@@ -2927,15 +2927,9 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static Unit ReadUnit(WktTokenizer tokenizer)
     {
-        WktBracket bracket = tokenizer.ReadOpener();
-        string unitName = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double unitsPerUnit = tokenizer.GetNumericValue();
-        tokenizer.NextToken();
-        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
-
-        return new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt1UnitFromNode(
+            WktKeywordNode.ParseSubtree(tokenizer),
+            static (unitsPerUnit, unitName, authority, authorityCode) => new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
     }
 
     /// <summary>
@@ -2945,16 +2939,9 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static LinearUnit ReadLinearUnit(WktTokenizer tokenizer)
     {
-        WktBracket bracket = tokenizer.ReadOpener();
-
-        string unitName = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double unitsPerUnit = tokenizer.GetNumericValue();
-        tokenizer.NextToken();
-        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
-
-        return new LinearUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt1UnitFromNode(
+            WktKeywordNode.ParseSubtree(tokenizer),
+            static (unitsPerUnit, unitName, authority, authorityCode) => new LinearUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
     }
 
     /// <summary>
@@ -2964,16 +2951,9 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static AngularUnit ReadAngularUnit(WktTokenizer tokenizer)
     {
-        WktBracket bracket = tokenizer.ReadOpener();
-
-        string unitName = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double unitsPerUnit = tokenizer.GetNumericValue();
-        tokenizer.NextToken();
-        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
-
-        return new AngularUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt1UnitFromNode(
+            WktKeywordNode.ParseSubtree(tokenizer),
+            static (unitsPerUnit, unitName, authority, authorityCode) => new AngularUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
     }
 
     /// <summary>
@@ -2988,12 +2968,23 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("AXIS");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string axisName = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        string unitname = tokenizer.GetStringValue();
-        tokenizer.ReadCloser(bracket);
+        return ReadAxis(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static AxisInfo ReadAxis(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string axisName = node.GetString(0);
+        string unitname = node.GetIdentifier(0);
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is WktKeywordNode keywordChild)
+            {
+                throw new NotSupportedException($"WKT1 AXIS keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
         return unitname.ToUpperInvariant() switch
         {
             "DOWN" => new AxisInfo(axisName, AxisOrientationEnum.Down),
@@ -3005,6 +2996,36 @@ public static partial class CoordinateSystemWktReader
             "WEST" => new AxisInfo(axisName, AxisOrientationEnum.West),
             _ => ArgumentGuard.ThrowArgument<AxisInfo>($"Invalid axis name '{unitname}' in WKT"),
         };
+    }
+
+    private static TUnit ReadWkt1UnitFromNode<TUnit>(WktKeywordNode node, Func<double, string, string, long, TUnit> factory)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        ArgumentGuard.ThrowIfNull(factory, nameof(factory));
+
+        string unitName = node.GetString(0);
+        double unitsPerUnit = node.GetNumber(0);
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        (string Authority, string Code)? authorityNode = node.GetAuthority();
+        if (authorityNode.HasValue)
+        {
+            authority = authorityNode.Value.Authority;
+            authorityCode = long.TryParse(authorityNode.Value.Code, NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
+                ? parsedCode
+                : -1;
+        }
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is WktKeywordNode keywordChild && !string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotSupportedException($"WKT1 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
+        return factory(unitsPerUnit, unitName, authority, authorityCode);
     }
 
     private static CoordinateSystem ReadCoordinateSystem(string? coordinateSystem, WktTokenizer tokenizer)
