@@ -34,7 +34,7 @@ internal sealed class IdentityMathTransform : MathTransform
     public override int DimTarget => this.dimension;
 
     /// <inheritdoc/>
-    public override string WKT => $"PARAM_MT[\"Identity\",PARAMETER[\"dimension\",{this.dimension}]]";
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc/>
     public override WktNode ToWktNode()

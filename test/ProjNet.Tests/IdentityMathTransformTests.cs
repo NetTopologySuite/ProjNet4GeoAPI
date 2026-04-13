@@ -47,7 +47,7 @@ public class IdentityMathTransformTests
     {
         var transform = new IdentityMathTransform(4);
 
-        Assert.Equal("PARAM_MT[\"Identity\",PARAMETER[\"dimension\",4]]", transform.WKT);
+        Assert.Equal("PARAM_MT[\"Identity\", PARAMETER[\"dimension\", 4]]", transform.WKT);
     }
 
     /// <summary>
