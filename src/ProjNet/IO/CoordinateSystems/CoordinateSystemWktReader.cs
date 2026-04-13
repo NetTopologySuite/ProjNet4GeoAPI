@@ -158,9 +158,15 @@ public static partial class CoordinateSystemWktReader
 
     private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer)
     {
-        string rootKeyword = tokenizer.GetStringValue();
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2GeodeticCoordinateReferenceSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+
+        string rootKeyword = node.Keyword;
+        string name = node.GetString(0);
 
         HorizontalDatum? horizontalDatum = null;
         GeographicCoordinateSystem? baseGeographicCoordinateSystem = null;
@@ -174,71 +180,59 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var axisInfo = new List<AxisInfo>();
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "DATUM":
-                    horizontalDatum = ReadWkt2HorizontalDatum(tokenizer);
+                    horizontalDatum = ReadWkt2HorizontalDatum(keywordChild);
                     break;
                 case "ENSEMBLE":
-                    horizontalDatum = ReadWkt2HorizontalDatumEnsemble(tokenizer);
+                    horizontalDatum = ReadWkt2HorizontalDatumEnsemble(keywordChild);
                     break;
                 case "BASEGEOGCRS":
                 case "BASEGEODCRS":
-                    baseGeographicCoordinateSystem = ReadWkt2BaseGeographicCoordinateSystem(tokenizer);
+                    baseGeographicCoordinateSystem = ParseWkt2Root(keywordChild, ReadWkt2BaseGeographicCoordinateSystem);
                     break;
                 case "DERIVINGCONVERSION":
-                    derivingConversion = ReadWkt2DerivingConversion(tokenizer, out AngularUnit? derivingAngularUnit);
+                    var derivingConversionTokenizer = new WktTokenizer(keywordChild.ToString());
+                    derivingConversionTokenizer.NextToken();
+                    derivingConversion = ReadWkt2DerivingConversion(derivingConversionTokenizer, out AngularUnit? derivingAngularUnit);
                     angularUnit = MergeAxisAngularUnit(angularUnit, derivingAngularUnit);
                     break;
                 case "PRIMEM":
-                    primeMeridian = ReadWkt2PrimeMeridian(tokenizer);
+                    primeMeridian = ReadWkt2PrimeMeridian(keywordChild);
                     break;
                 case "CS":
-                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(keywordChild);
                     break;
                 case "AXIS":
-                    axisInfo.Add(ReadWkt2Axis(tokenizer, out AngularUnit? axisAngularUnit, out LinearUnit? axisLinearUnit));
+                    axisInfo.Add(ReadWkt2Axis(keywordChild, out AngularUnit? axisAngularUnit, out LinearUnit? axisLinearUnit));
                     angularUnit = MergeAxisAngularUnit(angularUnit, axisAngularUnit);
                     linearUnit = MergeAxisLinearUnit(linearUnit, axisLinearUnit);
                     break;
                 case "ANGLEUNIT":
-                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    angularUnit = ReadWkt2AngularUnit(keywordChild);
                     break;
                 case "LENGTHUNIT":
-                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    linearUnit = ReadWkt2LinearUnit(keywordChild);
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                        throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         bool isDerived = baseGeographicCoordinateSystem is not null || derivingConversion is not null;
@@ -435,36 +429,34 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("CS");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        tokenizer.NextToken();
-        string coordinateSystemType = tokenizer.GetStringValue();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        int dimension = (int)tokenizer.GetNumericValue();
-        tokenizer.NextToken();
+        return ReadWkt2CoordinateSystemDefinition(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        while (true)
+    private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "CS", StringComparison.OrdinalIgnoreCase))
         {
-            if (tokenizer.GetStringValue() == ",")
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in CS.");
+        }
+
+        string coordinateSystemType = node.GetIdentifier(0);
+        int dimension = checked((int)node.GetNumber(0));
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase) ||
+                ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            if (tokenizer.GetStringValue() == "ID" || ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-                tokenizer.NextToken();
                 continue;
             }
 
-            throw new NotSupportedException($"WKT2 CS keyword '{tokenizer.GetStringValue()}' is not supported.");
+            throw new NotSupportedException($"WKT2 CS keyword '{keywordChild.Keyword}' is not supported.");
         }
 
         return (coordinateSystemType, dimension);
@@ -477,9 +469,15 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("AXIS");
         }
 
-        var axisNode = WktKeywordNode.ParseSubtree(tokenizer);
-        (AxisInfo axis, IUnit? unit) = ReadWkt2AxisDefinition(axisNode);
-        WktKeywordNode? unitNode = axisNode.FindChild("ANGLEUNIT", "LENGTHUNIT", "SCALEUNIT", "TIMEUNIT", "PARAMETRICUNIT");
+        return ReadWkt2Axis(WktKeywordNode.ParseSubtree(tokenizer), out angularUnit, out linearUnit);
+    }
+
+    private static AxisInfo ReadWkt2Axis(WktKeywordNode node, out AngularUnit? angularUnit, out LinearUnit? linearUnit)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+
+        (AxisInfo axis, IUnit? unit) = ReadWkt2AxisDefinition(node);
+        WktKeywordNode? unitNode = node.FindChild("ANGLEUNIT", "LENGTHUNIT", "SCALEUNIT", "TIMEUNIT", "PARAMETRICUNIT");
 
         if (unit is not null && unit is not AngularUnit && unit is not LinearUnit)
         {
