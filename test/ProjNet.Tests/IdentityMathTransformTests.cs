@@ -51,6 +51,19 @@ public class IdentityMathTransformTests
     }
 
     /// <summary>
+    /// Verifies that the WKT node output matches the canonical identity WKT and that the string property delegates to it.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_ProducesCanonicalIdentityWkt()
+    {
+        var transform = new IdentityMathTransform(4);
+        string nodeWkt = transform.ToWktNode().ToString();
+
+        Assert.Equal("PARAM_MT[\"Identity\", PARAMETER[\"dimension\", 4]]", nodeWkt);
+        Assert.Equal(nodeWkt, transform.WKT);
+    }
+
+    /// <summary>
     /// Verifies that the transform reports identity semantics.
     /// </summary>
     [Fact]
