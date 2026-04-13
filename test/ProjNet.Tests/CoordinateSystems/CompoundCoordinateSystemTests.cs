@@ -48,7 +48,7 @@ public class CompoundCoordinateSystemTests
         VerticalCoordinateSystem tail = VerticalCoordinateSystem.ODN;
         var system = new CompoundCoordinateSystem(head, tail, "Custom compound", string.Empty, -1, string.Empty, string.Empty, string.Empty);
 
-        Assert.Equal($"COMPD_CS[\"Custom compound\",{head.WKT},{tail.WKT}]", system.WKT);
+        Assert.Equal($"COMPD_CS[\"Custom compound\", {head.WKT}, {tail.WKT}]", system.WKT);
     }
 
     /// <summary>
@@ -61,7 +61,7 @@ public class CompoundCoordinateSystemTests
         VerticalCoordinateSystem tail = VerticalCoordinateSystem.ODN;
         CompoundCoordinateSystem system = CreateSystem(authority: "EPSG", authorityCode: 0);
 
-        Assert.Equal($"COMPD_CS[\"Custom compound\",{head.WKT},{tail.WKT}]", system.WKT);
+        Assert.Equal($"COMPD_CS[\"Custom compound\", {head.WKT}, {tail.WKT}]", system.WKT);
     }
 
     /// <summary>
@@ -74,7 +74,7 @@ public class CompoundCoordinateSystemTests
         VerticalCoordinateSystem tail = VerticalCoordinateSystem.ODN;
         var system = new CompoundCoordinateSystem(head, tail, "Custom compound", "EPSG", 9900, string.Empty, string.Empty, string.Empty);
 
-        Assert.Equal($"COMPD_CS[\"Custom compound\",{head.WKT},{tail.WKT},AUTHORITY[\"EPSG\",\"9900\"]]", system.WKT);
+        Assert.Equal($"COMPD_CS[\"Custom compound\", {head.WKT}, {tail.WKT}, AUTHORITY[\"EPSG\", \"9900\"]]", system.WKT);
     }
 
     /// <summary>

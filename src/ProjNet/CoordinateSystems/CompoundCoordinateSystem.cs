@@ -6,7 +6,6 @@ namespace ProjNet.CoordinateSystems;
 
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
@@ -106,33 +105,7 @@ public class CompoundCoordinateSystem : CoordinateSystem
     public CoordinateSystem TailCoordinateSystem { get; }
 
     /// <inheritdoc/>
-    public override string WKT
-    {
-        get
-        {
-            // Keep the legacy compact COMPD_CS formatting here because WktKeywordNode emits
-            // a canonical ", " separator, while the long-standing WKT contract for this type
-            // omits those spaces and existing byte-for-byte tests depend on that exact output.
-            var sb = new StringBuilder();
-            sb.Append("COMPD_CS[\"");
-            sb.Append(this.Name);
-            sb.Append("\",");
-            sb.Append(this.HeadCoordinateSystem.WKT);
-            sb.Append(',');
-            sb.Append(this.TailCoordinateSystem.WKT);
-            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-            {
-                sb.Append(",AUTHORITY[\"");
-                sb.Append(this.Authority);
-                sb.Append("\",\"");
-                sb.Append(this.AuthorityCode.ToString(CultureInfo.InvariantCulture));
-                sb.Append("\"]");
-            }
-
-            sb.Append(']');
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc/>
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
