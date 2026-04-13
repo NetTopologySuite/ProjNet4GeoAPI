@@ -94,30 +94,30 @@ public static partial class CoordinateSystemWktReader
         info = rootNode.Keyword switch
         {
             "GEOGCRS" or "GEODCRS" or "GEODETICCRS" when rootNode.FindChild("CS") is not null
-                => ParseWkt2Root(rootNode, ReadWkt2GeodeticCoordinateReferenceSystem),
+                => ReadWkt2GeodeticCoordinateReferenceSystem(rootNode),
             "PROJCRS" when rootNode.FindChild("CONVERSION") is not null && rootNode.FindChild("CS") is not null
-                => ParseWkt2Root(rootNode, ReadWkt2ProjectedCoordinateSystem),
+                => ReadWkt2ProjectedCoordinateSystem(rootNode),
             "DERIVEDPROJCRS" when rootNode.FindChild("DERIVINGCONVERSION") is not null && rootNode.FindChild("CS") is not null
-                => ParseWkt2Root(rootNode, ReadWkt2DerivedProjectedCoordinateSystem),
+                => ReadWkt2DerivedProjectedCoordinateSystem(rootNode),
             "VERTCRS" when rootNode.FindChild("VDATUM", "ENSEMBLE") is not null && rootNode.FindChild("CS") is not null
-                => ParseWkt2Root(rootNode, ReadWkt2VerticalCoordinateSystem),
-            "ENGCRS" or "ENGINEERINGCRS" => ParseWkt2Root(rootNode, ReadWkt2EngineeringCoordinateSystem),
-            "TIMECRS" => ParseWkt2Root(rootNode, ReadWkt2TemporalCoordinateSystem),
-            "PARAMETRICCRS" => ParseWkt2Root(rootNode, ReadWkt2ParametricCoordinateSystem),
-            "COORDINATEOPERATION" => ParseWkt2Root(rootNode, ReadWkt2CoordinateOperation),
-            "CONCATENATEDOPERATION" => ParseWkt2Root(rootNode, ReadWkt2ConcatenatedOperation),
-            "COMPOUNDCRS" => ParseWkt2Root(rootNode, ReadWkt2CompoundCoordinateSystem),
+                => ReadWkt2VerticalCoordinateSystem(rootNode),
+            "ENGCRS" or "ENGINEERINGCRS" => ReadWkt2EngineeringCoordinateSystem(rootNode),
+            "TIMECRS" => ReadWkt2TemporalCoordinateSystem(rootNode),
+            "PARAMETRICCRS" => ReadWkt2ParametricCoordinateSystem(rootNode),
+            "COORDINATEOPERATION" => ReadWkt2CoordinateOperation(rootNode),
+            "CONCATENATEDOPERATION" => ReadWkt2ConcatenatedOperation(rootNode),
+            "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(rootNode),
             "BOUNDCRS" when rootNode.FindChild("SOURCECRS") is not null
                 && rootNode.FindChild("TARGETCRS") is not null
                 && rootNode.FindChild("ABRIDGEDTRANSFORMATION") is not null
-                => ParseWkt2Root(rootNode, ReadWkt2BoundCoordinateSystem),
+                => ReadWkt2BoundCoordinateSystem(rootNode),
             _ => null,
         };
 
         return info is not null;
     }
 
-    private static T ParseWkt2Root<T>(WktKeywordNode rootNode, Func<WktTokenizer, T> reader)
+    private static T ParseWkt2NodeWithTokenizer<T>(WktKeywordNode rootNode, Func<WktTokenizer, T> reader)
     {
         ArgumentGuard.ThrowIfNull(rootNode, nameof(rootNode));
         ArgumentGuard.ThrowIfNull(reader, nameof(reader));
@@ -125,35 +125,6 @@ public static partial class CoordinateSystemWktReader
         var tokenizer = new WktTokenizer(rootNode.ToString());
         tokenizer.NextToken();
         return reader(tokenizer);
-    }
-
-    private static bool ContainsKeywordBlock(string wkt, string keyword)
-    {
-        int index = wkt.IndexOf(keyword, StringComparison.OrdinalIgnoreCase);
-        while (index >= 0)
-        {
-            int probeIndex = index + keyword.Length;
-            while (probeIndex < wkt.Length && char.IsWhiteSpace(wkt[probeIndex]))
-            {
-                probeIndex++;
-            }
-
-            if (probeIndex < wkt.Length && wkt[probeIndex] == '[')
-            {
-                return true;
-            }
-
-            index = wkt.IndexOf(keyword, index + 1, StringComparison.OrdinalIgnoreCase);
-        }
-
-        return false;
-    }
-
-    private static bool HasCompleteWkt2BoundCoordinateSystemBlocks(string wkt)
-    {
-        return ContainsKeywordBlock(wkt, "SOURCECRS")
-            && ContainsKeywordBlock(wkt, "TARGETCRS")
-            && ContainsKeywordBlock(wkt, "ABRIDGEDTRANSFORMATION");
     }
 
     private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer)
@@ -2626,7 +2597,7 @@ public static partial class CoordinateSystemWktReader
             "PARAMETRICCRS" => ReadWkt2ParametricCoordinateSystem(node),
             "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(node),
             "BOUNDCRS" => ReadWkt2BoundCoordinateSystem(node),
-            _ => ParseWkt2Root(node, tokenizer => ReadCoordinateSystem(null, tokenizer)),
+            _ => ParseWkt2NodeWithTokenizer(node, tokenizer => ReadCoordinateSystem(null, tokenizer)),
         };
     }
 
@@ -2913,7 +2884,6 @@ public static partial class CoordinateSystemWktReader
             "PRIMEM" => ReadPrimeMeridian(tokenizer),
             "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
                 => ReadCoordinateSystem(normalizedWkt, tokenizer),
-            "BOUNDCRS" when HasCompleteWkt2BoundCoordinateSystemBlocks(normalizedWkt) => ReadWkt2BoundCoordinateSystem(tokenizer),
             "BOUNDCRS" => throw new NotSupportedException("BOUNDCRS coordinate system is not supported."),
             _ => ArgumentGuard.ThrowArgument<IInfo>($"'{objectName}' is not recognized."),
         };
