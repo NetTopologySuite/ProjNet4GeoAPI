@@ -9,6 +9,7 @@ namespace ProjNet.IO.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
@@ -35,6 +36,7 @@ public static class MathTransformWktReader
         return objectName switch
         {
             "PARAM_MT" => ReadMathTransform(tokenizer),
+            "INVERSE_MT" => ReadInverseMathTransform(tokenizer),
             _ => ArgumentGuard.ThrowArgument<MathTransform>($"'{objectName}' is not recognized."),
         };
     }
@@ -58,8 +60,39 @@ public static class MathTransformWktReader
         return transformName.ToUpperInvariant() switch
         {
             "AFFINE" => ReadAffineTransform(tokenizer),
-            _ => throw new NotSupportedException($"Transform not supported '{transformName}'"),
+            "IDENTITY" => ReadIdentityTransform(tokenizer),
+            _ => ReadProjectionTransform(tokenizer, transformName),
         };
+    }
+
+    /// <summary>
+    /// Reads an inverse math transform from the current position of the specified tokenizer.
+    /// </summary>
+    /// <param name="tokenizer">The tokenizer positioned at or before an <c>INVERSE_MT</c> token.</param>
+    /// <returns>The parsed inverse <see cref="MathTransform"/>.</returns>
+    internal static MathTransform ReadInverseMathTransform(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "INVERSE_MT")
+        {
+            tokenizer.ReadToken("INVERSE_MT");
+        }
+
+        tokenizer.ReadToken("[");
+        tokenizer.NextToken();
+
+        MathTransform transform = tokenizer.GetStringValue() switch
+        {
+            "PARAM_MT" => ReadMathTransform(tokenizer),
+            "INVERSE_MT" => ReadInverseMathTransform(tokenizer),
+            _ => throw new NotSupportedException($"Transform not supported '{tokenizer.GetStringValue()}'"),
+        };
+
+        if (tokenizer.GetStringValue() != "]")
+        {
+            tokenizer.ReadToken("]");
+        }
+
+        return transform.Inverse();
     }
 
     private static ParameterInfo ReadParameters(WktTokenizer tokenizer)
@@ -218,5 +251,63 @@ public static class MathTransformWktReader
         // use "matrix" constructor to create transformation matrix
         var affineTransform = new AffineTransform(matrix);
         return affineTransform;
+    }
+
+    private static IdentityMathTransform ReadIdentityTransform(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "PARAMETER")
+        {
+            tokenizer.ReadToken("PARAMETER");
+        }
+
+        ParameterInfo paramInfo = ReadParameters(tokenizer);
+        Parameter? dimensionParam = paramInfo.GetParameterByName("dimension");
+        if (dimensionParam is null)
+        {
+            ArgumentGuard.ThrowArgument("Identity transform does not contain 'dimension' parameter", nameof(tokenizer));
+        }
+
+        int dimension = (int)dimensionParam.Value;
+        if (dimension <= 0)
+        {
+            ArgumentGuard.ThrowArgument("Identity transform contains invalid value of 'dimension' parameter", nameof(tokenizer));
+        }
+
+        if (tokenizer.GetStringValue() != "]")
+        {
+            tokenizer.ReadToken("]");
+        }
+
+        return new IdentityMathTransform(dimension);
+    }
+
+    private static MathTransform ReadProjectionTransform(WktTokenizer tokenizer, string transformName)
+    {
+        if (tokenizer.GetStringValue() != "PARAMETER")
+        {
+            tokenizer.ReadToken("PARAMETER");
+        }
+
+        ParameterInfo paramInfo = ReadParameters(tokenizer);
+        IList<Parameter>? parametersCandidate = paramInfo.Parameters;
+        IList<Parameter> parameters = ArgumentGuard.ThrowIfNull(parametersCandidate, nameof(parametersCandidate));
+        var projectionParameters = new List<ProjectionParameter>(parameters.Count);
+
+        foreach (Parameter? parameter in parameters)
+        {
+            if (parameter is null || parameter.Name is null)
+            {
+                continue;
+            }
+
+            projectionParameters.Add(new ProjectionParameter(parameter.Name, parameter.Value));
+        }
+
+        if (tokenizer.GetStringValue() != "]")
+        {
+            tokenizer.ReadToken("]");
+        }
+
+        return ProjectionsRegistry.CreateProjection(transformName, projectionParameters);
     }
 }

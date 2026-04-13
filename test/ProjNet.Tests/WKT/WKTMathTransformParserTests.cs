@@ -5,6 +5,9 @@
 namespace ProjNet.Tests.WKT;
 
 using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
 using Xunit;
@@ -16,6 +19,8 @@ public class WKTMathTransformParserTests
 {
     private static readonly double[] Origin2D = [0.0, 0.0];
     private static readonly double[] AffineSamplePoint = [2040.0, 1590.0];
+    private static readonly double[] GeographicSamplePoint = [12.0, 45.0];
+    private static readonly double[] IdentitySamplePoint = [1.0, 2.0, 3.0, 4.0];
 
     /// <summary>
     /// Test parsing of affine math transform from WKT.
@@ -101,6 +106,60 @@ public class WKTMathTransformParserTests
     }
 
     /// <summary>
+    /// Verifies that map projection WKT roundtrips through the parser without losing the projection behavior.
+    /// </summary>
+    [Fact]
+    public void MapProjectionWkt_RoundTripsThroughParser()
+    {
+        MapProjection original = CreateMercatorProjection();
+
+        MathTransform parsedTransform = MathTransformWktReader.Parse(original.WKT);
+        MapProjection parsed = Assert.IsAssignableFrom<MapProjection>(parsedTransform);
+        double[] originalResult = original.Transform(GeographicSamplePoint);
+        double[] parsedResult = parsed.Transform(GeographicSamplePoint);
+
+        Assert.Equal(original.WKT, parsed.WKT);
+        Assert.Equal(originalResult[0], parsedResult[0], 12);
+        Assert.Equal(originalResult[1], parsedResult[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies that inverse map projection WKT roundtrips through the parser and preserves inverse behavior.
+    /// </summary>
+    [Fact]
+    public void InverseMapProjectionWkt_RoundTripsThroughParser()
+    {
+        MapProjection forward = CreateMercatorProjection();
+        MapProjection original = Assert.IsAssignableFrom<MapProjection>(forward.Inverse());
+        double[] projectedSamplePoint = forward.Transform(GeographicSamplePoint);
+
+        MathTransform parsedTransform = MathTransformWktReader.Parse(original.WKT);
+        MapProjection parsed = Assert.IsAssignableFrom<MapProjection>(parsedTransform);
+        double[] originalResult = original.Transform(projectedSamplePoint);
+        double[] parsedResult = parsed.Transform(projectedSamplePoint);
+
+        Assert.Equal(original.WKT, parsed.WKT);
+        Assert.Equal(originalResult[0], parsedResult[0], 12);
+        Assert.Equal(originalResult[1], parsedResult[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies that identity transform WKT roundtrips through the parser without changing dimensionality.
+    /// </summary>
+    [Fact]
+    public void IdentityTransformWkt_RoundTripsThroughParser()
+    {
+        var original = new IdentityMathTransform(IdentitySamplePoint.Length);
+
+        MathTransform parsedTransform = MathTransformWktReader.Parse(original.WKT);
+        IdentityMathTransform parsed = Assert.IsType<IdentityMathTransform>(parsedTransform);
+        double[] parsedResult = parsed.Transform(IdentitySamplePoint);
+
+        Assert.Equal(original.WKT, parsed.WKT);
+        Assert.Equal(IdentitySamplePoint, parsedResult);
+    }
+
+    /// <summary>
     /// MathTransformWktReader parses real number with exponent incorrectly.
     /// </summary>
     /// <param name="wkt">The wkt value.</param>
@@ -139,5 +198,25 @@ public class WKTMathTransformParserTests
             0.468458794848877,
             0.883485346527455,
             5478710.88035753);
+    }
+
+    private static MapProjection CreateMercatorProjection()
+    {
+        return Assert.IsAssignableFrom<MapProjection>(ProjectionsRegistry.CreateProjection("mercator", CreateMercatorParameters()));
+    }
+
+    private static List<ProjectionParameter> CreateMercatorParameters()
+    {
+        return
+        [
+            new("semi_major", Ellipsoid.WGS84.SemiMajorAxis),
+            new("semi_minor", Ellipsoid.WGS84.SemiMinorAxis),
+            new("central_meridian", 0d),
+            new("latitude_of_origin", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
+            new("unit", 1d),
+        ];
     }
 }
