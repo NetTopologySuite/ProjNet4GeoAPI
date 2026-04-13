@@ -5,6 +5,7 @@ namespace ProjNet.Tests.IO.Wkt;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -17,6 +18,11 @@ using Xunit;
 public class WktNodeTests
 {
     private static readonly CoordinateSystemServices CoordinateSystemServices = new();
+    private static readonly Type[] IntParameterTypes = [typeof(int)];
+    private static readonly Type[] StringParameterTypes = [typeof(string)];
+    private static readonly Type[] StringArrayParameterTypes = [typeof(string[])];
+    private static readonly string[] AuthorityOrIdKeywords = ["AUTHORITY", "ID"];
+    private static readonly object[] AuthorityOrIdArguments = [AuthorityOrIdKeywords];
 
     /// <summary>
     /// Verifies that <see cref="WktQuotedString.ToString"/> wraps the stored value in double quotes.
@@ -310,6 +316,134 @@ public class WktNodeTests
 
         var node = new WktKeywordNode("TEST", children);
         Assert.Equal("TEST[\"test\", 42]", node.ToString());
+    }
+
+    /// <summary>
+    /// Verifies that the internal tree builder parses a simple WKT1 structure into the expected node hierarchy.
+    /// </summary>
+    [Fact]
+    public void WktKeywordNode_ParseTree_SimpleWkt1_ReturnsExpectedStructure()
+    {
+        const string wkt = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],UNIT["degree",0.0174532925199433]]""";
+
+        WktKeywordNode root = ParseTree(wkt);
+        Assert.Equal("GEOGCS", root.Keyword);
+        Assert.Equal("GEOGCS[\"WGS 84\", DATUM[\"WGS_1984\", SPHEROID[\"WGS 84\", 6378137, 298.257223563]], UNIT[\"degree\", 0.0174532925199433]]", root.ToString());
+
+        WktKeywordNode datum = Assert.IsType<WktKeywordNode>(root.Children[1]);
+        Assert.Equal("DATUM", datum.Keyword);
+
+        WktKeywordNode spheroid = Assert.IsType<WktKeywordNode>(datum.Children[1]);
+        Assert.Equal("SPHEROID", spheroid.Keyword);
+        Assert.IsType<WktInteger>(spheroid.Children[1]);
+        Assert.IsType<WktNumber>(spheroid.Children[2]);
+    }
+
+    /// <summary>
+    /// Verifies that the internal tree builder parses a complex WKT2 structure and preserves all supported node kinds.
+    /// </summary>
+    [Fact]
+    public void WktKeywordNode_ParseTree_ComplexWkt2_ReturnsExpectedNodeKinds()
+    {
+        const string wkt = """PROJCRS["WGS 84 / UTM zone 32N",BASEGEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ID["EPSG",6326]],ID["EPSG",4326]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator"],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433]]],CS[Cartesian,2],AXIS["Easting (E)",east,ORDER[1]],AXIS["Northing (N)",north,ORDER[2]],LENGTHUNIT["metre",1],ID["EPSG",32632]]""";
+
+        WktKeywordNode root = ParseTree(wkt);
+        Assert.Equal("PROJCRS", root.Keyword);
+
+        WktKeywordNode conversion = Assert.IsType<WktKeywordNode>(root.Children[2]);
+        WktKeywordNode parameter = Assert.IsType<WktKeywordNode>(conversion.Children[2]);
+        Assert.Equal("PARAMETER", parameter.Keyword);
+        Assert.IsType<WktQuotedString>(parameter.Children[0]);
+        Assert.IsType<WktInteger>(parameter.Children[1]);
+        Assert.IsType<WktKeywordNode>(parameter.Children[2]);
+
+        WktKeywordNode cs = Assert.IsType<WktKeywordNode>(root.Children[3]);
+        Assert.Equal("CS", cs.Keyword);
+        Assert.IsType<WktIdentifier>(cs.Children[0]);
+        Assert.IsType<WktInteger>(cs.Children[1]);
+
+        WktKeywordNode axis = Assert.IsType<WktKeywordNode>(root.Children[4]);
+        Assert.Equal("AXIS", axis.Keyword);
+        Assert.IsType<WktQuotedString>(axis.Children[0]);
+        Assert.IsType<WktIdentifier>(axis.Children[1]);
+        Assert.IsType<WktKeywordNode>(axis.Children[2]);
+    }
+
+    /// <summary>
+    /// Verifies that the internal tree builder supports empty keyword nodes.
+    /// </summary>
+    [Fact]
+    public void WktKeywordNode_ParseTree_EmptyNode_ReturnsNodeWithoutChildren()
+    {
+        WktKeywordNode root = ParseTree("STEP[]");
+
+        Assert.Equal("STEP", root.Keyword);
+        Assert.Empty(root.Children);
+        Assert.Equal("STEP[]", root.ToString());
+    }
+
+    /// <summary>
+    /// Verifies that the internal tree builder preserves deep nesting.
+    /// </summary>
+    [Fact]
+    public void WktKeywordNode_ParseTree_DeepNesting_PreservesHierarchy()
+    {
+        WktKeywordNode root = ParseTree("""ROOT[LEVEL1[LEVEL2[LEVEL3["value"]]]]""");
+        WktKeywordNode level1 = Assert.IsType<WktKeywordNode>(root.Children[0]);
+        WktKeywordNode level2 = Assert.IsType<WktKeywordNode>(level1.Children[0]);
+        WktKeywordNode level3 = Assert.IsType<WktKeywordNode>(level2.Children[0]);
+
+        Assert.Equal("ROOT", root.Keyword);
+        Assert.Equal("LEVEL1", level1.Keyword);
+        Assert.Equal("LEVEL3", level3.Keyword);
+    }
+
+    /// <summary>
+    /// Verifies that tree parsing roundtrips back to the compact WKT representation apart from whitespace normalization.
+    /// </summary>
+    [Fact]
+    public void WktKeywordNode_ParseTree_RoundTripsToCompactForm()
+    {
+        const string wkt = """
+            GEOGCS[
+                "WGS 84",
+                DATUM["WGS_1984"],
+                UNIT["degree", 0.0174532925199433]
+            ]
+            """;
+
+        WktKeywordNode root = ParseTree(wkt);
+        Assert.Equal("GEOGCS[\"WGS 84\", DATUM[\"WGS_1984\"], UNIT[\"degree\", 0.0174532925199433]]", root.ToString());
+    }
+
+    /// <summary>
+    /// Verifies that the internal helper methods expose typed positional and keyword-based child access.
+    /// </summary>
+    [Fact]
+    public void WktKeywordNode_InternalHelpers_ReturnExpectedValues()
+    {
+        const string wkt = """PROJCRS["WGS 84 / UTM zone 32N",BASEGEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ID["EPSG",6326]],ID["EPSG",4326]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator"],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433]]],CS[Cartesian,2],AXIS["Easting (E)",east,ORDER[1]],AXIS["Northing (N)",north,ORDER[2]],LENGTHUNIT["metre",1],ID["EPSG",32632]]""";
+
+        WktKeywordNode root = ParseTree(wkt);
+
+        Assert.Equal("WGS 84 / UTM zone 32N", InvokeNonPublicInstance<string>(root, "GetString", IntParameterTypes, 0));
+
+        WktKeywordNode? cs = InvokeNonPublicInstance<WktKeywordNode?>(root, "FindChild", StringParameterTypes, "CS");
+        Assert.NotNull(cs);
+        Assert.Equal("Cartesian", InvokeNonPublicInstance<string>(cs, "GetIdentifier", IntParameterTypes, 0));
+        Assert.Equal(2d, InvokeNonPublicInstance<double>(cs, "GetNumber", IntParameterTypes, 0));
+
+        IReadOnlyList<WktKeywordNode> axisNodes = InvokeNonPublicInstance<IReadOnlyList<WktKeywordNode>>(root, "FindChildren", StringParameterTypes, "AXIS");
+        Assert.Equal(2, axisNodes.Count);
+
+        (string Authority, string Code)? authority = InvokeNonPublicInstance<(string Authority, string Code)?>(root, "GetAuthority", Type.EmptyTypes);
+        Assert.True(authority.HasValue);
+        Assert.Equal("EPSG", authority.Value.Authority);
+        Assert.Equal("32632", authority.Value.Code);
+
+        WktKeywordNode? idNode = InvokeNonPublicInstance<WktKeywordNode?>(root, "FindChild", StringArrayParameterTypes, AuthorityOrIdArguments);
+        Assert.NotNull(idNode);
+        Assert.Equal("ID", idNode.Keyword);
     }
 
     /// <summary>
@@ -1117,6 +1251,33 @@ public class WktNodeTests
 
         // Formatted version should have newlines when there are keyword children
         Assert.Contains("\n", formatted, StringComparison.Ordinal);
+    }
+
+    private static WktKeywordNode ParseTree(string wkt)
+    {
+        MethodInfo? method = typeof(WktKeywordNode).GetMethod(
+            "ParseTree",
+            BindingFlags.Static | BindingFlags.NonPublic,
+            binder: null,
+            types: StringParameterTypes,
+            modifiers: null);
+
+        Assert.NotNull(method);
+        return Assert.IsType<WktKeywordNode>(method.Invoke(null, new object[] { wkt }));
+    }
+
+    private static T InvokeNonPublicInstance<T>(WktKeywordNode node, string methodName, Type[] parameterTypes, params object[] arguments)
+    {
+        MethodInfo? method = typeof(WktKeywordNode).GetMethod(
+            methodName,
+            BindingFlags.Instance | BindingFlags.NonPublic,
+            binder: null,
+            types: parameterTypes,
+            modifiers: null);
+
+        Assert.NotNull(method);
+        object? result = method.Invoke(node, arguments);
+        return result is null ? default! : (T)result;
     }
 
     private static TCoordinateSystem ParseCatalogWkt1<TCoordinateSystem>(CoordinateSystemFactory factory, int srid)
