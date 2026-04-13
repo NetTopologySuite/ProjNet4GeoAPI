@@ -13,6 +13,7 @@ using System.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Data;
+using ProjNet.IO.CoordinateSystems;
 
 /// <summary>
 /// Provides coordinate system lookup and transformation creation backed by a registry of SRID-keyed systems.
@@ -199,6 +200,68 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
 
         coordinateSystem = this.GetCoordinateSystem(srid.Value);
         return coordinateSystem is not null;
+    }
+
+    /// <summary>
+    /// Attempts to replace a parsed coordinate system with the canonical catalog instance identified by its authority metadata.
+    /// </summary>
+    /// <param name="parsed">The parsed coordinate system to resolve.</param>
+    /// <returns>The canonical catalog instance when the authority metadata matches a registered entry; otherwise <see langword="null"/>.</returns>
+    public CoordinateSystem? ResolveFromCatalog(CoordinateSystem parsed)
+    {
+        parsed = ArgumentGuard.ThrowIfNull(parsed, nameof(parsed));
+        return this.TryResolveFromCatalog(parsed, out CoordinateSystem? coordinateSystem) ? coordinateSystem : null;
+    }
+
+    /// <summary>
+    /// Attempts to replace a parsed coordinate system with the canonical catalog instance identified by its authority metadata.
+    /// </summary>
+    /// <param name="parsed">The parsed coordinate system to resolve.</param>
+    /// <param name="coordinateSystem">The canonical catalog instance when resolution succeeds; otherwise <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> when the parsed coordinate system resolved to a registered catalog entry; otherwise <see langword="false"/>.</returns>
+    public bool TryResolveFromCatalog(CoordinateSystem parsed, [NotNullWhen(true)] out CoordinateSystem? coordinateSystem)
+    {
+        parsed = ArgumentGuard.ThrowIfNull(parsed, nameof(parsed));
+        coordinateSystem = null;
+
+        if (string.IsNullOrWhiteSpace(parsed.Authority) || parsed.AuthorityCode < 0)
+        {
+            return false;
+        }
+
+        return this.TryGetCoordinateSystem(parsed.Authority, parsed.AuthorityCode, out coordinateSystem);
+    }
+
+    /// <summary>
+    /// Parses a coordinate system WKT definition and resolves it to the canonical catalog instance when possible.
+    /// </summary>
+    /// <param name="wkt">The coordinate system WKT to parse.</param>
+    /// <returns>The canonical catalog instance when the parsed authority metadata resolves successfully; otherwise the parsed coordinate system instance.</returns>
+    public CoordinateSystem ResolveOrParse(string wkt)
+    {
+        CoordinateSystem? parsed = this.coordinateSystemFactory.CreateFromWkt(wkt);
+        if (parsed is null)
+        {
+            return ArgumentGuard.ThrowArgument<CoordinateSystem>("WKT does not describe a coordinate system.", nameof(wkt));
+        }
+
+        return this.ResolveFromCatalog(parsed) ?? parsed;
+    }
+
+    /// <summary>
+    /// Parses a PROJJSON coordinate system definition and resolves it to the canonical catalog instance when possible.
+    /// </summary>
+    /// <param name="json">The PROJJSON coordinate system definition to parse.</param>
+    /// <returns>The canonical catalog instance when the parsed authority metadata resolves successfully; otherwise the parsed coordinate system instance.</returns>
+    public CoordinateSystem ResolveOrParseJson(string json)
+    {
+        IInfo info = ProjJsonReader.Parse(json);
+        if (info is not CoordinateSystem parsed)
+        {
+            return ArgumentGuard.ThrowArgument<CoordinateSystem>("PROJJSON does not describe a coordinate system.", nameof(json));
+        }
+
+        return this.ResolveFromCatalog(parsed) ?? parsed;
     }
 
     /// <summary>

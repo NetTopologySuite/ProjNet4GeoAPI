@@ -20,8 +20,12 @@ namespace ProjNet
         public System.Collections.Generic.IEnumerator<ProjNet.Data.CoordinateSystemEntry> GetEnumerator() { }
         public int? GetSRID(string authority, long authorityCode) { }
         public bool RemoveCoordinateSystem(int srid) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem? ResolveFromCatalog(ProjNet.CoordinateSystems.CoordinateSystem parsed) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem ResolveOrParse(string wkt) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem ResolveOrParseJson(string json) { }
         public bool TryGetCoordinateSystem(int srid, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out ProjNet.CoordinateSystems.CoordinateSystem? coordinateSystem) { }
         public bool TryGetCoordinateSystem(string authority, long code, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out ProjNet.CoordinateSystems.CoordinateSystem? coordinateSystem) { }
+        public bool TryResolveFromCatalog(ProjNet.CoordinateSystems.CoordinateSystem parsed, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out ProjNet.CoordinateSystems.CoordinateSystem? coordinateSystem) { }
     }
 }
 namespace ProjNet.CoordinateSystems
