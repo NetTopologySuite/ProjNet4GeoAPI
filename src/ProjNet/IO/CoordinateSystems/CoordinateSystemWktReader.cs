@@ -2654,56 +2654,46 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("ABRIDGEDTRANSFORMATION");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        _ = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2AbridgedTransformationDefinition(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static BoundTransformation ReadWkt2AbridgedTransformationDefinition(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        _ = node.GetString(0);
 
         string methodName = string.Empty;
         string? parameterFileName = null;
         var parameters = new Wgs84ConversionInfo();
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "METHOD":
-                    methodName = ReadWkt2ProjectionMethod(tokenizer);
+                    methodName = ReadWkt2ProjectionMethod(keywordChild);
                     break;
                 case "PARAMETER":
-                    ReadWkt2AbridgedTransformationParameter(tokenizer, parameters);
+                    ReadWkt2AbridgedTransformationParameter(keywordChild, parameters);
                     break;
                 case "PARAMETERFILE":
-                    parameterFileName = ReadWkt2AbridgedTransformationParameterFile(tokenizer);
+                    parameterFileName = ReadWkt2AbridgedTransformationParameterFile(keywordChild);
                     break;
                 case "ID":
-                    SkipKeywordNode(tokenizer);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         if (string.IsNullOrWhiteSpace(methodName))
@@ -2717,14 +2707,6 @@ public static partial class CoordinateSystemWktReader
             parameterFileName);
     }
 
-    private static BoundTransformation ReadWkt2AbridgedTransformationDefinition(WktKeywordNode node)
-    {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-        var tokenizer = new WktTokenizer(node.ToString());
-        tokenizer.NextToken();
-        return ReadWkt2AbridgedTransformationDefinition(tokenizer);
-    }
-
     private static void ReadWkt2AbridgedTransformationParameter(WktTokenizer tokenizer, Wgs84ConversionInfo parameters)
     {
         if (tokenizer.GetStringValue() != "PARAMETER")
@@ -2732,59 +2714,47 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("PARAMETER");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string parameterName = NormalizeWkt2BoundTransformationParameterName(tokenizer.ReadDoubleQuotedWord());
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double value = tokenizer.GetNumericValue();
+        ReadWkt2AbridgedTransformationParameter(WktKeywordNode.ParseSubtree(tokenizer), parameters);
+    }
+
+    private static void ReadWkt2AbridgedTransformationParameter(WktKeywordNode node, Wgs84ConversionInfo parameters)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string parameterName = NormalizeWkt2BoundTransformationParameterName(node.GetString(0));
+        double value = node.GetNumber(0);
 
         AngularUnit? angularUnit = null;
         LinearUnit? linearUnit = null;
         double? scaleUnitFactor = null;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "ANGLEUNIT":
-                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    angularUnit = ReadWkt2AngularUnit(keywordChild);
                     break;
                 case "LENGTHUNIT":
-                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    linearUnit = ReadWkt2LinearUnit(keywordChild);
                     break;
                 case "SCALEUNIT":
-                    scaleUnitFactor = ReadWkt2ScaleUnitFactor(tokenizer);
+                    scaleUnitFactor = ReadWkt2ScaleUnitFactor(keywordChild);
                     break;
                 case "ID":
-                    SkipKeywordNode(tokenizer);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION parameter keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION parameter keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         ApplyWkt2BoundTransformationParameter(
@@ -2800,36 +2770,26 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("PARAMETERFILE");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        _ = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        string parameterFileName = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2AbridgedTransformationParameterFile(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        tokenizer.NextToken();
-        while (true)
+    private static string ReadWkt2AbridgedTransformationParameterFile(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        _ = node.GetString(0);
+        string parameterFileName = node.GetString(1);
+
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
+                throw new NotSupportedException($"WKT2 PARAMETERFILE keyword '{keywordChild.Keyword}' is not supported.");
             }
-
-            if (tokenizer.GetStringValue() == "ID" || ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 PARAMETERFILE keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
         }
 
         return parameterFileName;
@@ -2842,37 +2802,26 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("SCALEUNIT");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        _ = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double unitFactor = tokenizer.GetNumericValue();
+        return ReadWkt2ScaleUnitFactor(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        tokenizer.NextToken();
-        while (true)
+    private static double ReadWkt2ScaleUnitFactor(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        _ = node.GetString(0);
+        double unitFactor = node.GetNumber(0);
+
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
+                throw new NotSupportedException($"WKT2 SCALEUNIT keyword '{keywordChild.Keyword}' is not supported.");
             }
-
-            if (tokenizer.GetStringValue() == "ID" || ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 SCALEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
         }
 
         return unitFactor;
