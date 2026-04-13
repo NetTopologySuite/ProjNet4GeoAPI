@@ -3053,44 +3053,43 @@ public static partial class CoordinateSystemWktReader
     // Reads either 3, 6 or 7 parameter Bursa-Wolf values from TOWGS84 token
     private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktTokenizer tokenizer)
     {
-        // TOWGS84[0,0,0,0,0,0,0]
-        WktBracket bracket = tokenizer.ReadOpener();
-        var info = new Wgs84ConversionInfo();
-        tokenizer.NextToken();
-        info.Dx = tokenizer.GetNumericValue();
-        tokenizer.ReadToken(",");
+        return ReadWGS84ConversionInfo(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        tokenizer.NextToken();
-        info.Dy = tokenizer.GetNumericValue();
-        tokenizer.ReadToken(",");
-
-        tokenizer.NextToken();
-        info.Dz = tokenizer.GetNumericValue();
-        tokenizer.NextToken();
-        if (tokenizer.GetStringValue() == ",")
+    private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        IReadOnlyList<double> values = node.GetAllNumbers();
+        if (values.Count is not 3 and not 6 and not 7)
         {
-            tokenizer.NextToken();
-            info.Ex = tokenizer.GetNumericValue();
+            ArgumentGuard.ThrowArgument("WKT1 TOWGS84 must contain 3, 6, or 7 numeric values.");
+        }
 
-            tokenizer.ReadToken(",");
-            tokenizer.NextToken();
-            info.Ey = tokenizer.GetNumericValue();
-
-            tokenizer.ReadToken(",");
-            tokenizer.NextToken();
-            info.Ez = tokenizer.GetNumericValue();
-
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == ",")
+        foreach (WktNode child in node.Children)
+        {
+            if (child is WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
-                info.Ppm = tokenizer.GetNumericValue();
+                throw new NotSupportedException($"WKT1 TOWGS84 keyword '{keywordChild.Keyword}' is not supported.");
             }
         }
 
-        if (tokenizer.GetStringValue() != "]")
+        var info = new Wgs84ConversionInfo
         {
-            tokenizer.ReadCloser(bracket);
+            Dx = values[0],
+            Dy = values[1],
+            Dz = values[2],
+        };
+
+        if (values.Count >= 6)
+        {
+            info.Ex = values[3];
+            info.Ey = values[4];
+            info.Ez = values[5];
+        }
+
+        if (values.Count == 7)
+        {
+            info.Ppm = values[6];
         }
 
         return info;
@@ -3098,20 +3097,18 @@ public static partial class CoordinateSystemWktReader
 
     private static Ellipsoid ReadEllipsoid(WktTokenizer tokenizer)
     {
-        // SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]]
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double majorAxis = tokenizer.GetNumericValue();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double e = tokenizer.GetNumericValue();
-        tokenizer.NextToken();
-        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
+        return ReadEllipsoid(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        var ellipsoid = new Ellipsoid(majorAxis, 0.0, e, true, LinearUnit.Metre, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-        return ellipsoid;
+    private static Ellipsoid ReadEllipsoid(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        double majorAxis = node.GetNumber(0);
+        double e = node.GetNumber(1);
+        ReadWkt1Authority(node, out string authority, out long authorityCode);
+
+        return new Ellipsoid(majorAxis, 0.0, e, true, LinearUnit.Metre, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
     private static Projection ReadProjection(WktTokenizer tokenizer)
@@ -3448,78 +3445,115 @@ public static partial class CoordinateSystemWktReader
 
     private static HorizontalDatum ReadHorizontalDatum(WktTokenizer tokenizer)
     {
-        // DATUM["OSGB 1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6277"]]
+        return ReadHorizontalDatum(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static HorizontalDatum ReadHorizontalDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
         Wgs84ConversionInfo? wgsInfo = null;
         string authority = string.Empty;
         long authorityCode = -1;
+        Ellipsoid? ellipsoid = null;
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("SPHEROID");
-        Ellipsoid ellipsoid = ReadEllipsoid(tokenizer);
-        tokenizer.NextToken();
-        while (tokenizer.GetStringValue() == ",")
+        foreach (WktNode child in node.Children)
         {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "TOWGS84")
+            if (child is not WktKeywordNode keywordChild)
             {
-                wgsInfo = ReadWGS84ConversionInfo(tokenizer);
-                tokenizer.NextToken();
+                continue;
             }
-            else if (tokenizer.GetStringValue() == "AUTHORITY")
+
+            switch (keywordChild.Keyword)
             {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-                tokenizer.ReadCloser(bracket);
-            }
-            else
-            {
-                SkipKeywordNode(tokenizer);
-                tokenizer.NextToken();
+                case "SPHEROID":
+                    ellipsoid = ReadEllipsoid(keywordChild);
+                    break;
+                case "TOWGS84":
+                    wgsInfo = ReadWGS84ConversionInfo(keywordChild);
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
             }
         }
 
         // make an assumption about the datum type.
-        var horizontalDatum = new HorizontalDatum(ellipsoid, wgsInfo, DatumType.HD_Geocentric, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-
-        return horizontalDatum;
+        return new HorizontalDatum(
+            ArgumentGuard.ThrowIfNull(ellipsoid, nameof(ellipsoid)),
+            wgsInfo,
+            DatumType.HD_Geocentric,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     private static VerticalDatum ReadVerticalDatum(WktTokenizer tokenizer)
     {
-        // <vert datum> = VERT_DATUM["<name>", <datum type> {,<authority>}]
-        string authority = string.Empty;
-        long authorityCode = -1;
+        return ReadVerticalDatum(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        var datumType = (DatumType)tokenizer.GetNumericValue();
-        tokenizer.NextToken();
-        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out authority, out authorityCode);
+    private static VerticalDatum ReadVerticalDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        var datumType = (DatumType)node.GetNumber(0);
+        ReadWkt1Authority(node, out string authority, out long authorityCode);
 
-        var verticalDatum = new VerticalDatum(datumType, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-
-        return verticalDatum;
+        return new VerticalDatum(datumType, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
     private static PrimeMeridian ReadPrimeMeridian(WktTokenizer tokenizer)
     {
-        // PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]]
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double longitude = tokenizer.GetNumericValue();
+        return ReadPrimeMeridian(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        tokenizer.NextToken();
-        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
+    private static PrimeMeridian ReadPrimeMeridian(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        double longitude = node.GetNumber(0);
+        ReadWkt1Authority(node, out string authority, out long authorityCode);
 
         // make an assumption about the Angular units - degrees.
-        var primeMeridian = new PrimeMeridian(longitude, AngularUnit.Degrees, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return new PrimeMeridian(longitude, AngularUnit.Degrees, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
 
-        return primeMeridian;
+    private static void ReadWkt1Authority(WktKeywordNode node, out string authority, out long authorityCode)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        authority = string.Empty;
+        authorityCode = -1;
+
+        if (string.Equals(node.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+        {
+            if (node.Children.Count < 2)
+            {
+                return;
+            }
+
+            authority = GetWktNodeText(node.Children[0]);
+            authorityCode = long.TryParse(GetWktNodeText(node.Children[1]), NumberStyles.Any, CultureInfo.InvariantCulture, out long directCode)
+                ? directCode
+                : -1;
+            return;
+        }
+
+        (string Authority, string Code)? authorityNode = node.GetAuthority();
+        if (!authorityNode.HasValue)
+        {
+            return;
+        }
+
+        authority = authorityNode.Value.Authority;
+        authorityCode = long.TryParse(authorityNode.Value.Code, NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
+            ? parsedCode
+            : -1;
     }
 
     private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktTokenizer tokenizer)
