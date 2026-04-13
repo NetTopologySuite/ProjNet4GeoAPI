@@ -886,8 +886,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         public abstract int DimSource { get; }
         public abstract int DimTarget { get; }
         public virtual bool IsInvertible { get; }
-        public abstract string WKT { get; }
-        public abstract string XML { get; }
+        public virtual string WKT { get; }
+        public virtual string XML { get; }
         public virtual double[,] Derivative(double[] point) { }
         public virtual System.Collections.Generic.List<double> GetCodomainConvexHull(System.Collections.Generic.List<double> points) { }
         public virtual System.Collections.Generic.List<double> GetCodomainConvexHull(System.ReadOnlySpan<double> points) { }
@@ -896,6 +896,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         public virtual bool Identity() { }
         public abstract ProjNet.CoordinateSystems.Transformations.MathTransform Inverse();
         public abstract void Invert();
+        public virtual ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public virtual System.Xml.Linq.XElement ToXml() { }
         public void Transform(System.Span<ProjNet.Geometries.XYZ> xyzs) { }
         public double[] Transform(double[] point) { }
         public void Transform(System.ReadOnlySpan<double> point, System.Span<double> result) { }
