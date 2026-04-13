@@ -2378,10 +2378,13 @@ public static partial class CoordinateSystemWktReader
 
     private static VerticalCoordinateSystem ReadWkt2VerticalCoordinateSystem(WktTokenizer tokenizer)
     {
-        const string rootKeyword = "VERTCRS";
+        return ReadWkt2VerticalCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+    private static VerticalCoordinateSystem ReadWkt2VerticalCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        const string rootKeyword = "VERTCRS";
 
         VerticalDatum? verticalDatum = null;
         LinearUnit? linearUnit = null;
@@ -2391,58 +2394,45 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var axisInfo = new List<AxisInfo>();
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "VDATUM":
-                    verticalDatum = ReadWkt2VerticalDatum(tokenizer);
+                    verticalDatum = ReadWkt2VerticalDatum(keywordChild);
                     break;
                 case "ENSEMBLE":
-                    verticalDatum = ReadWkt2VerticalDatumEnsemble(tokenizer);
+                    verticalDatum = ReadWkt2VerticalDatumEnsemble(keywordChild);
                     break;
                 case "CS":
-                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(keywordChild);
                     break;
                 case "AXIS":
-                    axisInfo.Add(ReadWkt2Axis(tokenizer, out _, out LinearUnit? axisLinearUnit));
+                    axisInfo.Add(ReadWkt2Axis(keywordChild, out _, out LinearUnit? axisLinearUnit));
                     linearUnit = MergeAxisLinearUnit(linearUnit, axisLinearUnit);
                     break;
                 case "LENGTHUNIT":
-                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    linearUnit = ReadWkt2LinearUnit(keywordChild);
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                        throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
+        string name = node.GetString(0);
         if (verticalDatum is null)
         {
             ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a VDATUM or ENSEMBLE block.");
