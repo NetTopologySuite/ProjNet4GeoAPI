@@ -541,10 +541,10 @@ public class CoordinateSystemCoverageTests
     }
 
     /// <summary>
-    /// Verifies that XML throws NotImplementedException.
+    /// Verifies that XML throws NotSupportedException.
     /// </summary>
     [Fact]
-    public void FittedCS_XML_ThrowsNotImplementedException()
+    public void FittedCS_XML_ThrowsNotSupportedException()
     {
         GeographicCoordinateSystem baseCs = GeographicCoordinateSystem.WGS84;
         var axes = new List<AxisInfo>
@@ -559,7 +559,7 @@ public class CoordinateSystemCoverageTests
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
-        Assert.Throws<NotImplementedException>(() => fitted.XML);
+        Assert.Throws<NotSupportedException>(() => fitted.XML);
     }
 
     /// <summary>

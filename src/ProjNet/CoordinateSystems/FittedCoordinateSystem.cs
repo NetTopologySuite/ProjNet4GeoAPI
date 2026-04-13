@@ -88,12 +88,9 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     /// <summary>
     /// Returns an XML representation of this fitted coordinate system as an <see cref="XElement"/>.
     /// </summary>
-    /// <returns>Not implemented; always throws <see cref="NotImplementedException"/>.</returns>
-    /// <exception cref="NotImplementedException">Always thrown because XML serialization is not supported for fitted coordinate systems.</exception>
-    public override XElement ToXml()
-    {
-        throw new NotImplementedException();
-    }
+    /// <returns>No value is returned because XML serialization is not supported for fitted coordinate systems.</returns>
+    /// <exception cref="NotSupportedException">Always thrown because XML serialization is not supported for fitted coordinate systems.</exception>
+    public override XElement ToXml() => throw new NotSupportedException("XML serialization is not supported for fitted coordinate systems.");
 
     /// <inheritdoc />
     public override WktNode ToWktNode()

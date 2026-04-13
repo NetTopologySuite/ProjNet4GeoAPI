@@ -376,13 +376,13 @@ public class XmlSerializationTests
 
     /// <summary>
     /// Verifies that <see cref="FittedCoordinateSystem.ToXml"/> throws a
-    /// <see cref="NotImplementedException"/>, consistent with the <c>XML</c> property on
+    /// <see cref="NotSupportedException"/>, consistent with the <c>XML</c> property on
     /// the same type.
     /// </summary>
     [Fact]
-    public void FittedCoordinateSystem_ToXml_ThrowsNotImplementedException()
+    public void FittedCoordinateSystem_ToXml_ThrowsNotSupportedException()
     {
-        // FittedCoordinateSystem.XML also throws NotImplementedException
+        // FittedCoordinateSystem.XML also throws NotSupportedException
         GeographicCoordinateSystem gcs = GeographicCoordinateSystem.WGS84;
         var fcs = new FittedCoordinateSystem(
             gcs,
@@ -402,7 +402,7 @@ public class XmlSerializationTests
             string.Empty,
             string.Empty);
 
-        Assert.Throws<NotImplementedException>(() => fcs.ToXml());
+        Assert.Throws<NotSupportedException>(() => fcs.ToXml());
     }
 
     /// <summary>

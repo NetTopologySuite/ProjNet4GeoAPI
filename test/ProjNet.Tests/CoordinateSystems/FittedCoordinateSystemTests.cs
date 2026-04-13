@@ -123,25 +123,25 @@ public class FittedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that XML is not implemented.
+    /// Verifies that XML is not supported.
     /// </summary>
     [Fact]
-    public void XML_ThrowsNotImplementedException()
+    public void XML_ThrowsNotSupportedException()
     {
         FittedCoordinateSystem system = CreateSystem();
 
-        Assert.Throws<NotImplementedException>(() => system.XML);
+        Assert.Throws<NotSupportedException>(() => system.XML);
     }
 
     /// <summary>
-    /// Verifies that <see cref="FittedCoordinateSystem.ToXml"/> is not implemented.
+    /// Verifies that <see cref="FittedCoordinateSystem.ToXml"/> is not supported.
     /// </summary>
     [Fact]
-    public void ToXml_ThrowsNotImplementedException()
+    public void ToXml_ThrowsNotSupportedException()
     {
         FittedCoordinateSystem system = CreateSystem();
 
-        Assert.Throws<NotImplementedException>(() => system.ToXml());
+        Assert.Throws<NotSupportedException>(() => system.ToXml());
     }
 
     /// <summary>

@@ -108,7 +108,7 @@ public sealed class AffineTransform : MathTransform
     /// <summary>
     /// Gets an XML representation of this affine transformation.
     /// </summary>
-    public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
+    public override string XML => base.XML;
 
     /// <inheritdoc />
     public override int DimSource => this.dimSource;

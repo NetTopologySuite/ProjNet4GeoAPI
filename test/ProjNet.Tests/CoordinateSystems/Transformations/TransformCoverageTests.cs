@@ -361,6 +361,17 @@ public class TransformCoverageTests
     }
 
     /// <summary>
+    /// Affine transforms keep their XML member but now follow the shared unsupported contract.
+    /// </summary>
+    [Fact]
+    public void AffineTransformXml_UsesSharedNotSupportedContract()
+    {
+        var transform = new AffineTransform(1d, 0d, 5d, 0d, 1d, 10d);
+
+        Assert.Throws<NotSupportedException>(() => _ = transform.XML);
+    }
+
+    /// <summary>
     /// Transform with tuple API returns correct results.
     /// </summary>
     [Fact]
