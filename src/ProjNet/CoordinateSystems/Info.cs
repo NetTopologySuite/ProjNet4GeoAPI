@@ -4,9 +4,7 @@
 
 namespace ProjNet.CoordinateSystems;
 
-using System;
 using System.Globalization;
-using System.Text;
 using System.Xml.Linq;
 
 /// <summary>
@@ -94,40 +92,6 @@ public abstract class Info : IInfo
     /// Gets an XML representation of this object.
     /// </summary>
     public abstract string XML { get; }
-
-    /// <summary>
-    /// Gets an XML string of the info object.
-    /// </summary>
-    internal string InfoXml
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.Append("<CS_Info");
-            if (this.AuthorityCode > 0)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, " AuthorityCode=\"{0}\"", this.AuthorityCode);
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.Abbreviation))
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, " Abbreviation=\"{0}\"", this.Abbreviation);
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.Authority))
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, " Authority=\"{0}\"", this.Authority);
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.Name))
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, " Name=\"{0}\"", this.Name);
-            }
-
-            sb.Append("/>");
-            return sb.ToString();
-        }
-    }
 
     /// <summary>
     /// Gets an XML element of the info object.

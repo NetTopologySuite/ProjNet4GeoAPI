@@ -310,10 +310,10 @@ public class InfoTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
+    /// Verifies that the XElement-based info XML string includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]
-    public void InfoXml_WithMetadata_IncludesExpectedAttributes()
+    public void InfoXmlElementString_WithMetadata_IncludesExpectedAttributes()
     {
         var info = new TestInfo(
             "WGS 84",
@@ -326,15 +326,15 @@ public class InfoTests
             "XML");
 
         Assert.Equal(
-            "<CS_Info AuthorityCode=\"4326\" Abbreviation=\"abbr\" Authority=\"EPSG\" Name=\"WGS 84\"/>",
-            info.InfoXml);
+            "<CS_Info AuthorityCode=\"4326\" Abbreviation=\"abbr\" Authority=\"EPSG\" Name=\"WGS 84\" />",
+            info.InfoXmlElement.ToString(SaveOptions.DisableFormatting));
     }
 
     /// <summary>
-    /// Verifies that <see cref="Info.InfoXml"/> omits optional attributes when the values are blank or not positive.
+    /// Verifies that the XElement-based info XML string omits optional attributes when the values are blank or not positive.
     /// </summary>
     [Fact]
-    public void InfoXml_WithBlankMetadata_OmitsOptionalAttributes()
+    public void InfoXmlElementString_WithBlankMetadata_OmitsOptionalAttributes()
     {
         var info = new TestInfo(
             " ",
@@ -346,7 +346,7 @@ public class InfoTests
             "WKT",
             "XML");
 
-        Assert.Equal("<CS_Info/>", info.InfoXml);
+        Assert.Equal("<CS_Info />", info.InfoXmlElement.ToString(SaveOptions.DisableFormatting));
     }
 
     /// <summary>
