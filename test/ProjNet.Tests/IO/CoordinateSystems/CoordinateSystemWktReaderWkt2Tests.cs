@@ -5,8 +5,10 @@ namespace ProjNet.Tests.IO.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Projections;
 using ProjNet.Data;
 using ProjNet.IO.CoordinateSystems;
 using ProjNet.IO.Wkt;
@@ -136,6 +138,12 @@ public class CoordinateSystemWktReaderWkt2Tests
         """;
 
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly Lazy<IReadOnlyList<CoordinateSystemEntry>> CatalogEntries = new(() =>
+        new ManagedCoordinateSystemDefinitionProvider()
+            .GetCoordinateSystems()
+            .OrderBy(entry => entry.Srid)
+            .ToList());
+
     private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
         new ManagedCoordinateSystemDefinitionProvider()
             .GetDefinitions()
@@ -929,6 +937,37 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.Equal("GRIDS/us_nga_egm96_15.tif", parsed.Transformation.ParameterFileName);
     }
 
+    /// <summary>
+    /// Verifies that every managed EPSG catalog coordinate system can roundtrip through WKT2 serialization and parsing
+    /// without losing its semantic model.
+    /// </summary>
+    [Fact]
+    public void BulkCatalogRoundTrip_AllEpsgCrs_ShouldParseWkt2AndMatchOriginal()
+    {
+        var failures = new List<string>();
+        int successfulRoundTrips = 0;
+
+        foreach (CoordinateSystemEntry entry in CatalogEntries.Value)
+        {
+            CoordinateSystem original = entry.CoordinateSystem;
+            string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+            CoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem(CoordinateSystemFactory, wkt);
+
+            if (!AreCoordinateSystemsSemanticallyEquivalent(original, parsed))
+            {
+                failures.Add(FormattableString.Invariant($"EPSG:{entry.Srid} ({original.GetType().Name}) failed WKT2 catalog roundtrip."));
+                continue;
+            }
+
+            successfulRoundTrips++;
+        }
+
+        Assert.True(
+            failures.Count == 0,
+            $"Expected all {CatalogEntries.Value.Count} catalog CRS definitions to roundtrip through WKT2. Failures ({failures.Count}): {string.Join("; ", failures)}");
+        Assert.Equal(CatalogEntries.Value.Count, successfulRoundTrips);
+    }
+
     private static string GetCatalogWkt(int srid)
     {
         Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out string? wkt), $"SRID {srid} not found in managed EPSG catalog.");
@@ -965,5 +1004,246 @@ public class CoordinateSystemWktReaderWkt2Tests
                         ID["EPSG",9661]],
                     PARAMETERFILE["Geoid (height correction) model file","{{outerParameterFileName}}"]]]
             """;
+    }
+
+    private static bool AreCoordinateSystemsSemanticallyEquivalent(CoordinateSystem original, CoordinateSystem parsed)
+    {
+        if (original.GetType() != parsed.GetType())
+        {
+            return false;
+        }
+
+        return original switch
+        {
+            ProjectedCoordinateSystem originalProjected when parsed is ProjectedCoordinateSystem parsedProjected => AreProjectedCoordinateSystemsSemanticallyEquivalent(originalProjected, parsedProjected),
+            GeographicCoordinateSystem originalGeographic when parsed is GeographicCoordinateSystem parsedGeographic => AreGeographicCoordinateSystemsSemanticallyEquivalent(originalGeographic, parsedGeographic),
+            CompoundCoordinateSystem originalCompound when parsed is CompoundCoordinateSystem parsedCompound => AreCompoundCoordinateSystemsSemanticallyEquivalent(originalCompound, parsedCompound),
+            _ => original.EqualParams(parsed),
+        };
+    }
+
+    private static bool AreProjectedCoordinateSystemsSemanticallyEquivalent(ProjectedCoordinateSystem original, ProjectedCoordinateSystem parsed)
+    {
+        return AreAxesSemanticallyEquivalent(original, parsed)
+            && original.LinearUnit.EqualParams(parsed.LinearUnit)
+            && AreCoordinateSystemsSemanticallyEquivalent(original.GeographicCoordinateSystem, parsed.GeographicCoordinateSystem)
+            && AreProjectionsSemanticallyEquivalent(original.Projection, parsed.Projection);
+    }
+
+    private static bool AreGeographicCoordinateSystemsSemanticallyEquivalent(GeographicCoordinateSystem original, GeographicCoordinateSystem parsed)
+    {
+        return AreAxesSemanticallyEquivalent(original, parsed)
+            && original.AngularUnit.EqualParams(parsed.AngularUnit)
+            && original.PrimeMeridian.EqualParams(parsed.PrimeMeridian)
+            && AreHorizontalDatumsSemanticallyEquivalent(original.HorizontalDatum, parsed.HorizontalDatum);
+    }
+
+    private static bool AreCompoundCoordinateSystemsSemanticallyEquivalent(CompoundCoordinateSystem original, CompoundCoordinateSystem parsed)
+    {
+        return AreAxesSemanticallyEquivalent(original, parsed)
+            && AreCoordinateSystemsSemanticallyEquivalent(original.HeadCoordinateSystem, parsed.HeadCoordinateSystem)
+            && AreCoordinateSystemsSemanticallyEquivalent(original.TailCoordinateSystem, parsed.TailCoordinateSystem);
+    }
+
+    private static bool AreAxesSemanticallyEquivalent(CoordinateSystem original, CoordinateSystem parsed)
+    {
+        if (original.Dimension != parsed.Dimension)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < original.Dimension; i++)
+        {
+            AxisInfo originalAxis = original.GetAxis(i);
+            AxisInfo parsedAxis = parsed.GetAxis(i);
+            if (!string.Equals(originalAxis.Name, parsedAxis.Name, StringComparison.Ordinal)
+                || originalAxis.Orientation != parsedAxis.Orientation
+                || !original.GetUnits(i).EqualParams(parsed.GetUnits(i)))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool AreHorizontalDatumsSemanticallyEquivalent(HorizontalDatum original, HorizontalDatum parsed)
+    {
+        if (original.EqualParams(parsed))
+        {
+            return true;
+        }
+
+        if (!string.Equals(original.Name, parsed.Name, StringComparison.Ordinal)
+            || (original.Wgs84Parameters is null) != (parsed.Wgs84Parameters is null)
+            || (original.Ensemble is null) != (parsed.Ensemble is null)
+            || !AreEllipsoidsSemanticallyEquivalent(original.Ellipsoid, parsed.Ellipsoid))
+        {
+            return false;
+        }
+
+        if (original.Wgs84Parameters is not null
+            && parsed.Wgs84Parameters is not null
+            && !AreWgs84ConversionInfosEquivalent(original.Wgs84Parameters, parsed.Wgs84Parameters))
+        {
+            return false;
+        }
+
+        if (original.Ensemble is not null
+            && parsed.Ensemble is not null
+            && !AreDatumEnsemblesSemanticallyEquivalent(original.Ensemble, parsed.Ensemble))
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool AreDatumEnsemblesSemanticallyEquivalent(DatumEnsemble original, DatumEnsemble parsed)
+    {
+        if (!string.Equals(original.Name, parsed.Name, StringComparison.Ordinal)
+            || !string.Equals(original.Authority, parsed.Authority, StringComparison.Ordinal)
+            || original.AuthorityCode != parsed.AuthorityCode
+            || original.Accuracy != parsed.Accuracy
+            || (original.Ellipsoid is null) != (parsed.Ellipsoid is null)
+            || original.Members.Count != parsed.Members.Count)
+        {
+            return false;
+        }
+
+        if (original.Ellipsoid is not null
+            && parsed.Ellipsoid is not null
+            && !AreEllipsoidsSemanticallyEquivalent(original.Ellipsoid, parsed.Ellipsoid))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < original.Members.Count; i++)
+        {
+            if (!original.Members[i].Equals(parsed.Members[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool AreEllipsoidsSemanticallyEquivalent(Ellipsoid original, Ellipsoid parsed)
+    {
+        return original.SemiMajorAxis.Equals(parsed.SemiMajorAxis)
+            && original.SemiMinorAxis.Equals(parsed.SemiMinorAxis)
+            && original.AxisUnit.EqualParams(parsed.AxisUnit);
+    }
+
+    private static bool AreWgs84ConversionInfosEquivalent(Wgs84ConversionInfo original, Wgs84ConversionInfo parsed)
+    {
+        return original.Dx.Equals(parsed.Dx)
+            && original.Dy.Equals(parsed.Dy)
+            && original.Dz.Equals(parsed.Dz)
+            && original.Ex.Equals(parsed.Ex)
+            && original.Ey.Equals(parsed.Ey)
+            && original.Ez.Equals(parsed.Ez)
+            && original.Ppm.Equals(parsed.Ppm);
+    }
+
+    private static bool AreProjectionsSemanticallyEquivalent(IProjection original, IProjection parsed)
+    {
+        if (!string.Equals(original.ClassName, parsed.ClassName, StringComparison.Ordinal)
+            || original.NumParameters != parsed.NumParameters)
+        {
+            return false;
+        }
+
+        string[] originalParameters = GetCanonicalProjectionParameters(original);
+        string[] parsedParameters = GetCanonicalProjectionParameters(parsed);
+
+        Array.Sort(originalParameters, StringComparer.Ordinal);
+        Array.Sort(parsedParameters, StringComparer.Ordinal);
+
+        if (originalParameters.Length != parsedParameters.Length)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < originalParameters.Length; i++)
+        {
+            if (!string.Equals(originalParameters[i], parsedParameters[i], StringComparison.Ordinal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static string[] GetCanonicalProjectionParameters(IProjection projection)
+    {
+        string[] parameters = new string[projection.NumParameters];
+        for (int i = 0; i < projection.NumParameters; i++)
+        {
+            ProjectionParameter parameter = projection.GetParameter(i);
+            string canonicalName = NormalizeProjectionParameterName(parameter.Name);
+            string canonicalValue = parameter.Value.ToString("R", CultureInfo.InvariantCulture);
+            parameters[i] = $"{canonicalName}={canonicalValue}";
+        }
+
+        return parameters;
+    }
+
+    private static string NormalizeProjectionParameterName(string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(parameterName))
+        {
+            return string.Empty;
+        }
+
+        string normalized = parameterName
+            .ToUpperInvariant()
+            .Trim()
+            .Replace("(", string.Empty, StringComparison.Ordinal)
+            .Replace(")", string.Empty, StringComparison.Ordinal)
+            .Replace("-", "_", StringComparison.Ordinal)
+            .Replace("/", "_", StringComparison.Ordinal)
+            .Replace(" ", "_", StringComparison.Ordinal)
+            .Replace(".", "_", StringComparison.Ordinal);
+
+        while (normalized.Contains("__", StringComparison.Ordinal))
+        {
+            normalized = normalized.Replace("__", "_", StringComparison.Ordinal);
+        }
+
+        return normalized switch
+        {
+            "LONGITUDE_OF_NATURAL_ORIGIN" => "CENTRAL_MERIDIAN",
+            "LONGITUDE_OF_FALSE_ORIGIN" => "CENTRAL_MERIDIAN",
+            "LONGITUDE_OF_PROJECTION_CENTRE" => "CENTRAL_MERIDIAN",
+            "LONGITUDE_OF_ORIGIN" => "CENTRAL_MERIDIAN",
+            "LATITUDE_OF_NATURAL_ORIGIN" => "LATITUDE_OF_ORIGIN",
+            "LATITUDE_OF_FALSE_ORIGIN" => "LATITUDE_OF_ORIGIN",
+            "LATITUDE_OF_PROJECTION_CENTRE" => "LATITUDE_OF_ORIGIN",
+            "LATITUDE_OF_ORIGIN" => "LATITUDE_OF_ORIGIN",
+            "LATITUDE_OF_1ST_STANDARD_PARALLEL" => "STANDARD_PARALLEL_1",
+            "LATITUDE_OF_2ND_STANDARD_PARALLEL" => "STANDARD_PARALLEL_2",
+            "LATITUDE_OF_PSEUDO_STANDARD_PARALLEL" => "STANDARD_PARALLEL_1",
+            "LATITUDE_OF_STANDARD_PARALLEL" => "LATITUDE_OF_STANDARD_PARALLEL",
+            "EASTING_AT_FALSE_ORIGIN" => "FALSE_EASTING",
+            "EASTING_AT_PROJECTION_CENTRE" => "FALSE_EASTING",
+            "EASTING_AT_NATURAL_ORIGIN" => "FALSE_EASTING",
+            "FALSE_EASTING" => "FALSE_EASTING",
+            "NORTHING_AT_FALSE_ORIGIN" => "FALSE_NORTHING",
+            "NORTHING_AT_PROJECTION_CENTRE" => "FALSE_NORTHING",
+            "NORTHING_AT_NATURAL_ORIGIN" => "FALSE_NORTHING",
+            "FALSE_NORTHING" => "FALSE_NORTHING",
+            "SCALE_FACTOR_AT_NATURAL_ORIGIN" => "SCALE_FACTOR",
+            "SCALE_FACTOR_AT_PROJECTION_CENTRE" => "SCALE_FACTOR",
+            "SCALE_FACTOR_ON_INITIAL_LINE" => "SCALE_FACTOR",
+            "SCALE_FACTOR_ON_PSEUDO_STANDARD_PARALLEL" => "SCALE_FACTOR_ON_PSEUDO_STANDARD_PARALLEL",
+            "AZIMUTH_OF_INITIAL_LINE" => "AZIMUTH",
+            "AZIMUTH_AT_PROJECTION_CENTRE" => "AZIMUTH",
+            "ANGLE_FROM_RECTIFIED_TO_SKEW_GRID" => "RECTIFIED_GRID_ANGLE",
+            "RECTIFIED_GRID_ANGLE" => "RECTIFIED_GRID_ANGLE",
+            _ => normalized,
+        };
     }
 }
