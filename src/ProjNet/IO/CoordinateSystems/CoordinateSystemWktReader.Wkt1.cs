@@ -1,0 +1,752 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from GeoTools.NET.
+
+namespace ProjNet.IO.CoordinateSystems;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using ProjNet;
+using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.IO.Wkt;
+
+/// <summary>
+/// Creates an object based on the supplied Well Known Text (WKT).
+/// </summary>
+public static partial class CoordinateSystemWktReader
+{
+    private static void SkipKeywordNode(WktTokenizer tokenizer)
+    {
+        _ = tokenizer.ReadOpener();
+        int depth = 1;
+        while (depth > 0)
+        {
+            TokenType tokenType = tokenizer.NextToken(false);
+            if (tokenType == TokenType.Eof)
+            {
+                ArgumentGuard.ThrowArgument("Unexpected end of input while skipping WKT2 metadata node.");
+            }
+
+            string token = tokenizer.GetStringValue();
+            if (token is "[" or "(")
+            {
+                depth++;
+            }
+            else if (token is "]" or ")")
+            {
+                depth--;
+            }
+        }
+    }
+
+    private static void ReadAuthorityWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
+    {
+        tokenizer.ReadAuthority(out authority, out authorityCode, out bool hasNumericAuthorityCode);
+        if (!hasNumericAuthorityCode)
+        {
+            authorityCode = -1;
+        }
+    }
+
+    private static void ReadOptionalAuthoritySkippingUnknownNodes(WktTokenizer tokenizer, WktBracket bracket, out string authority, out long authorityCode)
+    {
+        authority = string.Empty;
+        authorityCode = -1;
+
+        while (tokenizer.GetStringValue() == ",")
+        {
+            tokenizer.NextToken();
+            if (tokenizer.GetStringValue() == "AUTHORITY")
+            {
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
+                tokenizer.ReadCloser(bracket);
+                return;
+            }
+
+            SkipKeywordNode(tokenizer);
+            tokenizer.NextToken();
+        }
+
+        tokenizer.CheckCloser(bracket);
+    }
+
+    /// <summary>
+    /// Returns a IUnit given a piece of WKT.
+    /// </summary>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
+    /// <returns>An object that implements the IUnit interface.</returns>
+    private static Unit ReadUnit(WktTokenizer tokenizer)
+    {
+        return ReadWkt1UnitFromNode(
+            WktKeywordNode.ParseSubtree(tokenizer),
+            static (unitsPerUnit, unitName, authority, authorityCode) => new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    /// <summary>
+    /// Returns a <see cref="LinearUnit"/> given a piece of WKT.
+    /// </summary>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
+    /// <returns>An object that implements the IUnit interface.</returns>
+    private static LinearUnit ReadLinearUnit(WktTokenizer tokenizer)
+    {
+        return ReadLinearUnit(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static LinearUnit ReadLinearUnit(WktKeywordNode node)
+    {
+        return ReadWkt1UnitFromNode(
+            node,
+            static (unitsPerUnit, unitName, authority, authorityCode) => new LinearUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    /// <summary>
+    /// Returns a <see cref="AngularUnit"/> given a piece of WKT.
+    /// </summary>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
+    /// <returns>An object that implements the IUnit interface.</returns>
+    private static AngularUnit ReadAngularUnit(WktTokenizer tokenizer)
+    {
+        return ReadAngularUnit(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static AngularUnit ReadAngularUnit(WktKeywordNode node)
+    {
+        return ReadWkt1UnitFromNode(
+            node,
+            static (unitsPerUnit, unitName, authority, authorityCode) => new AngularUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    /// <summary>
+    /// Returns a <see cref="AxisInfo"/> given a piece of WKT.
+    /// </summary>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
+    /// <returns>An AxisInfo object.</returns>
+    private static AxisInfo ReadAxis(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "AXIS")
+        {
+            tokenizer.ReadToken("AXIS");
+        }
+
+        return ReadAxis(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static AxisInfo ReadAxis(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string axisName = node.GetString(0);
+        string unitname = node.GetIdentifier(0);
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is WktKeywordNode keywordChild)
+            {
+                throw new NotSupportedException($"WKT1 AXIS keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
+        return unitname.ToUpperInvariant() switch
+        {
+            "DOWN" => new AxisInfo(axisName, AxisOrientationEnum.Down),
+            "EAST" => new AxisInfo(axisName, AxisOrientationEnum.East),
+            "NORTH" => new AxisInfo(axisName, AxisOrientationEnum.North),
+            "OTHER" => new AxisInfo(axisName, AxisOrientationEnum.Other),
+            "SOUTH" => new AxisInfo(axisName, AxisOrientationEnum.South),
+            "UP" => new AxisInfo(axisName, AxisOrientationEnum.Up),
+            "WEST" => new AxisInfo(axisName, AxisOrientationEnum.West),
+            _ => ArgumentGuard.ThrowArgument<AxisInfo>($"Invalid axis name '{unitname}' in WKT"),
+        };
+    }
+
+    private static TUnit ReadWkt1UnitFromNode<TUnit>(WktKeywordNode node, Func<double, string, string, long, TUnit> factory)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        ArgumentGuard.ThrowIfNull(factory, nameof(factory));
+
+        string unitName = node.GetString(0);
+        double unitsPerUnit = node.GetNumber(0);
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        (string Authority, string Code)? authorityNode = node.GetAuthority();
+        if (authorityNode.HasValue)
+        {
+            authority = authorityNode.Value.Authority;
+            authorityCode = long.TryParse(authorityNode.Value.Code, NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
+                ? parsedCode
+                : -1;
+        }
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is WktKeywordNode keywordChild && !string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotSupportedException($"WKT1 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
+        return factory(unitsPerUnit, unitName, authority, authorityCode);
+    }
+
+    private static CoordinateSystem ReadCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadCoordinateSystemNode(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    // Reads either 3, 6 or 7 parameter Bursa-Wolf values from TOWGS84 token
+    private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktTokenizer tokenizer)
+    {
+        return ReadWGS84ConversionInfo(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        IReadOnlyList<double> values = node.GetAllNumbers();
+        if (values.Count is not 3 and not 6 and not 7)
+        {
+            ArgumentGuard.ThrowArgument("WKT1 TOWGS84 must contain 3, 6, or 7 numeric values.");
+        }
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is WktKeywordNode keywordChild)
+            {
+                throw new NotSupportedException($"WKT1 TOWGS84 keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
+        var info = new Wgs84ConversionInfo
+        {
+            Dx = values[0],
+            Dy = values[1],
+            Dz = values[2],
+        };
+
+        if (values.Count >= 6)
+        {
+            info.Ex = values[3];
+            info.Ey = values[4];
+            info.Ez = values[5];
+        }
+
+        if (values.Count == 7)
+        {
+            info.Ppm = values[6];
+        }
+
+        return info;
+    }
+
+    private static Ellipsoid ReadEllipsoid(WktTokenizer tokenizer)
+    {
+        return ReadEllipsoid(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static Ellipsoid ReadEllipsoid(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        double majorAxis = node.GetNumber(0);
+        double e = node.GetNumber(1);
+        ReadWkt1Authority(node, out string authority, out long authorityCode);
+
+        return new Ellipsoid(majorAxis, 0.0, e, true, LinearUnit.Metre, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static Projection ReadProjection(WktKeywordNode projectionNode, List<WktKeywordNode> parameterNodes)
+    {
+        ArgumentGuard.ThrowIfNull(projectionNode, nameof(projectionNode));
+        ArgumentGuard.ThrowIfNull(parameterNodes, nameof(parameterNodes));
+
+        string projectionName = projectionNode.GetString(0);
+        ReadWkt1Authority(projectionNode, out string authority, out long authorityCode);
+
+        var paramList = new List<ProjectionParameter>(parameterNodes.Count);
+        for (int i = 0; i < parameterNodes.Count; i++)
+        {
+            paramList.Add(ReadWkt1ProjectionParameter(parameterNodes[i]));
+        }
+
+        return new Projection(projectionName, paramList, projectionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static ProjectionParameter ReadWkt1ProjectionParameter(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is WktKeywordNode keywordChild)
+            {
+                throw new NotSupportedException($"WKT1 PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
+        return new ProjectionParameter(node.GetString(0), node.GetNumber(0));
+    }
+
+    private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadProjectedCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        GeographicCoordinateSystem? geographicCS = null;
+        LinearUnit? linearUnit = null;
+        WktKeywordNode? projectionNode = null;
+        var parameterNodes = new List<WktKeywordNode>();
+        var axisInfo = new List<AxisInfo>(2);
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            switch (keywordChild.Keyword)
+            {
+                case "GEOGCS":
+                    geographicCS = ReadGeographicCoordinateSystem(keywordChild);
+                    break;
+                case "UNIT":
+                    linearUnit = ReadLinearUnit(keywordChild);
+                    break;
+                case "PROJECTION":
+                    projectionNode = keywordChild;
+                    break;
+                case "PARAMETER":
+                    parameterNodes.Add(keywordChild);
+                    break;
+                case "AXIS":
+                    axisInfo.Add(ReadAxis(keywordChild));
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // This is default axis values if not specified.
+        if (axisInfo.Count == 0)
+        {
+            axisInfo.Add(new AxisInfo("X", AxisOrientationEnum.East));
+            axisInfo.Add(new AxisInfo("Y", AxisOrientationEnum.North));
+        }
+
+        geographicCS = ArgumentGuard.ThrowIfNull(geographicCS, nameof(geographicCS));
+        linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        Projection projection = ReadProjection(ArgumentGuard.ThrowIfNull(projectionNode, nameof(projectionNode)), parameterNodes);
+        return new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, linearUnit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadVerticalCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        VerticalDatum? verticalDatum = null;
+        LinearUnit? linearUnit = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        AxisInfo? info = null;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            switch (keywordChild.Keyword)
+            {
+                case "VERT_DATUM":
+                    verticalDatum = ReadVerticalDatum(keywordChild);
+                    break;
+                case "UNIT":
+                    linearUnit = ReadLinearUnit(keywordChild);
+                    break;
+                case "AXIS":
+                    info = ReadAxis(keywordChild);
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // This is default axis values if not specified.
+        info ??= new AxisInfo("Up", AxisOrientationEnum.Up);
+
+        return new VerticalCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit)),
+            ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum)),
+            info,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadCompoundCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        CoordinateSystem? headcs = null;
+        CoordinateSystem? tailcs = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            if (string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+            {
+                ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+            }
+            else if (IsCoordinateSystemKeyword(keywordChild.Keyword))
+            {
+                if (headcs is null)
+                {
+                    headcs = ReadCoordinateSystemNode(keywordChild);
+                }
+                else if (tailcs is null)
+                {
+                    tailcs = ReadCoordinateSystemNode(keywordChild);
+                }
+            }
+        }
+
+        return new CompoundCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(headcs, nameof(headcs)),
+            ArgumentGuard.ThrowIfNull(tailcs, nameof(tailcs)),
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadGeocentricCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        HorizontalDatum? horizontalDatum = null;
+        PrimeMeridian? primeMeridian = null;
+        LinearUnit? linearUnit = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var info = new List<AxisInfo>(3);
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            switch (keywordChild.Keyword)
+            {
+                case "DATUM":
+                    horizontalDatum = ReadHorizontalDatum(keywordChild);
+                    break;
+                case "PRIMEM":
+                    primeMeridian = ReadPrimeMeridian(keywordChild);
+                    break;
+                case "UNIT":
+                    linearUnit = ReadLinearUnit(keywordChild);
+                    break;
+                case "AXIS":
+                    info.Add(ReadAxis(keywordChild));
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // This is default axis values if not specified.
+        if (info.Count == 0)
+        {
+            info.Add(new AxisInfo("Geocentric X", AxisOrientationEnum.Other));
+            info.Add(new AxisInfo("Geocentric Y", AxisOrientationEnum.Other));
+            info.Add(new AxisInfo("Geocentric Z", AxisOrientationEnum.North));
+        }
+
+        return new GeocentricCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum)),
+            ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit)),
+            ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian)),
+            info,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadGeographicCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        HorizontalDatum? horizontalDatum = null;
+        PrimeMeridian? primeMeridian = null;
+        AngularUnit? angularUnit = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var info = new List<AxisInfo>(2);
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            switch (keywordChild.Keyword)
+            {
+                case "DATUM":
+                    horizontalDatum = ReadHorizontalDatum(keywordChild);
+                    break;
+                case "PRIMEM":
+                    primeMeridian = ReadPrimeMeridian(keywordChild);
+                    break;
+                case "UNIT":
+                    angularUnit = ReadAngularUnit(keywordChild);
+                    break;
+                case "AXIS":
+                    info.Add(ReadAxis(keywordChild));
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // This is default axis values if not specified.
+        if (info.Count == 0)
+        {
+            info.Add(new AxisInfo("Lon", AxisOrientationEnum.East));
+            info.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
+        }
+
+        return new GeographicCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(angularUnit, nameof(angularUnit)),
+            ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum)),
+            ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian)),
+            info,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static HorizontalDatum ReadHorizontalDatum(WktTokenizer tokenizer)
+    {
+        return ReadHorizontalDatum(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static HorizontalDatum ReadHorizontalDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        Wgs84ConversionInfo? wgsInfo = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        Ellipsoid? ellipsoid = null;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            switch (keywordChild.Keyword)
+            {
+                case "SPHEROID":
+                    ellipsoid = ReadEllipsoid(keywordChild);
+                    break;
+                case "TOWGS84":
+                    wgsInfo = ReadWGS84ConversionInfo(keywordChild);
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        // make an assumption about the datum type.
+        return new HorizontalDatum(
+            ArgumentGuard.ThrowIfNull(ellipsoid, nameof(ellipsoid)),
+            wgsInfo,
+            DatumType.HD_Geocentric,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static VerticalDatum ReadVerticalDatum(WktTokenizer tokenizer)
+    {
+        return ReadVerticalDatum(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static VerticalDatum ReadVerticalDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        var datumType = (DatumType)node.GetNumber(0);
+        ReadWkt1Authority(node, out string authority, out long authorityCode);
+
+        return new VerticalDatum(datumType, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static PrimeMeridian ReadPrimeMeridian(WktTokenizer tokenizer)
+    {
+        return ReadPrimeMeridian(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static PrimeMeridian ReadPrimeMeridian(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        double longitude = node.GetNumber(0);
+        ReadWkt1Authority(node, out string authority, out long authorityCode);
+
+        // make an assumption about the Angular units - degrees.
+        return new PrimeMeridian(longitude, AngularUnit.Degrees, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static void ReadWkt1Authority(WktKeywordNode node, out string authority, out long authorityCode)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        authority = string.Empty;
+        authorityCode = -1;
+
+        if (string.Equals(node.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+        {
+            if (node.Children.Count < 2)
+            {
+                return;
+            }
+
+            authority = GetWktNodeText(node.Children[0]);
+            authorityCode = long.TryParse(GetWktNodeText(node.Children[1]), NumberStyles.Any, CultureInfo.InvariantCulture, out long directCode)
+                ? directCode
+                : -1;
+            return;
+        }
+
+        (string Authority, string Code)? authorityNode = node.GetAuthority();
+        if (!authorityNode.HasValue)
+        {
+            return;
+        }
+
+        authority = authorityNode.Value.Authority;
+        authorityCode = long.TryParse(authorityNode.Value.Code, NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
+            ? parsedCode
+            : -1;
+    }
+
+    private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadFittedCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        MathTransform? toBaseTransform = null;
+        CoordinateSystem? baseCS = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            if (string.Equals(keywordChild.Keyword, "PARAM_MT", StringComparison.OrdinalIgnoreCase))
+            {
+                toBaseTransform = ParseNodeWithTokenizer(keywordChild, MathTransformWktReader.ReadMathTransform);
+            }
+            else if (string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+            {
+                ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+            }
+            else if (baseCS is null && IsCoordinateSystemKeyword(keywordChild.Keyword))
+            {
+                baseCS = ReadCoordinateSystemNode(keywordChild);
+            }
+        }
+
+        return new FittedCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(baseCS, nameof(baseCS)),
+            ArgumentGuard.ThrowIfNull(toBaseTransform, nameof(toBaseTransform)),
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+}
