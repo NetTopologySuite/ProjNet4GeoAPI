@@ -23,7 +23,6 @@ using ProjNet.IO.Wkt;
 public static partial class CoordinateSystemWktReader
 {
     private const double RadiansPerArcSecond = 4.84813681109535993589914102357e-6d;
-    private static readonly string[] CompoundCoordinateSystemDelimiters = [",", "]"];
 #if !NET8_0_OR_GREATER
     private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 #endif
@@ -2582,7 +2581,7 @@ public static partial class CoordinateSystemWktReader
         return ReadWkt2CoordinateSystemNode(ArgumentGuard.ThrowIfNull(coordinateSystemNode, nameof(coordinateSystemNode)));
     }
 
-    private static CoordinateSystem ReadWkt2CoordinateSystemNode(WktKeywordNode node)
+    private static CoordinateSystem ReadCoordinateSystemNode(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
 
@@ -2597,8 +2596,42 @@ public static partial class CoordinateSystemWktReader
             "PARAMETRICCRS" => ReadWkt2ParametricCoordinateSystem(node),
             "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(node),
             "BOUNDCRS" => ReadWkt2BoundCoordinateSystem(node),
-            _ => ParseNodeWithTokenizer(node, tokenizer => ReadCoordinateSystem(null, tokenizer)),
+            "GEOGCS" => ReadGeographicCoordinateSystem(node),
+            "PROJCS" => ReadProjectedCoordinateSystem(node),
+            "FITTED_CS" => ReadFittedCoordinateSystem(node),
+            "GEOCCS" => ReadGeocentricCoordinateSystem(node),
+            "COMPD_CS" => ReadCompoundCoordinateSystem(node),
+            "VERT_CS" => ReadVerticalCoordinateSystem(node),
+            _ => ParseNodeWithTokenizer(node, ReadCoordinateSystem),
         };
+    }
+
+    private static CoordinateSystem ReadWkt2CoordinateSystemNode(WktKeywordNode node)
+    {
+        return ReadCoordinateSystemNode(node);
+    }
+
+    private static bool IsCoordinateSystemKeyword(string keyword)
+    {
+        return keyword is "GEOGCRS"
+            or "GEODCRS"
+            or "GEODETICCRS"
+            or "PROJCRS"
+            or "DERIVEDPROJCRS"
+            or "VERTCRS"
+            or "ENGCRS"
+            or "ENGINEERINGCRS"
+            or "TIMECRS"
+            or "PARAMETRICCRS"
+            or "COMPOUNDCRS"
+            or "BOUNDCRS"
+            or "GEOGCS"
+            or "PROJCS"
+            or "FITTED_CS"
+            or "GEOCCS"
+            or "COMPD_CS"
+            or "VERT_CS"
+            or "LOCAL_CS";
     }
 
     private static void EnsureSupportedWkt2BoundSourceCoordinateSystem(CoordinateSystem coordinateSystem)
@@ -2883,7 +2916,7 @@ public static partial class CoordinateSystemWktReader
             "DATUM" => ParseNodeWithTokenizer(rootNode, ReadHorizontalDatum),
             "PRIMEM" => ParseNodeWithTokenizer(rootNode, ReadPrimeMeridian),
             "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
-                => ParseNodeWithTokenizer(rootNode, currentTokenizer => ReadCoordinateSystem(normalizedWkt, currentTokenizer)),
+                => ParseNodeWithTokenizer(rootNode, ReadCoordinateSystem),
             "BOUNDCRS" => throw new NotSupportedException("BOUNDCRS coordinate system is not supported."),
             _ => ArgumentGuard.ThrowArgument<IInfo>($"'{rootNode.Keyword}' is not recognized."),
         };
@@ -2939,8 +2972,13 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static LinearUnit ReadLinearUnit(WktTokenizer tokenizer)
     {
+        return ReadLinearUnit(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static LinearUnit ReadLinearUnit(WktKeywordNode node)
+    {
         return ReadWkt1UnitFromNode(
-            WktKeywordNode.ParseSubtree(tokenizer),
+            node,
             static (unitsPerUnit, unitName, authority, authorityCode) => new LinearUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
     }
 
@@ -2951,8 +2989,13 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static AngularUnit ReadAngularUnit(WktTokenizer tokenizer)
     {
+        return ReadAngularUnit(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static AngularUnit ReadAngularUnit(WktKeywordNode node)
+    {
         return ReadWkt1UnitFromNode(
-            WktKeywordNode.ParseSubtree(tokenizer),
+            node,
             static (unitsPerUnit, unitName, authority, authorityCode) => new AngularUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
     }
 
@@ -3028,26 +3071,9 @@ public static partial class CoordinateSystemWktReader
         return factory(unitsPerUnit, unitName, authority, authorityCode);
     }
 
-    private static CoordinateSystem ReadCoordinateSystem(string? coordinateSystem, WktTokenizer tokenizer)
+    private static CoordinateSystem ReadCoordinateSystem(WktTokenizer tokenizer)
     {
-        string coordinateSystemText = coordinateSystem ?? tokenizer.GetStringValue();
-        return tokenizer.GetStringValue() switch
-        {
-            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer),
-            "PROJCRS" => ReadWkt2ProjectedCoordinateSystem(tokenizer),
-            "DERIVEDPROJCRS" => ReadWkt2DerivedProjectedCoordinateSystem(tokenizer),
-            "VERTCRS" => ReadWkt2VerticalCoordinateSystem(tokenizer),
-            "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(tokenizer),
-            "GEOGCS" => ReadGeographicCoordinateSystem(tokenizer),
-            "PROJCS" => ReadProjectedCoordinateSystem(tokenizer),
-            "FITTED_CS" => ReadFittedCoordinateSystem(tokenizer),
-            "GEOCCS" => ReadGeocentricCoordinateSystem(tokenizer),
-            "COMPD_CS" => ReadCompoundCoordinateSystem(tokenizer),
-            "VERT_CS" => ReadVerticalCoordinateSystem(tokenizer),
-            "BOUNDCRS" => ReadWkt2BoundCoordinateSystem(tokenizer),
-            "LOCAL_CS" => throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported."),
-            _ => throw new InvalidOperationException($"{coordinateSystemText} coordinate system is not recognized."),
-        };
+        return ReadCoordinateSystemNode(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     // Reads either 3, 6 or 7 parameter Bursa-Wolf values from TOWGS84 token
@@ -3111,118 +3137,84 @@ public static partial class CoordinateSystemWktReader
         return new Ellipsoid(majorAxis, 0.0, e, true, LinearUnit.Metre, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static Projection ReadProjection(WktTokenizer tokenizer)
+    private static Projection ReadProjection(WktKeywordNode projectionNode, List<WktKeywordNode> parameterNodes)
     {
-        if (tokenizer.GetStringValue() != "PROJECTION")
+        ArgumentGuard.ThrowIfNull(projectionNode, nameof(projectionNode));
+        ArgumentGuard.ThrowIfNull(parameterNodes, nameof(parameterNodes));
+
+        string projectionName = projectionNode.GetString(0);
+        ReadWkt1Authority(projectionNode, out string authority, out long authorityCode);
+
+        var paramList = new List<ProjectionParameter>(parameterNodes.Count);
+        for (int i = 0; i < parameterNodes.Count; i++)
         {
-            tokenizer.ReadToken("PROJECTION");
+            paramList.Add(ReadWkt1ProjectionParameter(parameterNodes[i]));
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string projectionName = tokenizer.ReadDoubleQuotedWord();
+        return new Projection(projectionName, paramList, projectionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
 
-        tokenizer.NextToken(true);
-        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
+    private static ProjectionParameter ReadWkt1ProjectionParameter(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
 
-        tokenizer.ReadToken(",");
-        var paramList = new List<ProjectionParameter>();
-        tokenizer.NextToken();
-        while (tokenizer.GetStringValue() == "PARAMETER")
+        foreach (WktNode child in node.Children)
         {
-            bracket = tokenizer.ReadOpener();
-            string paramName = tokenizer.ReadDoubleQuotedWord();
-            tokenizer.ReadToken(",");
-            tokenizer.NextToken();
-            double paramValue = tokenizer.GetNumericValue();
-            tokenizer.ReadCloser(bracket);
-            paramList.Add(new ProjectionParameter(paramName, paramValue));
-
-            // tokenizer.ReadToken(",");
-            // tokenizer.NextToken();
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == ",")
+            if (child is WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
-            }
-            else
-            {
-                break;
+                throw new NotSupportedException($"WKT1 PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
             }
         }
 
-        var projection = new Projection(projectionName, paramList, projectionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-        return projection;
+        return new ProjectionParameter(node.GetString(0), node.GetNumber(0));
     }
 
     private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktTokenizer tokenizer)
     {
-        // PROJCS[
-        //     "OSGB 1936 / British National Grid",
-        //     GEOGCS[
-        //         "OSGB 1936",
-        //         DATUM[...]
-        //         PRIMEM[...]
-        //         AXIS["Geodetic latitude","NORTH"]
-        //         AXIS["Geodetic longitude","EAST"]
-        //         AUTHORITY["EPSG","4277"]
-        //     ],
-        //     PROJECTION["Transverse Mercator"],
-        //     PARAMETER["latitude_of_natural_origin",49],
-        //     PARAMETER["longitude_of_natural_origin",-2],
-        //     PARAMETER["scale_factor_at_natural_origin",0.999601272],
-        //     PARAMETER["false_easting",400000],
-        //     PARAMETER["false_northing",-100000],
-        //     AXIS["Easting","EAST"],
-        //     AXIS["Northing","NORTH"],
-        //     AUTHORITY["EPSG","27700"]
-        // ]
-        _ = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("GEOGCS");
-        GeographicCoordinateSystem geographicCS = ReadGeographicCoordinateSystem(tokenizer);
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
+        return ReadProjectedCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
+    private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        GeographicCoordinateSystem? geographicCS = null;
         LinearUnit? linearUnit = null;
-
-        if (tokenizer.GetStringValue().Equals("UNIT", StringComparison.OrdinalIgnoreCase))
-        {
-            linearUnit = ReadLinearUnit(tokenizer);
-            tokenizer.ReadToken(",");
-        }
-
-        Projection projection = ReadProjection(tokenizer);
-        LinearUnit unit = linearUnit ?? ReadLinearUnit(tokenizer);
+        WktKeywordNode? projectionNode = null;
+        var parameterNodes = new List<WktKeywordNode>();
         var axisInfo = new List<AxisInfo>(2);
         string authority = string.Empty;
         long authorityCode = -1;
 
-        TokenType ct = tokenizer.NextToken();
-        if (tokenizer.GetStringValue() == ",")
+        foreach (WktNode child in node.Children)
         {
-            tokenizer.NextToken();
-            while (tokenizer.GetStringValue() == "AXIS")
+            if (child is not WktKeywordNode keywordChild)
             {
-                axisInfo.Add(ReadAxis(tokenizer));
-                tokenizer.NextToken();
-                if (tokenizer.GetStringValue() == ",")
-                {
-                    tokenizer.NextToken();
-                }
+                continue;
             }
 
-            while (ct != TokenType.Eol && ct != TokenType.Eof)
+            switch (keywordChild.Keyword)
             {
-                if (tokenizer.GetStringValue() == "AUTHORITY")
-                {
-                    ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
+                case "GEOGCS":
+                    geographicCS = ReadGeographicCoordinateSystem(keywordChild);
                     break;
-                }
-                else
-                {
-                    ct = tokenizer.NextToken();
-                }
+                case "UNIT":
+                    linearUnit = ReadLinearUnit(keywordChild);
+                    break;
+                case "PROJECTION":
+                    projectionNode = keywordChild;
+                    break;
+                case "PARAMETER":
+                    parameterNodes.Add(keywordChild);
+                    break;
+                case "AXIS":
+                    axisInfo.Add(ReadAxis(keywordChild));
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -3233,125 +3225,159 @@ public static partial class CoordinateSystemWktReader
             axisInfo.Add(new AxisInfo("Y", AxisOrientationEnum.North));
         }
 
-        var projectedCS = new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, unit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-        return projectedCS;
+        geographicCS = ArgumentGuard.ThrowIfNull(geographicCS, nameof(geographicCS));
+        linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        Projection projection = ReadProjection(ArgumentGuard.ThrowIfNull(projectionNode, nameof(projectionNode)), parameterNodes);
+        return new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, linearUnit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
     private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktTokenizer tokenizer)
     {
-        // VERT_CS["<name>", <vert datum>, <linear unit>, {<axis>,} {,< authority >}]
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("VERT_DATUM");
-        VerticalDatum verticalDatum = ReadVerticalDatum(tokenizer);
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("UNIT");
-        LinearUnit linearUnit = ReadLinearUnit(tokenizer);
+        return ReadVerticalCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
+    private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        VerticalDatum? verticalDatum = null;
+        LinearUnit? linearUnit = null;
         string authority = string.Empty;
         long authorityCode = -1;
-        tokenizer.NextToken();
         AxisInfo? info = null;
-        while (tokenizer.GetStringValue() == ",")
+
+        foreach (WktNode child in node.Children)
         {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "AXIS")
+            if (child is not WktKeywordNode keywordChild)
             {
-                info = ReadAxis(tokenizer);
-                tokenizer.NextToken();
+                continue;
             }
-            else if (tokenizer.GetStringValue() == "AUTHORITY")
+
+            switch (keywordChild.Keyword)
             {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-                tokenizer.ReadCloser(bracket);
-                break;
-            }
-            else
-            {
-                SkipKeywordNode(tokenizer);
-                tokenizer.NextToken();
+                case "VERT_DATUM":
+                    verticalDatum = ReadVerticalDatum(keywordChild);
+                    break;
+                case "UNIT":
+                    linearUnit = ReadLinearUnit(keywordChild);
+                    break;
+                case "AXIS":
+                    info = ReadAxis(keywordChild);
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
             }
         }
 
         // This is default axis values if not specified.
         info ??= new AxisInfo("Up", AxisOrientationEnum.Up);
 
-        var verticalCs = new VerticalCoordinateSystem(linearUnit, verticalDatum, info, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-        return verticalCs;
+        return new VerticalCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit)),
+            ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum)),
+            info,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktTokenizer tokenizer)
     {
-        // <compd cs> = COMPD_CS["<name>", <head cs>, <tail cs> {,<authority>}]
-        _ = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        CoordinateSystem headcs = ReadCoordinateSystem(null, tokenizer);
+        return ReadCompoundCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        TokenType ct = tokenizer.NextToken();
-        while (ct != TokenType.Eol && ct != TokenType.Eof && CompoundCoordinateSystemDelimiters.Contains(tokenizer.GetStringValue()))
-        {
-            ct = tokenizer.NextToken();
-        }
-
-        CoordinateSystem tailcs = ReadCoordinateSystem(null, tokenizer);
-
+    private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        CoordinateSystem? headcs = null;
+        CoordinateSystem? tailcs = null;
         string authority = string.Empty;
         long authorityCode = -1;
-        tokenizer.NextToken();
 
-        if (tokenizer.GetStringValue() == ",")
+        foreach (WktNode child in node.Children)
         {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "AUTHORITY")
+            if (child is not WktKeywordNode keywordChild)
             {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
+                continue;
+            }
+
+            if (string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+            {
+                ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+            }
+            else if (IsCoordinateSystemKeyword(keywordChild.Keyword))
+            {
+                if (headcs is null)
+                {
+                    headcs = ReadCoordinateSystemNode(keywordChild);
+                }
+                else if (tailcs is null)
+                {
+                    tailcs = ReadCoordinateSystemNode(keywordChild);
+                }
             }
         }
 
-        return new CompoundCoordinateSystem(headcs, tailcs, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return new CompoundCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(headcs, nameof(headcs)),
+            ArgumentGuard.ThrowIfNull(tailcs, nameof(tailcs)),
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktTokenizer tokenizer)
     {
-        // GEOCCS["<name>", <datum>, <prime meridian>, <linear unit> {,<axis>, <axis>, <axis>} {,<authority>}]
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("DATUM");
-        HorizontalDatum horizontalDatum = ReadHorizontalDatum(tokenizer);
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("PRIMEM");
-        PrimeMeridian primeMeridian = ReadPrimeMeridian(tokenizer);
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("UNIT");
-        LinearUnit linearUnit = ReadLinearUnit(tokenizer);
+        return ReadGeocentricCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
+    private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        HorizontalDatum? horizontalDatum = null;
+        PrimeMeridian? primeMeridian = null;
+        LinearUnit? linearUnit = null;
         string authority = string.Empty;
         long authorityCode = -1;
-        tokenizer.NextToken();
-
         var info = new List<AxisInfo>(3);
-        while (tokenizer.GetStringValue() == ",")
+
+        foreach (WktNode child in node.Children)
         {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "AXIS")
+            if (child is not WktKeywordNode keywordChild)
             {
-                info.Add(ReadAxis(tokenizer));
-                tokenizer.NextToken();
+                continue;
             }
-            else if (tokenizer.GetStringValue() == "AUTHORITY")
+
+            switch (keywordChild.Keyword)
             {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-                tokenizer.ReadCloser(bracket);
-                break;
-            }
-            else
-            {
-                SkipKeywordNode(tokenizer);
-                tokenizer.NextToken();
+                case "DATUM":
+                    horizontalDatum = ReadHorizontalDatum(keywordChild);
+                    break;
+                case "PRIMEM":
+                    primeMeridian = ReadPrimeMeridian(keywordChild);
+                    break;
+                case "UNIT":
+                    linearUnit = ReadLinearUnit(keywordChild);
+                    break;
+                case "AXIS":
+                    info.Add(ReadAxis(keywordChild));
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -3364,9 +3390,9 @@ public static partial class CoordinateSystemWktReader
         }
 
         return new GeocentricCoordinateSystem(
-            horizontalDatum,
-            linearUnit,
-            primeMeridian,
+            ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum)),
+            ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit)),
+            ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian)),
             info,
             name,
             authority,
@@ -3378,47 +3404,46 @@ public static partial class CoordinateSystemWktReader
 
     private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktTokenizer tokenizer)
     {
-        // GEOGCS["OSGB 1936",
-        // DATUM["OSGB 1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6277"]]
-        // PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]]
-        // AXIS["Geodetic latitude","NORTH"]
-        // AXIS["Geodetic longitude","EAST"]
-        // AUTHORITY["EPSG","4277"]
-        // ]
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("DATUM");
-        HorizontalDatum horizontalDatum = ReadHorizontalDatum(tokenizer);
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("PRIMEM");
-        PrimeMeridian primeMeridian = ReadPrimeMeridian(tokenizer);
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("UNIT");
-        AngularUnit angularUnit = ReadAngularUnit(tokenizer);
+        return ReadGeographicCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
+    private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        HorizontalDatum? horizontalDatum = null;
+        PrimeMeridian? primeMeridian = null;
+        AngularUnit? angularUnit = null;
         string authority = string.Empty;
         long authorityCode = -1;
-        tokenizer.NextToken();
         var info = new List<AxisInfo>(2);
-        while (tokenizer.GetStringValue() == ",")
+
+        foreach (WktNode child in node.Children)
         {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "AXIS")
+            if (child is not WktKeywordNode keywordChild)
             {
-                info.Add(ReadAxis(tokenizer));
-                tokenizer.NextToken();
+                continue;
             }
-            else if (tokenizer.GetStringValue() == "AUTHORITY")
+
+            switch (keywordChild.Keyword)
             {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-                tokenizer.ReadCloser(bracket);
-                break;
-            }
-            else
-            {
-                SkipKeywordNode(tokenizer);
-                tokenizer.NextToken();
+                case "DATUM":
+                    horizontalDatum = ReadHorizontalDatum(keywordChild);
+                    break;
+                case "PRIMEM":
+                    primeMeridian = ReadPrimeMeridian(keywordChild);
+                    break;
+                case "UNIT":
+                    angularUnit = ReadAngularUnit(keywordChild);
+                    break;
+                case "AXIS":
+                    info.Add(ReadAxis(keywordChild));
+                    break;
+                case "AUTHORITY":
+                    ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -3429,10 +3454,10 @@ public static partial class CoordinateSystemWktReader
             info.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
         }
 
-        var geographicCS = new GeographicCoordinateSystem(
-            angularUnit,
-            horizontalDatum,
-            primeMeridian,
+        return new GeographicCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(angularUnit, nameof(angularUnit)),
+            ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum)),
+            ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian)),
             info,
             name,
             authority,
@@ -3440,7 +3465,6 @@ public static partial class CoordinateSystemWktReader
             string.Empty,
             string.Empty,
             string.Empty);
-        return geographicCS;
     }
 
     private static HorizontalDatum ReadHorizontalDatum(WktTokenizer tokenizer)
@@ -3558,58 +3582,47 @@ public static partial class CoordinateSystemWktReader
 
     private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktTokenizer tokenizer)
     {
-        // FITTED_CS[
-        //     "Local coordinate system MNAU (based on Gauss-Krueger)",
-        //     PARAM_MT[
-        //        "Affine",
-        //        PARAMETER["num_row",3],
-        //        PARAMETER["num_col",3],
-        //        PARAMETER["elt_0_0", 0.883485346527455],
-        //        PARAMETER["elt_0_1", -0.468458794848877],
-        //        PARAMETER["elt_0_2", 3455869.17937689],
-        //        PARAMETER["elt_1_0", 0.468458794848877],
-        //        PARAMETER["elt_1_1", 0.883485346527455],
-        //        PARAMETER["elt_1_2", 5478710.88035753],
-        //        PARAMETER["elt_2_2", 1],
-        //     ],
-        //     PROJCS["DHDN / Gauss-Kruger zone 3", GEOGCS["DHDN", DATUM["Deutsches_Hauptdreiecksnetz", SPHEROID["Bessel 1841", 6377397.155, 299.1528128, AUTHORITY["EPSG", "7004"]], TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096], AUTHORITY["EPSG", "6314"]], PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]], UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]], AUTHORITY["EPSG", "4314"]], UNIT["metre", 1, AUTHORITY["EPSG", "9001"]], PROJECTION["Transverse_Mercator"], PARAMETER["latitude_of_origin", 0], PARAMETER["central_meridian", 9], PARAMETER["scale_factor", 1], PARAMETER["false_easting", 3500000], PARAMETER["false_northing", 0], AUTHORITY["EPSG", "31467"]]
-        //     AUTHORITY["CUSTOM","12345"]
-        // ]
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.ReadToken("PARAM_MT");
-        MathTransform toBaseTransform = MathTransformWktReader.ReadMathTransform(tokenizer);
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        CoordinateSystem baseCS = ReadCoordinateSystem(null, tokenizer);
+        return ReadFittedCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
+    private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
+        MathTransform? toBaseTransform = null;
+        CoordinateSystem? baseCS = null;
         string authority = string.Empty;
         long authorityCode = -1;
 
-        TokenType ct = tokenizer.NextToken();
-        while (ct != TokenType.Eol && ct != TokenType.Eof)
+        foreach (WktNode child in node.Children)
         {
-            switch (tokenizer.GetStringValue())
+            if (child is not WktKeywordNode keywordChild)
             {
-                case ",":
-                    break;
-                case "]":
-                case ")":
-                    tokenizer.CheckCloser(bracket);
-
-                    break;
-                case "AUTHORITY":
-                    ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-
-                    // tokenizer.ReadCloser(bracket);
-                    break;
+                continue;
             }
 
-            ct = tokenizer.NextToken();
+            if (string.Equals(keywordChild.Keyword, "PARAM_MT", StringComparison.OrdinalIgnoreCase))
+            {
+                toBaseTransform = ParseNodeWithTokenizer(keywordChild, MathTransformWktReader.ReadMathTransform);
+            }
+            else if (string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+            {
+                ReadWkt1Authority(keywordChild, out authority, out authorityCode);
+            }
+            else if (baseCS is null && IsCoordinateSystemKeyword(keywordChild.Keyword))
+            {
+                baseCS = ReadCoordinateSystemNode(keywordChild);
+            }
         }
 
-        var fittedCS = new FittedCoordinateSystem(baseCS, toBaseTransform, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-        return fittedCS;
+        return new FittedCoordinateSystem(
+            ArgumentGuard.ThrowIfNull(baseCS, nameof(baseCS)),
+            ArgumentGuard.ThrowIfNull(toBaseTransform, nameof(toBaseTransform)),
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 }
