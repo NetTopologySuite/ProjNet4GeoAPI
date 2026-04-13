@@ -254,15 +254,15 @@ public class TransformCoverageTests
     }
 
     /// <summary>
-    /// The unimplemented serialization APIs throw as documented.
+    /// The default serialization APIs throw <see cref="NotSupportedException"/> as documented.
     /// </summary>
     [Fact]
-    public void PrimeMeridianTransformUnimplementedSerializationMembersThrowNotImplementedException()
+    public void PrimeMeridianTransformUnimplementedSerializationMembersThrowNotSupportedException()
     {
         var transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, PrimeMeridian.Paris);
 
-        Assert.Throws<NotImplementedException>(() => _ = transform.WKT);
-        Assert.Throws<NotImplementedException>(() => _ = transform.XML);
+        Assert.Throws<NotSupportedException>(() => _ = transform.WKT);
+        Assert.Throws<NotSupportedException>(() => _ = transform.XML);
     }
 
     /// <summary>
@@ -340,6 +340,24 @@ public class TransformCoverageTests
         Assert.Equal(0d, results[0][1], 6);
         Assert.True(results[1][1] < 45d);
         Assert.True(results[2][1] < 60d);
+    }
+
+    /// <summary>
+    /// The MathTransform base serialization defaults surface <see cref="NotSupportedException"/>
+    /// for transform types without dedicated serialization implementations.
+    /// </summary>
+    [Fact]
+    public void MathTransformBaseSerializationDefaultsThrowNotSupportedException()
+    {
+        var transform = new GeocentricTransform(
+            [
+                new ProjectionParameter("semi_major", Ellipsoid.GRS80.SemiMajorAxis),
+                new ProjectionParameter("semi_minor", Ellipsoid.GRS80.SemiMinorAxis),
+            ],
+            false);
+
+        Assert.Throws<NotSupportedException>(() => _ = transform.WKT);
+        Assert.Throws<NotSupportedException>(() => _ = transform.XML);
     }
 
     /// <summary>

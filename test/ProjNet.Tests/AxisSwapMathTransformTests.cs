@@ -163,15 +163,15 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Verifies that the <see cref="AxisSwapMathTransform.WKT"/> and <see cref="AxisSwapMathTransform.XML"/>
-    /// properties each throw <see cref="NotImplementedException"/>.
+    /// Verifies that the inherited <see cref="MathTransform.WKT"/> and <see cref="MathTransform.XML"/>
+    /// properties each throw <see cref="NotSupportedException"/>.
     /// </summary>
     [Fact]
-    public void WktAndXmlPropertiesThrowNotImplementedException()
+    public void WktAndXmlPropertiesThrowNotSupportedException()
     {
         var transform = new AxisSwapMathTransform(2, 0, 1, 1, 1, 2, 1, 3, 1);
 
-        Assert.Throws<NotImplementedException>(() => _ = transform.WKT);
-        Assert.Throws<NotImplementedException>(() => _ = transform.XML);
+        Assert.Throws<NotSupportedException>(() => _ = transform.WKT);
+        Assert.Throws<NotSupportedException>(() => _ = transform.XML);
     }
 }

@@ -187,25 +187,25 @@ public class CompositeMathTransformTests
     }
 
     /// <summary>
-    /// Verifies that WKT throws <see cref="NotImplementedException"/>.
+    /// Verifies that WKT throws <see cref="NotSupportedException"/>.
     /// </summary>
     [Fact]
-    public void WKT_ThrowsNotImplementedException()
+    public void WKT_ThrowsNotSupportedException()
     {
         var composite = new CompositeMathTransform([new IdentityMathTransform(2)]);
 
-        Assert.Throws<NotImplementedException>(() => composite.WKT);
+        Assert.Throws<NotSupportedException>(() => composite.WKT);
     }
 
     /// <summary>
-    /// Verifies that XML throws <see cref="NotImplementedException"/>.
+    /// Verifies that XML throws <see cref="NotSupportedException"/>.
     /// </summary>
     [Fact]
-    public void XML_ThrowsNotImplementedException()
+    public void XML_ThrowsNotSupportedException()
     {
         var composite = new CompositeMathTransform([new IdentityMathTransform(2)]);
 
-        Assert.Throws<NotImplementedException>(() => composite.XML);
+        Assert.Throws<NotSupportedException>(() => composite.XML);
     }
 
     /// <summary>
