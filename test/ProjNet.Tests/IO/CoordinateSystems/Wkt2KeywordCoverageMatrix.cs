@@ -25,7 +25,7 @@ internal static class Wkt2KeywordCoverageMatrix
     private const string PrimeMeridianReference = WktReader + ".ReadWkt2PrimeMeridian";
     private const string AngularUnitReference = WktReader + ".ReadWkt2AngularUnit, " + WktReader + ".ReadWkt2Unit";
     private const string LinearUnitReference = WktReader + ".ReadWkt2LinearUnit, " + WktReader + ".ReadWkt2Unit";
-    private const string MetadataSkipReference = WktReader + ".ShouldSkipWkt2MetadataNode, " + WktReader + ".SkipKeywordNode";
+    private const string MetadataSkipReference = WktReader + ".ShouldSkipWkt2MetadataNode";
     private const string TemporalReference = WktReader + ".ReadWkt2TemporalCoordinateSystem, " + WktReader + ".ReadWkt2TemporalDatum, " + WktReader + ".ReadWkt2TimeUnit, " + WktReader + ".ReadWkt2Unit";
     private const string ParametricReference = WktReader + ".ReadWkt2ParametricCoordinateSystem, " + WktReader + ".ReadWkt2ParametricDatum, " + WktReader + ".ReadWkt2ParametricUnit, " + WktReader + ".ReadWkt2Unit";
     private const string ProjectedReference = WktReader + ".ReadWkt2ProjectedCoordinateSystem";
