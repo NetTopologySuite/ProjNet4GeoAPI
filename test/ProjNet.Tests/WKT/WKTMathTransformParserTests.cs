@@ -15,6 +15,7 @@ using Xunit;
 public class WKTMathTransformParserTests
 {
     private static readonly double[] Origin2D = [0.0, 0.0];
+    private static readonly double[] AffineSamplePoint = [2040.0, 1590.0];
 
     /// <summary>
     /// Test parsing of affine math transform from WKT.
@@ -58,6 +59,48 @@ public class WKTMathTransformParserTests
     }
 
     /// <summary>
+    /// Verifies that affine transforms now emit canonical WKT with the shared separator formatting.
+    /// </summary>
+    [Fact]
+    public void AffineTransformWkt_UsesCanonicalSpacingAndParameterOrder()
+    {
+        AffineTransform transform = CreateAffineTransform();
+        string expected =
+            "PARAM_MT[\"Affine\", " +
+            "PARAMETER[\"num_row\", 3], " +
+            "PARAMETER[\"num_col\", 3], " +
+            "PARAMETER[\"elt_0_0\", 0.883485346527455], " +
+            "PARAMETER[\"elt_0_1\", -0.468458794848877], " +
+            "PARAMETER[\"elt_0_2\", 3455869.17937689], " +
+            "PARAMETER[\"elt_1_0\", 0.468458794848877], " +
+            "PARAMETER[\"elt_1_1\", 0.883485346527455], " +
+            "PARAMETER[\"elt_1_2\", 5478710.88035753], " +
+            "PARAMETER[\"elt_2_0\", 0], " +
+            "PARAMETER[\"elt_2_1\", 0], " +
+            "PARAMETER[\"elt_2_2\", 1]]";
+
+        Assert.Equal(expected, transform.WKT);
+    }
+
+    /// <summary>
+    /// Verifies that affine transform WKT roundtrips through the parser without losing matrix values.
+    /// </summary>
+    [Fact]
+    public void AffineTransformWkt_RoundTripsThroughParser()
+    {
+        AffineTransform original = CreateAffineTransform();
+
+        MathTransform parsedTransform = MathTransformWktReader.Parse(original.WKT);
+        AffineTransform parsed = Assert.IsType<AffineTransform>(parsedTransform);
+        double[] originalResult = original.Transform(AffineSamplePoint);
+        double[] parsedResult = parsed.Transform(AffineSamplePoint);
+
+        Assert.Equal(original.WKT, parsed.WKT);
+        Assert.Equal(originalResult[0], parsedResult[0], 12);
+        Assert.Equal(originalResult[1], parsedResult[1], 12);
+    }
+
+    /// <summary>
     /// MathTransformWktReader parses real number with exponent incorrectly.
     /// </summary>
     /// <param name="wkt">The wkt value.</param>
@@ -85,5 +128,16 @@ public class WKTMathTransformParserTests
 
         Assert.NotNull(mt);
         Assert.NotNull(mt as AffineTransform);
+    }
+
+    private static AffineTransform CreateAffineTransform()
+    {
+        return new AffineTransform(
+            0.883485346527455,
+            -0.468458794848877,
+            3455869.17937689,
+            0.468458794848877,
+            0.883485346527455,
+            5478710.88035753);
     }
 }
