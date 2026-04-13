@@ -826,6 +826,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         public double[,] GetMatrix() { }
         public override ProjNet.CoordinateSystems.Transformations.MathTransform Inverse() { }
         public override void Invert() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override void Transform(ref double x, ref double y, ref double z) { }
     }
     public sealed class CoordinateTransformation : ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation, ProjNet.CoordinateSystems.Transformations.ICoordinateTransformationCore
