@@ -7,7 +7,6 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -104,31 +103,7 @@ public sealed class AffineTransform : MathTransform
     /// <summary>
     /// Gets a Well-Known Text representation of this affine math transformation.
     /// </summary>
-    public override string WKT
-    {
-        get
-        {
-            // PARAM_MT["Affine",
-            //    PARAMETER["num_row",3],
-            //    PARAMETER["num_col",3],
-            //    PARAMETER["elt_0_1",1],
-            //    PARAMETER["elt_0_2",2],
-            //    PARAMETER["elt 1 2",3]]
-            var sb = new StringBuilder();
-
-            sb.Append("PARAM_MT[\"Affine\"");
-
-            // append parameters
-            foreach (ProjectionParameter param in this.GetParameterValues())
-            {
-                sb.Append(',');
-                sb.Append(param.WKT);
-            }
-
-            sb.Append(']');
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <summary>
     /// Gets an XML representation of this affine transformation.
