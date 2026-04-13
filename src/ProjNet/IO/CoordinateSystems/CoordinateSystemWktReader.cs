@@ -568,49 +568,100 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("DATUM");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2HorizontalDatum(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static HorizontalDatum ReadWkt2HorizontalDatumEnsemble(WktTokenizer tokenizer)
+    {
+        return ReadWkt2HorizontalDatumEnsemble(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static DatumEnsemble ReadWkt2DatumEnsemble(WktTokenizer tokenizer, bool requireEllipsoid)
+    {
+        if (tokenizer.GetStringValue() != "ENSEMBLE")
+        {
+            tokenizer.ReadToken("ENSEMBLE");
+        }
+
+        return ReadWkt2DatumEnsemble(WktKeywordNode.ParseSubtree(tokenizer), requireEllipsoid);
+    }
+
+    private static DatumEnsembleMember ReadWkt2DatumEnsembleMember(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "MEMBER")
+        {
+            tokenizer.ReadToken("MEMBER");
+        }
+
+        return ReadWkt2DatumEnsembleMember(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static double ReadWkt2DatumEnsembleAccuracy(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "ENSEMBLEACCURACY")
+        {
+            tokenizer.ReadToken("ENSEMBLEACCURACY");
+        }
+
+        return ReadWkt2DatumEnsembleAccuracy(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static Ellipsoid ReadWkt2Ellipsoid(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "ELLIPSOID")
+        {
+            tokenizer.ReadToken("ELLIPSOID");
+        }
+
+        return ReadWkt2Ellipsoid(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static PrimeMeridian ReadWkt2PrimeMeridian(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "PRIMEM")
+        {
+            tokenizer.ReadToken("PRIMEM");
+        }
+
+        return ReadWkt2PrimeMeridian(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static HorizontalDatum ReadWkt2HorizontalDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "DATUM", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in DATUM.");
+        }
+
+        string name = node.GetString(0);
         string authority = string.Empty;
         long authorityCode = -1;
         Ellipsoid? ellipsoid = null;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "ELLIPSOID":
-                    ellipsoid = ReadWkt2Ellipsoid(tokenizer);
+                    ellipsoid = ReadWkt2Ellipsoid(keywordChild);
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 DATUM keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 DATUM keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         if (ellipsoid is null)
@@ -621,71 +672,57 @@ public static partial class CoordinateSystemWktReader
         return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static HorizontalDatum ReadWkt2HorizontalDatumEnsemble(WktTokenizer tokenizer)
+    private static HorizontalDatum ReadWkt2HorizontalDatumEnsemble(WktKeywordNode node)
     {
-        DatumEnsemble ensemble = ReadWkt2DatumEnsemble(tokenizer, requireEllipsoid: true);
+        DatumEnsemble ensemble = ReadWkt2DatumEnsemble(node, requireEllipsoid: true);
         Ellipsoid ellipsoid = ArgumentGuard.ThrowIfNull(ensemble.Ellipsoid, nameof(ensemble));
         return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty, ensemble);
     }
 
-    private static DatumEnsemble ReadWkt2DatumEnsemble(WktTokenizer tokenizer, bool requireEllipsoid)
+    private static DatumEnsemble ReadWkt2DatumEnsemble(WktKeywordNode node, bool requireEllipsoid)
     {
-        if (tokenizer.GetStringValue() != "ENSEMBLE")
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "ENSEMBLE", StringComparison.OrdinalIgnoreCase))
         {
-            tokenizer.ReadToken("ENSEMBLE");
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ENSEMBLE.");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        string name = node.GetString(0);
         var members = new List<DatumEnsembleMember>();
         Ellipsoid? ellipsoid = null;
         double? accuracy = null;
         string authority = string.Empty;
         long authorityCode = -1;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "MEMBER":
-                    members.Add(ReadWkt2DatumEnsembleMember(tokenizer));
+                    members.Add(ReadWkt2DatumEnsembleMember(keywordChild));
                     break;
                 case "ELLIPSOID":
-                    ellipsoid = ReadWkt2Ellipsoid(tokenizer);
+                    ellipsoid = ReadWkt2Ellipsoid(keywordChild);
                     break;
                 case "ENSEMBLEACCURACY":
-                    accuracy = ReadWkt2DatumEnsembleAccuracy(tokenizer);
+                    accuracy = ReadWkt2DatumEnsembleAccuracy(keywordChild);
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 ENSEMBLE keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 ENSEMBLE keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         if (members.Count == 0)
@@ -706,124 +743,87 @@ public static partial class CoordinateSystemWktReader
         return new DatumEnsemble(name, members, accuracy.Value, ellipsoid, authority, authorityCode);
     }
 
-    private static DatumEnsembleMember ReadWkt2DatumEnsembleMember(WktTokenizer tokenizer)
+    private static DatumEnsembleMember ReadWkt2DatumEnsembleMember(WktKeywordNode node)
     {
-        if (tokenizer.GetStringValue() != "MEMBER")
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "MEMBER", StringComparison.OrdinalIgnoreCase))
         {
-            tokenizer.ReadToken("MEMBER");
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in MEMBER.");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        string name = node.GetString(0);
         string authority = string.Empty;
         long authorityCode = -1;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
+                ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-
-            if (tokenizer.GetStringValue() == "ID")
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                throw new NotSupportedException($"WKT2 MEMBER keyword '{keywordChild.Keyword}' is not supported.");
             }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 MEMBER keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
         }
 
         return new DatumEnsembleMember(name, authority, authorityCode);
     }
 
-    private static double ReadWkt2DatumEnsembleAccuracy(WktTokenizer tokenizer)
+    private static double ReadWkt2DatumEnsembleAccuracy(WktKeywordNode node)
     {
-        if (tokenizer.GetStringValue() != "ENSEMBLEACCURACY")
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "ENSEMBLEACCURACY", StringComparison.OrdinalIgnoreCase))
         {
-            tokenizer.ReadToken("ENSEMBLEACCURACY");
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ENSEMBLEACCURACY.");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        tokenizer.NextToken();
-        double accuracy = tokenizer.GetNumericValue();
-        tokenizer.NextToken();
-        tokenizer.CheckCloser(bracket);
-        return accuracy;
+        return node.GetNumber(0);
     }
 
-    private static Ellipsoid ReadWkt2Ellipsoid(WktTokenizer tokenizer)
+    private static Ellipsoid ReadWkt2Ellipsoid(WktKeywordNode node)
     {
-        if (tokenizer.GetStringValue() != "ELLIPSOID")
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "ELLIPSOID", StringComparison.OrdinalIgnoreCase))
         {
-            tokenizer.ReadToken("ELLIPSOID");
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ELLIPSOID.");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double semiMajorAxis = tokenizer.GetNumericValue();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double inverseFlattening = tokenizer.GetNumericValue();
-
+        string name = node.GetString(0);
+        double semiMajorAxis = node.GetNumber(0);
+        double inverseFlattening = node.GetNumber(1);
         string authority = string.Empty;
         long authorityCode = -1;
         LinearUnit? axisUnit = null;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "LENGTHUNIT":
-                    axisUnit = ReadWkt2LinearUnit(tokenizer);
+                    axisUnit = ReadWkt2LinearUnit(keywordChild);
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 ELLIPSOID keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 ELLIPSOID keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         if (axisUnit is null)
@@ -834,60 +834,43 @@ public static partial class CoordinateSystemWktReader
         return new Ellipsoid(semiMajorAxis, 0d, inverseFlattening, true, axisUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static PrimeMeridian ReadWkt2PrimeMeridian(WktTokenizer tokenizer)
+    private static PrimeMeridian ReadWkt2PrimeMeridian(WktKeywordNode node)
     {
-        if (tokenizer.GetStringValue() != "PRIMEM")
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "PRIMEM", StringComparison.OrdinalIgnoreCase))
         {
-            tokenizer.ReadToken("PRIMEM");
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in PRIMEM.");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double longitude = tokenizer.GetNumericValue();
-
+        string name = node.GetString(0);
+        double longitude = node.GetNumber(0);
         string authority = string.Empty;
         long authorityCode = -1;
         AngularUnit angularUnit = AngularUnit.Degrees;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "ANGLEUNIT":
-                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    angularUnit = ReadWkt2AngularUnit(keywordChild);
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 PRIMEM keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 PRIMEM keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         return new PrimeMeridian(longitude, angularUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -1076,45 +1059,7 @@ public static partial class CoordinateSystemWktReader
 
     private static EngineeringDatum ReadWkt2EngineeringDatum(WktTokenizer tokenizer)
     {
-        string rootKeyword = tokenizer.GetStringValue();
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        tokenizer.NextToken();
-        while (true)
-        {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            if (tokenizer.GetStringValue() == "ID")
-            {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
-            }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 {rootKeyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
-        }
-
-        return new EngineeringDatum(name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt2EngineeringDatum(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static EngineeringCoordinateSystem ReadWkt2EngineeringCoordinateSystem(WktTokenizer tokenizer)
@@ -1214,61 +1159,7 @@ public static partial class CoordinateSystemWktReader
 
     private static TemporalDatum ReadWkt2TemporalDatum(WktTokenizer tokenizer)
     {
-        string rootKeyword = tokenizer.GetStringValue();
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-
-        string timeOrigin = string.Empty;
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        tokenizer.NextToken();
-        while (true)
-        {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
-            {
-                case "TIMEORIGIN":
-                    WktBracket timeOriginBracket = tokenizer.ReadOpener();
-                    timeOrigin = tokenizer.ReadDoubleQuotedWord();
-                    tokenizer.ReadCloser(timeOriginBracket);
-                    break;
-                case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
-                    break;
-                default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-                    {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 {rootKeyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
-                    }
-
-                    break;
-            }
-
-            tokenizer.NextToken();
-        }
-
-        if (string.IsNullOrWhiteSpace(timeOrigin))
-        {
-            ArgumentGuard.ThrowArgument("WKT2 temporal datum is missing a TIMEORIGIN block.");
-        }
-
-        return new TemporalDatum(timeOrigin, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt2TemporalDatum(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static TemporalCoordinateSystem ReadWkt2TemporalCoordinateSystem(WktTokenizer tokenizer)
@@ -1368,42 +1259,117 @@ public static partial class CoordinateSystemWktReader
 
     private static ParametricDatum ReadWkt2ParametricDatum(WktTokenizer tokenizer)
     {
-        string rootKeyword = tokenizer.GetStringValue();
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2ParametricDatum(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
+    private static EngineeringDatum ReadWkt2EngineeringDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "EDATUM", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(node.Keyword, "ENGINEERINGDATUM", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in engineering datum.");
+        }
+
+        string name = node.GetString(0);
         string authority = string.Empty;
         long authorityCode = -1;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
+                ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
+            }
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            {
+                throw new NotSupportedException($"WKT2 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
+        return new EngineeringDatum(name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static TemporalDatum ReadWkt2TemporalDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "TDATUM", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(node.Keyword, "TIMEDATUM", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in temporal datum.");
+        }
+
+        string name = node.GetString(0);
+        string timeOrigin = string.Empty;
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
             }
 
-            if (tokenizer.GetStringValue() == "ID")
+            switch (keywordChild.Keyword)
             {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                case "TIMEORIGIN":
+                    timeOrigin = keywordChild.GetString(0);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
+                    break;
+                default:
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+                    {
+                        throw new NotSupportedException($"WKT2 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
+                    }
+
+                    break;
             }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+        }
+
+        if (string.IsNullOrWhiteSpace(timeOrigin))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 temporal datum is missing a TIMEORIGIN block.");
+        }
+
+        return new TemporalDatum(timeOrigin, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static ParametricDatum ReadWkt2ParametricDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "PDATUM", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(node.Keyword, "PARAMETRICDATUM", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in parametric datum.");
+        }
+
+        string name = node.GetString(0);
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
             {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 {rootKeyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
+                continue;
             }
 
-            tokenizer.NextToken();
+            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            {
+                ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
+            }
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            {
+                throw new NotSupportedException($"WKT2 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
+            }
         }
 
         return new ParametricDatum(name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -2651,48 +2617,49 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("VDATUM");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2VerticalDatum(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static VerticalDatum ReadWkt2VerticalDatumEnsemble(WktTokenizer tokenizer)
+    {
+        return ReadWkt2VerticalDatumEnsemble(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static VerticalDatum ReadWkt2VerticalDatum(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "VDATUM", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in VDATUM.");
+        }
+
+        string name = node.GetString(0);
         string authority = string.Empty;
         long authorityCode = -1;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
+                ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-
-            if (tokenizer.GetStringValue() == "ID")
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                throw new NotSupportedException($"WKT2 VDATUM keyword '{keywordChild.Keyword}' is not supported.");
             }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 VDATUM keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
         }
 
         return new VerticalDatum(DatumType.VD_GeoidModelDerived, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static VerticalDatum ReadWkt2VerticalDatumEnsemble(WktTokenizer tokenizer)
+    private static VerticalDatum ReadWkt2VerticalDatumEnsemble(WktKeywordNode node)
     {
-        DatumEnsemble ensemble = ReadWkt2DatumEnsemble(tokenizer, requireEllipsoid: false);
+        DatumEnsemble ensemble = ReadWkt2DatumEnsemble(node, requireEllipsoid: false);
         return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty, ensemble);
     }
 
