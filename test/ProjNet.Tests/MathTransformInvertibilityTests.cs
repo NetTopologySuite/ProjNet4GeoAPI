@@ -7,6 +7,7 @@ namespace ProjNet.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
@@ -42,6 +43,22 @@ public class MathTransformInvertibilityTests
 
         Assert.Equal(CreateExpectedProjectionWkt(projection), projection.WKT);
         Assert.Equal(CreateExpectedProjectionWkt(inverse), inverse.WKT);
+    }
+
+    /// <summary>
+    /// Verifies that Mercator XML formatting preserves the expected forward and inverse XML shape.
+    /// </summary>
+    [Fact]
+    public void MercatorProjectionXml_MatchesForwardAndInverseReferenceStrings()
+    {
+        MapProjection projection = Assert.IsAssignableFrom<MapProjection>(
+            ProjectionsRegistry.CreateProjection("mercator", CreateMercatorParameters()));
+        MapProjection inverse = Assert.IsAssignableFrom<MapProjection>(projection.Inverse());
+
+        Assert.Equal(CreateExpectedProjectionXml(projection), projection.XML);
+        Assert.Equal(CreateExpectedProjectionXml(inverse), inverse.XML);
+        Assert.True(XNode.DeepEquals(XElement.Parse(CreateExpectedProjectionXml(projection)), projection.ToXml()));
+        Assert.True(XNode.DeepEquals(XElement.Parse(CreateExpectedProjectionXml(inverse)), inverse.ToXml()));
     }
 
     /// <summary>
@@ -106,6 +123,16 @@ public class MathTransformInvertibilityTests
         return projection.IsInverse
             ? "INVERSE_MT[" + parameterizedWkt + "]"
             : parameterizedWkt;
+    }
+
+    private static string CreateExpectedProjectionXml(MapProjection projection)
+    {
+        string transformElementName = projection.IsInverse
+            ? "CT_InverseTransform"
+            : "CT_ParameterizedMathTransform";
+        return "<CT_MathTransform><" + transformElementName + " Name=\"" + projection.ClassName + "\">" +
+            string.Concat(Enumerable.Range(0, projection.NumParameters).Select(i => projection.GetParameter(i).ToXml().ToString(SaveOptions.DisableFormatting))) +
+            "</" + transformElementName + "></CT_MathTransform>";
     }
 
     private static MathTransform CreateTransform(string operation)
