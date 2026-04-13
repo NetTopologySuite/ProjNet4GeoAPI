@@ -226,7 +226,7 @@ internal static class ProjJsonCoverageMatrix
                 WriterRootReference,
                 "Standalone coordinate-operation or concatenated-operation objects are not exposed as top-level PROJJSON parse/write targets."),
             Row(
-                "TimeCRS",
+                "TemporalCRS",
                 ProjJsonCoverageStatus.Unsupported,
                 ReaderRootReference,
                 ProjJsonCoverageStatus.Unsupported,

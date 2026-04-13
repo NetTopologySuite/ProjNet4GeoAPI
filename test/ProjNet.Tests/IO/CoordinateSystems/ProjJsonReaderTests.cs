@@ -310,7 +310,7 @@ public class ProjJsonReaderTests
             new TheoryDataRow<string>("CoordinateMetadata"),
             new TheoryDataRow<string>("EngineeringCRS"),
             new TheoryDataRow<string>("ParametricCRS"),
-            new TheoryDataRow<string>("TimeCRS"),
+            new TheoryDataRow<string>("TemporalCRS"),
             new TheoryDataRow<string>("DerivedVerticalCRS"),
             new TheoryDataRow<string>("ConcatenatedOperation"),
         ];

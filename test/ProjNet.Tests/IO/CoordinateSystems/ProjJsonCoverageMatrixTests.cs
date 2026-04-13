@@ -45,7 +45,7 @@ public class ProjJsonCoverageMatrixTests
             "ProjectedCRS",
             "retained bound metadata on existing CRS",
             "Standalone operation objects",
-            "TimeCRS",
+            "TemporalCRS",
             "unit.type = Unit",
             "usage metadata",
             "VerticalCRS",

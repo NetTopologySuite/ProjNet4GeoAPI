@@ -28,6 +28,20 @@ public class ProjJsonWriterTests
             .GroupBy(item => item.Srid)
             .ToDictionary(group => group.Key, group => group.Last().Wkt));
 
+    private static readonly IReadOnlyDictionary<Type, (bool ShouldSerialize, Func<CoordinateSystem> CreateSample)> WriterTypeCoverage = new Dictionary<Type, (bool ShouldSerialize, Func<CoordinateSystem> CreateSample)>
+    {
+        [typeof(BoundCoordinateSystem)] = (true, CreateSupportedBoundCoordinateSystem),
+        [typeof(CompoundCoordinateSystem)] = (true, () => CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, GetCatalogWkt(9518))),
+        [typeof(EngineeringCoordinateSystem)] = (false, CreateUnsupportedEngineeringCoordinateSystem),
+        [typeof(FittedCoordinateSystem)] = (true, CreateDerivedGeographicCoordinateSystem),
+        [typeof(GeocentricCoordinateSystem)] = (true, () => CoordinateSystemTestHelpers.RequireCoordinateSystem<GeocentricCoordinateSystem>(CoordinateSystemFactory, GetCatalogWkt(4978))),
+        [typeof(GeographicCoordinateSystem)] = (true, () => CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(CoordinateSystemFactory, GetCatalogWkt(4230))),
+        [typeof(ParametricCoordinateSystem)] = (false, CreateUnsupportedParametricCoordinateSystem),
+        [typeof(ProjectedCoordinateSystem)] = (true, () => CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, GetCatalogWkt(27700))),
+        [typeof(TemporalCoordinateSystem)] = (false, CreateUnsupportedTemporalCoordinateSystem),
+        [typeof(VerticalCoordinateSystem)] = (true, () => CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, GetCatalogWkt(5701))),
+    };
+
     /// <summary>
     /// Provides EPSG geographic CRS examples that should roundtrip through the initial PROJJSON writer slice.
     /// </summary>
@@ -96,6 +110,16 @@ public class ProjJsonWriterTests
             new TheoryDataRow<int>(5701),
             new TheoryDataRow<int>(9518),
         ];
+    }
+
+    /// <summary>
+    /// Discovers all public concrete <see cref="CoordinateSystem"/> types for PROJJSON writer coverage.
+    /// </summary>
+    /// <returns>The discovered coordinate-system runtime types.</returns>
+    public static IEnumerable<TheoryDataRow<Type>> ConcreteCoordinateSystemWriterRows()
+    {
+        return GetConcreteCoordinateSystemWriterTypes()
+            .Select(type => new TheoryDataRow<Type>(type));
     }
 
     /// <summary>
@@ -306,6 +330,53 @@ public class ProjJsonWriterTests
             GetCatalogWkt(srid));
 
         Assert.Equal(ProjJsonWriter.ToJson(reference), reference.ToProjJson());
+    }
+
+    /// <summary>
+    /// Verifies the PROJJSON writer coverage map stays in lockstep with the public concrete coordinate-system model types.
+    /// </summary>
+    [Fact]
+    public void WriterTypeCoverage_MatchesConcreteCoordinateSystemTypes()
+    {
+        string[] discoveredTypes = GetConcreteCoordinateSystemWriterTypes()
+            .Select(type => type.FullName!)
+            .ToArray();
+        string[] coveredTypes = WriterTypeCoverage.Keys
+            .OrderBy(type => type.FullName, StringComparer.Ordinal)
+            .Select(type => type.FullName!)
+            .ToArray();
+
+        Assert.Equal(discoveredTypes, coveredTypes);
+    }
+
+    /// <summary>
+    /// Verifies every public concrete coordinate-system type is explicitly classified as supported or unsupported for PROJJSON writing.
+    /// </summary>
+    /// <param name="coordinateSystemType">The concrete coordinate-system runtime type under test.</param>
+    [Theory]
+    [MemberData(nameof(ConcreteCoordinateSystemWriterRows))]
+    public void ToJson_ConcreteCoordinateSystemTypesRemainExplicitlyClassified(Type coordinateSystemType)
+    {
+        ArgumentNullException.ThrowIfNull(coordinateSystemType);
+
+        Assert.True(
+            WriterTypeCoverage.ContainsKey(coordinateSystemType),
+            $"Add a PROJJSON writer coverage entry for coordinate-system type '{coordinateSystemType.FullName}'.");
+
+        (bool shouldSerialize, Func<CoordinateSystem> createSample) = WriterTypeCoverage[coordinateSystemType];
+        CoordinateSystem sample = createSample();
+        Assert.Equal(coordinateSystemType, sample.GetType());
+
+        Exception? exception = Record.Exception(() => _ = ProjJsonWriter.ToJson(sample));
+
+        if (shouldSerialize)
+        {
+            Assert.Null(exception);
+            return;
+        }
+
+        NotSupportedException notSupportedException = Assert.IsType<NotSupportedException>(exception);
+        Assert.Contains(coordinateSystemType.Name, notSupportedException.Message, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -682,6 +753,63 @@ public class ProjJsonWriterTests
         }
 
         return wkt;
+    }
+
+    private static Type[] GetConcreteCoordinateSystemWriterTypes()
+    {
+        return typeof(CoordinateSystem).Assembly.GetTypes()
+            .Where(type => type.IsPublic && !type.IsAbstract && typeof(CoordinateSystem).IsAssignableFrom(type))
+            .OrderBy(type => type.FullName, StringComparer.Ordinal)
+            .ToArray();
+    }
+
+    private static BoundCoordinateSystem CreateSupportedBoundCoordinateSystem()
+    {
+        string wkt = CreateBoundVerticalCoordinateSystem().ToWktNode(WktVersion.Wkt22019).ToString();
+        return CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+    }
+
+    private static EngineeringCoordinateSystem CreateUnsupportedEngineeringCoordinateSystem()
+    {
+        return new EngineeringCoordinateSystem(
+            new EngineeringDatum("Local plant", "EPSG", 1098, string.Empty, string.Empty, string.Empty),
+            "Cartesian",
+            [new AxisInfo("x", AxisOrientationEnum.East), new AxisInfo("y", AxisOrientationEnum.North)],
+            [LinearUnit.Metre, LinearUnit.Metre],
+            "Plant grid",
+            "EPSG",
+            5800,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static ParametricCoordinateSystem CreateUnsupportedParametricCoordinateSystem()
+    {
+        return new ParametricCoordinateSystem(
+            new ParametricUnit(0.1d, "pressure", "EPSG", 0, string.Empty, string.Empty, string.Empty),
+            new ParametricDatum("Reservoir datum", "EPSG", 0, string.Empty, string.Empty, string.Empty),
+            new AxisInfo("pressure", AxisOrientationEnum.Up),
+            "Reservoir pressure",
+            "EPSG",
+            0,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static TemporalCoordinateSystem CreateUnsupportedTemporalCoordinateSystem()
+    {
+        return new TemporalCoordinateSystem(
+            new TimeUnit(1d, "second", "EPSG", 1040, string.Empty, string.Empty, string.Empty),
+            new TemporalDatum("1950-01-01T00:00:00Z", "Unix epoch", "EPSG", 1040, string.Empty, string.Empty, string.Empty),
+            new AxisInfo("time", AxisOrientationEnum.Other),
+            "Temporal axis",
+            "EPSG",
+            1041,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     private static FittedCoordinateSystem CreateDerivedGeographicCoordinateSystem()
