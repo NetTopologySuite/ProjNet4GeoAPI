@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using ProjNet.Geometries;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Abstract class for creating multi-dimensional coordinate points transformations.
@@ -62,6 +63,12 @@ public abstract class MathTransform
     /// Gets a value indicating whether <see cref="Inverse"/> can return a usable inverse transform.
     /// </summary>
     public virtual bool IsInvertible => true;
+
+    /// <summary>
+    /// Converts this transform to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this transform.</returns>
+    public virtual WktNode ToWktNode() => throw new NotSupportedException("WKT node serialization is not supported for this transform type.");
 
     /// <summary>
     /// Tests whether this transform does not move any points.
