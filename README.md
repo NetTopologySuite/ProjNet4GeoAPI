@@ -1,15 +1,15 @@
-# ProjNET 3.0 (modernized ProjNet4GeoAPI)
+# ProjNET 3.0
 
 ProjNET is a managed .NET spatial reference and projection engine for geodetic coordinate system modeling and coordinate transformation workflows.
 
-This repository contains an actively modernized codebase aligned with current PROJ behavior and expanded runtime coverage while preserving compatibility-focused API surfaces.
+This repository contains the current ProjNET codebase, aligned with contemporary PROJ behavior and expanded runtime coverage while preserving compatibility-focused API surfaces.
 
 ## What is included
 
 - Managed coordinate system definitions and EPSG-backed lookup/catalog support.
 - Projection registration with broad alias coverage (`321` aliases).
 - Coordinate operation and transformation runtime (including affine, Helmert, Molodensky, deformation, grid-shift, topocentric, and pipeline-based paths).
-- WKT parsing/writing support and modernization artifacts under `docs/modernization/`.
+- WKT parsing/writing and coordinate-system serialization support.
 
 ## Target frameworks
 
@@ -56,34 +56,30 @@ From repository root:
 
 ```powershell
 dotnet build .\ProjNet4GeoAPI.sln --tl:off -v minimal
-dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal
+dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj
 ```
 
-## Modernization highlights (v3 line)
+## What's new in v3
 
 - Added `net8.0` as a library target while preserving `netstandard` targets.
 - Generator now uses EPSG WKT ZIP as primary source (no runtime `proj.db` dependency).
 - Large generated eager arrays were replaced by on-demand switch-based lookup paths in the managed EPSG catalog.
-- Test stack modernized to xUnit v3.
+- Test infrastructure uses xUnit v3 and Microsoft.Testing.Platform.
 - Historical `SpecialtyProjectionBatch*` test naming was removed in favor of behavior-oriented class names.
 - SPDX-based file attribution and `LICENSES/` + `NOTICE.md` consolidation completed.
 - API XML documentation overhauled across projection, transformation, coordinate-system, and IO/service surfaces.
 - Build/versioning was unified with Nerdbank.GitVersioning (`version.json` + shared build props).
 
-## API baseline and coverage workflow
+## API compatibility and validation
 
 - Public API drift is guarded by `PublicApiBaselineTests` against `src/ProjNet/PublicAPI.Shipped.txt`.
 - Baseline regeneration (intentional API change only) is controlled by `PROJNET_UPDATE_PUBLIC_API_BASELINE=1`.
-- Modernization-wave verification artifacts (coverage baseline/delta, review/finalization/checkpoints) are tracked in `docs/modernization/`.
+- Intentional baseline updates can be performed with:
 
-## Phase 5 completion snapshot (current)
-
-- Full solution Release build: passed (`dotnet build .\ProjNet4GeoAPI.sln -c Release`).
-- Full test-suite baseline: `3854 total`, `3021 passed`, `0 failed`, `833 skipped`.
-- Public API baseline validation passes (`PublicApiBaselineTests`).
-- AOT/trimming hardening completed: net8 trim-analyzer build is IL-warning clean.
-- Catalog cold-start benchmark results: first EPSG lookup/transform initialization is approximately `1.10-1.14 s` with about `1.11-1.12 MB` managed allocations on first access.
-- Coordinate definition APIs now use descriptive typed contracts (`CoordinateSystemDefinition`, `CoordinateSystemEntry`) instead of `KeyValuePair<int, string>` / `KeyValuePair<int, CoordinateSystem>`.
+```powershell
+$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'
+dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "FullyQualifiedName~PublicApiBaselineTests"
+```
 
 ## Transformation coverage summary
 
@@ -98,11 +94,6 @@ Implemented and validated transformation families include:
 - Horizontal/vertical/XYZ grid shifts (NTv2, GTX, GeoTIFF)
 - Prime-meridian and topocentric transforms
 - Pipeline composition and concatenation paths
-
-For audit details, see:
-
-- `docs/modernization/m1-transform-audit.md`
-- `docs/modernization/m1-pipeline-ops-audit.md`
 
 ## Projection coverage summary
 
@@ -151,7 +142,6 @@ Projection aliases registered in `ProjectionsRegistry`: **321**
 
 ## Documentation and governance
 
-- Modernization and parity artifacts: `docs/modernization/`
 - Projection parity matrix: `docs/projection-coverage.md`
 - Engineering governance and API baseline policy: `src/ProjNet/ENGINEERING_GOVERNANCE.md`
 

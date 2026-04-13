@@ -16,13 +16,13 @@ Use this only when a public API change is intentional and approved:
 
 1. Run baseline update:
    - PowerShell:  
-     `$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'; dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter PublicApiBaselineTests`
+     `$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'; dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "FullyQualifiedName~PublicApiBaselineTests"`
 2. Inspect and review changes in:
    - `src/ProjNet/PublicAPI.Shipped.txt`
    - `src/ProjNet/PublicAPI.Unshipped.txt`
 3. Re-run without update variable:
    - `Remove-Item Env:PROJNET_UPDATE_PUBLIC_API_BASELINE -ErrorAction Ignore`
-   - `dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter PublicApiBaselineTests`
+   - `dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "FullyQualifiedName~PublicApiBaselineTests"`
 
 ## Target framework policy
 
@@ -40,7 +40,7 @@ Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFram
 
 - Unit and integration tests run on xUnit v3.
 - Default validation command:
-  - `dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal`
+  - `dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj`
 
 ## Code style and analyzers
 
@@ -57,7 +57,6 @@ Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFram
 
 - Public API changes should include XML documentation updates when applicable.
 - External web URLs should not be embedded in XML API docs unless required for legal/provenance context.
-- Modernization and milestone records are maintained in `docs/modernization/`.
 
 ## Licensing and attribution policy
 
@@ -68,7 +67,7 @@ Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFram
 
 ## Deprecation and compatibility policy
 
-- Compatibility-first is the default: avoid breaking removals in active modernization waves.
+- Compatibility-first is the default: avoid breaking removals in active release lines.
 - Obsolete APIs are acceptable when:
   - replacement guidance is explicit,
   - behavior remains functional during deprecation window,

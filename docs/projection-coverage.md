@@ -21,11 +21,6 @@ This document tracks the projection feature-parity status between `spec\PROJ` (C
 - Refined resolution:
   - implemented via non-dispatch runtime/factory paths: `affine`, `cart`, `geocent`
   - direct `+proj` dispatcher gaps: `push`, `pop`, `geogoffset`, `molobadekas`, `geoc`
-- Detailed audit record: `docs/modernization/m1-projection-audit.md`.
-- Pipeline dispatch audit record: `docs/modernization/m1-pipeline-ops-audit.md`.
-- Baseline validation at audit time:
-  - `dotnet build ProjNet4GeoAPI.sln -c Release` succeeded with 570 warnings (existing baseline),
-  - `dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build` succeeded (`3731 total / 3213 passed / 518 skipped / 0 failed`).
 
 ## Implemented projection families in ProjNet
 
@@ -131,18 +126,12 @@ These are runtime operation-dispatch parity items, not projection-class registra
 | `cart` | geodetic/cartesian conversion op (`PROJ_HEAD`) | runtime/factory path exists | partial | `GeocentricTransform` + factory composition available, but no direct `+proj=cart` dispatch. |
 | `geocent` | geocentric conversion op (`PROJ_HEAD`) | runtime/factory path exists | partial | Geocentric runtime exists, but no direct `+proj=geocent` dispatch. |
 
-Audit artifacts:
-
-- `docs/modernization/m1-projection-audit.md`
-- `docs/modernization/m1-transform-audit.md`
-- `docs/modernization/m1-pipeline-ops-audit.md`
-
 ## Validation linkage
 
 Recent parity-related validation evidence:
 
 - Build baseline: `dotnet build ProjNet4GeoAPI.sln -c Release`
-- Test baseline: `dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build`
+- Test baseline: `dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build`
 - Runtime GIE coverage harness: `GieBuiltinsTheoryTests`
 - Dedicated runtime transform support checks for `ob_tran` and conversion pipeline operations.
 

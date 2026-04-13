@@ -12,7 +12,6 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Added EPSG WKT ZIP-based generator pipeline as the primary managed data source.
 - Added `net8.0` target for `ProjNET` in addition to `netstandard2.0` and `netstandard2.1`.
 - Added source-generated regex paths (conditional on .NET 8) for selected hot regex call sites.
-- Added structured modernization audit/finalization artifacts under `docs/modernization/` for parity, generator, style, license, test, and documentation waves.
 - Added `LICENSES/` folder and `NOTICE.md` for consolidated attribution and licensing context.
 - Added broad projection and transformation runtime verification coverage, including direct proj2proj parity fixtures.
 - Added public grid resource API (`IGridResourceFetchClient`, `GridResourceResolutionMode`, `NoOpGridResourceFetchClient`) with async `TryFetchAsync` support and programmatic configuration via `CoordinateTransformationFactory.ConfigureGridResolution`.
