@@ -141,7 +141,7 @@ public sealed class WktKeywordNode : WktNode
         ArgumentGuard.ThrowIfNull(tokenizer, nameof(tokenizer));
 
         tokenizer.NextToken();
-        WktKeywordNode root = ParseKeywordNode(tokenizer);
+        WktKeywordNode root = ParseKeywordNode(tokenizer, advancePastNode: true);
         if (!tokenizer.IsEndOfInput)
         {
             throw new ArgumentException(
@@ -150,6 +150,17 @@ public sealed class WktKeywordNode : WktNode
         }
 
         return root;
+    }
+
+    /// <summary>
+    /// Parses a single keyword-node subtree from the current tokenizer position.
+    /// </summary>
+    /// <param name="tokenizer">The tokenizer positioned on a keyword token.</param>
+    /// <returns>The parsed keyword node.</returns>
+    internal static WktKeywordNode ParseSubtree(WktTokenizer tokenizer)
+    {
+        ArgumentGuard.ThrowIfNull(tokenizer, nameof(tokenizer));
+        return ParseKeywordNode(tokenizer, advancePastNode: false);
     }
 
     /// <summary>
@@ -281,7 +292,7 @@ public sealed class WktKeywordNode : WktNode
         return (GetNodeText(authorityNode.Children[0]), GetNodeText(authorityNode.Children[1]));
     }
 
-    private static WktKeywordNode ParseKeywordNode(WktTokenizer tokenizer)
+    private static WktKeywordNode ParseKeywordNode(WktTokenizer tokenizer, bool advancePastNode)
     {
         if (tokenizer.GetTokenType() != TokenType.Word)
         {
@@ -292,10 +303,10 @@ public sealed class WktKeywordNode : WktNode
 
         string keyword = tokenizer.GetStringValue();
         tokenizer.NextToken();
-        return ParseKeywordNodeAfterKeyword(tokenizer, keyword);
+        return ParseKeywordNodeAfterKeyword(tokenizer, keyword, advancePastNode);
     }
 
-    private static WktKeywordNode ParseKeywordNodeAfterKeyword(WktTokenizer tokenizer, string keyword)
+    private static WktKeywordNode ParseKeywordNodeAfterKeyword(WktTokenizer tokenizer, string keyword, bool advancePastNode)
     {
         WktBracket bracket = GetCurrentOpener(tokenizer);
         var children = new List<WktNode>();
@@ -321,7 +332,11 @@ public sealed class WktKeywordNode : WktNode
         }
 
         var node = new WktKeywordNode(keyword, children);
-        tokenizer.NextToken();
+        if (advancePastNode)
+        {
+            tokenizer.NextToken();
+        }
+
         return node;
     }
 
@@ -343,7 +358,7 @@ public sealed class WktKeywordNode : WktNode
                 string word = tokenizer.GetStringValue();
                 tokenizer.NextToken();
                 return IsOpener(tokenizer)
-                    ? ParseKeywordNodeAfterKeyword(tokenizer, word)
+                    ? ParseKeywordNodeAfterKeyword(tokenizer, word, advancePastNode: true)
                     : new WktIdentifier(word);
 
             default:

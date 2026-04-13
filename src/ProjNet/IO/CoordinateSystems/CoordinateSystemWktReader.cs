@@ -948,47 +948,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("ANGLEUNIT");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double radiansPerUnit = tokenizer.GetNumericValue();
-
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        tokenizer.NextToken();
-        while (true)
-        {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            if (tokenizer.GetStringValue() == "ID")
-            {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
-            }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 ANGLEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
-        }
-
-        return new AngularUnit(radiansPerUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt2AngularUnit(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static LinearUnit ReadWkt2LinearUnit(WktTokenizer tokenizer)
@@ -998,47 +958,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("LENGTHUNIT");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double metersPerUnit = tokenizer.GetNumericValue();
-
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        tokenizer.NextToken();
-        while (true)
-        {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            if (tokenizer.GetStringValue() == "ID")
-            {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
-            }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 LENGTHUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
-        }
-
-        return new LinearUnit(metersPerUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt2LinearUnit(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static Unit ReadWkt2ScaleUnit(WktTokenizer tokenizer)
@@ -1048,47 +968,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("SCALEUNIT");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double conversionFactor = tokenizer.GetNumericValue();
-
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        tokenizer.NextToken();
-        while (true)
-        {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            if (tokenizer.GetStringValue() == "ID")
-            {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
-            }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 SCALEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
-        }
-
-        return new Unit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt2ScaleUnit(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static TimeUnit ReadWkt2TimeUnit(WktTokenizer tokenizer)
@@ -1098,47 +978,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("TIMEUNIT");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double conversionFactor = tokenizer.GetNumericValue();
-
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        tokenizer.NextToken();
-        while (true)
-        {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            if (tokenizer.GetStringValue() == "ID")
-            {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
-            }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 TIMEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
-        }
-
-        return new TimeUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt2TimeUnit(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static ParametricUnit ReadWkt2ParametricUnit(WktTokenizer tokenizer)
@@ -1148,60 +988,102 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("PARAMETRICUNIT");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double conversionFactor = tokenizer.GetNumericValue();
-
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        tokenizer.NextToken();
-        while (true)
-        {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            if (tokenizer.GetStringValue() == "ID")
-            {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
-            }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 PARAMETRICUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
-        }
-
-        return new ParametricUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        return ReadWkt2ParametricUnit(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static IUnit ReadWkt2Unit(WktTokenizer tokenizer)
     {
-        return tokenizer.GetStringValue() switch
+        return ReadWkt2Unit(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static AngularUnit ReadWkt2AngularUnit(WktKeywordNode node)
+    {
+        return ReadWkt2UnitFromNode(
+            node,
+            "ANGLEUNIT",
+            static (conversionFactor, name, authority, authorityCode) => new AngularUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    private static LinearUnit ReadWkt2LinearUnit(WktKeywordNode node)
+    {
+        return ReadWkt2UnitFromNode(
+            node,
+            "LENGTHUNIT",
+            static (conversionFactor, name, authority, authorityCode) => new LinearUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    private static Unit ReadWkt2ScaleUnit(WktKeywordNode node)
+    {
+        return ReadWkt2UnitFromNode(
+            node,
+            "SCALEUNIT",
+            static (conversionFactor, name, authority, authorityCode) => new Unit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    private static TimeUnit ReadWkt2TimeUnit(WktKeywordNode node)
+    {
+        return ReadWkt2UnitFromNode(
+            node,
+            "TIMEUNIT",
+            static (conversionFactor, name, authority, authorityCode) => new TimeUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    private static ParametricUnit ReadWkt2ParametricUnit(WktKeywordNode node)
+    {
+        return ReadWkt2UnitFromNode(
+            node,
+            "PARAMETRICUNIT",
+            static (conversionFactor, name, authority, authorityCode) => new ParametricUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty));
+    }
+
+    private static IUnit ReadWkt2Unit(WktKeywordNode node)
+    {
+        return node.Keyword switch
         {
-            "ANGLEUNIT" => ReadWkt2AngularUnit(tokenizer),
-            "LENGTHUNIT" => ReadWkt2LinearUnit(tokenizer),
-            "SCALEUNIT" => ReadWkt2ScaleUnit(tokenizer),
-            "TIMEUNIT" => ReadWkt2TimeUnit(tokenizer),
-            "PARAMETRICUNIT" => ReadWkt2ParametricUnit(tokenizer),
-            _ => throw new NotSupportedException($"WKT2 unit keyword '{tokenizer.GetStringValue()}' is not supported."),
+            "ANGLEUNIT" => ReadWkt2AngularUnit(node),
+            "LENGTHUNIT" => ReadWkt2LinearUnit(node),
+            "SCALEUNIT" => ReadWkt2ScaleUnit(node),
+            "TIMEUNIT" => ReadWkt2TimeUnit(node),
+            "PARAMETRICUNIT" => ReadWkt2ParametricUnit(node),
+            _ => throw new NotSupportedException($"WKT2 unit keyword '{node.Keyword}' is not supported."),
         };
+    }
+
+    private static TUnit ReadWkt2UnitFromNode<TUnit>(WktKeywordNode node, string expectedKeyword, Func<double, string, string, long, TUnit> factory)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        ArgumentGuard.ThrowIfNull(factory, nameof(factory));
+
+        if (!string.Equals(node.Keyword, expectedKeyword, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 unit keyword '{node.Keyword}' is not supported.");
+        }
+
+        string name = node.GetString(0);
+        double conversionFactor = node.GetNumber(0);
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            {
+                ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
+                continue;
+            }
+
+            if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            {
+                throw new NotSupportedException($"WKT2 {expectedKeyword} keyword '{keywordChild.Keyword}' is not supported.");
+            }
+        }
+
+        return factory(conversionFactor, name, authority, authorityCode);
     }
 
     private static bool Wkt2UnitsEqual(IUnit left, IUnit right)
@@ -1939,6 +1821,37 @@ public static partial class CoordinateSystemWktReader
         }
 
         tokenizer.ReadCloser(bracket);
+    }
+
+    private static void ReadIdentifierWithUnknownCode(WktKeywordNode node, out string authority, out long authorityCode)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 identifier keyword '{node.Keyword}' is not supported.");
+        }
+
+        if (node.Children.Count < 2)
+        {
+            throw new ArgumentException("WKT2 ID is missing an authority code.", nameof(node));
+        }
+
+        authority = GetWktNodeText(node.Children[0]);
+        authorityCode = long.TryParse(GetWktNodeText(node.Children[1]), NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
+            ? parsedCode
+            : -1;
+    }
+
+    private static string GetWktNodeText(WktNode node)
+    {
+        return node switch
+        {
+            WktQuotedString quotedString => quotedString.Value,
+            WktIdentifier identifier => identifier.Name,
+            WktInteger integer => integer.Value.ToString(CultureInfo.InvariantCulture),
+            WktNumber number => number.Value.ToString(CultureInfo.InvariantCulture),
+            _ => throw new ArgumentException($"Expected a leaf WKT node value but found '{node.GetType().Name}'.", nameof(node)),
+        };
     }
 
     private static void SkipKeywordNode(WktTokenizer tokenizer)
