@@ -4,7 +4,7 @@
 
 namespace ProjNet.CoordinateSystems.Transformations;
 
-using System;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Represents a pass-through transform that leaves all ordinates unchanged.
@@ -35,6 +35,18 @@ internal sealed class IdentityMathTransform : MathTransform
 
     /// <inheritdoc/>
     public override string WKT => $"PARAM_MT[\"Identity\",PARAMETER[\"dimension\",{this.dimension}]]";
+
+    /// <inheritdoc/>
+    public override WktNode ToWktNode()
+    {
+        return new WktKeywordNode(
+            "PARAM_MT",
+            new WktQuotedString("Identity"),
+            new WktKeywordNode(
+                "PARAMETER",
+                new WktQuotedString("dimension"),
+                new WktInteger(this.dimension)));
+    }
 
     /// <inheritdoc/>
     public override bool Identity() => true;
