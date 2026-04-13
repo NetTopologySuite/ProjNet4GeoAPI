@@ -58,7 +58,7 @@ public abstract class MathTransform
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public abstract string XML { get; }
+    public virtual string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Gets a value indicating whether <see cref="Inverse"/> can return a usable inverse transform.
