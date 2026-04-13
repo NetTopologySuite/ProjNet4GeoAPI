@@ -45,11 +45,6 @@ internal sealed class PrimeMeridianTransform : MathTransform
     }
 
     /// <summary>
-    /// Gets a Well-Known Text representation of this prime meridian transformation.
-    /// </summary>
-    public override string WKT => throw new NotImplementedException("The method or operation is not implemented.");
-
-    /// <summary>
     /// Gets an XML representation of this prime meridian transformation.
     /// </summary>
     public override string XML => throw new NotImplementedException("The method or operation is not implemented.");

@@ -71,12 +71,6 @@ internal sealed class ConcatenatedTransform : MathTransform, ICoordinateTransfor
     public CoordinateSystem TargetCS { get => this.GetLastTransform().TargetCS; }
 
     /// <summary>
-    /// Gets a Well-Known Text representation of this object.
-    /// </summary>
-    /// <value>The value.</value>
-    public override string WKT => throw new NotImplementedException();
-
-    /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
     /// <value>The value.</value>

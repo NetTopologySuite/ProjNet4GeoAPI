@@ -79,9 +79,6 @@ internal sealed class TopocentricMathTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <inheritdoc />
-    public override string WKT => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override string XML => throw new NotImplementedException();
 
     /// <inheritdoc />

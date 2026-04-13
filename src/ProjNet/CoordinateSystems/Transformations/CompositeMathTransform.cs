@@ -51,9 +51,6 @@ internal sealed class CompositeMathTransform : MathTransform
     public override int DimTarget => this.transforms[^1].DimTarget;
 
     /// <inheritdoc />
-    public override string WKT => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override string XML => throw new NotImplementedException();
 
     /// <inheritdoc />

@@ -125,11 +125,6 @@ internal sealed class GeocentricTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <summary>
-    /// Gets a Well-Known Text representation of this object.
-    /// </summary>
-    public override string WKT => throw new NotImplementedException("The method or operation is not implemented.");
-
-    /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
     public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
