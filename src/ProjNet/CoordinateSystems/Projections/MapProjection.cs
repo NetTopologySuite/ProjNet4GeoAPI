@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Threading;
+using System.Xml.Linq;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.Wkt;
 
@@ -471,6 +472,26 @@ public abstract class MapProjection : MathTransform, IProjection
         return this.IsInverse
             ? new WktKeywordNode("INVERSE_MT", parameterizedNode)
             : parameterizedNode;
+    }
+
+    /// <inheritdoc />
+    public override XElement ToXml()
+    {
+        var children = new List<object>(this.NumParameters + 1)
+        {
+            new XAttribute("Name", this.ClassName),
+        };
+
+        for (int i = 0; i < this.NumParameters; i++)
+        {
+            children.Add(this.GetParameter(i).ToXml());
+        }
+
+        return new XElement(
+            "CT_MathTransform",
+            new XElement(
+                this.IsInverse ? "CT_InverseTransform" : "CT_ParameterizedMathTransform",
+                children));
     }
 
     /// <inheritdoc />
