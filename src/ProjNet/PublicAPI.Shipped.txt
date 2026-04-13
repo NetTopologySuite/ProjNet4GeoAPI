@@ -146,6 +146,7 @@ namespace ProjNet.CoordinateSystems
         public int Dimension { get; }
         public ProjNet.CoordinateSystems.AxisInfo GetAxis(int dimension) { }
         public abstract ProjNet.CoordinateSystems.IUnit GetUnits(int dimension);
+        public string ToProjJson() { }
         public virtual ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public virtual ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public virtual System.Xml.Linq.XElement ToXml() { }
