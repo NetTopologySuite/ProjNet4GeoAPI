@@ -128,7 +128,7 @@ public abstract class CoordinateSystem : Info
     /// Returns an XML representation of this coordinate system as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
-    public virtual XElement ToXml() => throw new NotImplementedException();
+    public virtual XElement ToXml() => throw new NotSupportedException("XML serialization is not supported for this coordinate system type.");
 
     /// <summary>
     /// Gets axis details for dimension within coordinate system.

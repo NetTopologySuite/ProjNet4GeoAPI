@@ -59,25 +59,16 @@ public class Unit : Info, IUnit
     public override string WKT => this.ToWktNode().ToString();
 
     /// <summary>
-    /// Gets an XML representation of this object [NOT IMPLEMENTED].
+    /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            throw new NotImplementedException();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
-    /// Returns an XML representation of this unit as an <see cref="XElement"/> [NOT IMPLEMENTED].
+    /// Returns an XML representation of this unit as an <see cref="XElement"/>.
     /// </summary>
-    /// <returns>Not implemented; always throws <see cref="NotImplementedException"/>.</returns>
-    /// <exception cref="NotImplementedException">Always thrown because XML serialization is not supported for generic units.</exception>
-    public XElement ToXml()
-    {
-        throw new NotImplementedException();
-    }
+    /// <returns>This method does not return; it always throws.</returns>
+    /// <exception cref="NotSupportedException">Always thrown because XML serialization is not supported for generic units.</exception>
+    public XElement ToXml() => throw new NotSupportedException("XML serialization is not supported for generic units.");
 
     /// <summary>
     /// Converts this generic unit to a WKT syntax tree node.

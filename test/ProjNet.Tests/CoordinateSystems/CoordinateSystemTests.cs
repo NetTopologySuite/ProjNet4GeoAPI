@@ -90,14 +90,14 @@ public class CoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="CoordinateSystem.ToXml"/> throws by default.
+    /// Verifies that <see cref="CoordinateSystem.ToXml"/> throws by default when XML serialization is unsupported.
     /// </summary>
     [Fact]
-    public void ToXml_DefaultImplementation_ThrowsNotImplementedException()
+    public void ToXml_DefaultImplementation_ThrowsNotSupportedException()
     {
         TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
 
-        Assert.Throws<NotImplementedException>(() => coordinateSystem.ToXml());
+        Assert.Throws<NotSupportedException>(() => coordinateSystem.ToXml());
     }
 
     /// <summary>

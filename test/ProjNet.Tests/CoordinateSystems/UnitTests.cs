@@ -460,25 +460,25 @@ public class UnitTests
     }
 
     /// <summary>
-    /// Verifies that XML serialization is not implemented for generic units.
+    /// Verifies that XML serialization is not supported for generic units.
     /// </summary>
     [Fact]
-    public void Unit_XML_ThrowsNotImplementedException()
+    public void Unit_XML_ThrowsNotSupportedException()
     {
         var unit = new Unit("custom", 2.5);
 
-        Assert.Throws<NotImplementedException>(() => _ = unit.XML);
+        Assert.Throws<NotSupportedException>(() => _ = unit.XML);
     }
 
     /// <summary>
-    /// Verifies that XML element serialization is not implemented for generic units.
+    /// Verifies that XML element serialization is not supported for generic units.
     /// </summary>
     [Fact]
-    public void Unit_ToXml_ThrowsNotImplementedException()
+    public void Unit_ToXml_ThrowsNotSupportedException()
     {
         var unit = new Unit("custom", 2.5);
 
-        Assert.Throws<NotImplementedException>(() => unit.ToXml());
+        Assert.Throws<NotSupportedException>(() => unit.ToXml());
     }
 
     /// <summary>
