@@ -141,7 +141,7 @@ public class CoordinateSystemServicesTests
         CoordinateSystem catalog = Assert.IsAssignableFrom<CoordinateSystem>(css.GetCoordinateSystem(4326));
         CoordinateSystem parsed = Assert.IsAssignableFrom<CoordinateSystem>(new CoordinateSystemFactory().CreateFromWkt(catalog.WKT));
 
-        CoordinateSystem? resolved = css.ResolveFromCatalog(parsed);
+        CoordinateSystem resolved = css.ResolveFromCatalog(parsed);
 
         Assert.NotSame(catalog, parsed);
         Assert.Same(catalog, resolved);
@@ -167,126 +167,69 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Verifies that catalog resolution returns <see langword="null"/> when the parsed coordinate system has no top-level authority metadata.
+    /// Verifies that catalog resolution preserves the parsed instance when the parsed coordinate system has no top-level authority metadata.
     /// </summary>
     [Fact]
-    public void ResolveFromCatalogReturnsNullWhenAuthorityMetadataIsMissing()
+    public void ResolveFromCatalogReturnsInputWhenAuthorityMetadataIsMissing()
     {
         var css = new CoordinateSystemServices(
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
         CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority(string.Empty, -1);
 
-        CoordinateSystem? resolved = css.ResolveFromCatalog(parsed);
+        CoordinateSystem resolved = css.ResolveFromCatalog(parsed);
 
-        Assert.Null(resolved);
+        Assert.Same(parsed, resolved);
     }
 
     /// <summary>
-    /// Verifies that catalog resolution returns <see langword="null"/> when the parsed coordinate system points to an unregistered authority code.
+    /// Verifies that catalog resolution preserves the parsed instance when the parsed coordinate system points to an unregistered authority code.
     /// </summary>
     [Fact]
-    public void ResolveFromCatalogReturnsNullWhenAuthorityCodeIsUnknown()
+    public void ResolveFromCatalogReturnsInputWhenAuthorityCodeIsUnknown()
     {
         var css = new CoordinateSystemServices(
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
         CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority("EPSG", 999999);
 
-        CoordinateSystem? resolved = css.ResolveFromCatalog(parsed);
+        CoordinateSystem resolved = css.ResolveFromCatalog(parsed);
 
-        Assert.Null(resolved);
+        Assert.Same(parsed, resolved);
     }
 
     /// <summary>
-    /// Verifies that <see cref="CoordinateSystemServices.ResolveOrParse(string)"/> returns the canonical catalog instance when the parsed WKT identifies a registered coordinate system.
+    /// Verifies that <see cref="CoordinateSystemServices.TryResolveFromCatalog"/> returns <see langword="false"/> when the parsed coordinate system has no top-level authority metadata.
     /// </summary>
     [Fact]
-    public void ResolveOrParseReturnsCanonicalCatalogInstanceForRegisteredWkt()
+    public void TryResolveFromCatalogReturnsFalseWhenAuthorityMetadataIsMissing()
     {
         var css = new CoordinateSystemServices(
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
-        CoordinateSystem catalog = Assert.IsAssignableFrom<CoordinateSystem>(css.GetCoordinateSystem(4326));
+        CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority(string.Empty, -1);
 
-        CoordinateSystem resolved = css.ResolveOrParse(catalog.WKT);
+        bool resolved = css.TryResolveFromCatalog(parsed, out CoordinateSystem? resolvedCoordinateSystem);
 
-        Assert.Same(catalog, resolved);
+        Assert.False(resolved);
+        Assert.Null(resolvedCoordinateSystem);
     }
 
     /// <summary>
-    /// Verifies that <see cref="CoordinateSystemServices.ResolveOrParse(string)"/> returns the parsed instance when no catalog match exists.
+    /// Verifies that <see cref="CoordinateSystemServices.TryResolveFromCatalog"/> returns <see langword="false"/> when the parsed coordinate system points to an unregistered authority code.
     /// </summary>
     [Fact]
-    public void ResolveOrParseReturnsParsedInstanceWhenCatalogResolutionFails()
+    public void TryResolveFromCatalogReturnsFalseWhenAuthorityCodeIsUnknown()
     {
         var css = new CoordinateSystemServices(
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
-        CoordinateSystem catalog = Assert.IsAssignableFrom<CoordinateSystem>(css.GetCoordinateSystem(4326));
-        GeographicCoordinateSystem runtime = catalog is GeographicCoordinateSystem geographic
-            ? geographic.WithAuthority(string.Empty, -1)
-            : throw new InvalidOperationException("Expected EPSG:4326 to be geographic.");
+        CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority("EPSG", 999999);
 
-        CoordinateSystem resolved = css.ResolveOrParse(runtime.WKT);
+        bool resolved = css.TryResolveFromCatalog(parsed, out CoordinateSystem? resolvedCoordinateSystem);
 
-        Assert.IsType<GeographicCoordinateSystem>(resolved);
-        Assert.NotSame(catalog, resolved);
-        Assert.True(string.IsNullOrEmpty(resolved.Authority));
-        Assert.Equal(-1, resolved.AuthorityCode);
-    }
-
-    /// <summary>
-    /// Verifies that <see cref="CoordinateSystemServices.ResolveOrParse(string)"/> rejects WKT that does not describe a coordinate system.
-    /// </summary>
-    [Fact]
-    public void ResolveOrParseThrowsForNonCoordinateSystemWkt()
-    {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
-
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => css.ResolveOrParse(PrimeMeridian.Greenwich.WKT));
-
-        Assert.Equal("wkt", exception.ParamName);
-    }
-
-    /// <summary>
-    /// Verifies that <see cref="CoordinateSystemServices.ResolveOrParseJson(string)"/> returns the canonical catalog instance when the parsed PROJJSON identifies a registered coordinate system.
-    /// </summary>
-    [Fact]
-    public void ResolveOrParseJsonReturnsCanonicalCatalogInstanceForRegisteredJson()
-    {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
-        CoordinateSystem catalog = Assert.IsAssignableFrom<CoordinateSystem>(css.GetCoordinateSystem(4326));
-
-        CoordinateSystem resolved = css.ResolveOrParseJson(catalog.ToProjJson());
-
-        Assert.Same(catalog, resolved);
-    }
-
-    /// <summary>
-    /// Verifies that <see cref="CoordinateSystemServices.ResolveOrParseJson(string)"/> returns the parsed instance when no catalog match exists.
-    /// </summary>
-    [Fact]
-    public void ResolveOrParseJsonReturnsParsedInstanceWhenCatalogResolutionFails()
-    {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
-        CoordinateSystem catalog = Assert.IsAssignableFrom<CoordinateSystem>(css.GetCoordinateSystem(4326));
-        GeographicCoordinateSystem runtime = catalog is GeographicCoordinateSystem geographic
-            ? geographic.WithAuthority(string.Empty, -1)
-            : throw new InvalidOperationException("Expected EPSG:4326 to be geographic.");
-
-        CoordinateSystem resolved = css.ResolveOrParseJson(runtime.ToProjJson());
-
-        Assert.IsType<GeographicCoordinateSystem>(resolved);
-        Assert.NotSame(catalog, resolved);
-        Assert.True(string.IsNullOrEmpty(resolved.Authority));
-        Assert.Equal(-1, resolved.AuthorityCode);
+        Assert.False(resolved);
+        Assert.Null(resolvedCoordinateSystem);
     }
 
     /// <summary>
