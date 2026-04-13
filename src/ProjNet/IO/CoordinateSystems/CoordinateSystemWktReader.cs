@@ -1507,7 +1507,7 @@ public static partial class CoordinateSystemWktReader
                     targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(keywordChild);
                     break;
                 case "METHOD":
-                    methodName = ParseWkt2Root(keywordChild, ReadWkt2ProjectionMethod);
+                    methodName = ReadWkt2ProjectionMethod(keywordChild);
                     break;
                 case "PARAMETER":
                     parameters.Add(ReadWkt2CoordinateOperationParameter(keywordChild));
@@ -2152,18 +2152,12 @@ public static partial class CoordinateSystemWktReader
 
     private static Projection ReadWkt2Conversion(WktKeywordNode node, out AngularUnit? angularUnit)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-        var tokenizer = new WktTokenizer(node.ToString());
-        tokenizer.NextToken();
-        return ReadWkt2Conversion(tokenizer, out angularUnit);
+        return ReadWkt2Conversion(node, "CONVERSION", out angularUnit);
     }
 
     private static Projection ReadWkt2DerivingConversion(WktKeywordNode node, out AngularUnit? angularUnit)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-        var tokenizer = new WktTokenizer(node.ToString());
-        tokenizer.NextToken();
-        return ReadWkt2DerivingConversion(tokenizer, out angularUnit);
+        return ReadWkt2Conversion(node, "DERIVINGCONVERSION", out angularUnit);
     }
 
     private static Projection ReadWkt2Conversion(WktTokenizer tokenizer, string keyword, out AngularUnit? angularUnit)
@@ -2173,8 +2167,13 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken(keyword);
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string conversionName = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2Conversion(WktKeywordNode.ParseSubtree(tokenizer), keyword, out angularUnit);
+    }
+
+    private static Projection ReadWkt2Conversion(WktKeywordNode node, string keyword, out AngularUnit? angularUnit)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string conversionName = node.GetString(0);
 
         string methodName = string.Empty;
         string authority = string.Empty;
@@ -2182,47 +2181,33 @@ public static partial class CoordinateSystemWktReader
         angularUnit = null;
         var parameters = new List<ProjectionParameter>();
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "METHOD":
-                    methodName = ReadWkt2ProjectionMethod(tokenizer);
+                    methodName = ReadWkt2ProjectionMethod(keywordChild);
                     break;
                 case "PARAMETER":
-                    parameters.Add(ReadWkt2ProjectionParameter(tokenizer, out AngularUnit? parameterAngularUnit));
+                    parameters.Add(ReadWkt2ProjectionParameter(keywordChild, out AngularUnit? parameterAngularUnit));
                     angularUnit = MergeAxisAngularUnit(angularUnit, parameterAngularUnit);
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 {keyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 {keyword} keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         if (string.IsNullOrWhiteSpace(methodName))
@@ -2240,34 +2225,25 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("METHOD");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string methodName = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2ProjectionMethod(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        tokenizer.NextToken();
-        while (true)
+    private static string ReadWkt2ProjectionMethod(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string methodName = node.GetString(0);
+
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
+                throw new NotSupportedException($"WKT2 METHOD keyword '{keywordChild.Keyword}' is not supported.");
             }
-
-            if (tokenizer.GetStringValue() == "ID" || ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 METHOD keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
         }
 
         return methodName;
@@ -2280,52 +2256,40 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("PARAMETER");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string parameterName = NormalizeWkt2ProjectionParameterName(tokenizer.ReadDoubleQuotedWord());
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double value = tokenizer.GetNumericValue();
+        return ReadWkt2ProjectionParameter(WktKeywordNode.ParseSubtree(tokenizer), out angularUnit);
+    }
+
+    private static ProjectionParameter ReadWkt2ProjectionParameter(WktKeywordNode node, out AngularUnit? angularUnit)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string parameterName = NormalizeWkt2ProjectionParameterName(node.GetString(0));
+        double value = node.GetNumber(0);
         angularUnit = null;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "ANGLEUNIT":
-                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    angularUnit = ReadWkt2AngularUnit(keywordChild);
                     break;
                 case "ID":
                 case "LENGTHUNIT":
                 case "SCALEUNIT":
-                    SkipKeywordNode(tokenizer);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 PARAMETER keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         return new ProjectionParameter(parameterName, value);
