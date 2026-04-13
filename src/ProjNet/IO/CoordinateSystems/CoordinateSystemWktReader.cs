@@ -477,58 +477,18 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("AXIS");
         }
 
-        angularUnit = null;
-        linearUnit = null;
+        var axisNode = WktKeywordNode.ParseSubtree(tokenizer);
+        (AxisInfo axis, IUnit? unit) = ReadWkt2AxisDefinition(axisNode);
+        WktKeywordNode? unitNode = axisNode.FindChild("ANGLEUNIT", "LENGTHUNIT", "SCALEUNIT", "TIMEUNIT", "PARAMETRICUNIT");
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string axisName = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        AxisOrientationEnum orientation = ParseWkt2AxisOrientation(tokenizer.GetStringValue());
-        tokenizer.NextToken();
-
-        while (true)
+        if (unit is not null && unit is not AngularUnit && unit is not LinearUnit)
         {
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-                continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
-            {
-                case "ANGLEUNIT":
-                    angularUnit = ReadWkt2AngularUnit(tokenizer);
-                    break;
-                case "LENGTHUNIT":
-                    linearUnit = ReadWkt2LinearUnit(tokenizer);
-                    break;
-                case "ID":
-                    SkipKeywordNode(tokenizer);
-                    break;
-                default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-                    {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 AXIS keyword '{tokenizer.GetStringValue()}' is not supported.");
-                    }
-
-                    break;
-            }
-
-            tokenizer.NextToken();
+            throw new NotSupportedException($"WKT2 AXIS keyword '{ArgumentGuard.ThrowIfNull(unitNode, nameof(unitNode)).Keyword}' is not supported.");
         }
 
-        return new AxisInfo(axisName, orientation);
+        angularUnit = unit as AngularUnit;
+        linearUnit = unit as LinearUnit;
+        return axis;
     }
 
     private static AxisOrientationEnum ParseWkt2AxisOrientation(string orientationToken)
@@ -555,55 +515,47 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("AXIS");
         }
 
-        IUnit? unit = null;
+        return ReadWkt2AxisDefinition(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string axisName = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        AxisOrientationEnum orientation = ParseWkt2AxisOrientation(tokenizer.GetStringValue());
-        tokenizer.NextToken();
-
-        while (true)
+    private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        if (!string.Equals(node.Keyword, "AXIS", StringComparison.OrdinalIgnoreCase))
         {
-            if (tokenizer.GetStringValue() == ",")
+            throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in AXIS.");
+        }
+
+        IUnit? unit = null;
+        string axisName = node.GetString(0);
+        AxisOrientationEnum orientation = ParseWkt2AxisOrientation(node.GetIdentifier(0));
+
+        foreach (WktNode child in node.Children)
+        {
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "ANGLEUNIT":
                 case "LENGTHUNIT":
                 case "SCALEUNIT":
                 case "TIMEUNIT":
                 case "PARAMETRICUNIT":
-                    unit = ReadWkt2Unit(tokenizer);
+                    unit = ReadWkt2Unit(keywordChild);
                     break;
                 case "ID":
-                    SkipKeywordNode(tokenizer);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 AXIS keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 AXIS keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         return (new AxisInfo(axisName, orientation), unit);
