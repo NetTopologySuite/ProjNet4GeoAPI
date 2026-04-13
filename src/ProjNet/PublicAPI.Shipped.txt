@@ -766,6 +766,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected virtual void SourceToDegrees(System.Span<double> xs, System.Span<double> ys, int strideX, int strideY) { }
         protected void SourceToMeters(ref double x, ref double y) { }
         protected void SourceToMeters(System.Span<double> xs, System.Span<double> ys, int strideX, int strideY) { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override sealed void Transform(ref double x, ref double y, ref double z) { }
         protected override sealed void TransformCore(System.Span<double> xs, System.Span<double> ys, System.Span<double> zs, int strideX, int strideY, int strideZ) { }
         protected static double Adjust_lon(double x) { }
