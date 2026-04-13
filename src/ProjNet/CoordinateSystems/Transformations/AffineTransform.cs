@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Represents an affine math transform that transforms input coordinates to target coordinates using an affine transformation matrix. Dimensionality may change.
@@ -139,6 +140,23 @@ public sealed class AffineTransform : MathTransform
 
     /// <inheritdoc />
     public override int DimTarget => this.dimTarget;
+
+    /// <inheritdoc />
+    public override WktNode ToWktNode()
+    {
+        List<ProjectionParameter> parameters = this.GetParameterValues();
+        var children = new List<WktNode>(parameters.Count + 1)
+        {
+            new WktQuotedString("Affine"),
+        };
+
+        foreach (ProjectionParameter parameter in parameters)
+        {
+            children.Add(parameter.ToWktNode());
+        }
+
+        return new WktKeywordNode("PARAM_MT", children);
+    }
 
     /// <summary>
     /// Returns the inverse of this affine transformation.
