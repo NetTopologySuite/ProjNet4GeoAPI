@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Xml.Linq;
 using ProjNet.Geometries;
 using ProjNet.IO.Wkt;
 
@@ -69,6 +70,12 @@ public abstract class MathTransform
     /// </summary>
     /// <returns>A <see cref="WktNode"/> representing this transform.</returns>
     public virtual WktNode ToWktNode() => throw new NotSupportedException("WKT node serialization is not supported for this transform type.");
+
+    /// <summary>
+    /// Returns an XML representation of this transform as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public virtual XElement ToXml() => throw new NotSupportedException("XML serialization is not supported for this transform type.");
 
     /// <summary>
     /// Tests whether this transform does not move any points.
