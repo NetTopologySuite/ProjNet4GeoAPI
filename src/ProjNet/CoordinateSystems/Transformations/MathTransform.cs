@@ -53,7 +53,7 @@ public abstract class MathTransform
     /// <summary>
     /// Gets a Well-Known text representation of this object.
     /// </summary>
-    public abstract string WKT { get; }
+    public virtual string WKT => this.ToWktNode().ToString();
 
     /// <summary>
     /// Gets an XML representation of this object.
