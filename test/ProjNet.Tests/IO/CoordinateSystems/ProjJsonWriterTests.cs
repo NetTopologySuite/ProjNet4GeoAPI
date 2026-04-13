@@ -294,6 +294,21 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
+    /// Verifies <see cref="CoordinateSystem.ToProjJson"/> delegates to <see cref="ProjJsonWriter.ToJson(CoordinateSystem)"/> for supported CRS shapes.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    [Theory]
+    [MemberData(nameof(SupportedCrossFormatWriterRows))]
+    public void ToProjJson_MatchesProjJsonWriterForSupportedCoordinateSystems(int srid)
+    {
+        CoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.Equal(ProjJsonWriter.ToJson(reference), reference.ToProjJson());
+    }
+
+    /// <summary>
     /// Verifies affine fitted coordinate systems with geographic bases serialize as PROJJSON derived geographic CRS objects.
     /// </summary>
     [Fact]
