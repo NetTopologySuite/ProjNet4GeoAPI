@@ -1446,8 +1446,43 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("COORDINATEOPERATION");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        return ReadWkt2CoordinateOperation(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static Parameter ReadWkt2CoordinateOperationParameter(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "PARAMETER")
+        {
+            tokenizer.ReadToken("PARAMETER");
+        }
+
+        return ReadWkt2CoordinateOperationParameter(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static ConcatenatedOperation ReadWkt2ConcatenatedOperation(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "CONCATENATEDOPERATION")
+        {
+            tokenizer.ReadToken("CONCATENATEDOPERATION");
+        }
+
+        return ReadWkt2ConcatenatedOperation(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static CoordinateOperation ReadWkt2ConcatenatedOperationStep(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "STEP")
+        {
+            tokenizer.ReadToken("STEP");
+        }
+
+        return ReadWkt2ConcatenatedOperationStep(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static CoordinateOperation ReadWkt2CoordinateOperation(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
 
         CoordinateSystem? sourceCoordinateSystem = null;
         CoordinateSystem? targetCoordinateSystem = null;
@@ -1456,52 +1491,38 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var parameters = new List<Parameter>();
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "SOURCECRS":
-                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(keywordChild);
                     break;
                 case "TARGETCRS":
-                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(keywordChild);
                     break;
                 case "METHOD":
-                    methodName = ReadWkt2ProjectionMethod(tokenizer);
+                    methodName = ParseWkt2Root(keywordChild, ReadWkt2ProjectionMethod);
                     break;
                 case "PARAMETER":
-                    parameters.Add(ReadWkt2CoordinateOperationParameter(tokenizer));
+                    parameters.Add(ReadWkt2CoordinateOperationParameter(keywordChild));
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 COORDINATEOPERATION keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 COORDINATEOPERATION keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         if (sourceCoordinateSystem is null)
@@ -1519,6 +1540,8 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgument("WKT2 coordinate operation is missing a METHOD block.");
         }
 
+        sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
+        targetCoordinateSystem = ArgumentGuard.ThrowIfNull(targetCoordinateSystem, nameof(targetCoordinateSystem));
         return new CoordinateOperation(
             methodName,
             parameters,
@@ -1532,62 +1555,38 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static Parameter ReadWkt2CoordinateOperationParameter(WktTokenizer tokenizer)
+    private static Parameter ReadWkt2CoordinateOperationParameter(WktKeywordNode node)
     {
-        if (tokenizer.GetStringValue() != "PARAMETER")
-        {
-            tokenizer.ReadToken("PARAMETER");
-        }
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string parameterName = node.GetString(0);
+        double value = node.GetNumber(0);
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string parameterName = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        double value = tokenizer.GetNumericValue();
-
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
+            if (keywordChild.Keyword is not "ANGLEUNIT"
+                and not "LENGTHUNIT"
+                and not "SCALEUNIT"
+                and not "TIMEUNIT"
+                and not "PARAMETRICUNIT"
+                and not "ID"
+                && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                tokenizer.CheckCloser(bracket);
-                break;
+                throw new NotSupportedException($"WKT2 COORDINATEOPERATION PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
             }
-
-            if (tokenizer.GetStringValue() is "ANGLEUNIT" or "LENGTHUNIT" or "SCALEUNIT" or "TIMEUNIT" or "PARAMETRICUNIT" or "ID")
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
-            {
-                SkipKeywordNode(tokenizer);
-            }
-            else
-            {
-                throw new NotSupportedException($"WKT2 COORDINATEOPERATION PARAMETER keyword '{tokenizer.GetStringValue()}' is not supported.");
-            }
-
-            tokenizer.NextToken();
         }
 
         return new Parameter(parameterName, value);
     }
 
-    private static ConcatenatedOperation ReadWkt2ConcatenatedOperation(WktTokenizer tokenizer)
+    private static ConcatenatedOperation ReadWkt2ConcatenatedOperation(WktKeywordNode node)
     {
-        if (tokenizer.GetStringValue() != "CONCATENATEDOPERATION")
-        {
-            tokenizer.ReadToken("CONCATENATEDOPERATION");
-        }
-
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        string name = node.GetString(0);
 
         CoordinateSystem? sourceCoordinateSystem = null;
         CoordinateSystem? targetCoordinateSystem = null;
@@ -1595,49 +1594,35 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var steps = new List<CoordinateOperation>();
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "SOURCECRS":
-                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(keywordChild);
                     break;
                 case "TARGETCRS":
-                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(keywordChild);
                     break;
                 case "STEP":
-                    steps.Add(ReadWkt2ConcatenatedOperationStep(tokenizer));
+                    steps.Add(ReadWkt2ConcatenatedOperationStep(keywordChild));
                     break;
                 case "ID":
-                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 CONCATENATEDOPERATION keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 CONCATENATEDOPERATION keyword '{keywordChild.Keyword}' is not supported.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         if (sourceCoordinateSystem is null)
@@ -1650,6 +1635,8 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgument("WKT2 concatenated operation is missing a TARGETCRS block.");
         }
 
+        sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
+        targetCoordinateSystem = ArgumentGuard.ThrowIfNull(targetCoordinateSystem, nameof(targetCoordinateSystem));
         return new ConcatenatedOperation(
             steps,
             sourceCoordinateSystem,
@@ -1662,21 +1649,18 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static CoordinateOperation ReadWkt2ConcatenatedOperationStep(WktTokenizer tokenizer)
+    private static CoordinateOperation ReadWkt2ConcatenatedOperationStep(WktKeywordNode node)
     {
-        if (tokenizer.GetStringValue() != "STEP")
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+
+        WktKeywordNode? operationNode = node.FindChild("COORDINATEOPERATION");
+        if (operationNode is null)
         {
-            tokenizer.ReadToken("STEP");
+            WktKeywordNode? firstChild = node.Children.OfType<WktKeywordNode>().FirstOrDefault();
+            throw new NotSupportedException($"WKT2 STEP keyword '{firstChild?.Keyword ?? string.Empty}' is not supported.");
         }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        tokenizer.NextToken();
-        CoordinateOperation step = tokenizer.GetStringValue() == "COORDINATEOPERATION"
-            ? ReadWkt2CoordinateOperation(tokenizer)
-            : throw new NotSupportedException($"WKT2 STEP keyword '{tokenizer.GetStringValue()}' is not supported.");
-        tokenizer.NextToken();
-        tokenizer.CheckCloser(bracket);
-        return step;
+        return ReadWkt2CoordinateOperation(operationNode);
     }
 
     private static void ReadIdentifierWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
