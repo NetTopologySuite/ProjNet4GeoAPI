@@ -31,18 +31,17 @@ public class MathTransformInvertibilityTests
     }
 
     /// <summary>
-    /// Verifies that Mercator WKT formatting preserves the expected separators while emitting the projection parameters.
+    /// Verifies that Mercator WKT formatting preserves the expected forward and inverse WKT shape.
     /// </summary>
     [Fact]
-    public void MercatorProjectionWkt_FormatsParametersWithExpectedSeparators()
+    public void MercatorProjectionWkt_MatchesForwardAndInverseReferenceStrings()
     {
         MapProjection projection = Assert.IsAssignableFrom<MapProjection>(
             ProjectionsRegistry.CreateProjection("mercator", CreateMercatorParameters()));
-        string expected = "PARAM_MT[\"" + projection.Name + "\"" +
-            string.Concat(Enumerable.Range(0, projection.NumParameters).Select(i => ", " + projection.GetParameter(i).WKT)) +
-            "]";
+        MapProjection inverse = Assert.IsAssignableFrom<MapProjection>(projection.Inverse());
 
-        Assert.Equal(expected, projection.WKT);
+        Assert.Equal(CreateExpectedProjectionWkt(projection), projection.WKT);
+        Assert.Equal(CreateExpectedProjectionWkt(inverse), inverse.WKT);
     }
 
     /// <summary>
@@ -97,6 +96,16 @@ public class MathTransformInvertibilityTests
             new("false_northing", 0d),
             new("unit", 1d),
         ];
+    }
+
+    private static string CreateExpectedProjectionWkt(MapProjection projection)
+    {
+        string parameterizedWkt = "PARAM_MT[\"" + projection.Name + "\"" +
+            string.Concat(Enumerable.Range(0, projection.NumParameters).Select(i => ", " + projection.GetParameter(i).WKT)) +
+            "]";
+        return projection.IsInverse
+            ? "INVERSE_MT[" + parameterizedWkt + "]"
+            : parameterizedWkt;
     }
 
     private static MathTransform CreateTransform(string operation)
