@@ -8,8 +8,6 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 using System.Threading;
 using System.Xml.Linq;
 using ProjNet.CoordinateSystems.Transformations;
@@ -428,26 +426,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.Append("<CT_MathTransform>");
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture,
-                this.IsInverse ? "<CT_InverseTransform Name=\"{0}\">" : "<CT_ParameterizedMathTransform Name=\"{0}\">",
-                this.ClassName);
-            for (int i = 0; i < this.NumParameters; i++)
-            {
-                sb.Append(this.GetParameter(i).XML);
-            }
-
-            sb.Append(this.IsInverse ? "</CT_InverseTransform>" : "</CT_ParameterizedMathTransform>");
-            sb.Append("</CT_MathTransform>");
-            return sb.ToString();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <inheritdoc/>
     public sealed override int DimSource => 2;
