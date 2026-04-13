@@ -422,38 +422,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// Gets the Well-known text for this object
     /// as defined in the simple features specification.
     /// </summary>
-    public override string WKT
-    {
-        get
-        {
-            // Keep the MathTransform WKT/XML implementations local to MapProjection for now:
-            // unlike the coordinate-system model types in Milestone 60, this hierarchy has no
-            // reusable WktNode/XElement builders, so adding them here would broaden the API
-            // surface instead of merely removing existing duplication.
-            var sb = new StringBuilder();
-            if (this.IsInverse)
-            {
-                sb.Append("INVERSE_MT[");
-            }
-
-            sb.Append("PARAM_MT[\"");
-            sb.Append(this.Name);
-            sb.Append('"');
-            for (int i = 0; i < this.NumParameters; i++)
-            {
-                sb.Append(", ");
-                sb.Append(this.GetParameter(i).WKT);
-            }
-
-            sb.Append(']');
-            if (this.IsInverse)
-            {
-                sb.Append(']');
-            }
-
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <summary>
     /// Gets an XML representation of this object.
