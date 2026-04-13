@@ -2528,53 +2528,53 @@ public static partial class CoordinateSystemWktReader
 
     private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktTokenizer tokenizer)
     {
-        const string rootKeyword = "COMPOUNDCRS";
+        return ReadWkt2CompoundCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
 
-        WktBracket bracket = tokenizer.ReadOpener();
-        string name = tokenizer.ReadDoubleQuotedWord();
+    private static BoundCoordinateSystem ReadWkt2BoundCoordinateSystem(WktTokenizer tokenizer)
+    {
+        return ReadWkt2BoundCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktTokenizer tokenizer)
+    {
+        return ReadWkt2BoundCoordinateSystemComponent(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        const string rootKeyword = "COMPOUNDCRS";
+        string name = node.GetString(0);
 
         CoordinateSystem? headCoordinateSystem = null;
         CoordinateSystem? tailCoordinateSystem = null;
         string authority = string.Empty;
         long authorityCode = -1;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
-            }
-
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
             }
 
             if (headCoordinateSystem is null)
             {
-                headCoordinateSystem = ReadCoordinateSystem(null, tokenizer);
+                headCoordinateSystem = ReadWkt2CoordinateSystemNode(keywordChild);
             }
             else if (tailCoordinateSystem is null)
             {
-                tailCoordinateSystem = ReadCoordinateSystem(null, tokenizer);
+                tailCoordinateSystem = ReadWkt2CoordinateSystemNode(keywordChild);
             }
-            else if (tokenizer.GetStringValue() == "ID")
+            else if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
             {
-                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
             {
-                SkipKeywordNode(tokenizer);
+                throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
-            else
-            {
-                throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
-            }
-
-            tokenizer.NextToken();
         }
 
         headCoordinateSystem = ArgumentGuard.ThrowIfNull(headCoordinateSystem, nameof(headCoordinateSystem));
@@ -2582,56 +2582,42 @@ public static partial class CoordinateSystemWktReader
         return new CompoundCoordinateSystem(headCoordinateSystem, tailCoordinateSystem, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static BoundCoordinateSystem ReadWkt2BoundCoordinateSystem(WktTokenizer tokenizer)
+    private static BoundCoordinateSystem ReadWkt2BoundCoordinateSystem(WktKeywordNode node)
     {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "BOUNDCRS";
 
-        WktBracket bracket = tokenizer.ReadOpener();
         CoordinateSystem? sourceCoordinateSystem = null;
         CoordinateSystem? targetCoordinateSystem = null;
         BoundTransformation? transformation = null;
 
-        tokenizer.NextToken();
-        while (true)
+        foreach (WktNode child in node.Children)
         {
-            if (tokenizer.GetStringValue() == ",")
+            if (child is not WktKeywordNode keywordChild)
             {
-                tokenizer.NextToken();
                 continue;
             }
 
-            if (tokenizer.GetStringValue() is "]" or ")")
-            {
-                tokenizer.CheckCloser(bracket);
-                break;
-            }
-
-            switch (tokenizer.GetStringValue())
+            switch (keywordChild.Keyword)
             {
                 case "SOURCECRS":
-                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(keywordChild);
                     EnsureSupportedWkt2BoundSourceCoordinateSystem(sourceCoordinateSystem);
                     break;
                 case "TARGETCRS":
-                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(keywordChild);
                     break;
                 case "ABRIDGEDTRANSFORMATION":
-                    transformation = ReadWkt2AbridgedTransformationDefinition(tokenizer);
+                    transformation = ReadWkt2AbridgedTransformationDefinition(keywordChild);
                     break;
                 default:
-                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
                     {
-                        SkipKeywordNode(tokenizer);
-                    }
-                    else
-                    {
-                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                        throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
                     }
 
                     break;
             }
-
-            tokenizer.NextToken();
         }
 
         sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
@@ -2650,18 +2636,50 @@ public static partial class CoordinateSystemWktReader
             sourceCoordinateSystem.Remarks);
     }
 
-    private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktTokenizer tokenizer)
+    private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktKeywordNode node)
     {
-        WktBracket bracket = tokenizer.ReadOpener();
-        tokenizer.NextToken();
-        CoordinateSystem coordinateSystem = tokenizer.GetStringValue() switch
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+
+        WktKeywordNode? coordinateSystemNode = null;
+        bool foundCoordinateSystemNode = false;
+        foreach (WktNode child in node.Children)
         {
-            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer),
-            _ => ReadCoordinateSystem(null, tokenizer),
+            if (child is not WktKeywordNode keywordChild)
+            {
+                continue;
+            }
+
+            if (!foundCoordinateSystemNode)
+            {
+                coordinateSystemNode = keywordChild;
+                foundCoordinateSystemNode = true;
+            }
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            {
+                throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {node.Keyword}.");
+            }
+        }
+
+        return ReadWkt2CoordinateSystemNode(ArgumentGuard.ThrowIfNull(coordinateSystemNode, nameof(coordinateSystemNode)));
+    }
+
+    private static CoordinateSystem ReadWkt2CoordinateSystemNode(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+
+        return node.Keyword switch
+        {
+            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(node),
+            "PROJCRS" => ReadWkt2ProjectedCoordinateSystem(node),
+            "DERIVEDPROJCRS" => ReadWkt2DerivedProjectedCoordinateSystem(node),
+            "VERTCRS" => ReadWkt2VerticalCoordinateSystem(node),
+            "ENGCRS" or "ENGINEERINGCRS" => ReadWkt2EngineeringCoordinateSystem(node),
+            "TIMECRS" => ReadWkt2TemporalCoordinateSystem(node),
+            "PARAMETRICCRS" => ReadWkt2ParametricCoordinateSystem(node),
+            "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(node),
+            "BOUNDCRS" => ReadWkt2BoundCoordinateSystem(node),
+            _ => ParseWkt2Root(node, tokenizer => ReadCoordinateSystem(null, tokenizer)),
         };
-        tokenizer.NextToken();
-        tokenizer.CheckCloser(bracket);
-        return coordinateSystem;
     }
 
     private static void EnsureSupportedWkt2BoundSourceCoordinateSystem(CoordinateSystem coordinateSystem)
@@ -2749,6 +2767,14 @@ public static partial class CoordinateSystemWktReader
             methodName,
             string.IsNullOrWhiteSpace(parameterFileName) ? parameters : null,
             parameterFileName);
+    }
+
+    private static BoundTransformation ReadWkt2AbridgedTransformationDefinition(WktKeywordNode node)
+    {
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        var tokenizer = new WktTokenizer(node.ToString());
+        tokenizer.NextToken();
+        return ReadWkt2AbridgedTransformationDefinition(tokenizer);
     }
 
     private static void ReadWkt2AbridgedTransformationParameter(WktTokenizer tokenizer, Wgs84ConversionInfo parameters)
