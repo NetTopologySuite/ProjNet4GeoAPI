@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Abstract base class for all map projections, providing shared mathematical utilities and
@@ -483,6 +484,25 @@ public abstract class MapProjection : MathTransform, IProjection
 
     /// <inheritdoc/>
     public sealed override int DimTarget => 2;
+
+    /// <inheritdoc />
+    public override WktNode ToWktNode()
+    {
+        var children = new List<WktNode>(this.NumParameters + 1)
+        {
+            new WktQuotedString(this.Name),
+        };
+
+        for (int i = 0; i < this.NumParameters; i++)
+        {
+            children.Add(this.GetParameter(i).ToWktNode());
+        }
+
+        WktNode parameterizedNode = new WktKeywordNode("PARAM_MT", children);
+        return this.IsInverse
+            ? new WktKeywordNode("INVERSE_MT", parameterizedNode)
+            : parameterizedNode;
+    }
 
     /// <inheritdoc />
     public sealed override void Transform(ref double x, ref double y, ref double z)
