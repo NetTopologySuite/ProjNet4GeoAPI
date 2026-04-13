@@ -206,16 +206,10 @@ public class GeoTiffGridRuntimeTests
                 return candidate;
             }
 
-            string projCandidate = Path.Combine(current.FullName, "spec", "PROJ", "data", "tests", fileName);
-            if (File.Exists(projCandidate))
-            {
-                return projCandidate;
-            }
-
             current = current.Parent;
         }
 
-        throw new FileNotFoundException("Could not locate a GeoTIFF grid fixture under test\\ProjNet.Tests\\Fixtures\\grids or spec\\PROJ\\data\\tests.", fileName);
+        throw new FileNotFoundException("Could not locate a GeoTIFF grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 
     private class TrackingDoubleArrayPool : ArrayPool<double>

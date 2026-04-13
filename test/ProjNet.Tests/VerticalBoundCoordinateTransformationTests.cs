@@ -23,7 +23,7 @@ public class VerticalBoundCoordinateTransformationTests
     [Fact]
     public void CreateFromCoordinateSystems_WithVerticalBoundCompoundSource_TransformsGravityRelatedHeightToEllipsoidalHeight()
     {
-        string gridPath = FindGridPath("egm96_15_downsampled.gtx");
+        string gridPath = FindGridPath("egm96_15.gtx");
         BoundCoordinateSystem boundVertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(
             CoordinateSystemFactory,
             CreateVerticalBoundWkt(gridPath));
@@ -53,7 +53,7 @@ public class VerticalBoundCoordinateTransformationTests
     [Fact]
     public void CreateFromCoordinateSystems_WithEllipsoidalHeightCompoundSource_TransformsEllipsoidalHeightToBoundVerticalHeight()
     {
-        string gridPath = FindGridPath("egm96_15_downsampled.gtx");
+        string gridPath = FindGridPath("egm96_15.gtx");
         BoundCoordinateSystem boundVertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(
             CoordinateSystemFactory,
             CreateVerticalBoundWkt(gridPath));

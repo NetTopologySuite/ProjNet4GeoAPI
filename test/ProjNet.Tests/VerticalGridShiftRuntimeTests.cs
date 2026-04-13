@@ -26,7 +26,7 @@ public class VerticalGridShiftRuntimeTests
     [InlineData(" +multiplier=1", 36.9959410718d)]
     public void VgridshiftWithGtxGridAppliesExpectedVerticalShift(string multiplierToken, double expectedZ)
     {
-        string gridPath = FindGridPath("egm96_15_downsampled.gtx");
+        string gridPath = FindGridPath("egm96_15.gtx");
         string operation = $"+proj=vgridshift +grids={gridPath}{multiplierToken}";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
@@ -44,7 +44,7 @@ public class VerticalGridShiftRuntimeTests
     [Fact]
     public void VgridshiftWithInverseFlagRoundtripsSinglePoint()
     {
-        string gridPath = FindGridPath("egm96_15_downsampled.gtx");
+        string gridPath = FindGridPath("egm96_15.gtx");
         string forwardOperation = $"+proj=vgridshift +grids={gridPath}";
         string inverseOperation = $"+inv +proj=vgridshift +grids={gridPath}";
 

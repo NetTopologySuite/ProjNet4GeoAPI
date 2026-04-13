@@ -194,7 +194,7 @@ public sealed class DhdnGkToUtmTheoryTests
             ProjectedCoordinateSystem target = Assert.IsType<ProjectedCoordinateSystem>(
                 Css.GetCoordinateSystem(targetSrid),
                 exactMatch: false);
-            string gridPath = Path.Combine(FindProjGridDirectory(), "BETA2007.gsb");
+            string gridPath = Path.Combine(FindFixtureGridDirectory(), "BETA2007.gsb");
 
             ConcatenatedTransform concatenatedTransform = new();
             concatenatedTransform.CoordinateTransformationList.Add(
@@ -266,12 +266,12 @@ public sealed class DhdnGkToUtmTheoryTests
         throw new FileNotFoundException("Could not locate the DHDN_ETRS89.gie fixture under test\\ProjNet.Tests\\Fixtures\\gie.", "DHDN_ETRS89.gie");
     }
 
-    private static string FindProjGridDirectory()
+    private static string FindFixtureGridDirectory()
     {
         DirectoryInfo? current = new(AppContext.BaseDirectory);
         while (current is not null)
         {
-            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "data", "tests");
+            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "grids");
             if (File.Exists(Path.Combine(candidate, "BETA2007.gsb")))
             {
                 return candidate;
@@ -280,7 +280,7 @@ public sealed class DhdnGkToUtmTheoryTests
             current = current.Parent;
         }
 
-        throw new DirectoryNotFoundException("Could not locate spec\\PROJ\\data\\tests with BETA2007.gsb.");
+        throw new DirectoryNotFoundException("Could not locate test\\ProjNet.Tests\\Fixtures\\grids with BETA2007.gsb.");
     }
 
     private sealed record TaggedCoordinate(double X, double Y, string Tag);

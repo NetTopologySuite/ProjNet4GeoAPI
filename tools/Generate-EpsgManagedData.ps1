@@ -1,5 +1,7 @@
 param(
-    [string]$ZipPath = "..\..\..\spec\epsg\EPSG-v12_053-WKT.Zip",
+    # Path to the EPSG WKT ZIP archive (for example EPSG-v12_053-WKT.Zip).
+    [Parameter(Mandatory = $true)]
+    [string]$ZipPath,
     [string]$OutputPath = "..\src\ProjNet\Data\Generated\EpsgGeneratedCatalog.g.cs"
 )
 

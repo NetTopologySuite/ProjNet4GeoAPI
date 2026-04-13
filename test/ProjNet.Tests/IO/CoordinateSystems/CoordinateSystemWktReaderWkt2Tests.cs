@@ -298,7 +298,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     {
         return
         [
-            new TheoryDataRow<string, string>(@"spec\PROJ\test\unit\test_operationfactory.cpp:3815", ProjectedProjBoundCrs),
+            new TheoryDataRow<string, string>("PROJ test_operationfactory.cpp:3815", ProjectedProjBoundCrs),
         ];
     }
 
@@ -310,7 +310,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     {
         return
         [
-            new TheoryDataRow<string, string>(@"spec\PROJ\test\unit\test_operationfactory.cpp:9132", VerticalProjBoundCrs),
+            new TheoryDataRow<string, string>("PROJ test_operationfactory.cpp:9132", VerticalProjBoundCrs),
         ];
     }
 

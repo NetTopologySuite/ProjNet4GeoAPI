@@ -1,6 +1,8 @@
 param(
     [string]$GeneratedCatalogPath = "..\src\ProjNet\Data\Generated\EpsgGeneratedCatalog.g.cs",
-    [string]$ProjBinPath = "..\..\..\spec\PROJ\build-vcpkg\bin",
+    # Path to the directory containing the PROJ command-line binaries (projinfo.exe and cs2cs.exe).
+    [Parameter(Mandatory = $true)]
+    [string]$ProjBinPath,
     [string]$OutputPath = "..\test\ProjNet.Tests\Generated\proj2proj-direct-parity-fixture.json",
     [string]$ProjNetProjectPath = "..\src\ProjNet\ProjNET.csproj",
     [int]$MaxCases = 24
