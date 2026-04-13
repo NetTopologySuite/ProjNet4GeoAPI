@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Creates an object based on the supplied Well Known Text (WKT).
@@ -79,79 +80,51 @@ public static partial class CoordinateSystemWktReader
     private static bool TryParseNativeWkt2(string wkt, out IInfo? info)
     {
         var tokenizer = new WktTokenizer(wkt);
-        tokenizer.NextToken();
-        switch (tokenizer.GetStringValue())
+        WktKeywordNode rootNode;
+        try
         {
-            case "GEOGCRS":
-            case "GEODCRS":
-            case "GEODETICCRS":
-                if (!ContainsKeywordBlock(wkt, "CS"))
-                {
-                    info = null;
-                    return false;
-                }
-
-                info = ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer);
-                return true;
-            case "PROJCRS":
-                if (!ContainsKeywordBlock(wkt, "CONVERSION") || !ContainsKeywordBlock(wkt, "CS"))
-                {
-                    info = null;
-                    return false;
-                }
-
-                info = ReadWkt2ProjectedCoordinateSystem(tokenizer);
-                return true;
-            case "DERIVEDPROJCRS":
-                if (!ContainsKeywordBlock(wkt, "DERIVINGCONVERSION") || !ContainsKeywordBlock(wkt, "CS"))
-                {
-                    info = null;
-                    return false;
-                }
-
-                info = ReadWkt2DerivedProjectedCoordinateSystem(tokenizer);
-                return true;
-            case "VERTCRS":
-                if ((!ContainsKeywordBlock(wkt, "VDATUM") && !ContainsKeywordBlock(wkt, "ENSEMBLE")) || !ContainsKeywordBlock(wkt, "CS"))
-                {
-                    info = null;
-                    return false;
-                }
-
-                info = ReadWkt2VerticalCoordinateSystem(tokenizer);
-                return true;
-            case "ENGCRS":
-            case "ENGINEERINGCRS":
-                info = ReadWkt2EngineeringCoordinateSystem(tokenizer);
-                return true;
-            case "TIMECRS":
-                info = ReadWkt2TemporalCoordinateSystem(tokenizer);
-                return true;
-            case "PARAMETRICCRS":
-                info = ReadWkt2ParametricCoordinateSystem(tokenizer);
-                return true;
-            case "COORDINATEOPERATION":
-                info = ReadWkt2CoordinateOperation(tokenizer);
-                return true;
-            case "CONCATENATEDOPERATION":
-                info = ReadWkt2ConcatenatedOperation(tokenizer);
-                return true;
-            case "COMPOUNDCRS":
-                info = ReadWkt2CompoundCoordinateSystem(tokenizer);
-                return true;
-            case "BOUNDCRS":
-                if (!HasCompleteWkt2BoundCoordinateSystemBlocks(wkt))
-                {
-                    info = null;
-                    return false;
-                }
-
-                info = ReadWkt2BoundCoordinateSystem(tokenizer);
-                return true;
-            default:
-                info = null;
-                return false;
+            rootNode = WktKeywordNode.ParseTree(tokenizer);
         }
+        catch (ArgumentException)
+        {
+            info = null;
+            return false;
+        }
+
+        info = rootNode.Keyword switch
+        {
+            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" when rootNode.FindChild("CS") is not null
+                => ParseWkt2Root(rootNode, ReadWkt2GeodeticCoordinateReferenceSystem),
+            "PROJCRS" when rootNode.FindChild("CONVERSION") is not null && rootNode.FindChild("CS") is not null
+                => ParseWkt2Root(rootNode, ReadWkt2ProjectedCoordinateSystem),
+            "DERIVEDPROJCRS" when rootNode.FindChild("DERIVINGCONVERSION") is not null && rootNode.FindChild("CS") is not null
+                => ParseWkt2Root(rootNode, ReadWkt2DerivedProjectedCoordinateSystem),
+            "VERTCRS" when rootNode.FindChild("VDATUM", "ENSEMBLE") is not null && rootNode.FindChild("CS") is not null
+                => ParseWkt2Root(rootNode, ReadWkt2VerticalCoordinateSystem),
+            "ENGCRS" or "ENGINEERINGCRS" => ParseWkt2Root(rootNode, ReadWkt2EngineeringCoordinateSystem),
+            "TIMECRS" => ParseWkt2Root(rootNode, ReadWkt2TemporalCoordinateSystem),
+            "PARAMETRICCRS" => ParseWkt2Root(rootNode, ReadWkt2ParametricCoordinateSystem),
+            "COORDINATEOPERATION" => ParseWkt2Root(rootNode, ReadWkt2CoordinateOperation),
+            "CONCATENATEDOPERATION" => ParseWkt2Root(rootNode, ReadWkt2ConcatenatedOperation),
+            "COMPOUNDCRS" => ParseWkt2Root(rootNode, ReadWkt2CompoundCoordinateSystem),
+            "BOUNDCRS" when rootNode.FindChild("SOURCECRS") is not null
+                && rootNode.FindChild("TARGETCRS") is not null
+                && rootNode.FindChild("ABRIDGEDTRANSFORMATION") is not null
+                => ParseWkt2Root(rootNode, ReadWkt2BoundCoordinateSystem),
+            _ => null,
+        };
+
+        return info is not null;
+    }
+
+    private static T ParseWkt2Root<T>(WktKeywordNode rootNode, Func<WktTokenizer, T> reader)
+    {
+        ArgumentGuard.ThrowIfNull(rootNode, nameof(rootNode));
+        ArgumentGuard.ThrowIfNull(reader, nameof(reader));
+
+        var tokenizer = new WktTokenizer(rootNode.ToString());
+        tokenizer.NextToken();
+        return reader(tokenizer);
     }
 
     private static bool ContainsKeywordBlock(string wkt, string keyword)
