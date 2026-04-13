@@ -22,61 +22,6 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public static partial class CoordinateSystemWktReader
 {
-    private static void SkipKeywordNode(WktTokenizer tokenizer)
-    {
-        _ = tokenizer.ReadOpener();
-        int depth = 1;
-        while (depth > 0)
-        {
-            TokenType tokenType = tokenizer.NextToken(false);
-            if (tokenType == TokenType.Eof)
-            {
-                ArgumentGuard.ThrowArgument("Unexpected end of input while skipping WKT2 metadata node.");
-            }
-
-            string token = tokenizer.GetStringValue();
-            if (token is "[" or "(")
-            {
-                depth++;
-            }
-            else if (token is "]" or ")")
-            {
-                depth--;
-            }
-        }
-    }
-
-    private static void ReadAuthorityWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
-    {
-        tokenizer.ReadAuthority(out authority, out authorityCode, out bool hasNumericAuthorityCode);
-        if (!hasNumericAuthorityCode)
-        {
-            authorityCode = -1;
-        }
-    }
-
-    private static void ReadOptionalAuthoritySkippingUnknownNodes(WktTokenizer tokenizer, WktBracket bracket, out string authority, out long authorityCode)
-    {
-        authority = string.Empty;
-        authorityCode = -1;
-
-        while (tokenizer.GetStringValue() == ",")
-        {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "AUTHORITY")
-            {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-                tokenizer.ReadCloser(bracket);
-                return;
-            }
-
-            SkipKeywordNode(tokenizer);
-            tokenizer.NextToken();
-        }
-
-        tokenizer.CheckCloser(bracket);
-    }
-
     /// <summary>
     /// Returns a IUnit given a piece of WKT.
     /// </summary>

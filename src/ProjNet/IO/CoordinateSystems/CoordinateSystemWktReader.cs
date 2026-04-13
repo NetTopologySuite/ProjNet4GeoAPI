@@ -191,6 +191,8 @@ public static partial class CoordinateSystemWktReader
             or "LOCAL_CS";
     }
 
+    // The WKT1 fallback still accepts historical hybrid inputs such as PROJECTEDCRS plus
+    // PROJECTION/PARAMETER siblings and spaced ID[...] metadata that do not satisfy the native WKT2 path.
     private static string NormalizeWkt(string wkt)
     {
         string normalized = wkt;
