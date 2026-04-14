@@ -3,6 +3,8 @@
 
 namespace ProjNet.IO.Wkt;
 
+using System.Text;
+
 /// <summary>
 /// Abstract base class for all WKT (Well-Known Text) syntax tree nodes.
 /// </summary>
@@ -21,4 +23,21 @@ public abstract class WktNode
     /// <param name="indentSize">The number of spaces per indentation level.</param>
     /// <returns>A formatted WKT string with indentation.</returns>
     public abstract string ToFormattedString(int indentLevel = 0, int indentSize = 4);
+
+    /// <summary>
+    /// Appends the compact WKT representation of this node to the provided string builder.
+    /// </summary>
+    /// <param name="builder">The target string builder.</param>
+    internal abstract void AppendTo(StringBuilder builder);
+
+    /// <summary>
+    /// Appends the formatted WKT representation of this node to the provided string builder.
+    /// </summary>
+    /// <param name="builder">The target string builder.</param>
+    /// <param name="indentLevel">The current indentation level.</param>
+    /// <param name="indentSize">The number of spaces per indentation level.</param>
+    internal virtual void AppendFormattedTo(StringBuilder builder, int indentLevel, int indentSize)
+    {
+        this.AppendTo(builder);
+    }
 }

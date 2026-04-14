@@ -4,6 +4,7 @@
 namespace ProjNet.IO.Wkt;
 
 using System.Globalization;
+using System.Text;
 
 /// <summary>
 /// Represents a numeric value in WKT, e.g. <c>6378137</c>.
@@ -26,4 +27,10 @@ public sealed class WktNumber : WktNode
 
     /// <inheritdoc />
     public override string ToFormattedString(int indentLevel = 0, int indentSize = 4) => this.ToString();
+
+    /// <inheritdoc />
+    internal override void AppendTo(StringBuilder builder)
+    {
+        builder.Append(this.Value.ToString(CultureInfo.InvariantCulture));
+    }
 }

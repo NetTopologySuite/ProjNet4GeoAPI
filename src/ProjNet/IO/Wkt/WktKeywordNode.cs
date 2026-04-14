@@ -15,15 +15,18 @@ using ProjNet.IO.CoordinateSystems;
 /// </summary>
 public sealed class WktKeywordNode : WktNode
 {
+    private readonly WktTextSlice keywordText;
+    private readonly WktNode[] children;
+    private string? keyword;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="WktKeywordNode"/> class.
     /// </summary>
     /// <param name="keyword">The WKT keyword.</param>
     /// <param name="children">The child nodes.</param>
     public WktKeywordNode(string keyword, params WktNode[] children)
+        : this(new WktTextSlice(ArgumentGuard.ThrowIfNull(keyword, nameof(keyword))), CopyChildren(children), keyword)
     {
-        this.Keyword = keyword;
-        this.Children = children;
     }
 
     /// <summary>
@@ -32,91 +35,52 @@ public sealed class WktKeywordNode : WktNode
     /// <param name="keyword">The WKT keyword.</param>
     /// <param name="children">The child nodes.</param>
     public WktKeywordNode(string keyword, IReadOnlyList<WktNode> children)
+        : this(new WktTextSlice(ArgumentGuard.ThrowIfNull(keyword, nameof(keyword))), CopyChildren(children), keyword)
     {
-        this.Keyword = keyword;
-        this.Children = children;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="WktKeywordNode"/> class from a source-backed keyword slice.
+    /// </summary>
+    /// <param name="source">The WKT source string.</param>
+    /// <param name="keywordStart">The zero-based start index of the keyword text.</param>
+    /// <param name="keywordLength">The keyword length.</param>
+    /// <param name="children">The child node array to attach directly.</param>
+    internal WktKeywordNode(string source, int keywordStart, int keywordLength, WktNode[] children)
+        : this(new WktTextSlice(source, keywordStart, keywordLength), TakeChildren(children), keyword: null)
+    {
+    }
+
+    private WktKeywordNode(WktTextSlice keywordText, WktNode[] children, string? keyword)
+    {
+        this.keywordText = keywordText;
+        this.children = children;
+        this.keyword = keyword;
     }
 
     /// <summary>
     /// Gets the WKT keyword, e.g. <c>GEOGCS</c>, <c>DATUM</c>.
     /// </summary>
-    public string Keyword { get; }
+    public string Keyword => this.keyword ??= this.keywordText.ToText();
 
     /// <summary>
     /// Gets the child nodes of this keyword node.
     /// </summary>
-    public IReadOnlyList<WktNode> Children { get; }
+    public IReadOnlyList<WktNode> Children => this.children;
 
     /// <inheritdoc />
     public override string ToString()
     {
         var sb = new StringBuilder();
-        sb.Append(this.Keyword);
-        sb.Append('[');
-        for (int i = 0; i < this.Children.Count; i++)
-        {
-            if (i > 0)
-            {
-                sb.Append(", ");
-            }
-
-            sb.Append(this.Children[i].ToString());
-        }
-
-        sb.Append(']');
+        this.AppendTo(sb);
         return sb.ToString();
     }
 
     /// <inheritdoc />
     public override string ToFormattedString(int indentLevel = 0, int indentSize = 4)
     {
-        string indent = new string(' ', indentLevel * indentSize);
-        string childIndent = new string(' ', (indentLevel + 1) * indentSize);
         var sb = new StringBuilder();
-        sb.Append(indent);
-        sb.Append(this.Keyword);
-        sb.Append('[');
-
-        bool hasComplexChildren = HasKeywordChildren(this.Children);
-        if (hasComplexChildren && this.Children.Count > 0)
-        {
-            sb.AppendLine();
-            for (int i = 0; i < this.Children.Count; i++)
-            {
-                if (this.Children[i] is WktKeywordNode keywordChild)
-                {
-                    sb.Append(keywordChild.ToFormattedString(indentLevel + 1, indentSize));
-                }
-                else
-                {
-                    sb.Append(childIndent);
-                    sb.Append(this.Children[i].ToString());
-                }
-
-                if (i < this.Children.Count - 1)
-                {
-                    sb.Append(',');
-                }
-
-                sb.AppendLine();
-            }
-
-            sb.Append(indent);
-        }
-        else
-        {
-            for (int i = 0; i < this.Children.Count; i++)
-            {
-                if (i > 0)
-                {
-                    sb.Append(", ");
-                }
-
-                sb.Append(this.Children[i].ToString());
-            }
-        }
-
-        sb.Append(']');
+        this.AppendFormattedTo(sb, indentLevel, indentSize);
         return sb.ToString();
     }
 
@@ -211,16 +175,16 @@ public sealed class WktKeywordNode : WktNode
     {
         ArgumentGuard.ThrowIfNull(keywords, nameof(keywords));
 
-        foreach (WktNode child in this.Children)
+        for (int childIndex = 0; childIndex < this.children.Length; childIndex++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (this.children[childIndex] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
 
             for (int i = 0; i < keywords.Length; i++)
             {
-                if (string.Equals(keywordChild.Keyword, keywords[i], StringComparison.OrdinalIgnoreCase))
+                if (keywordChild.KeywordEquals(keywords[i]))
                 {
                     return keywordChild;
                 }
@@ -240,16 +204,16 @@ public sealed class WktKeywordNode : WktNode
         ArgumentGuard.ThrowIfNull(keyword, nameof(keyword));
 
         var matches = new List<WktKeywordNode>();
-        foreach (WktNode child in this.Children)
+        for (int i = 0; i < this.children.Length; i++)
         {
-            if (child is WktKeywordNode keywordChild &&
-                string.Equals(keywordChild.Keyword, keyword, StringComparison.OrdinalIgnoreCase))
+            if (this.children[i] is WktKeywordNode keywordChild &&
+                keywordChild.KeywordEquals(keyword))
             {
                 matches.Add(keywordChild);
             }
         }
 
-        return matches;
+        return matches.Count == 0 ? Array.Empty<WktKeywordNode>() : matches;
     }
 
     /// <summary>
@@ -259,15 +223,15 @@ public sealed class WktKeywordNode : WktNode
     internal IReadOnlyList<string> GetAllStrings()
     {
         var values = new List<string>();
-        foreach (WktNode child in this.Children)
+        for (int i = 0; i < this.children.Length; i++)
         {
-            if (child is WktQuotedString quotedString)
+            if (this.children[i] is WktQuotedString quotedString)
             {
                 values.Add(quotedString.Value);
             }
         }
 
-        return values;
+        return values.Count == 0 ? Array.Empty<string>() : values;
     }
 
     /// <summary>
@@ -277,15 +241,15 @@ public sealed class WktKeywordNode : WktNode
     internal IReadOnlyList<double> GetAllNumbers()
     {
         var values = new List<double>();
-        foreach (WktNode child in this.Children)
+        for (int i = 0; i < this.children.Length; i++)
         {
-            if (IsNumericNode(child))
+            if (IsNumericNode(this.children[i]))
             {
-                values.Add(GetNumericValue(child));
+                values.Add(GetNumericValue(this.children[i]));
             }
         }
 
-        return values;
+        return values.Count == 0 ? Array.Empty<double>() : values;
     }
 
     /// <summary>
@@ -295,12 +259,98 @@ public sealed class WktKeywordNode : WktNode
     internal (string Authority, string Code)? GetAuthority()
     {
         WktKeywordNode? authorityNode = this.FindChild("ID", "AUTHORITY");
-        if (authorityNode is null || authorityNode.Children.Count < 2)
+        if (authorityNode is null || authorityNode.children.Length < 2)
         {
             return null;
         }
 
-        return (GetNodeText(authorityNode.Children[0]), GetNodeText(authorityNode.Children[1]));
+        return (GetNodeText(authorityNode.children[0]), GetNodeText(authorityNode.children[1]));
+    }
+
+    /// <summary>
+    /// Returns the child nodes as a span for allocation-free internal iteration.
+    /// </summary>
+    /// <returns>The direct child nodes.</returns>
+    internal ReadOnlySpan<WktNode> GetChildrenSpan()
+    {
+        return this.children;
+    }
+
+    /// <summary>
+    /// Appends the compact WKT representation of this node to the provided builder.
+    /// </summary>
+    /// <param name="builder">The target string builder.</param>
+    internal override void AppendTo(StringBuilder builder)
+    {
+        ArgumentGuard.ThrowIfNull(builder, nameof(builder));
+        this.keywordText.AppendTo(builder);
+        builder.Append('[');
+        for (int i = 0; i < this.children.Length; i++)
+        {
+            if (i > 0)
+            {
+                builder.Append(", ");
+            }
+
+            this.children[i].AppendTo(builder);
+        }
+
+        builder.Append(']');
+    }
+
+    /// <summary>
+    /// Appends the formatted WKT representation of this node to the provided builder.
+    /// </summary>
+    /// <param name="builder">The target string builder.</param>
+    /// <param name="indentLevel">The current indentation level.</param>
+    /// <param name="indentSize">The number of spaces per indentation level.</param>
+    internal override void AppendFormattedTo(StringBuilder builder, int indentLevel, int indentSize)
+    {
+        ArgumentGuard.ThrowIfNull(builder, nameof(builder));
+        AppendIndent(builder, indentLevel, indentSize);
+        this.keywordText.AppendTo(builder);
+        builder.Append('[');
+
+        bool hasComplexChildren = HasKeywordChildren(this.children);
+        if (hasComplexChildren && this.children.Length > 0)
+        {
+            builder.AppendLine();
+            for (int i = 0; i < this.children.Length; i++)
+            {
+                if (this.children[i] is WktKeywordNode keywordChild)
+                {
+                    keywordChild.AppendFormattedTo(builder, indentLevel + 1, indentSize);
+                }
+                else
+                {
+                    AppendIndent(builder, indentLevel + 1, indentSize);
+                    this.children[i].AppendTo(builder);
+                }
+
+                if (i < this.children.Length - 1)
+                {
+                    builder.Append(',');
+                }
+
+                builder.AppendLine();
+            }
+
+            AppendIndent(builder, indentLevel, indentSize);
+        }
+        else
+        {
+            for (int i = 0; i < this.children.Length; i++)
+            {
+                if (i > 0)
+                {
+                    builder.Append(", ");
+                }
+
+                this.children[i].AppendTo(builder);
+            }
+        }
+
+        builder.Append(']');
     }
 
     private static WktKeywordNode ParseKeywordNode(WktTokenizer tokenizer, bool advancePastNode)
@@ -312,15 +362,19 @@ public sealed class WktKeywordNode : WktNode
                 nameof(tokenizer));
         }
 
-        string keyword = tokenizer.GetStringValue();
+        int keywordStart = tokenizer.TokenStartIndex;
+        int keywordLength = tokenizer.TokenLength;
+        string source = tokenizer.Source;
         tokenizer.NextToken();
-        return ParseKeywordNodeAfterKeyword(tokenizer, keyword, advancePastNode);
+        return ParseKeywordNodeAfterKeyword(tokenizer, source, keywordStart, keywordLength, advancePastNode);
     }
 
-    private static WktKeywordNode ParseKeywordNodeAfterKeyword(WktTokenizer tokenizer, string keyword, bool advancePastNode)
+    private static WktKeywordNode ParseKeywordNodeAfterKeyword(WktTokenizer tokenizer, string source, int keywordStart, int keywordLength, bool advancePastNode)
     {
+        var keywordText = new WktTextSlice(source, keywordStart, keywordLength);
         WktBracket bracket = GetCurrentOpener(tokenizer);
-        var children = new List<WktNode>();
+        WktNode[] children = Array.Empty<WktNode>();
+        int childCount = 0;
         tokenizer.NextToken();
 
         while (!IsCloser(tokenizer, bracket))
@@ -328,11 +382,11 @@ public sealed class WktKeywordNode : WktNode
             if (tokenizer.IsEndOfInput)
             {
                 throw new ArgumentException(
-                    $"Unexpected end of input while parsing '{keyword}' at line {tokenizer.LineNumber} column {tokenizer.Column}.",
+                    $"Unexpected end of input while parsing '{keywordText.ToText()}' at line {tokenizer.LineNumber} column {tokenizer.Column}.",
                     nameof(tokenizer));
             }
 
-            children.Add(ParseNodeAndAdvance(tokenizer));
+            AddChild(ref children, ref childCount, ParseNodeAndAdvance(tokenizer));
             if (IsComma(tokenizer))
             {
                 tokenizer.NextToken();
@@ -342,7 +396,7 @@ public sealed class WktKeywordNode : WktNode
             tokenizer.CheckCloser(bracket);
         }
 
-        var node = new WktKeywordNode(keyword, children);
+        var node = new WktKeywordNode(source, keywordStart, keywordLength, TrimChildren(children, childCount));
         if (advancePastNode)
         {
             tokenizer.NextToken();
@@ -356,9 +410,9 @@ public sealed class WktKeywordNode : WktNode
         switch (tokenizer.GetTokenType())
         {
             case TokenType.Symbol when tokenizer.IsCurrentSymbol('"'):
-                string quotedValue = tokenizer.ReadDoubleQuotedWord();
+                (int quotedContentStart, int quotedContentLength) = tokenizer.ReadDoubleQuotedContentRange();
                 tokenizer.NextToken();
-                return new WktQuotedString(quotedValue);
+                return new WktQuotedString(tokenizer.Source, quotedContentStart, quotedContentLength);
 
             case TokenType.Number:
                 WktNode numericNode = CreateNumericNode(tokenizer);
@@ -366,11 +420,13 @@ public sealed class WktKeywordNode : WktNode
                 return numericNode;
 
             case TokenType.Word:
-                string word = tokenizer.GetStringValue();
+                int wordStart = tokenizer.TokenStartIndex;
+                int wordLength = tokenizer.TokenLength;
+                string source = tokenizer.Source;
                 tokenizer.NextToken();
                 return IsOpener(tokenizer)
-                    ? ParseKeywordNodeAfterKeyword(tokenizer, word, advancePastNode: true)
-                    : new WktIdentifier(word);
+                    ? ParseKeywordNodeAfterKeyword(tokenizer, source, wordStart, wordLength, advancePastNode: true)
+                    : new WktIdentifier(source, wordStart, wordLength);
 
             default:
                 throw new ArgumentException(
@@ -457,9 +513,9 @@ public sealed class WktKeywordNode : WktNode
         };
     }
 
-    private static bool HasKeywordChildren(IReadOnlyList<WktNode> children)
+    private static bool HasKeywordChildren(WktNode[] children)
     {
-        for (int i = 0; i < children.Count; i++)
+        for (int i = 0; i < children.Length; i++)
         {
             if (children[i] is WktKeywordNode)
             {
@@ -468,6 +524,68 @@ public sealed class WktKeywordNode : WktNode
         }
 
         return false;
+    }
+
+    private static WktNode[] CopyChildren(IReadOnlyList<WktNode>? children)
+    {
+        children = ArgumentGuard.ThrowIfNull(children, nameof(children));
+
+        if (children.Count == 0)
+        {
+            return Array.Empty<WktNode>();
+        }
+
+        var copy = new WktNode[children.Count];
+        for (int i = 0; i < children.Count; i++)
+        {
+            copy[i] = children[i];
+        }
+
+        return copy;
+    }
+
+    private static WktNode[] TakeChildren(WktNode[]? children)
+    {
+        return ArgumentGuard.ThrowIfNull(children, nameof(children));
+    }
+
+    private static void AddChild(ref WktNode[] children, ref int count, WktNode child)
+    {
+        if (count == children.Length)
+        {
+            int newLength = children.Length == 0 ? 4 : children.Length * 2;
+            Array.Resize(ref children, newLength);
+        }
+
+        children[count] = child;
+        count++;
+    }
+
+    private static WktNode[] TrimChildren(WktNode[] children, int count)
+    {
+        if (count == 0)
+        {
+            return Array.Empty<WktNode>();
+        }
+
+        if (count == children.Length)
+        {
+            return children;
+        }
+
+        var trimmedChildren = new WktNode[count];
+        Array.Copy(children, trimmedChildren, count);
+        return trimmedChildren;
+    }
+
+    private static void AppendIndent(StringBuilder builder, int indentLevel, int indentSize)
+    {
+        builder.Append(' ', indentLevel * indentSize);
+    }
+
+    private bool KeywordEquals(string value)
+    {
+        return this.keywordText.EqualsOrdinalIgnoreCase(value);
     }
 
     private T GetLeafChild<T>(
@@ -482,16 +600,16 @@ public sealed class WktKeywordNode : WktNode
         }
 
         int currentIndex = 0;
-        foreach (WktNode child in this.Children)
+        for (int i = 0; i < this.children.Length; i++)
         {
-            if (!predicate(child))
+            if (!predicate(this.children[i]))
             {
                 continue;
             }
 
             if (currentIndex == index)
             {
-                return selector(child);
+                return selector(this.children[i]);
             }
 
             currentIndex++;

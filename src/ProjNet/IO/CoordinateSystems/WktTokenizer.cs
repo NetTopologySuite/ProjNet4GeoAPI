@@ -64,6 +64,11 @@ internal sealed class WktTokenizer
     internal TokenType TokenType => this.tokenType;
 
     /// <summary>
+    /// Gets the buffered WKT source string.
+    /// </summary>
+    internal string Source => this.source;
+
+    /// <summary>
     /// Gets the one-based line number where the current token starts.
     /// </summary>
     internal int LineNumber => this.tokenLine;
@@ -77,6 +82,16 @@ internal sealed class WktTokenizer
     /// Gets a value indicating whether the tokenizer reached end of input.
     /// </summary>
     internal bool IsEndOfInput => this.tokenType == TokenType.Eof;
+
+    /// <summary>
+    /// Gets the zero-based start index of the current token within the buffered source string.
+    /// </summary>
+    internal int TokenStartIndex => this.tokenStartIndex;
+
+    /// <summary>
+    /// Gets the length of the current token.
+    /// </summary>
+    internal int TokenLength => this.tokenLength;
 
     /// <summary>
     /// Gets the current token as a span over the buffered source text.
@@ -259,6 +274,45 @@ internal sealed class WktTokenizer
             }
 
             builder.Append(this.GetTokenString());
+            this.NextToken(false);
+        }
+    }
+
+    /// <summary>
+    /// Reads a double-quoted token and returns the raw content range without materializing the unescaped string.
+    /// </summary>
+    /// <returns>The start index and length of the content inside the surrounding double quotes.</returns>
+    /// <exception cref="ArgumentException">Thrown when the quoted value is not terminated.</exception>
+    internal (int ContentStartIndex, int ContentLength) ReadDoubleQuotedContentRange()
+    {
+        if (!this.IsCurrentSymbol('"'))
+        {
+            this.ReadToken("\"");
+        }
+
+        int contentStartIndex = this.index;
+        this.NextToken(false);
+
+        while (true)
+        {
+            if (this.tokenType == TokenType.Eof)
+            {
+                ArgumentGuard.ThrowArgument(
+                    $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
+            }
+
+            if (this.IsCurrentSymbol('"'))
+            {
+                if (this.index < this.source.Length && this.source[this.index] == '"')
+                {
+                    this.NextToken(false);
+                    this.NextToken(false);
+                    continue;
+                }
+
+                return (contentStartIndex, this.tokenStartIndex - contentStartIndex);
+            }
+
             this.NextToken(false);
         }
     }

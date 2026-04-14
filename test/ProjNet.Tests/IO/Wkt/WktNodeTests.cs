@@ -417,6 +417,21 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that quoted strings with escaped double quotes preserve their raw WKT form and decode to the expected value.
+    /// </summary>
+    [Fact]
+    public void WktKeywordNode_ParseTree_QuotedStringWithEscapedQuotes_RoundTripsAndDecodesValue()
+    {
+        const string wkt = """REMARK["A ""quoted"" value"]""";
+
+        WktKeywordNode root = ParseTree(wkt);
+        WktQuotedString valueNode = Assert.IsType<WktQuotedString>(root.Children[0]);
+
+        Assert.Equal("REMARK[\"A \"\"quoted\"\" value\"]", root.ToString());
+        Assert.Equal("A \"quoted\" value", valueNode.Value);
+    }
+
+    /// <summary>
     /// Verifies that the internal helper methods expose typed positional and keyword-based child access.
     /// </summary>
     [Fact]
