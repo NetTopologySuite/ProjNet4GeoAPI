@@ -97,7 +97,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -320,7 +320,7 @@ public static partial class CoordinateSystemWktReader
             }
 
             if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase) ||
-                ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+                ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 continue;
             }
@@ -415,7 +415,7 @@ public static partial class CoordinateSystemWktReader
             }
             else if (!keywordChild.KeywordEquals("ID"))
             {
-                if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+                if (!ShouldSkipWkt2MetadataNode(keywordChild))
                 {
                     throw new NotSupportedException($"WKT2 AXIS keyword '{keywordChild.Keyword}' is not supported.");
                 }
@@ -519,7 +519,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 DATUM keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -578,7 +578,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 ENSEMBLE keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -625,7 +625,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 MEMBER keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -676,7 +676,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 ELLIPSOID keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -720,7 +720,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 PRIMEM keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -883,7 +883,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 {expectedKeyword} keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -978,7 +978,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -1017,7 +1017,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -1056,7 +1056,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -1118,7 +1118,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -1193,7 +1193,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -1272,7 +1272,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -1387,7 +1387,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 COORDINATEOPERATION keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -1443,7 +1443,7 @@ public static partial class CoordinateSystemWktReader
                 and not "TIMEUNIT"
                 and not "PARAMETRICUNIT"
                 and not "ID"
-                && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+                && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 COORDINATEOPERATION PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -1487,7 +1487,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 CONCATENATEDOPERATION keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -1592,21 +1592,22 @@ public static partial class CoordinateSystemWktReader
             : -1;
     }
 
-    private static bool ShouldSkipWkt2MetadataNode(string keyword)
+    private static bool ShouldSkipWkt2MetadataNode(WktKeywordNode node)
     {
-        return keyword is "ANCHOR"
-            or "ANCHOREPOCH"
-            or "AREA"
-            or "BBOX"
-            or "DEFININGTRANSFORMATION"
-            or "DYNAMIC"
-            or "GEOIDMODEL"
-            or "MERIDIAN"
-            or "ORDER"
-            or "REMARK"
-            or "SCOPE"
-            or "VERSION"
-            or "USAGE";
+        ArgumentGuard.ThrowIfNull(node, nameof(node));
+        return node.KeywordEquals("ANCHOR")
+            || node.KeywordEquals("ANCHOREPOCH")
+            || node.KeywordEquals("AREA")
+            || node.KeywordEquals("BBOX")
+            || node.KeywordEquals("DEFININGTRANSFORMATION")
+            || node.KeywordEquals("DYNAMIC")
+            || node.KeywordEquals("GEOIDMODEL")
+            || node.KeywordEquals("MERIDIAN")
+            || node.KeywordEquals("ORDER")
+            || node.KeywordEquals("REMARK")
+            || node.KeywordEquals("SCOPE")
+            || node.KeywordEquals("VERSION")
+            || node.KeywordEquals("USAGE");
     }
 
     private static AngularUnit? MergeAxisAngularUnit(AngularUnit? current, AngularUnit? candidate)
@@ -1737,7 +1738,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -1858,7 +1859,7 @@ public static partial class CoordinateSystemWktReader
             {
                 throw new NotSupportedException("WKT2 datum ensembles are not supported.");
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -1958,7 +1959,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -2046,7 +2047,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 {keyword} keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -2083,7 +2084,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 METHOD keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -2125,7 +2126,7 @@ public static partial class CoordinateSystemWktReader
                 && !keywordChild.KeywordEquals("LENGTHUNIT")
                 && !keywordChild.KeywordEquals("SCALEUNIT"))
             {
-                if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+                if (!ShouldSkipWkt2MetadataNode(keywordChild))
                 {
                     throw new NotSupportedException($"WKT2 PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
                 }
@@ -2187,7 +2188,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -2276,7 +2277,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 VDATUM keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -2359,7 +2360,7 @@ public static partial class CoordinateSystemWktReader
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -2400,7 +2401,7 @@ public static partial class CoordinateSystemWktReader
             {
                 transformation = ReadWkt2AbridgedTransformationDefinition(keywordChild);
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {rootKeyword}.");
             }
@@ -2441,7 +2442,7 @@ public static partial class CoordinateSystemWktReader
                 coordinateSystemNode = keywordChild;
                 foundCoordinateSystemNode = true;
             }
-            else if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            else if (!ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 keyword '{keywordChild.Keyword}' is not supported in {node.Keyword}.");
             }
@@ -2508,7 +2509,7 @@ public static partial class CoordinateSystemWktReader
             }
             else if (!keywordChild.KeywordEquals("ID"))
             {
-                if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+                if (!ShouldSkipWkt2MetadataNode(keywordChild))
                 {
                     throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION keyword '{keywordChild.Keyword}' is not supported.");
                 }
@@ -2568,7 +2569,7 @@ public static partial class CoordinateSystemWktReader
             }
             else if (!keywordChild.KeywordEquals("ID"))
             {
-                if (!ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+                if (!ShouldSkipWkt2MetadataNode(keywordChild))
                 {
                     throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION parameter keyword '{keywordChild.Keyword}' is not supported.");
                 }
@@ -2605,7 +2606,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 PARAMETERFILE keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -2638,7 +2639,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild.Keyword))
+            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 SCALEUNIT keyword '{keywordChild.Keyword}' is not supported.");
             }
