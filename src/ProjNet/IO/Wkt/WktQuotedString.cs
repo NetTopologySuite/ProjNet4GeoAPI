@@ -13,7 +13,6 @@ using ProjNet;
 public sealed class WktQuotedString : WktNode
 {
     private readonly WktTextSlice rawContent;
-    private readonly bool usesRawContent;
     private string? value;
 
     /// <summary>
@@ -22,7 +21,9 @@ public sealed class WktQuotedString : WktNode
     /// <param name="value">The string value (without surrounding quotes).</param>
     public WktQuotedString(string value)
     {
-        this.value = ArgumentGuard.ThrowIfNull(value, nameof(value));
+        value = ArgumentGuard.ThrowIfNull(value, nameof(value));
+        this.rawContent = CreateRawContent(value);
+        this.value = value;
     }
 
     /// <summary>
@@ -34,7 +35,6 @@ public sealed class WktQuotedString : WktNode
     internal WktQuotedString(string source, int contentStart, int contentLength)
     {
         this.rawContent = new WktTextSlice(source, contentStart, contentLength);
-        this.usesRawContent = true;
     }
 
     /// <summary>
@@ -45,7 +45,7 @@ public sealed class WktQuotedString : WktNode
     /// <inheritdoc />
     public override string ToString()
     {
-        var builder = new StringBuilder(this.Value.Length + 2);
+        var builder = new StringBuilder(this.rawContent.Length + 2);
         this.AppendTo(builder);
         return builder.ToString();
     }
@@ -58,16 +58,39 @@ public sealed class WktQuotedString : WktNode
     {
         ArgumentGuard.ThrowIfNull(builder, nameof(builder));
         builder.Append('"');
-        if (this.usesRawContent)
+        this.rawContent.AppendTo(builder);
+        builder.Append('"');
+    }
+
+    private static WktTextSlice CreateRawContent(string value)
+    {
+        int quoteCount = 0;
+        for (int i = 0; i < value.Length; i++)
         {
-            this.rawContent.AppendTo(builder);
-        }
-        else
-        {
-            AppendEscapedValue(builder, this.Value);
+            if (value[i] == '"')
+            {
+                quoteCount++;
+            }
         }
 
-        builder.Append('"');
+        if (quoteCount == 0)
+        {
+            return new WktTextSlice(value);
+        }
+
+        var builder = new StringBuilder(value.Length + quoteCount);
+        for (int i = 0; i < value.Length; i++)
+        {
+            char current = value[i];
+            if (current == '"')
+            {
+                builder.Append('"');
+            }
+
+            builder.Append(current);
+        }
+
+        return new WktTextSlice(builder.ToString());
     }
 
     private static string DecodeValue(WktTextSlice rawContent)
@@ -93,22 +116,5 @@ public sealed class WktQuotedString : WktNode
         }
 
         return builder.ToString();
-    }
-
-    private static void AppendEscapedValue(StringBuilder builder, string value)
-    {
-        for (int i = 0; i < value.Length; i++)
-        {
-            char current = value[i];
-            if (current == '"')
-            {
-                builder.Append('"');
-                builder.Append('"');
-            }
-            else
-            {
-                builder.Append(current);
-            }
-        }
     }
 }

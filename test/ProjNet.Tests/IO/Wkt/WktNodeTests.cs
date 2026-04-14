@@ -45,6 +45,19 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="WktQuotedString.ToString"/> escapes embedded double quotes while keeping the decoded value intact.
+    /// </summary>
+    [Fact]
+    public void WktQuotedString_ToString_EscapesEmbeddedQuotes()
+    {
+        const string value = "A \"quoted\" value";
+        var node = new WktQuotedString(value);
+
+        Assert.Equal("\"A \"\"quoted\"\" value\"", node.ToString());
+        Assert.Equal(value, node.Value);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="WktQuotedString.ToFormattedString"/> matches the compact representation for a leaf node.
     /// </summary>
     [Fact]
