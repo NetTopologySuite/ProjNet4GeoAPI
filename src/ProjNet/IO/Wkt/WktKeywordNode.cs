@@ -6,7 +6,6 @@ namespace ProjNet.IO.Wkt;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using ProjNet;
 using ProjNet.IO.CoordinateSystems;
@@ -78,7 +77,7 @@ public sealed class WktKeywordNode : WktNode
         sb.Append(this.Keyword);
         sb.Append('[');
 
-        bool hasComplexChildren = this.Children.Any(c => c is WktKeywordNode);
+        bool hasComplexChildren = HasKeywordChildren(this.Children);
         if (hasComplexChildren && this.Children.Count > 0)
         {
             sb.AppendLine();
@@ -259,10 +258,16 @@ public sealed class WktKeywordNode : WktNode
     /// <returns>The quoted-string child values.</returns>
     internal IReadOnlyList<string> GetAllStrings()
     {
-        return this.Children
-            .OfType<WktQuotedString>()
-            .Select(static child => child.Value)
-            .ToArray();
+        var values = new List<string>();
+        foreach (WktNode child in this.Children)
+        {
+            if (child is WktQuotedString quotedString)
+            {
+                values.Add(quotedString.Value);
+            }
+        }
+
+        return values;
     }
 
     /// <summary>
@@ -271,10 +276,16 @@ public sealed class WktKeywordNode : WktNode
     /// <returns>The numeric child values.</returns>
     internal IReadOnlyList<double> GetAllNumbers()
     {
-        return this.Children
-            .Where(IsNumericNode)
-            .Select(GetNumericValue)
-            .ToArray();
+        var values = new List<double>();
+        foreach (WktNode child in this.Children)
+        {
+            if (IsNumericNode(child))
+            {
+                values.Add(GetNumericValue(child));
+            }
+        }
+
+        return values;
     }
 
     /// <summary>
@@ -344,7 +355,7 @@ public sealed class WktKeywordNode : WktNode
     {
         switch (tokenizer.GetTokenType())
         {
-            case TokenType.Symbol when tokenizer.GetTokenString() == "\"":
+            case TokenType.Symbol when tokenizer.IsCurrentSymbol('"'):
                 string quotedValue = tokenizer.ReadDoubleQuotedWord();
                 tokenizer.NextToken();
                 return new WktQuotedString(quotedValue);
@@ -370,9 +381,7 @@ public sealed class WktKeywordNode : WktNode
 
     private static WktNode CreateNumericNode(WktTokenizer tokenizer)
     {
-        string token = tokenizer.GetTokenString();
-        if (token.IndexOfAny(['.', 'e', 'E']) < 0 &&
-            int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int integerValue))
+        if (tokenizer.TryGetInt32Value(out int integerValue))
         {
             return new WktInteger(integerValue);
         }
@@ -382,20 +391,19 @@ public sealed class WktKeywordNode : WktNode
 
     private static bool IsComma(WktTokenizer tokenizer)
     {
-        return tokenizer.GetTokenType() == TokenType.Symbol && tokenizer.GetTokenString() == ",";
+        return tokenizer.IsCurrentSymbol(',');
     }
 
     private static bool IsOpener(WktTokenizer tokenizer)
     {
-        return tokenizer.GetTokenType() == TokenType.Symbol &&
-            (tokenizer.GetTokenString() == "[" || tokenizer.GetTokenString() == "(");
+        return tokenizer.IsCurrentSymbol('[') || tokenizer.IsCurrentSymbol('(');
     }
 
     private static bool IsCloser(WktTokenizer tokenizer, WktBracket bracket)
     {
-        return tokenizer.GetTokenType() == TokenType.Symbol &&
-            ((bracket == WktBracket.Square && tokenizer.GetTokenString() == "]") ||
-             (bracket == WktBracket.Round && tokenizer.GetTokenString() == ")"));
+        return bracket == WktBracket.Square
+            ? tokenizer.IsCurrentSymbol(']')
+            : tokenizer.IsCurrentSymbol(')');
     }
 
     private static WktBracket GetCurrentOpener(WktTokenizer tokenizer)
@@ -407,14 +415,19 @@ public sealed class WktKeywordNode : WktNode
                 nameof(tokenizer));
         }
 
-        return tokenizer.GetTokenString() switch
+        if (tokenizer.IsCurrentSymbol('['))
         {
-            "[" => WktBracket.Square,
-            "(" => WktBracket.Round,
-            _ => throw new ArgumentException(
-                $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
-                nameof(tokenizer)),
-        };
+            return WktBracket.Square;
+        }
+
+        if (tokenizer.IsCurrentSymbol('('))
+        {
+            return WktBracket.Round;
+        }
+
+        throw new ArgumentException(
+            $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
+            nameof(tokenizer));
     }
 
     private static string GetNodeText(WktNode node)
@@ -442,6 +455,19 @@ public sealed class WktKeywordNode : WktNode
             WktInteger integer => integer.Value,
             _ => throw new ArgumentException($"Expected a numeric WKT node but found '{node.GetType().Name}'.", nameof(node)),
         };
+    }
+
+    private static bool HasKeywordChildren(IReadOnlyList<WktNode> children)
+    {
+        for (int i = 0; i < children.Count; i++)
+        {
+            if (children[i] is WktKeywordNode)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private T GetLeafChild<T>(

@@ -167,6 +167,47 @@ internal sealed class WktTokenizer
     }
 
     /// <summary>
+    /// Tries to parse the current token as a 32-bit integer.
+    /// </summary>
+    /// <param name="value">The parsed integer value, when successful.</param>
+    /// <returns>
+    /// <see langword="true"/> when the current token is numeric and parsing as an integer succeeded;
+    /// otherwise <see langword="false"/>.
+    /// </returns>
+    internal bool TryGetInt32Value(out int value)
+    {
+        if (this.tokenType != TokenType.Number)
+        {
+            value = default;
+            return false;
+        }
+
+#if NETSTANDARD2_0
+        return int.TryParse(
+            this.GetTokenString(),
+            NumberStyles.Integer,
+            CultureInfo.InvariantCulture,
+            out value);
+#else
+        return int.TryParse(
+            this.GetTokenSpan(),
+            NumberStyles.Integer,
+            CultureInfo.InvariantCulture,
+            out value);
+#endif
+    }
+
+    /// <summary>
+    /// Determines whether the current token is the specified symbol.
+    /// </summary>
+    /// <param name="symbol">Expected symbol character.</param>
+    /// <returns><see langword="true"/> when the current token is the requested symbol; otherwise <see langword="false"/>.</returns>
+    internal bool IsCurrentSymbol(char symbol)
+    {
+        return this.IsCurrentSymbolCore(symbol);
+    }
+
+    /// <summary>
     /// Reads a token and verifies that it matches the expected token text.
     /// </summary>
     /// <param name="expectedToken">Expected token text.</param>
@@ -507,7 +548,7 @@ internal sealed class WktTokenizer
         return fractionalStartIndex < this.source.Length && char.IsDigit(this.source[fractionalStartIndex]);
     }
 
-    private bool IsCurrentSymbol(char symbol)
+    private bool IsCurrentSymbolCore(char symbol)
     {
         return this.tokenType == TokenType.Symbol &&
             this.tokenLength == 1 &&
