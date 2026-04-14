@@ -638,15 +638,16 @@ public static partial class CoordinateSystemWktReader
         authority = string.Empty;
         authorityCode = -1;
 
-        if (string.Equals(node.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+        if (node.KeywordEquals("AUTHORITY"))
         {
-            if (node.Children.Count < 2)
+            ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+            if (children.Length < 2)
             {
                 return;
             }
 
-            authority = GetWktNodeText(node.Children[0]);
-            authorityCode = long.TryParse(GetWktNodeText(node.Children[1]), NumberStyles.Any, CultureInfo.InvariantCulture, out long directCode)
+            authority = node.GetLeafTextChild(0);
+            authorityCode = long.TryParse(node.GetLeafTextChild(1), NumberStyles.Any, CultureInfo.InvariantCulture, out long directCode)
                 ? directCode
                 : -1;
             return;
