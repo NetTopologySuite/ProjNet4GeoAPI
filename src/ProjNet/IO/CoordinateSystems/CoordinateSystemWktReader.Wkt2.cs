@@ -581,7 +581,7 @@ public static partial class CoordinateSystemWktReader
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ENSEMBLE.");
         }
 
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
         var members = new List<DatumEnsembleMember>();
         Ellipsoid? ellipsoid = null;
         double? accuracy = null;
@@ -644,7 +644,7 @@ public static partial class CoordinateSystemWktReader
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in MEMBER.");
         }
 
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
         string authority = string.Empty;
         long authorityCode = -1;
 
@@ -1046,7 +1046,7 @@ public static partial class CoordinateSystemWktReader
 
             if (keywordChild.KeywordEquals("TIMEORIGIN"))
             {
-                timeOrigin = keywordChild.GetString(0);
+                timeOrigin = keywordChild.GetStringChild(0);
             }
             else if (keywordChild.KeywordEquals("ID"))
             {
@@ -1109,7 +1109,7 @@ public static partial class CoordinateSystemWktReader
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
         string rootKeyword = node.Keyword;
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
 
         EngineeringDatum? engineeringDatum = null;
         string? coordinateSystemType = null;
@@ -1189,7 +1189,7 @@ public static partial class CoordinateSystemWktReader
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "TIMECRS";
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
 
         TemporalDatum? temporalDatum = null;
         string? coordinateSystemType = null;
@@ -1269,7 +1269,7 @@ public static partial class CoordinateSystemWktReader
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "PARAMETRICCRS";
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
 
         ParametricDatum? parametricDatum = null;
         string? coordinateSystemType = null;
@@ -1782,7 +1782,7 @@ public static partial class CoordinateSystemWktReader
             }
         }
 
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
         if (baseProjectedCoordinateSystem is null)
         {
             ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a BASEPROJCRS block.");
@@ -2233,7 +2233,7 @@ public static partial class CoordinateSystemWktReader
             }
         }
 
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
         if (verticalDatum is null)
         {
             ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a VDATUM or ENSEMBLE block.");
@@ -2301,7 +2301,7 @@ public static partial class CoordinateSystemWktReader
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in VDATUM.");
         }
 
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
         string authority = string.Empty;
         long authorityCode = -1;
 
@@ -2374,7 +2374,7 @@ public static partial class CoordinateSystemWktReader
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "COMPOUNDCRS";
-        string name = node.GetString(0);
+        string name = node.GetStringChild(0);
 
         CoordinateSystem? headCoordinateSystem = null;
         CoordinateSystem? tailCoordinateSystem = null;
