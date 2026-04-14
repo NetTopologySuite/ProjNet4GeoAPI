@@ -210,16 +210,6 @@ public static partial class CoordinateSystemWktReader
         return info is not null;
     }
 
-    private static T ParseNodeWithTokenizer<T>(WktKeywordNode rootNode, Func<WktTokenizer, T> reader)
-    {
-        ArgumentGuard.ThrowIfNull(rootNode, nameof(rootNode));
-        ArgumentGuard.ThrowIfNull(reader, nameof(reader));
-
-        var tokenizer = new WktTokenizer(rootNode.ToString());
-        tokenizer.NextToken();
-        return reader(tokenizer);
-    }
-
     private static string GetWktNodeText(WktNode node)
     {
         return node switch
@@ -253,7 +243,7 @@ public static partial class CoordinateSystemWktReader
             "GEOCCS" => ReadGeocentricCoordinateSystem(node),
             "COMPD_CS" => ReadCompoundCoordinateSystem(node),
             "VERT_CS" => ReadVerticalCoordinateSystem(node),
-            _ => ParseNodeWithTokenizer(node, ReadCoordinateSystem),
+            _ => ArgumentGuard.ThrowArgument<CoordinateSystem>($"'{node.Keyword}' is not recognized."),
         };
     }
 
@@ -442,12 +432,12 @@ public static partial class CoordinateSystemWktReader
         var rootNode = WktKeywordNode.ParseSubtree(tokenizer);
         return rootNode.Keyword switch
         {
-            "UNIT" => ParseNodeWithTokenizer(rootNode, ReadUnit),
-            "SPHEROID" => ParseNodeWithTokenizer(rootNode, ReadEllipsoid),
-            "DATUM" => ParseNodeWithTokenizer(rootNode, ReadHorizontalDatum),
-            "PRIMEM" => ParseNodeWithTokenizer(rootNode, ReadPrimeMeridian),
+            "UNIT" => ReadUnit(rootNode),
+            "SPHEROID" => ReadEllipsoid(rootNode),
+            "DATUM" => ReadHorizontalDatum(rootNode),
+            "PRIMEM" => ReadPrimeMeridian(rootNode),
             "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
-                => ParseNodeWithTokenizer(rootNode, ReadCoordinateSystem),
+                => ReadCoordinateSystemNode(rootNode),
             "BOUNDCRS" => throw new NotSupportedException("BOUNDCRS coordinate system is not supported."),
             _ => ArgumentGuard.ThrowArgument<IInfo>($"'{rootNode.Keyword}' is not recognized."),
         };

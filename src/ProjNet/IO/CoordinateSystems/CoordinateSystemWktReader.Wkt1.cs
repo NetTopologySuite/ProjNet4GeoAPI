@@ -29,8 +29,13 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static Unit ReadUnit(WktTokenizer tokenizer)
     {
+        return ReadUnit(WktKeywordNode.ParseSubtree(tokenizer));
+    }
+
+    private static Unit ReadUnit(WktKeywordNode node)
+    {
         return ReadWkt1UnitFromNode(
-            WktKeywordNode.ParseSubtree(tokenizer),
+            node,
             static (unitsPerUnit, unitName, authority, authorityCode) => new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty));
     }
 
@@ -672,7 +677,7 @@ public static partial class CoordinateSystemWktReader
 
             if (string.Equals(keywordChild.Keyword, "PARAM_MT", StringComparison.OrdinalIgnoreCase))
             {
-                toBaseTransform = ParseNodeWithTokenizer(keywordChild, MathTransformWktReader.ReadMathTransform);
+                toBaseTransform = MathTransformWktReader.ReadMathTransform(keywordChild);
             }
             else if (string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
             {
