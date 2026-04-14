@@ -157,6 +157,61 @@ public sealed class WktKeywordNode : WktNode
     }
 
     /// <summary>
+    /// Gets the direct child node at the specified zero-based index.
+    /// </summary>
+    /// <param name="index">The direct child index.</param>
+    /// <returns>The direct child node.</returns>
+    internal WktNode GetChild(int index)
+    {
+        if ((uint)index >= (uint)this.children.Length)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index, $"No direct child exists at index {index}.");
+        }
+
+        return this.children[index];
+    }
+
+    /// <summary>
+    /// Gets the quoted-string child at the specified direct child index.
+    /// </summary>
+    /// <param name="index">The direct child index.</param>
+    /// <returns>The quoted-string child value.</returns>
+    internal string GetStringChild(int index)
+    {
+        return this.GetDirectLeafChild(index, static child => child is WktQuotedString, static child => ((WktQuotedString)child).Value, "quoted string");
+    }
+
+    /// <summary>
+    /// Gets the identifier child at the specified direct child index.
+    /// </summary>
+    /// <param name="index">The direct child index.</param>
+    /// <returns>The identifier child value.</returns>
+    internal string GetIdentifierChild(int index)
+    {
+        return this.GetDirectLeafChild(index, static child => child is WktIdentifier, static child => ((WktIdentifier)child).Name, "identifier");
+    }
+
+    /// <summary>
+    /// Gets the numeric child at the specified direct child index.
+    /// </summary>
+    /// <param name="index">The direct child index.</param>
+    /// <returns>The numeric child value as a <see cref="double"/>.</returns>
+    internal double GetNumberChild(int index)
+    {
+        return this.GetDirectLeafChild(index, IsNumericNode, GetNumericValue, "numeric value");
+    }
+
+    /// <summary>
+    /// Gets the direct leaf-text child at the specified index.
+    /// </summary>
+    /// <param name="index">The direct child index.</param>
+    /// <returns>The direct leaf-text child value.</returns>
+    internal string GetLeafTextChild(int index)
+    {
+        return GetNodeText(this.GetChild(index));
+    }
+
+    /// <summary>
     /// Finds the first direct keyword child matching the requested keyword.
     /// </summary>
     /// <param name="keyword">Keyword to match.</param>
@@ -274,6 +329,16 @@ public sealed class WktKeywordNode : WktNode
     internal ReadOnlySpan<WktNode> GetChildrenSpan()
     {
         return this.children;
+    }
+
+    /// <summary>
+    /// Determines whether this node's keyword matches the supplied text using ordinal ignore-case comparison.
+    /// </summary>
+    /// <param name="value">The keyword text to compare.</param>
+    /// <returns><see langword="true"/> when the keywords match; otherwise <see langword="false"/>.</returns>
+    internal bool KeywordEquals(string value)
+    {
+        return this.keywordText.EqualsOrdinalIgnoreCase(value);
     }
 
     /// <summary>
@@ -583,11 +648,6 @@ public sealed class WktKeywordNode : WktNode
         builder.Append(' ', indentLevel * indentSize);
     }
 
-    private bool KeywordEquals(string value)
-    {
-        return this.keywordText.EqualsOrdinalIgnoreCase(value);
-    }
-
     private T GetLeafChild<T>(
         int index,
         Func<WktNode, bool> predicate,
@@ -616,5 +676,20 @@ public sealed class WktKeywordNode : WktNode
         }
 
         throw new ArgumentOutOfRangeException(paramName, index, $"No child with occurrence index {index} matched the requested node type.");
+    }
+
+    private T GetDirectLeafChild<T>(
+        int index,
+        Func<WktNode, bool> predicate,
+        Func<WktNode, T> selector,
+        string expectedNodeType)
+    {
+        WktNode child = this.GetChild(index);
+        if (!predicate(child))
+        {
+            throw new ArgumentException($"Expected a {expectedNodeType} child at index {index} but found '{child.GetType().Name}'.", nameof(index));
+        }
+
+        return selector(child);
     }
 }
