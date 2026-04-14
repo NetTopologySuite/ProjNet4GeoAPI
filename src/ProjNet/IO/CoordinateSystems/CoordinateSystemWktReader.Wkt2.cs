@@ -1627,7 +1627,6 @@ public static partial class CoordinateSystemWktReader
 
     private static bool ShouldSkipWkt2MetadataNode(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         return node.KeywordEquals("ANCHOR")
             || node.KeywordEquals("ANCHOREPOCH")
             || node.KeywordEquals("AREA")
