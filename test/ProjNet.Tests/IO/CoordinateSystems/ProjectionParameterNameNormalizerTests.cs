@@ -43,8 +43,25 @@ public class ProjectionParameterNameNormalizerTests
     }
 
     /// <summary>
-    /// Verifies that empty and whitespace-only names normalize to an empty string.
+    /// Verifies that the raw lookup-token normalization preserves the legacy single-pass underscore-collapse semantics.
     /// </summary>
+    /// <param name="parameterName">External parameter name.</param>
+    /// <param name="expected">Expected normalized lookup token.</param>
+    [Theory]
+    [InlineData("Semi-major.axis/length", "SEMI_MAJOR_AXIS_LENGTH")]
+    [InlineData("Alpha__beta", "ALPHA_BETA")]
+    [InlineData("Alpha___beta", "ALPHA__BETA")]
+    [InlineData("  (Alpha) / beta  ", "ALPHA__BETA")]
+    public void NormalizeLookupToken_WithMixedSeparators_ReturnsExpectedToken(string parameterName, string expected)
+    {
+        string actual = ProjectionParameterNameNormalizer.NormalizeLookupToken(parameterName);
+
+        Assert.Equal(expected, actual);
+    }
+
+    /// <summary>
+     /// Verifies that empty and whitespace-only names normalize to an empty string.
+     /// </summary>
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
