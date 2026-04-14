@@ -303,7 +303,7 @@ public static partial class CoordinateSystemWktReader
     private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "CS", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("CS"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in CS.");
         }
@@ -319,7 +319,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase) ||
+            if (keywordChild.KeywordEquals("ID") ||
                 ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 continue;
@@ -388,7 +388,7 @@ public static partial class CoordinateSystemWktReader
     private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "AXIS", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("AXIS"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in AXIS.");
         }
@@ -493,7 +493,7 @@ public static partial class CoordinateSystemWktReader
     private static HorizontalDatum ReadWkt2HorizontalDatum(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "DATUM", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("DATUM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in DATUM.");
         }
@@ -543,7 +543,7 @@ public static partial class CoordinateSystemWktReader
     private static DatumEnsemble ReadWkt2DatumEnsemble(WktKeywordNode node, bool requireEllipsoid)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "ENSEMBLE", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("ENSEMBLE"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ENSEMBLE.");
         }
@@ -605,7 +605,7 @@ public static partial class CoordinateSystemWktReader
     private static DatumEnsembleMember ReadWkt2DatumEnsembleMember(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "MEMBER", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("MEMBER"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in MEMBER.");
         }
@@ -621,7 +621,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            if (keywordChild.KeywordEquals("ID"))
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
@@ -637,7 +637,7 @@ public static partial class CoordinateSystemWktReader
     private static double ReadWkt2DatumEnsembleAccuracy(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "ENSEMBLEACCURACY", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("ENSEMBLEACCURACY"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ENSEMBLEACCURACY.");
         }
@@ -648,7 +648,7 @@ public static partial class CoordinateSystemWktReader
     private static Ellipsoid ReadWkt2Ellipsoid(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "ELLIPSOID", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("ELLIPSOID"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ELLIPSOID.");
         }
@@ -693,7 +693,7 @@ public static partial class CoordinateSystemWktReader
     private static PrimeMeridian ReadWkt2PrimeMeridian(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "PRIMEM", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("PRIMEM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in PRIMEM.");
         }
@@ -859,7 +859,7 @@ public static partial class CoordinateSystemWktReader
         ArgumentGuard.ThrowIfNull(node, nameof(node));
         ArgumentGuard.ThrowIfNull(factory, nameof(factory));
 
-        if (!string.Equals(node.Keyword, expectedKeyword, StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals(expectedKeyword))
         {
             throw new NotSupportedException($"WKT2 unit keyword '{node.Keyword}' is not supported.");
         }
@@ -877,7 +877,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            if (keywordChild.KeywordEquals("ID"))
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
                 continue;
@@ -956,8 +956,8 @@ public static partial class CoordinateSystemWktReader
     private static EngineeringDatum ReadWkt2EngineeringDatum(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "EDATUM", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(node.Keyword, "ENGINEERINGDATUM", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("EDATUM") &&
+            !node.KeywordEquals("ENGINEERINGDATUM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in engineering datum.");
         }
@@ -974,7 +974,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            if (keywordChild.KeywordEquals("ID"))
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
@@ -990,8 +990,8 @@ public static partial class CoordinateSystemWktReader
     private static TemporalDatum ReadWkt2TemporalDatum(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "TDATUM", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(node.Keyword, "TIMEDATUM", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("TDATUM") &&
+            !node.KeywordEquals("TIMEDATUM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in temporal datum.");
         }
@@ -1034,8 +1034,8 @@ public static partial class CoordinateSystemWktReader
     private static ParametricDatum ReadWkt2ParametricDatum(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "PDATUM", StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(node.Keyword, "PARAMETRICDATUM", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("PDATUM") &&
+            !node.KeywordEquals("PARAMETRICDATUM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in parametric datum.");
         }
@@ -1052,7 +1052,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            if (keywordChild.KeywordEquals("ID"))
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
@@ -1575,7 +1575,7 @@ public static partial class CoordinateSystemWktReader
     private static void ReadIdentifierWithUnknownCode(WktKeywordNode node, out string authority, out long authorityCode)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("ID"))
         {
             throw new NotSupportedException($"WKT2 identifier keyword '{node.Keyword}' is not supported.");
         }
@@ -1806,7 +1806,7 @@ public static partial class CoordinateSystemWktReader
         string coordinateSystemContext)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, rootKeyword, StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals(rootKeyword))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in {rootKeyword}.");
         }
@@ -2257,7 +2257,7 @@ public static partial class CoordinateSystemWktReader
     private static VerticalDatum ReadWkt2VerticalDatum(WktKeywordNode node)
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
-        if (!string.Equals(node.Keyword, "VDATUM", StringComparison.OrdinalIgnoreCase))
+        if (!node.KeywordEquals("VDATUM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in VDATUM.");
         }
@@ -2273,7 +2273,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            if (keywordChild.KeywordEquals("ID"))
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
@@ -2356,7 +2356,7 @@ public static partial class CoordinateSystemWktReader
             {
                 tailCoordinateSystem = ReadWkt2CoordinateSystemNode(keywordChild);
             }
-            else if (string.Equals(keywordChild.Keyword, "ID", StringComparison.OrdinalIgnoreCase))
+            else if (keywordChild.KeywordEquals("ID"))
             {
                 ReadIdentifierWithUnknownCode(keywordChild, out authority, out authorityCode);
             }
