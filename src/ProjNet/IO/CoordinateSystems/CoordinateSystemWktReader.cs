@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
+using System.Text;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -23,9 +23,6 @@ using ProjNet.IO.Wkt;
 public static partial class CoordinateSystemWktReader
 {
     private const double RadiansPerArcSecond = 4.84813681109535993589914102357e-6d;
-#if !NET8_0_OR_GREATER
-    private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
-#endif
 
     /// <summary>
     /// Reads and parses a WKT-formatted projection string.
@@ -58,11 +55,6 @@ public static partial class CoordinateSystemWktReader
 
         return ParseCore(wkt, sourceText: null);
     }
-
-#if NET8_0_OR_GREATER
-    [GeneratedRegex(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
-    private static partial Regex Wkt2IdRegex();
-#endif
 
     private static bool IsWhitespaceOnly(ReadOnlySpan<char> value)
     {
@@ -297,23 +289,150 @@ public static partial class CoordinateSystemWktReader
     // PROJECTION/PARAMETER siblings and spaced ID[...] metadata that do not satisfy the native WKT2 path.
     private static string NormalizeWkt(string wkt)
     {
-        string normalized = wkt;
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "ELLIPSOID", "SPHEROID");
-#if NET8_0_OR_GREATER
-        normalized = Wkt2IdRegex().Replace(normalized, "AUTHORITY[");
-#else
-        normalized = Wkt2IdRegex.Replace(normalized, "AUTHORITY[");
-#endif
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "GEODETICCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "GEODCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BASEGEODCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BASEGEOGCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "PROJECTEDCRS[", "PROJCS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "PROJCRS[", "PROJCS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "VERTCRS[", "VERT_CS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "COMPOUNDCRS[", "COMPD_CS[");
-        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BOUNDCRS[", "BOUNDCRS[");
-        return normalized;
+        ArgumentGuard.ThrowIfNull(wkt, nameof(wkt));
+
+        StringBuilder? builder = null;
+        int copyStart = 0;
+        int index = 0;
+        while (index < wkt.Length)
+        {
+            if (!IsWktKeywordCharacter(wkt[index]))
+            {
+                index++;
+                continue;
+            }
+
+            int keywordStart = index;
+            while (index < wkt.Length && IsWktKeywordCharacter(wkt[index]))
+            {
+                index++;
+            }
+
+            ReadOnlySpan<char> keyword = wkt.AsSpan(keywordStart, index - keywordStart);
+            int openerIndex = index;
+            while (openerIndex < wkt.Length && char.IsWhiteSpace(wkt[openerIndex]))
+            {
+                openerIndex++;
+            }
+
+            if (openerIndex >= wkt.Length || (wkt[openerIndex] != '[' && wkt[openerIndex] != '('))
+            {
+                continue;
+            }
+
+            if (!TryGetNormalizedWktKeyword(keyword, wkt.AsSpan(openerIndex), openerIndex != index, out string? normalizedKeyword))
+            {
+                continue;
+            }
+
+            builder ??= new StringBuilder(wkt.Length);
+            builder.Append(wkt, copyStart, keywordStart - copyStart);
+            builder.Append(normalizedKeyword);
+            builder.Append(wkt[openerIndex]);
+            copyStart = openerIndex + 1;
+            index = copyStart;
+        }
+
+        if (builder is null)
+        {
+            return wkt;
+        }
+
+        builder.Append(wkt, copyStart, wkt.Length - copyStart);
+        return builder.ToString();
+    }
+
+    private static bool TryGetNormalizedWktKeyword(ReadOnlySpan<char> keyword, ReadOnlySpan<char> openerAndRemainder, bool hadWhitespaceBeforeOpener, out string? normalizedKeyword)
+    {
+        normalizedKeyword = null;
+        bool requiresQuotedFirstValue = false;
+
+        if (KeywordEqualsOrdinalIgnoreCase(keyword, "ELLIPSOID"))
+        {
+            normalizedKeyword = "SPHEROID";
+        }
+        else if (KeywordEqualsOrdinalIgnoreCase(keyword, "ID"))
+        {
+            normalizedKeyword = "AUTHORITY";
+            requiresQuotedFirstValue = true;
+        }
+        else if (KeywordEqualsOrdinalIgnoreCase(keyword, "GEODETICCRS") || KeywordEqualsOrdinalIgnoreCase(keyword, "GEODCRS"))
+        {
+            normalizedKeyword = "GEOGCS";
+        }
+        else if (KeywordEqualsOrdinalIgnoreCase(keyword, "BASEGEODCRS") || KeywordEqualsOrdinalIgnoreCase(keyword, "BASEGEOGCRS"))
+        {
+            normalizedKeyword = "GEOGCS";
+        }
+        else if (KeywordEqualsOrdinalIgnoreCase(keyword, "PROJECTEDCRS") || KeywordEqualsOrdinalIgnoreCase(keyword, "PROJCRS"))
+        {
+            normalizedKeyword = "PROJCS";
+        }
+        else if (KeywordEqualsOrdinalIgnoreCase(keyword, "VERTCRS"))
+        {
+            normalizedKeyword = "VERT_CS";
+        }
+        else if (KeywordEqualsOrdinalIgnoreCase(keyword, "COMPOUNDCRS"))
+        {
+            normalizedKeyword = "COMPD_CS";
+        }
+        else if (KeywordEqualsOrdinalIgnoreCase(keyword, "BOUNDCRS"))
+        {
+            normalizedKeyword = "BOUNDCRS";
+        }
+        else
+        {
+            return false;
+        }
+
+        if (requiresQuotedFirstValue)
+        {
+            int valueIndex = 1;
+            while (valueIndex < openerAndRemainder.Length && char.IsWhiteSpace(openerAndRemainder[valueIndex]))
+            {
+                valueIndex++;
+            }
+
+            if (valueIndex >= openerAndRemainder.Length || openerAndRemainder[valueIndex] != '"')
+            {
+                normalizedKeyword = null;
+                return false;
+            }
+        }
+
+        if (!hadWhitespaceBeforeOpener && KeywordEqualsOrdinal(keyword, normalizedKeyword))
+        {
+            normalizedKeyword = null;
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool IsWktKeywordCharacter(char value)
+    {
+        return (value >= 'A' && value <= 'Z')
+            || (value >= 'a' && value <= 'z')
+            || (value >= '0' && value <= '9')
+            || value == '_';
+    }
+
+    private static bool KeywordEqualsOrdinal(ReadOnlySpan<char> keyword, string expected)
+    {
+        if (keyword.Length != expected.Length)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < keyword.Length; i++)
+        {
+            if (keyword[i] != expected[i])
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static IInfo ParseNormalizedWkt(string normalizedWkt)
