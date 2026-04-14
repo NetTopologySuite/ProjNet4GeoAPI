@@ -2682,21 +2682,7 @@ public static partial class CoordinateSystemWktReader
 
     private static string NormalizeWkt2BoundTransformationParameterName(string parameterName)
     {
-        if (string.IsNullOrWhiteSpace(parameterName))
-        {
-            return string.Empty;
-        }
-
-        string normalized = parameterName
-            .ToUpperInvariant()
-            .Trim();
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
+        string normalized = ProjectionParameterNameNormalizer.NormalizeLookupToken(parameterName);
 
         return normalized switch
         {
