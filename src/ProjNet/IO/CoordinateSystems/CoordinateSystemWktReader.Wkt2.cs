@@ -29,8 +29,6 @@ public static partial class CoordinateSystemWktReader
 
     private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-
         string rootKeyword = node.Keyword;
         string name = node.GetStringChild(0);
 
@@ -302,7 +300,6 @@ public static partial class CoordinateSystemWktReader
 
     private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("CS"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in CS.");
@@ -343,8 +340,6 @@ public static partial class CoordinateSystemWktReader
 
     private static AxisInfo ReadWkt2Axis(WktKeywordNode node, out AngularUnit? angularUnit, out LinearUnit? linearUnit)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-
         (AxisInfo axis, IUnit? unit) = ReadWkt2AxisDefinition(node);
         WktKeywordNode? unitNode = node.FindChild("ANGLEUNIT", "LENGTHUNIT", "SCALEUNIT", "TIMEUNIT", "PARAMETRICUNIT");
 
@@ -420,7 +415,6 @@ public static partial class CoordinateSystemWktReader
 
     private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("AXIS"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in AXIS.");
@@ -525,7 +519,6 @@ public static partial class CoordinateSystemWktReader
 
     private static HorizontalDatum ReadWkt2HorizontalDatum(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("DATUM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in DATUM.");
@@ -575,7 +568,6 @@ public static partial class CoordinateSystemWktReader
 
     private static DatumEnsemble ReadWkt2DatumEnsemble(WktKeywordNode node, bool requireEllipsoid)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("ENSEMBLE"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ENSEMBLE.");
@@ -638,7 +630,6 @@ public static partial class CoordinateSystemWktReader
 
     private static DatumEnsembleMember ReadWkt2DatumEnsembleMember(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("MEMBER"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in MEMBER.");
@@ -671,7 +662,6 @@ public static partial class CoordinateSystemWktReader
 
     private static double ReadWkt2DatumEnsembleAccuracy(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("ENSEMBLEACCURACY"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ENSEMBLEACCURACY.");
@@ -682,7 +672,6 @@ public static partial class CoordinateSystemWktReader
 
     private static Ellipsoid ReadWkt2Ellipsoid(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("ELLIPSOID"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in ELLIPSOID.");
@@ -727,7 +716,6 @@ public static partial class CoordinateSystemWktReader
 
     private static PrimeMeridian ReadWkt2PrimeMeridian(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("PRIMEM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in PRIMEM.");
@@ -891,9 +879,6 @@ public static partial class CoordinateSystemWktReader
 
     private static TUnit ReadWkt2UnitFromNode<TUnit>(WktKeywordNode node, string expectedKeyword, Func<double, string, string, long, TUnit> factory)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-        ArgumentGuard.ThrowIfNull(factory, nameof(factory));
-
         if (!node.KeywordEquals(expectedKeyword))
         {
             throw new NotSupportedException($"WKT2 unit keyword '{node.Keyword}' is not supported.");
@@ -990,7 +975,6 @@ public static partial class CoordinateSystemWktReader
 
     private static EngineeringDatum ReadWkt2EngineeringDatum(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("EDATUM") &&
             !node.KeywordEquals("ENGINEERINGDATUM"))
         {
@@ -1024,7 +1008,6 @@ public static partial class CoordinateSystemWktReader
 
     private static TemporalDatum ReadWkt2TemporalDatum(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("TDATUM") &&
             !node.KeywordEquals("TIMEDATUM"))
         {
@@ -1068,7 +1051,6 @@ public static partial class CoordinateSystemWktReader
 
     private static ParametricDatum ReadWkt2ParametricDatum(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("PDATUM") &&
             !node.KeywordEquals("PARAMETRICDATUM"))
         {
@@ -1107,7 +1089,6 @@ public static partial class CoordinateSystemWktReader
 
     private static EngineeringCoordinateSystem ReadWkt2EngineeringCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string rootKeyword = node.Keyword;
         string name = node.GetStringChild(0);
 
@@ -1187,7 +1168,6 @@ public static partial class CoordinateSystemWktReader
 
     private static TemporalCoordinateSystem ReadWkt2TemporalCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "TIMECRS";
         string name = node.GetStringChild(0);
 
@@ -1267,7 +1247,6 @@ public static partial class CoordinateSystemWktReader
 
     private static ParametricCoordinateSystem ReadWkt2ParametricCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "PARAMETRICCRS";
         string name = node.GetStringChild(0);
 
@@ -1387,7 +1366,6 @@ public static partial class CoordinateSystemWktReader
 
     private static CoordinateOperation ReadWkt2CoordinateOperation(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
 
         CoordinateSystem? sourceCoordinateSystem = null;
@@ -1463,7 +1441,6 @@ public static partial class CoordinateSystemWktReader
 
     private static Parameter ReadWkt2CoordinateOperationParameter(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string parameterName = node.GetStringChild(0);
         double value = node.GetNumberChild(1);
 
@@ -1492,7 +1469,6 @@ public static partial class CoordinateSystemWktReader
 
     private static ConcatenatedOperation ReadWkt2ConcatenatedOperation(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
 
         CoordinateSystem? sourceCoordinateSystem = null;
@@ -1557,8 +1533,6 @@ public static partial class CoordinateSystemWktReader
 
     private static CoordinateOperation ReadWkt2ConcatenatedOperationStep(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-
         WktKeywordNode? operationNode = node.FindChild("COORDINATEOPERATION");
         if (operationNode is null)
         {
@@ -1612,7 +1586,6 @@ public static partial class CoordinateSystemWktReader
 
     private static void ReadIdentifierWithUnknownCode(WktKeywordNode node, out string authority, out long authorityCode)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("ID"))
         {
             throw new NotSupportedException($"WKT2 identifier keyword '{node.Keyword}' is not supported.");
@@ -1731,7 +1704,6 @@ public static partial class CoordinateSystemWktReader
 
     private static FittedCoordinateSystem ReadWkt2DerivedProjectedCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "DERIVEDPROJCRS";
 
         ProjectedCoordinateSystem? baseProjectedCoordinateSystem = null;
@@ -1843,7 +1815,6 @@ public static partial class CoordinateSystemWktReader
         string crsContext,
         string coordinateSystemContext)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals(rootKeyword))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in {rootKeyword}.");
@@ -1964,8 +1935,6 @@ public static partial class CoordinateSystemWktReader
 
     private static GeographicCoordinateSystem ReadWkt2BaseGeographicCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-
         string rootKeyword = node.Keyword;
         string name = node.GetStringChild(0);
         HorizontalDatum? horizontalDatum = null;
@@ -2055,7 +2024,6 @@ public static partial class CoordinateSystemWktReader
 
     private static Projection ReadWkt2Conversion(WktKeywordNode node, string keyword, out AngularUnit? angularUnit)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string conversionName = node.GetStringChild(0);
 
         string methodName = string.Empty;
@@ -2111,7 +2079,6 @@ public static partial class CoordinateSystemWktReader
 
     private static string ReadWkt2ProjectionMethod(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string methodName = node.GetStringChild(0);
 
         ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
@@ -2143,7 +2110,6 @@ public static partial class CoordinateSystemWktReader
 
     private static ProjectionParameter ReadWkt2ProjectionParameter(WktKeywordNode node, out AngularUnit? angularUnit)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string parameterName = NormalizeWkt2ProjectionParameterName(node.GetStringChild(0));
         double value = node.GetNumberChild(1);
         angularUnit = null;
@@ -2183,7 +2149,6 @@ public static partial class CoordinateSystemWktReader
 
     private static VerticalCoordinateSystem ReadWkt2VerticalCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "VERTCRS";
 
         VerticalDatum? verticalDatum = null;
@@ -2295,7 +2260,6 @@ public static partial class CoordinateSystemWktReader
 
     private static VerticalDatum ReadWkt2VerticalDatum(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         if (!node.KeywordEquals("VDATUM"))
         {
             throw new NotSupportedException($"WKT2 keyword '{node.Keyword}' is not supported in VDATUM.");
@@ -2372,7 +2336,6 @@ public static partial class CoordinateSystemWktReader
 
     private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "COMPOUNDCRS";
         string name = node.GetStringChild(0);
 
@@ -2414,7 +2377,6 @@ public static partial class CoordinateSystemWktReader
 
     private static BoundCoordinateSystem ReadWkt2BoundCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         const string rootKeyword = "BOUNDCRS";
 
         CoordinateSystem? sourceCoordinateSystem = null;
@@ -2466,8 +2428,6 @@ public static partial class CoordinateSystemWktReader
 
     private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-
         WktKeywordNode? coordinateSystemNode = null;
         bool foundCoordinateSystemNode = false;
         ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
@@ -2521,7 +2481,6 @@ public static partial class CoordinateSystemWktReader
 
     private static BoundTransformation ReadWkt2AbridgedTransformationDefinition(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         _ = node.GetStringChild(0);
 
         string methodName = string.Empty;
@@ -2580,7 +2539,6 @@ public static partial class CoordinateSystemWktReader
 
     private static void ReadWkt2AbridgedTransformationParameter(WktKeywordNode node, Wgs84ConversionInfo parameters)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string parameterName = NormalizeWkt2BoundTransformationParameterName(node.GetStringChild(0));
         double value = node.GetNumberChild(1);
 
@@ -2635,7 +2593,6 @@ public static partial class CoordinateSystemWktReader
 
     private static string ReadWkt2AbridgedTransformationParameterFile(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         _ = node.GetStringChild(0);
         string parameterFileName = node.GetStringChild(1);
 
@@ -2668,7 +2625,6 @@ public static partial class CoordinateSystemWktReader
 
     private static double ReadWkt2ScaleUnitFactor(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         _ = node.GetStringChild(0);
         double unitFactor = node.GetNumberChild(1);
 

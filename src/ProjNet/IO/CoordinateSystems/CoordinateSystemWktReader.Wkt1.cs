@@ -90,7 +90,6 @@ public static partial class CoordinateSystemWktReader
 
     private static AxisInfo ReadAxis(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string axisName = node.GetStringChild(0);
         string unitname = node.GetIdentifierChild(1);
 
@@ -118,9 +117,6 @@ public static partial class CoordinateSystemWktReader
 
     private static TUnit ReadWkt1UnitFromNode<TUnit>(WktKeywordNode node, Func<double, string, string, long, TUnit> factory)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-        ArgumentGuard.ThrowIfNull(factory, nameof(factory));
-
         string unitName = node.GetStringChild(0);
         double unitsPerUnit = node.GetNumberChild(1);
         string authority = string.Empty;
@@ -160,7 +156,6 @@ public static partial class CoordinateSystemWktReader
 
     private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         IReadOnlyList<double> values = node.GetAllNumbers();
         if (values.Count is not 3 and not 6 and not 7)
         {
@@ -205,7 +200,6 @@ public static partial class CoordinateSystemWktReader
 
     private static Ellipsoid ReadEllipsoid(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         double majorAxis = node.GetNumberChild(1);
         double e = node.GetNumberChild(2);
@@ -216,9 +210,6 @@ public static partial class CoordinateSystemWktReader
 
     private static Projection ReadProjection(WktKeywordNode projectionNode, List<WktKeywordNode> parameterNodes)
     {
-        ArgumentGuard.ThrowIfNull(projectionNode, nameof(projectionNode));
-        ArgumentGuard.ThrowIfNull(parameterNodes, nameof(parameterNodes));
-
         string projectionName = projectionNode.GetStringChild(0);
         ReadWkt1Authority(projectionNode, out string authority, out long authorityCode);
 
@@ -233,8 +224,6 @@ public static partial class CoordinateSystemWktReader
 
     private static ProjectionParameter ReadWkt1ProjectionParameter(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-
         ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
         for (int i = 0; i < children.Length; i++)
         {
@@ -254,7 +243,6 @@ public static partial class CoordinateSystemWktReader
 
     private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         GeographicCoordinateSystem? geographicCS = null;
         LinearUnit? linearUnit = null;
@@ -317,7 +305,6 @@ public static partial class CoordinateSystemWktReader
 
     private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         VerticalDatum? verticalDatum = null;
         LinearUnit? linearUnit = null;
@@ -374,7 +361,6 @@ public static partial class CoordinateSystemWktReader
 
     private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         CoordinateSystem? headcs = null;
         CoordinateSystem? tailcs = null;
@@ -424,7 +410,6 @@ public static partial class CoordinateSystemWktReader
 
     private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         HorizontalDatum? horizontalDatum = null;
         PrimeMeridian? primeMeridian = null;
@@ -491,7 +476,6 @@ public static partial class CoordinateSystemWktReader
 
     private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         HorizontalDatum? horizontalDatum = null;
         PrimeMeridian? primeMeridian = null;
@@ -557,7 +541,6 @@ public static partial class CoordinateSystemWktReader
 
     private static HorizontalDatum ReadHorizontalDatum(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         Wgs84ConversionInfo? wgsInfo = null;
         string authority = string.Empty;
@@ -608,7 +591,6 @@ public static partial class CoordinateSystemWktReader
 
     private static VerticalDatum ReadVerticalDatum(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         var datumType = (DatumType)node.GetNumberChild(1);
         ReadWkt1Authority(node, out string authority, out long authorityCode);
@@ -623,7 +605,6 @@ public static partial class CoordinateSystemWktReader
 
     private static PrimeMeridian ReadPrimeMeridian(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         double longitude = node.GetNumberChild(1);
         ReadWkt1Authority(node, out string authority, out long authorityCode);
@@ -634,7 +615,6 @@ public static partial class CoordinateSystemWktReader
 
     private static void ReadWkt1Authority(WktKeywordNode node, out string authority, out long authorityCode)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         authority = string.Empty;
         authorityCode = -1;
 
@@ -672,7 +652,6 @@ public static partial class CoordinateSystemWktReader
 
     private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
         string name = node.GetStringChild(0);
         MathTransform? toBaseTransform = null;
         CoordinateSystem? baseCS = null;

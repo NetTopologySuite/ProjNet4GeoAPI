@@ -224,8 +224,6 @@ public static partial class CoordinateSystemWktReader
 
     private static CoordinateSystem ReadCoordinateSystemNode(WktKeywordNode node)
     {
-        ArgumentGuard.ThrowIfNull(node, nameof(node));
-
         return node.Keyword switch
         {
             "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(node),
@@ -279,8 +277,6 @@ public static partial class CoordinateSystemWktReader
     // PROJECTION/PARAMETER siblings and spaced ID[...] metadata that do not satisfy the native WKT2 path.
     private static string NormalizeWkt(string wkt)
     {
-        ArgumentGuard.ThrowIfNull(wkt, nameof(wkt));
-
         StringBuilder? builder = null;
         int copyStart = 0;
         int index = 0;
