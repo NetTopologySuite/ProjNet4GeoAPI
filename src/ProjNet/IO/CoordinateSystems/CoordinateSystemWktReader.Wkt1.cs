@@ -94,9 +94,10 @@ public static partial class CoordinateSystemWktReader
         string axisName = node.GetString(0);
         string unitname = node.GetIdentifier(0);
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is WktKeywordNode keywordChild)
+            if (children[i] is WktKeywordNode keywordChild)
             {
                 throw new NotSupportedException($"WKT1 AXIS keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -134,9 +135,10 @@ public static partial class CoordinateSystemWktReader
                 : -1;
         }
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is WktKeywordNode keywordChild && !string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
+            if (children[i] is WktKeywordNode keywordChild && !string.Equals(keywordChild.Keyword, "AUTHORITY", StringComparison.OrdinalIgnoreCase))
             {
                 throw new NotSupportedException($"WKT1 {node.Keyword} keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -165,9 +167,10 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgument("WKT1 TOWGS84 must contain 3, 6, or 7 numeric values.");
         }
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is WktKeywordNode keywordChild)
+            if (children[i] is WktKeywordNode keywordChild)
             {
                 throw new NotSupportedException($"WKT1 TOWGS84 keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -232,9 +235,10 @@ public static partial class CoordinateSystemWktReader
     {
         ArgumentGuard.ThrowIfNull(node, nameof(node));
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is WktKeywordNode keywordChild)
+            if (children[i] is WktKeywordNode keywordChild)
             {
                 throw new NotSupportedException($"WKT1 PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -260,9 +264,10 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -320,9 +325,10 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         AxisInfo? info = null;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -375,9 +381,10 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -426,9 +433,10 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var info = new List<AxisInfo>(3);
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -492,9 +500,10 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var info = new List<AxisInfo>(2);
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -555,9 +564,10 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         Ellipsoid? ellipsoid = null;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -668,9 +678,10 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
