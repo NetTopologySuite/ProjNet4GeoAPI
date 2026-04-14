@@ -588,9 +588,10 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -647,9 +648,10 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -1118,9 +1120,10 @@ public static partial class CoordinateSystemWktReader
         var axisInfo = new List<AxisInfo>();
         var axisUnits = new List<IUnit?>();
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -1197,9 +1200,10 @@ public static partial class CoordinateSystemWktReader
         var axisInfo = new List<AxisInfo>();
         var axisUnits = new List<IUnit?>();
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -1276,9 +1280,10 @@ public static partial class CoordinateSystemWktReader
         var axisInfo = new List<AxisInfo>();
         var axisUnits = new List<IUnit?>();
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -1738,9 +1743,10 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var axisInfo = new List<AxisInfo>();
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -2188,9 +2194,10 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         var axisInfo = new List<AxisInfo>();
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -2298,9 +2305,10 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
@@ -2373,9 +2381,10 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        foreach (WktNode child in node.Children)
+        ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
+        for (int i = 0; i < children.Length; i++)
         {
-            if (child is not WktKeywordNode keywordChild)
+            if (children[i] is not WktKeywordNode keywordChild)
             {
                 continue;
             }
