@@ -1470,12 +1470,12 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (keywordChild.Keyword is not "ANGLEUNIT"
-                and not "LENGTHUNIT"
-                and not "SCALEUNIT"
-                and not "TIMEUNIT"
-                and not "PARAMETRICUNIT"
-                and not "ID"
+            if (!keywordChild.KeywordEquals("ANGLEUNIT")
+                && !keywordChild.KeywordEquals("LENGTHUNIT")
+                && !keywordChild.KeywordEquals("SCALEUNIT")
+                && !keywordChild.KeywordEquals("TIMEUNIT")
+                && !keywordChild.KeywordEquals("PARAMETRICUNIT")
+                && !keywordChild.KeywordEquals("ID")
                 && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 COORDINATEOPERATION PARAMETER keyword '{keywordChild.Keyword}' is not supported.");
@@ -2116,7 +2116,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild))
+            if (!keywordChild.KeywordEquals("ID") && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 METHOD keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -2638,7 +2638,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild))
+            if (!keywordChild.KeywordEquals("ID") && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 PARAMETERFILE keyword '{keywordChild.Keyword}' is not supported.");
             }
@@ -2671,7 +2671,7 @@ public static partial class CoordinateSystemWktReader
                 continue;
             }
 
-            if (keywordChild.Keyword is not "ID" && !ShouldSkipWkt2MetadataNode(keywordChild))
+            if (!keywordChild.KeywordEquals("ID") && !ShouldSkipWkt2MetadataNode(keywordChild))
             {
                 throw new NotSupportedException($"WKT2 SCALEUNIT keyword '{keywordChild.Keyword}' is not supported.");
             }
