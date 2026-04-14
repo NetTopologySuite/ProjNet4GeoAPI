@@ -360,19 +360,52 @@ public static partial class CoordinateSystemWktReader
 
     private static AxisOrientationEnum ParseWkt2AxisOrientation(string orientationToken)
     {
-        return orientationToken.ToUpperInvariant() switch
+        if (string.Equals(orientationToken, "NORTH", StringComparison.OrdinalIgnoreCase))
         {
-            "NORTH" => AxisOrientationEnum.North,
-            "SOUTH" => AxisOrientationEnum.South,
-            "EAST" => AxisOrientationEnum.East,
-            "WEST" => AxisOrientationEnum.West,
-            "UP" => AxisOrientationEnum.Up,
-            "DOWN" => AxisOrientationEnum.Down,
-            "GEOCENTRICX" => AxisOrientationEnum.Other,
-            "GEOCENTRICY" => AxisOrientationEnum.East,
-            "GEOCENTRICZ" => AxisOrientationEnum.North,
-            _ => ArgumentGuard.ThrowArgument<AxisOrientationEnum>($"Invalid WKT2 axis orientation '{orientationToken}'."),
-        };
+            return AxisOrientationEnum.North;
+        }
+
+        if (string.Equals(orientationToken, "SOUTH", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.South;
+        }
+
+        if (string.Equals(orientationToken, "EAST", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.East;
+        }
+
+        if (string.Equals(orientationToken, "WEST", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.West;
+        }
+
+        if (string.Equals(orientationToken, "UP", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.Up;
+        }
+
+        if (string.Equals(orientationToken, "DOWN", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.Down;
+        }
+
+        if (string.Equals(orientationToken, "GEOCENTRICX", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.Other;
+        }
+
+        if (string.Equals(orientationToken, "GEOCENTRICY", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.East;
+        }
+
+        if (string.Equals(orientationToken, "GEOCENTRICZ", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.North;
+        }
+
+        return ArgumentGuard.ThrowArgument<AxisOrientationEnum>($"Invalid WKT2 axis orientation '{orientationToken}'.");
     }
 
     private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktTokenizer tokenizer)
