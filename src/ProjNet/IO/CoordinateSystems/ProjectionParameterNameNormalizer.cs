@@ -10,7 +10,9 @@ using System;
 /// </summary>
 internal static class ProjectionParameterNameNormalizer
 {
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
     private const int StackallocThreshold = 128;
+#endif
 
     /// <summary>
      /// Normalizes a projection parameter name.
