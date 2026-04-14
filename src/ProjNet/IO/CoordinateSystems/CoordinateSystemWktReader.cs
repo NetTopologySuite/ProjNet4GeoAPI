@@ -33,7 +33,15 @@ public static partial class CoordinateSystemWktReader
     /// <param name="wkt">String containing WKT.</param>
     /// <returns>Object representation of the WKT.</returns>
     /// <exception cref="ArgumentException">If a token is not recognized.</exception>
-    public static IInfo Parse(string wkt) => Parse(wkt.AsSpan());
+    public static IInfo Parse(string wkt)
+    {
+        if (string.IsNullOrWhiteSpace(wkt))
+        {
+            ArgumentGuard.ThrowArgumentNull(nameof(wkt));
+        }
+
+        return ParseCore(wkt.AsSpan(), wkt);
+    }
 
     /// <summary>
     /// Reads and parses a WKT-formatted projection text from a character span.
@@ -48,14 +56,7 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgumentNull(nameof(wkt));
         }
 
-        string wktText = wkt.ToString();
-        if (TryParseNativeWkt2(wktText, out IInfo? nativeWkt2Info))
-        {
-            return ArgumentGuard.ThrowIfNull(nativeWkt2Info, nameof(nativeWkt2Info));
-        }
-
-        string normalizedWkt = NormalizeWkt(wktText);
-        return ParseNormalizedWkt(normalizedWkt);
+        return ParseCore(wkt, sourceText: null);
     }
 
 #if NET8_0_OR_GREATER
@@ -68,6 +69,107 @@ public static partial class CoordinateSystemWktReader
         for (int i = 0; i < value.Length; i++)
         {
             if (!char.IsWhiteSpace(value[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static IInfo ParseCore(ReadOnlySpan<char> wkt, string? sourceText)
+    {
+        if (ShouldBypassNativeWkt2(wkt))
+        {
+            return ParseNormalizedWkt(sourceText ?? wkt.ToString());
+        }
+
+        string wktText = sourceText ?? wkt.ToString();
+        if (TryParseNativeWkt2(wktText, out IInfo? nativeWkt2Info))
+        {
+            return ArgumentGuard.ThrowIfNull(nativeWkt2Info, nameof(nativeWkt2Info));
+        }
+
+        string normalizedWkt = NormalizeWkt(wktText);
+        return ParseNormalizedWkt(normalizedWkt);
+    }
+
+    private static bool ShouldBypassNativeWkt2(ReadOnlySpan<char> wkt)
+    {
+        return TryGetRootKeyword(wkt, out ReadOnlySpan<char> keyword)
+            && IsWkt1OnlyRootKeyword(keyword);
+    }
+
+    private static bool TryGetRootKeyword(ReadOnlySpan<char> wkt, out ReadOnlySpan<char> keyword)
+    {
+        int index = 0;
+        while (index < wkt.Length && char.IsWhiteSpace(wkt[index]))
+        {
+            index++;
+        }
+
+        int start = index;
+        while (index < wkt.Length)
+        {
+            char current = wkt[index];
+            if ((current >= 'A' && current <= 'Z') ||
+                (current >= 'a' && current <= 'z') ||
+                (current >= '0' && current <= '9') ||
+                current == '_')
+            {
+                index++;
+                continue;
+            }
+
+            break;
+        }
+
+        if (index == start)
+        {
+            keyword = default;
+            return false;
+        }
+
+        keyword = wkt.Slice(start, index - start);
+        while (index < wkt.Length && char.IsWhiteSpace(wkt[index]))
+        {
+            index++;
+        }
+
+        return index < wkt.Length && (wkt[index] == '[' || wkt[index] == '(');
+    }
+
+    private static bool IsWkt1OnlyRootKeyword(ReadOnlySpan<char> keyword)
+    {
+        return KeywordEqualsOrdinalIgnoreCase(keyword, "UNIT")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "SPHEROID")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "DATUM")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "PRIMEM")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "GEOGCS")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "PROJCS")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "GEOCCS")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "COMPD_CS")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "VERT_CS")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "FITTED_CS")
+            || KeywordEqualsOrdinalIgnoreCase(keyword, "LOCAL_CS");
+    }
+
+    private static bool KeywordEqualsOrdinalIgnoreCase(ReadOnlySpan<char> keyword, string expected)
+    {
+        if (keyword.Length != expected.Length)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < keyword.Length; i++)
+        {
+            char current = keyword[i];
+            if (current >= 'a' && current <= 'z')
+            {
+                current = (char)(current - ('a' - 'A'));
+            }
+
+            if (current != expected[i])
             {
                 return false;
             }
