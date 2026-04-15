@@ -9,6 +9,7 @@ using System.Reflection;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.IO.CoordinateSystems;
 using ProjNet.IO.Wkt;
 using Xunit;
 
@@ -21,6 +22,7 @@ public class WktNodeTests
     private static readonly Type[] IntParameterTypes = [typeof(int)];
     private static readonly Type[] StringParameterTypes = [typeof(string)];
     private static readonly Type[] StringArrayParameterTypes = [typeof(string[])];
+    private static readonly Type[] WktTokenizerParameterTypes = [typeof(WktTokenizer)];
     private static readonly string[] AuthorityOrIdKeywords = ["AUTHORITY", "ID"];
     private static readonly object[] AuthorityOrIdArguments = [AuthorityOrIdKeywords];
 
@@ -458,11 +460,19 @@ public class WktNodeTests
 
         WktKeywordNode? cs = InvokeNonPublicInstance<WktKeywordNode?>(root, "FindChild", StringParameterTypes, "CS");
         Assert.NotNull(cs);
-        Assert.Equal("Cartesian", InvokeNonPublicInstance<string>(cs, "GetIdentifier", IntParameterTypes, 0));
+        Assert.Equal("Cartesian", InvokeNonPublicInstance<string>(cs, "GetIdentifierChild", IntParameterTypes, 0));
         Assert.Equal(2d, InvokeNonPublicInstance<double>(cs, "GetNumber", IntParameterTypes, 0));
 
-        IReadOnlyList<WktKeywordNode> axisNodes = InvokeNonPublicInstance<IReadOnlyList<WktKeywordNode>>(root, "FindChildren", StringParameterTypes, "AXIS");
-        Assert.Equal(2, axisNodes.Count);
+        int axisCount = 0;
+        for (int i = 0; i < root.Children.Count; i++)
+        {
+            if (root.Children[i] is WktKeywordNode keywordChild && string.Equals(keywordChild.Keyword, "AXIS", StringComparison.Ordinal))
+            {
+                axisCount++;
+            }
+        }
+
+        Assert.Equal(2, axisCount);
 
         (string Authority, string Code)? authority = InvokeNonPublicInstance<(string Authority, string Code)?>(root, "GetAuthority", Type.EmptyTypes);
         Assert.True(authority.HasValue);
@@ -1283,15 +1293,16 @@ public class WktNodeTests
 
     private static WktKeywordNode ParseTree(string wkt)
     {
+        var tokenizer = new WktTokenizer(wkt);
         MethodInfo? method = typeof(WktKeywordNode).GetMethod(
             "ParseTree",
             BindingFlags.Static | BindingFlags.NonPublic,
             binder: null,
-            types: StringParameterTypes,
+            types: WktTokenizerParameterTypes,
             modifiers: null);
 
         Assert.NotNull(method);
-        return Assert.IsType<WktKeywordNode>(method.Invoke(null, new object[] { wkt }));
+        return Assert.IsType<WktKeywordNode>(method.Invoke(null, [tokenizer]));
     }
 
     private static T InvokeNonPublicInstance<T>(WktKeywordNode node, string methodName, Type[] parameterTypes, params object[] arguments)

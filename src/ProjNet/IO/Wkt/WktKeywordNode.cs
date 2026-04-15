@@ -85,16 +85,6 @@ public sealed class WktKeywordNode : WktNode
     }
 
     /// <summary>
-    /// Parses a complete WKT string into a keyword-node tree.
-    /// </summary>
-    /// <param name="source">The WKT source text.</param>
-    /// <returns>The parsed root keyword node.</returns>
-    internal static WktKeywordNode ParseTree(string source)
-    {
-        return ParseTree(new WktTokenizer(source));
-    }
-
-    /// <summary>
     /// Parses the tokenizer stream into a keyword-node tree.
     /// </summary>
     /// <param name="tokenizer">The tokenizer positioned at the start of a WKT expression.</param>
@@ -144,16 +134,6 @@ public sealed class WktKeywordNode : WktNode
     internal double GetNumber(int index)
     {
         return this.GetLeafChild(index, IsNumericNode, GetNumericValue, nameof(index));
-    }
-
-    /// <summary>
-    /// Gets the identifier text of the indexed identifier child.
-    /// </summary>
-    /// <param name="index">Zero-based occurrence index among direct identifier children.</param>
-    /// <returns>The identifier child text.</returns>
-    internal string GetIdentifier(int index)
-    {
-        return this.GetLeafChild(index, static child => child is WktIdentifier, static child => ((WktIdentifier)child).Name, nameof(index));
     }
 
     /// <summary>
@@ -247,46 +227,6 @@ public sealed class WktKeywordNode : WktNode
         }
 
         return null;
-    }
-
-    /// <summary>
-    /// Finds all direct keyword children with the requested keyword.
-    /// </summary>
-    /// <param name="keyword">Keyword to match.</param>
-    /// <returns>The matching direct keyword children.</returns>
-    internal IReadOnlyList<WktKeywordNode> FindChildren(string keyword)
-    {
-        ArgumentGuard.ThrowIfNull(keyword, nameof(keyword));
-
-        var matches = new List<WktKeywordNode>();
-        for (int i = 0; i < this.children.Length; i++)
-        {
-            if (this.children[i] is WktKeywordNode keywordChild &&
-                keywordChild.KeywordEquals(keyword))
-            {
-                matches.Add(keywordChild);
-            }
-        }
-
-        return matches.Count == 0 ? Array.Empty<WktKeywordNode>() : matches;
-    }
-
-    /// <summary>
-    /// Gets all direct quoted-string child values.
-    /// </summary>
-    /// <returns>The quoted-string child values.</returns>
-    internal IReadOnlyList<string> GetAllStrings()
-    {
-        var values = new List<string>();
-        for (int i = 0; i < this.children.Length; i++)
-        {
-            if (this.children[i] is WktQuotedString quotedString)
-            {
-                values.Add(quotedString.Value);
-            }
-        }
-
-        return values.Count == 0 ? Array.Empty<string>() : values;
     }
 
     /// <summary>
