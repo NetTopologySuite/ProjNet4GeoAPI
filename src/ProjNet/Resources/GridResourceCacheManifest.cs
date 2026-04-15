@@ -37,6 +37,10 @@ internal static class GridResourceCacheManifest
     /// <summary>
     /// Determines whether the cached grid file is valid according to its manifest.
     /// </summary>
+    /// <remarks>
+    /// A missing manifest sidecar is treated as valid when the cached grid file itself exists.
+    /// Manifest validation is only enforced once the sidecar file has been written.
+    /// </remarks>
     /// <param name="targetFilePath">The cached grid file path.</param>
     /// <returns><see langword="true"/> when the cache entry is usable; otherwise <see langword="false"/>.</returns>
     internal static bool IsValid(string targetFilePath)
