@@ -8,6 +8,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Tokenizes a buffered Well Known Text (WKT) input stream.
@@ -135,18 +136,19 @@ internal sealed class WktTokenizer
     /// Gets the current token parsed as a number.
     /// </summary>
     /// <returns>The current token parsed as <see cref="double"/>.</returns>
-    /// <exception cref="ArgumentException">Current token is not a number token.</exception>
-    /// <exception cref="FormatException">Current token text is not a valid floating-point number.</exception>
+    /// <exception cref="WktParseException">
+    /// Thrown when the current token is not a valid numeric token.
+    /// </exception>
     internal double GetNumericValue()
     {
         if (this.tokenType != TokenType.Number)
         {
-            ArgumentGuard.ThrowArgument($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
+            throw new WktParseException($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
         }
 
         return this.TryGetNumericValue(out double value)
             ? value
-            : throw new FormatException($"The token '{this.GetTokenString()}' is not a valid number at line {this.LineNumber} column {this.Column}.");
+            : throw new WktParseException($"The token '{this.GetTokenString()}' is not a valid number at line {this.LineNumber} column {this.Column}.");
     }
 
     /// <summary>
@@ -226,13 +228,13 @@ internal sealed class WktTokenizer
     /// Reads a token and verifies that it matches the expected token text.
     /// </summary>
     /// <param name="expectedToken">Expected token text.</param>
-    /// <exception cref="ArgumentException">Thrown when the token does not match.</exception>
+    /// <exception cref="WktParseException">Thrown when the token does not match.</exception>
     internal void ReadToken(string expectedToken)
     {
         this.NextToken();
         if (!this.IsCurrentToken(expectedToken.AsSpan()))
         {
-            ArgumentGuard.ThrowArgument(
+            throw new WktParseException(
                 $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
         }
     }
@@ -241,7 +243,7 @@ internal sealed class WktTokenizer
     /// Reads a string value enclosed in double quotes.
     /// </summary>
     /// <returns>The unquoted string value.</returns>
-    /// <exception cref="ArgumentException">Thrown when the quoted value is not terminated.</exception>
+    /// <exception cref="WktParseException">Thrown when the quoted value is not terminated.</exception>
     internal string ReadDoubleQuotedWord()
     {
         if (!this.IsCurrentSymbol('"'))
@@ -256,7 +258,7 @@ internal sealed class WktTokenizer
         {
             if (this.tokenType == TokenType.Eof)
             {
-                ArgumentGuard.ThrowArgument(
+                throw new WktParseException(
                     $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
             }
 
@@ -282,7 +284,7 @@ internal sealed class WktTokenizer
     /// Reads a double-quoted token and returns the raw content range without materializing the unescaped string.
     /// </summary>
     /// <returns>The start index and length of the content inside the surrounding double quotes.</returns>
-    /// <exception cref="ArgumentException">Thrown when the quoted value is not terminated.</exception>
+    /// <exception cref="WktParseException">Thrown when the quoted value is not terminated.</exception>
     internal (int ContentStartIndex, int ContentLength) ReadDoubleQuotedContentRange()
     {
         if (!this.IsCurrentSymbol('"'))
@@ -297,7 +299,7 @@ internal sealed class WktTokenizer
         {
             if (this.tokenType == TokenType.Eof)
             {
-                ArgumentGuard.ThrowArgument(
+                throw new WktParseException(
                     $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
             }
 
@@ -322,7 +324,7 @@ internal sealed class WktTokenizer
     /// </summary>
     /// <param name="expectedBracket">Expected opening bracket type.</param>
     /// <returns>The encountered bracket type.</returns>
-    /// <exception cref="ArgumentException">Thrown when the bracket does not match.</exception>
+    /// <exception cref="WktParseException">Thrown when the bracket does not match.</exception>
     internal WktBracket ReadOpener(WktBracket expectedBracket = WktBracket.DontCare)
     {
         this.NextToken();
@@ -342,7 +344,7 @@ internal sealed class WktTokenizer
         }
 
         string expectedToken = expectedBracket == WktBracket.Square ? "[" : "(";
-        return ArgumentGuard.ThrowArgument<WktBracket>(
+        throw new WktParseException(
             $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
     }
 
@@ -360,7 +362,7 @@ internal sealed class WktTokenizer
     /// Validates that the current token is a matching closing bracket token.
     /// </summary>
     /// <param name="expectedBracket">Expected closing bracket type.</param>
-    /// <exception cref="ArgumentException">Thrown when the bracket does not match.</exception>
+    /// <exception cref="WktParseException">Thrown when the bracket does not match.</exception>
     internal void CheckCloser(WktBracket expectedBracket)
     {
         if (this.IsCurrentSymbol(']'))
@@ -379,7 +381,7 @@ internal sealed class WktTokenizer
         }
 
         string expectedToken = expectedBracket == WktBracket.Square ? "]" : ")";
-        ArgumentGuard.ThrowArgument(
+        throw new WktParseException(
             $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
     }
 

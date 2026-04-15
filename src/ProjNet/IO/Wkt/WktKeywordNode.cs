@@ -89,6 +89,7 @@ public sealed class WktKeywordNode : WktNode
     /// </summary>
     /// <param name="tokenizer">The tokenizer positioned at the start of a WKT expression.</param>
     /// <returns>The parsed root keyword node.</returns>
+    /// <exception cref="WktParseException">Thrown when the tokenizer input does not form a valid WKT tree.</exception>
     internal static WktKeywordNode ParseTree(WktTokenizer tokenizer)
     {
         ArgumentGuard.ThrowIfNull(tokenizer, nameof(tokenizer));
@@ -97,9 +98,8 @@ public sealed class WktKeywordNode : WktNode
         WktKeywordNode root = ParseKeywordNode(tokenizer, advancePastNode: true);
         if (!tokenizer.IsEndOfInput)
         {
-            throw new ArgumentException(
-                $"Unexpected token '{tokenizer.GetTokenString()}' at line {tokenizer.LineNumber} column {tokenizer.Column} after the root WKT node.",
-                nameof(tokenizer));
+            throw new WktParseException(
+                $"Unexpected token '{tokenizer.GetTokenString()}' at line {tokenizer.LineNumber} column {tokenizer.Column} after the root WKT node.");
         }
 
         return root;
@@ -110,6 +110,7 @@ public sealed class WktKeywordNode : WktNode
     /// </summary>
     /// <param name="tokenizer">The tokenizer positioned on a keyword token.</param>
     /// <returns>The parsed keyword node.</returns>
+    /// <exception cref="WktParseException">Thrown when the tokenizer input does not form a valid WKT subtree.</exception>
     internal static WktKeywordNode ParseSubtree(WktTokenizer tokenizer)
     {
         ArgumentGuard.ThrowIfNull(tokenizer, nameof(tokenizer));
@@ -362,9 +363,8 @@ public sealed class WktKeywordNode : WktNode
     {
         if (tokenizer.GetTokenType() != TokenType.Word)
         {
-            throw new ArgumentException(
-                $"Expected a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
-                nameof(tokenizer));
+            throw new WktParseException(
+                $"Expected a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.");
         }
 
         int keywordStart = tokenizer.TokenStartIndex;
@@ -386,9 +386,8 @@ public sealed class WktKeywordNode : WktNode
         {
             if (tokenizer.IsEndOfInput)
             {
-                throw new ArgumentException(
-                    $"Unexpected end of input while parsing '{keywordText.ToText()}' at line {tokenizer.LineNumber} column {tokenizer.Column}.",
-                    nameof(tokenizer));
+                throw new WktParseException(
+                    $"Unexpected end of input while parsing '{keywordText.ToText()}' at line {tokenizer.LineNumber} column {tokenizer.Column}.");
             }
 
             AddChild(ref children, ref childCount, ParseNodeAndAdvance(tokenizer));
@@ -434,9 +433,8 @@ public sealed class WktKeywordNode : WktNode
                     : new WktIdentifier(source, wordStart, wordLength);
 
             default:
-                throw new ArgumentException(
-                    $"Unexpected token '{tokenizer.GetTokenString()}' at line {tokenizer.LineNumber} column {tokenizer.Column} while parsing WKT.",
-                    nameof(tokenizer));
+                throw new WktParseException(
+                    $"Unexpected token '{tokenizer.GetTokenString()}' at line {tokenizer.LineNumber} column {tokenizer.Column} while parsing WKT.");
         }
     }
 
@@ -471,9 +469,8 @@ public sealed class WktKeywordNode : WktNode
     {
         if (tokenizer.GetTokenType() != TokenType.Symbol)
         {
-            throw new ArgumentException(
-                $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
-                nameof(tokenizer));
+            throw new WktParseException(
+                $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.");
         }
 
         if (tokenizer.IsCurrentSymbol('['))
@@ -486,9 +483,8 @@ public sealed class WktKeywordNode : WktNode
             return WktBracket.Round;
         }
 
-        throw new ArgumentException(
-            $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
-            nameof(tokenizer));
+        throw new WktParseException(
+            $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.");
     }
 
     private static string GetNodeText(WktNode node)

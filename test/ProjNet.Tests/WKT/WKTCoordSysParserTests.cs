@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.IO.Wkt;
 using Xunit;
 
 /// <summary>
@@ -193,7 +194,7 @@ public class WKTCoordSysParserTests
     {
         const string malformedWkt = """SPHEROID("WGS 84",6378137,298.257223563]""";
 
-        Assert.Throws<ArgumentException>(() => ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(malformedWkt));
+        Assert.Throws<WktParseException>(() => ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(malformedWkt));
     }
 
     /// <summary>

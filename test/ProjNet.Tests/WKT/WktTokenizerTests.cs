@@ -6,6 +6,7 @@ namespace ProjNet.Tests.WKT;
 using System;
 using System.Text;
 using ProjNet.IO.CoordinateSystems;
+using ProjNet.IO.Wkt;
 using Xunit;
 
 /// <summary>
@@ -78,7 +79,7 @@ public class WktTokenizerTests
     {
         var tokenizer = new WktTokenizer("\"unterminated");
 
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => tokenizer.ReadDoubleQuotedWord());
+        WktParseException exception = Assert.Throws<WktParseException>(() => tokenizer.ReadDoubleQuotedWord());
         Assert.Contains("Unterminated quoted string", exception.Message, StringComparison.Ordinal);
     }
 
@@ -93,8 +94,22 @@ public class WktTokenizerTests
         WktBracket opener = tokenizer.ReadOpener(WktBracket.Round);
         Assert.Equal(WktBracket.Round, opener);
 
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => tokenizer.ReadCloser(WktBracket.Round));
+        WktParseException exception = Assert.Throws<WktParseException>(() => tokenizer.ReadCloser(WktBracket.Round));
         Assert.Contains("Expecting (')')", exception.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies numeric reads on non-numeric tokens surface a structural parse exception.
+    /// </summary>
+    [Fact]
+    public void GetNumericValueWithWordTokenThrowsWktParseException()
+    {
+        var tokenizer = new WktTokenizer("WORD");
+
+        Assert.Equal(TokenType.Word, tokenizer.NextToken());
+
+        WktParseException exception = Assert.Throws<WktParseException>(() => tokenizer.GetNumericValue());
+        Assert.Contains("is not a number", exception.Message, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -201,8 +216,8 @@ public class WktTokenizerTests
     {
         const string malformedWkt = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]]";
 
-        ArgumentException stringException = Assert.Throws<ArgumentException>(() => CoordinateSystemWktReader.Parse(malformedWkt));
-        ArgumentException spanException = Assert.Throws<ArgumentException>(() => CoordinateSystemWktReader.Parse(malformedWkt.AsSpan()));
+        WktParseException stringException = Assert.Throws<WktParseException>(() => CoordinateSystemWktReader.Parse(malformedWkt));
+        WktParseException spanException = Assert.Throws<WktParseException>(() => CoordinateSystemWktReader.Parse(malformedWkt.AsSpan()));
 
         Assert.Contains("Expecting", stringException.Message, StringComparison.Ordinal);
         Assert.Contains("Expecting", spanException.Message, StringComparison.Ordinal);
