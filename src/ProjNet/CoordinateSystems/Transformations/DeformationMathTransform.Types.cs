@@ -221,9 +221,7 @@ internal sealed partial class DeformationMathTransform
         private static double ReadDoubleLittleEndian(byte[] bytes, int offset)
         {
             long rawBits = BinaryPrimitives.ReadInt64LittleEndian(bytes.AsSpan(offset, sizeof(long)));
-            Span<long> bitStorage = stackalloc long[1];
-            bitStorage[0] = rawBits;
-            return MemoryMarshal.Cast<long, double>(bitStorage)[0];
+            return BitConverter.Int64BitsToDouble(rawBits);
         }
 
         private static float ReadSingleLittleEndian(byte[] bytes, int offset)
@@ -525,9 +523,7 @@ internal sealed partial class DeformationMathTransform
         private static double ReadDoubleBigEndian(byte[] bytes, int offset)
         {
             long rawBits = BinaryPrimitives.ReadInt64BigEndian(bytes.AsSpan(offset, sizeof(long)));
-            Span<long> bitStorage = stackalloc long[1];
-            bitStorage[0] = rawBits;
-            return MemoryMarshal.Cast<long, double>(bitStorage)[0];
+            return BitConverter.Int64BitsToDouble(rawBits);
         }
 
         private static float ReadSingleBigEndian(byte[] bytes, int offset)
