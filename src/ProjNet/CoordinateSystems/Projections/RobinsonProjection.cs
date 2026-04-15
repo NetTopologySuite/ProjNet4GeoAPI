@@ -116,7 +116,7 @@ internal sealed class RobinsonProjection : MapProjection
         int index = GetLatitudeBand(phiAbs);
         if (index < 0 || index > Nodes)
         {
-            ArgumentGuard.ThrowArgumentOutOfRange(nameof(lat), "Latitude is outside the Robinson projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double dphi = RadiansToDegrees(phiAbs - (FiveDegreesInRadians * index));
@@ -137,7 +137,7 @@ internal sealed class RobinsonProjection : MapProjection
         {
             if (normalizedY > OneEps)
             {
-                ArgumentGuard.ThrowArgumentOutOfRange(nameof(y), "Coordinate is outside the valid Robinson projection domain.");
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
 
             y = y < 0d ? -HalfPi : HalfPi;
@@ -163,7 +163,7 @@ internal sealed class RobinsonProjection : MapProjection
 
         if (!converged)
         {
-            ProjectionThrowHelper.ThrowInvalidOperation("Robinson inverse did not converge.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double phi = DegreesToRadians((5d * index) + t);
@@ -172,12 +172,13 @@ internal sealed class RobinsonProjection : MapProjection
             phi = -phi;
         }
 
-        x = Adjust_lon(this.centralMeridian + (lambda / Evaluate(CoeffX[index], t)));
-        if (Math.Abs(x) > PI)
+        double lambdaResult = lambda / Evaluate(CoeffX[index], t);
+        if (Math.Abs(lambdaResult) > PI)
         {
-            ArgumentGuard.ThrowArgumentOutOfRange(nameof(x), "Coordinate is outside the valid Robinson projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
+        x = Adjust_lon(this.centralMeridian + lambdaResult);
         y = phi;
     }
 
@@ -202,7 +203,7 @@ internal sealed class RobinsonProjection : MapProjection
         int index = (int)Math.Floor(yNormalized * Nodes);
         if (index < 0 || index >= Nodes)
         {
-            ArgumentGuard.ThrowArgumentOutOfRange(nameof(yNormalized), "Coordinate is outside the valid Robinson projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         while (true)

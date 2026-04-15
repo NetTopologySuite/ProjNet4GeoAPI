@@ -995,6 +995,13 @@ internal static partial class ProjPipelineMathTransformFactory
             return false;
         }
 
+        bool inputIsAngular = IsAngularUnitToken(inUnitToken);
+        bool outputIsAngular = IsAngularUnitToken(outUnitToken);
+        if (inputIsAngular != outputIsAngular)
+        {
+            return false;
+        }
+
         if (outFactor == 0d)
         {
             return false;
@@ -1002,6 +1009,13 @@ internal static partial class ProjPipelineMathTransformFactory
 
         scale = inFactor / outFactor;
         return true;
+    }
+
+    private static bool IsAngularUnitToken(string token)
+    {
+        return token.Equals("rad", StringComparison.OrdinalIgnoreCase)
+            || token.Equals("deg", StringComparison.OrdinalIgnoreCase)
+            || token.Equals("grad", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool TryResolveUnitFactor(string token, out double factor)

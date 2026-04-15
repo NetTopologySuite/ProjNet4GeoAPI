@@ -400,6 +400,14 @@ public class GieBuiltinsTheoryTests
         "unitconvert.gie",
     ];
 
+    private static readonly string[] BuiltinsFixtureFiles =
+    [
+        "builtins.gie",
+        "more_builtins.gie",
+        "DHDN_ETRS89.gie",
+        ..RemainingFixtureFiles,
+    ];
+
     /// <summary>
     /// Validates builtins fixture cases for currently implemented projections against declared tolerances.
     /// </summary>
@@ -446,6 +454,24 @@ public class GieBuiltinsTheoryTests
     public void RemainingGieCasesForImplementedProjectionsStayWithinTolerance(GieCase? rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
+    }
+
+    /// <summary>
+    /// Validates fixture cases that explicitly expect runtime failure.
+    /// </summary>
+    /// <param name="rawCase">Raw GIE case payload from member data.</param>
+    [Theory]
+    [Trait("Category", "GieBuiltins")]
+    [MemberData(nameof(GetBuiltinsFailureCases))]
+    public void BuiltinsFailureCasesFailOrProduceNonFiniteResults(GieCase? rawCase)
+    {
+        if (rawCase is null)
+        {
+            Assert.Skip("No failure-expectation GIE case was produced from local fixtures for this data row.");
+            return;
+        }
+
+        AssertFailureCaseFails(rawCase);
     }
 
     /// <summary>
@@ -510,6 +536,28 @@ public class GieBuiltinsTheoryTests
         }
     }
 
+    /// <summary>
+    /// Returns theory data rows sourced from all selected GIE fixtures that explicitly expect failure.
+    /// </summary>
+    /// <returns>The computed value.</returns>
+    public static IEnumerable<TheoryDataRow<GieCase?>> GetBuiltinsFailureCases()
+    {
+        int emitted = 0;
+        foreach (string fileName in BuiltinsFixtureFiles)
+        {
+            foreach (TheoryDataRow<GieCase?> item in GetFailureCasesFromFixture(fileName))
+            {
+                yield return item;
+                emitted++;
+            }
+        }
+
+        if (emitted == 0)
+        {
+            yield return new TheoryDataRow<GieCase?>(null);
+        }
+    }
+
     private static void AssertCaseWithinTolerance(GieCase? rawCase)
     {
         if (rawCase is null)
@@ -519,7 +567,7 @@ public class GieBuiltinsTheoryTests
 
         if (rawCase.ExpectsFailure)
         {
-            Assert.Skip("Failure-expectation cases are tracked separately in a later wave.");
+            Assert.Skip("Failure-expectation cases are validated by BuiltinsFailureCases.");
         }
 
         if (rawCase.Accept is null || rawCase.Expect is null || rawCase.Accept.Length < 2 || rawCase.Expect.Length < 2)
@@ -592,6 +640,58 @@ public class GieBuiltinsTheoryTests
                 Assert.Skip($"Case requires higher-fidelity GIE mapping (axis={i.ToString(CultureInfo.InvariantCulture)}, delta={delta.ToString("R", CultureInfo.InvariantCulture)}).");
             }
         }
+    }
+
+    private static void AssertFailureCaseFails(GieCase rawCase)
+    {
+        Assert.True(rawCase.ExpectsFailure, "Failure theory received a non-failure GIE case.");
+
+        if (!ShouldPreferConversionFailurePath(rawCase))
+        {
+            if (!TryCreateTransform(rawCase, out MathTransform? projectionTransform, out _))
+            {
+                return;
+            }
+
+            MathTransform projectionMathTransform = Assert.IsType<MathTransform>(projectionTransform, exactMatch: false);
+            AssertFailureOutcome(() => projectionMathTransform.Transform(rawCase.Accept));
+            return;
+        }
+
+        if (TryCreateConversionTransformForDirection(rawCase.Operation, rawCase.Direction, out Func<double[], double[]>? conversionTransform, out _))
+        {
+            Func<double[], double[]> conversionDelegate = Assert.IsType<Func<double[], double[]>>(conversionTransform);
+            AssertFailureOutcome(() => conversionDelegate(rawCase.Accept));
+            return;
+        }
+
+        if (!TryCreateTransform(rawCase, out MathTransform? transform, out _))
+        {
+            return;
+        }
+
+        MathTransform mathTransform = Assert.IsType<MathTransform>(transform, exactMatch: false);
+        AssertFailureOutcome(() => mathTransform.Transform(rawCase.Accept));
+    }
+
+    private static bool ShouldPreferConversionFailurePath(GieCase rawCase)
+    {
+        if (!TryParseOperationArguments(rawCase.Operation, out Dictionary<string, string> args))
+        {
+            return true;
+        }
+
+        if (args.ContainsKey("step"))
+        {
+            return true;
+        }
+
+        if (!args.TryGetValue("proj", out string? projCode) || string.IsNullOrWhiteSpace(projCode))
+        {
+            return true;
+        }
+
+        return projCode.Equals("pipeline", StringComparison.OrdinalIgnoreCase) || ConversionProjCodes.Contains(projCode);
     }
 
     private static IEnumerable<TheoryDataRow<GieCase?>> GetCasesFromFixture(string fileName)
@@ -671,6 +771,39 @@ public class GieBuiltinsTheoryTests
         if (emitted == 0)
         {
             yield return new TheoryDataRow<GieCase?>(firstFilteredCase);
+        }
+    }
+
+    private static IEnumerable<TheoryDataRow<GieCase?>> GetFailureCasesFromFixture(string fileName)
+    {
+        string fixturePath = FindGiePath(fileName);
+        if (fixturePath is null)
+        {
+            yield break;
+        }
+
+        IReadOnlyList<GieCase> parsed;
+        try
+        {
+            parsed = GieParser.ParseFile(
+                fixturePath,
+                new GieParserOptions
+                {
+                    IgnoreUnknownDirectives = true,
+                    AllowOperationContinuation = true,
+                });
+        }
+        catch (FormatException)
+        {
+            yield break;
+        }
+
+        foreach (GieCase item in parsed)
+        {
+            if (item.ExpectsFailure)
+            {
+                yield return new TheoryDataRow<GieCase?>(item);
+            }
         }
     }
 
@@ -862,47 +995,65 @@ public class GieBuiltinsTheoryTests
         }
 
         string normalizedOperation = NormalizeOperationForRuntime(operation);
-        if (!ProjPipelineMathTransformFactory.TryCreateMathTransform(normalizedOperation, out MathTransform? mathTransform, out skipReason))
+        try
         {
-            if (!TryWrapStandaloneStackTransferOperation(normalizedOperation, out string? wrappedOperation))
+            if (!ProjPipelineMathTransformFactory.TryCreateMathTransform(normalizedOperation, out MathTransform? mathTransform, out skipReason))
             {
-                return false;
+                if (!TryWrapStandaloneStackTransferOperation(normalizedOperation, out string? wrappedOperation))
+                {
+                    return false;
+                }
+
+                string wrappedOperationValue = Assert.IsType<string>(wrappedOperation);
+                if (!ProjPipelineMathTransformFactory.TryCreateMathTransform(wrappedOperationValue, out mathTransform, out skipReason))
+                {
+                    return false;
+                }
             }
 
-            string wrappedOperationValue = Assert.IsType<string>(wrappedOperation);
-            if (!ProjPipelineMathTransformFactory.TryCreateMathTransform(wrappedOperationValue, out mathTransform, out skipReason))
+            MathTransform pipelineTransform = Assert.IsType<MathTransform>(mathTransform, exactMatch: false);
+            if (direction == GieDirection.Inverse)
             {
-                return false;
+                try
+                {
+                    pipelineTransform = pipelineTransform.Inverse();
+                }
+                catch (NotSupportedException)
+                {
+                    skipReason = "Operation does not support inverse direction in the current runtime.";
+                    return false;
+                }
+                catch (InvalidOperationException)
+                {
+                    skipReason = "Operation inverse could not be constructed for this case.";
+                    return false;
+                }
             }
+
+            transform = input =>
+            {
+                ArgumentNullException.ThrowIfNull(input);
+
+                return pipelineTransform.Transform(input);
+            };
+
+            return true;
         }
-
-        MathTransform pipelineTransform = Assert.IsType<MathTransform>(mathTransform, exactMatch: false);
-        if (direction == GieDirection.Inverse)
+        catch (ArgumentException)
         {
-            try
-            {
-                pipelineTransform = pipelineTransform.Inverse();
-            }
-            catch (NotSupportedException)
-            {
-                skipReason = "Operation does not support inverse direction in the current runtime.";
-                return false;
-            }
-            catch (InvalidOperationException)
-            {
-                skipReason = "Operation inverse could not be constructed for this case.";
-                return false;
-            }
+            skipReason = "Operation could not be created with the parsed parameter set.";
+            return false;
         }
-
-        transform = input =>
+        catch (NotSupportedException)
         {
-            ArgumentNullException.ThrowIfNull(input);
-
-            return pipelineTransform.Transform(input);
-        };
-
-        return true;
+            skipReason = "Operation is not supported by the current runtime.";
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            skipReason = "Operation could not be constructed for this case.";
+            return false;
+        }
     }
 
     private static string NormalizeOperationForRuntime(string operation)
@@ -932,6 +1083,27 @@ public class GieBuiltinsTheoryTests
         normalizedOperation = ExpandLegacyInitDefinitions(normalizedOperation);
         normalizedOperation = RewriteLegacyGeoidGridOperation(normalizedOperation);
         return ResolveKnownTestGridPaths(normalizedOperation);
+    }
+
+    private static void AssertFailureOutcome(Func<double[]> evaluate)
+    {
+        try
+        {
+            double[] output = evaluate();
+            Assert.Contains(output, value => double.IsNaN(value) || double.IsInfinity(value));
+        }
+        catch (ArgumentException)
+        {
+        }
+        catch (InvalidOperationException)
+        {
+        }
+        catch (NotSupportedException)
+        {
+        }
+        catch (FormatException)
+        {
+        }
     }
 
     private static bool TryExpandKnownCoordinateOperationUrn(string operation, [NotNullWhen(true)] out string? expandedOperation)

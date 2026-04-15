@@ -226,6 +226,11 @@ public abstract class MathTransform
         point = ArgumentGuard.ThrowIfNull(point, nameof(point));
 
         int pointLength = point.Length;
+        if (pointLength < 2)
+        {
+            ArgumentGuard.ThrowArgument("At least two ordinate values are required.", nameof(point));
+        }
+
         int resultDimensions = this.GetResultDimensions(pointLength);
         if (resultDimensions <= 4)
         {

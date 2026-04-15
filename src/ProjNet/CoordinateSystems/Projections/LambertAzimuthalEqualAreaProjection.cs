@@ -232,8 +232,7 @@ public sealed class LambertAzimuthalEqualAreaProjection : MapProjection
         double y = HugeVal;
         if (Math.Abs(b) < Eps10)
         {
-            // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
-            return;
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         switch (this.mode)
@@ -290,8 +289,7 @@ public sealed class LambertAzimuthalEqualAreaProjection : MapProjection
             oblcon:
                 if (y <= Eps10)
                 {
-                    // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
-                    return;
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 y = Math.Sqrt(2.0 / y);
@@ -308,8 +306,7 @@ public sealed class LambertAzimuthalEqualAreaProjection : MapProjection
             continue_S_POLE:
                 if (Math.Abs(phi + this.latOrigin) < Eps10)
                 {
-                    // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
-                    return;
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 y = FortPi - (phi * 0.5);
@@ -350,7 +347,13 @@ public sealed class LambertAzimuthalEqualAreaProjection : MapProjection
                     return;
                 }
 
-                double sCe = 2.0 * Math.Asin(0.5 * rho / this.rq);
+                double asinArgument = 0.5 * rho / this.rq;
+                if (asinArgument > 1d)
+                {
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+                }
+
+                double sCe = 2.0 * Math.Asin(asinArgument);
                 double cCe = Math.Cos(sCe);
                 sCe = Math.Sin(sCe);
                 x *= sCe;
@@ -402,9 +405,7 @@ public sealed class LambertAzimuthalEqualAreaProjection : MapProjection
         double sinz = 0.0;
         if (phi > 1.0)
         {
-            x = 0; // lam
-            y = 0; // phi
-            return;
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         phi = 2.0 * Math.Asin(phi);

@@ -1611,6 +1611,25 @@ public class GieBuiltinsRegressionTests
         Assert.NotEmpty(firstCase.Operation);
     }
 
+    /// <summary>
+    /// Verifies that the dedicated failure provider emits expected-failure rows from the builtins fixtures.
+    /// </summary>
+    [Fact]
+    public void GetBuiltinsFailureCasesReturnsExpectedFailureRows()
+    {
+        List<object> rows = GetFailureCaseRows();
+
+        Assert.NotEmpty(rows);
+
+        PropertyInfo dataProperty = rows[0].GetType().GetProperty("Data", BindingFlags.Instance | BindingFlags.Public)
+            ?? throw new InvalidOperationException("Could not locate TheoryDataRow.Data.");
+        var firstCase = dataProperty.GetValue(rows[0]) as GieCase;
+
+        Assert.NotNull(firstCase);
+        Assert.True(firstCase!.ExpectsFailure);
+        Assert.NotEmpty(firstCase.Operation);
+    }
+
     private static bool TryIsRuntimeOperationSupported(string operation)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("TryIsRuntimeOperationSupported", BindingFlags.Static | BindingFlags.NonPublic)
@@ -1662,6 +1681,20 @@ public class GieBuiltinsRegressionTests
 
         var rows = new List<object>();
         foreach (object row in Assert.IsAssignableFrom<System.Collections.IEnumerable>(method.Invoke(null, [fixtureName])))
+        {
+            rows.Add(row);
+        }
+
+        return rows;
+    }
+
+    private static List<object> GetFailureCaseRows()
+    {
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("GetBuiltinsFailureCases", BindingFlags.Static | BindingFlags.Public)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.GetBuiltinsFailureCases.");
+
+        var rows = new List<object>();
+        foreach (object row in Assert.IsAssignableFrom<System.Collections.IEnumerable>(method.Invoke(null, [])))
         {
             rows.Add(row);
         }

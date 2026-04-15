@@ -285,6 +285,7 @@ internal sealed class OrthographicProjection : MapProjection
             phi = y_recentered;
             lam = x_recentered - this.Lon_origin;
 
+            bool converged = false;
             for (int i = 0; i < 20; ++i)
             {
                 Sincos(phi, out double sinphi, out double cosphi);
@@ -299,7 +300,7 @@ internal sealed class OrthographicProjection : MapProjection
                 double j11 = -rho * sinphi * sinlam;
                 double j12 = nu * cosphi * coslam;
                 double j21 = rho * ((cosphi * this.cosph0) + (sinphi * this.sinph0 * coslam));
-                double j22 = nu * this.sinph0 * this.cosph0 * sinlam;
+                double j22 = nu * this.sinph0 * cosphi * sinlam;
                 double d = (j11 * j22) - (j12 * j21);
                 double dx = x - x_new;
                 double dy = y - y_new;
@@ -309,18 +310,26 @@ internal sealed class OrthographicProjection : MapProjection
                 phi += dphi;
                 if (phi > HalfPi)
                 {
-                    phi = HalfPi;
+                    phi = HalfPi - (phi - HalfPi);
+                    lam = Adjust_lon(lam + PI);
                 }
                 else if (phi < -HalfPi)
                 {
-                    phi = -HalfPi;
+                    phi = -HalfPi + (-HalfPi - phi);
+                    lam = Adjust_lon(lam + PI);
                 }
 
                 lam += dlam;
                 if (Math.Abs(dphi) < ProjectionConstants.Tolerance1E12 && Math.Abs(dlam) < ProjectionConstants.Tolerance1E12)
                 {
+                    converged = true;
                     break;
                 }
+            }
+
+            if (!converged)
+            {
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
         }
 

@@ -22,6 +22,7 @@ internal static class Program
         {
             PerformanceTests.Validate();
             ProjParityBenchmarks.Validate();
+            ProjectionSinglePointBenchmarks.Validate();
         }
 
         BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);

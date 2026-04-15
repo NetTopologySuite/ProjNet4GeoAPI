@@ -6,7 +6,6 @@ namespace ProjNet.Benchmark;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Reflection;
 using BenchmarkDotNet.Attributes;
 using ProjNet.CoordinateSystems.Transformations;
 
@@ -20,8 +19,6 @@ public class TransformationRuntimeBenchmarks
     private const int PointCount = 10_000;
     private const string MolodenskyOperation = "+proj=molodensky +a=6378160 +rf=298.25 +da=-23 +df=-8.120449e-8 +dx=-134 +dy=-48 +dz=149 +abridged";
     private const string HornerOperation = "+proj=horner +ellps=intl +range=10000000 +fwd_origin=4.94690026817276e+05,6.13342113183056e+06 +deg=3 +fwd_c=6.13258562111350e+06,6.19480105709997e+05,9.99378966275206e-01,-2.82153291753490e-02,-2.27089979140026e-10,-1.77019590701470e-09,1.08522286274070e-14,2.11430298751604e-15";
-
-    private static readonly MethodInfo CreatePipelineTransformMethod = ResolveCreatePipelineTransformMethod();
 
     private MathTransform molodenskyTransform = null!;
     private MathTransform hornerTransform = null!;
@@ -62,10 +59,10 @@ public class TransformationRuntimeBenchmarks
     [GlobalSetup]
     public void GlobalSetup()
     {
-        this.molodenskyTransform = CreatePipelineTransform(MolodenskyOperation);
-        this.hornerTransform = CreatePipelineTransform(HornerOperation);
-        this.horizontalGridShiftTransform = CreatePipelineTransform(FormattableString.Invariant($"+proj=hgridshift +grids={BenchmarkFixtureResolver.ResolveGridPath("test_hgrid_little_endian.gsb")}"));
-        this.verticalGridShiftTransform = CreatePipelineTransform(FormattableString.Invariant($"+proj=vgridshift +grids={BenchmarkFixtureResolver.ResolveGridPath("egm96_15.gtx")}"));
+        this.molodenskyTransform = BenchmarkPipelineTransformFactory.Create(MolodenskyOperation);
+        this.hornerTransform = BenchmarkPipelineTransformFactory.Create(HornerOperation);
+        this.horizontalGridShiftTransform = BenchmarkPipelineTransformFactory.Create(FormattableString.Invariant($"+proj=hgridshift +grids={BenchmarkFixtureResolver.ResolveGridPath("test_hgrid_little_endian.gsb")}"));
+        this.verticalGridShiftTransform = BenchmarkPipelineTransformFactory.Create(FormattableString.Invariant($"+proj=vgridshift +grids={BenchmarkFixtureResolver.ResolveGridPath("egm96_15.gtx")}"));
 
         (this.molodenskyXs, this.molodenskyYs, this.molodenskyZs) = CreateMolodenskySource();
         (this.hornerXs, this.hornerYs, this.hornerZs) = CreateHornerSource();
@@ -199,39 +196,5 @@ public class TransformationRuntimeBenchmarks
         Array.Fill(ys, y);
         Array.Fill(zs, z);
         return (xs, ys, zs);
-    }
-
-    private static MathTransform CreatePipelineTransform(string operation)
-    {
-        object?[] arguments = [operation, null, null];
-        bool ok = (bool)(CreatePipelineTransformMethod.Invoke(null, arguments) ?? false);
-        if (!ok)
-        {
-            throw new InvalidOperationException(arguments[2] as string ?? "Pipeline transform creation failed.");
-        }
-
-        return arguments[1] as MathTransform
-            ?? throw new InvalidOperationException("Pipeline transform factory returned null transform.");
-    }
-
-    private static MethodInfo ResolveCreatePipelineTransformMethod()
-    {
-        Type pipelineFactoryType = typeof(MathTransform).Assembly.GetType(
-            "ProjNet.CoordinateSystems.Transformations.ProjPipelineMathTransformFactory",
-            throwOnError: true)
-            ?? throw new InvalidOperationException("Unable to resolve ProjPipelineMathTransformFactory type.");
-
-        return pipelineFactoryType.GetMethod(
-            "TryCreateMathTransform",
-            BindingFlags.Static | BindingFlags.NonPublic,
-            binder: null,
-            types:
-            [
-                typeof(string),
-                typeof(MathTransform).MakeByRefType(),
-                typeof(string).MakeByRefType(),
-            ],
-            modifiers: null)
-            ?? throw new InvalidOperationException("Unable to resolve ProjPipelineMathTransformFactory.TryCreateMathTransform.");
     }
 }
