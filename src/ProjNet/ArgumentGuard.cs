@@ -183,30 +183,6 @@ internal static class ArgumentGuard
     }
 
     /// <summary>
-    /// Throws an <see cref="ArgumentException"/>.
-    /// </summary>
-    /// <param name="message">Exception message.</param>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [DoesNotReturn]
-    internal static void ThrowArgument(string message)
-    {
-        throw new ArgumentException(message);
-    }
-
-    /// <summary>
-    /// Throws an <see cref="ArgumentException"/> and satisfies expression contexts.
-    /// </summary>
-    /// <typeparam name="T">Return type used by the caller expression.</typeparam>
-    /// <param name="message">Exception message.</param>
-    /// <returns>This method always throws; no value is returned.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    [DoesNotReturn]
-    internal static T ThrowArgument<T>(string message)
-    {
-        throw new ArgumentException(message);
-    }
-
-    /// <summary>
     /// Throws an <see cref="ArgumentException"/> with parameter context and satisfies expression contexts.
     /// </summary>
     /// <typeparam name="T">Return type used by the caller expression.</typeparam>
