@@ -64,8 +64,8 @@ public class TransformationRuntimeBenchmarks
     {
         this.molodenskyTransform = CreatePipelineTransform(MolodenskyOperation);
         this.hornerTransform = CreatePipelineTransform(HornerOperation);
-        this.horizontalGridShiftTransform = CreatePipelineTransform(FormattableString.Invariant($"+proj=hgridshift +grids={ResolveGridPath("test_hgrid_little_endian.gsb")}"));
-        this.verticalGridShiftTransform = CreatePipelineTransform(FormattableString.Invariant($"+proj=vgridshift +grids={ResolveGridPath("egm96_15.gtx")}"));
+        this.horizontalGridShiftTransform = CreatePipelineTransform(FormattableString.Invariant($"+proj=hgridshift +grids={BenchmarkFixtureResolver.ResolveGridPath("test_hgrid_little_endian.gsb")}"));
+        this.verticalGridShiftTransform = CreatePipelineTransform(FormattableString.Invariant($"+proj=vgridshift +grids={BenchmarkFixtureResolver.ResolveGridPath("egm96_15.gtx")}"));
 
         (this.molodenskyXs, this.molodenskyYs, this.molodenskyZs) = CreateMolodenskySource();
         (this.hornerXs, this.hornerYs, this.hornerZs) = CreateHornerSource();
@@ -233,22 +233,5 @@ public class TransformationRuntimeBenchmarks
             ],
             modifiers: null)
             ?? throw new InvalidOperationException("Unable to resolve ProjPipelineMathTransformFactory.TryCreateMathTransform.");
-    }
-
-    private static string ResolveGridPath(string fileName)
-    {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current is not null)
-        {
-            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "grids", fileName);
-            if (File.Exists(candidate))
-            {
-                return candidate;
-            }
-
-            current = current.Parent;
-        }
-
-        throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }
