@@ -332,10 +332,7 @@ public class CoordinateSystemServicesTests
     {
         if (!string.IsNullOrWhiteSpace(csvPath))
         {
-            if (!File.Exists(csvPath))
-            {
-                Xunit.Assert.Skip("Specified file not found");
-            }
+            Assert.True(File.Exists(csvPath), FormattableString.Invariant($"Specified file not found: {csvPath}"));
         }
 
         var css = new CoordinateSystemServices(
