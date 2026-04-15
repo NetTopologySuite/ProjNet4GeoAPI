@@ -39,6 +39,12 @@ internal static partial class GeoTiffGridLoader
     private const int GtRasterTypeGeoKey = 1025;
     private const int RasterPixelIsPoint = 2;
 
+#if !NET8_0_OR_GREATER
+    private static readonly Regex MetadataAttributeRegex = new Regex(
+        "\\b(?<name>[^\\s=]+)\\s*=\\s*\"(?<value>[^\"]*)\"",
+        RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+#endif
+
     /// <summary>
     /// Loads all horizontal grid shift pages from a GeoTIFF file.
     /// </summary>
@@ -111,6 +117,9 @@ internal static partial class GeoTiffGridLoader
 #if NET8_0_OR_GREATER
     [GeneratedRegex("<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
     private static partial Regex MetadataItemRegex();
+
+    [GeneratedRegex("\\b(?<name>[^\\s=]+)\\s*=\\s*\"(?<value>[^\"]*)\"", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
+    private static partial Regex MetadataAttributeRegex();
 #endif
 
     private static List<LoadedPage> LoadCore(string path, GridMode mode, bool requireMetreUnitsForXyz, ArrayPool<double> sampleValueArrayPool)
@@ -712,17 +721,27 @@ internal static partial class GeoTiffGridLoader
             return string.Empty;
         }
 
-        Match match = Regex.Match(
-            attrs,
-            $"\\b{Regex.Escape(attributeName)}\\s*=\\s*\"(?<value>[^\"]*)\"",
-            RegexOptions.IgnoreCase | RegexOptions.Singleline);
-        if (!match.Success)
+#if NET8_0_OR_GREATER
+        MatchCollection matches = MetadataAttributeRegex().Matches(attrs);
+#else
+        MatchCollection matches = MetadataAttributeRegex.Matches(attrs);
+#endif
+        for (int i = 0; i < matches.Count; i++)
         {
-            return string.Empty;
+            Match match = matches[i];
+            Group nameGroup = match.Groups["name"];
+            Group valueGroup = match.Groups["value"];
+            if (!nameGroup.Success
+                || !valueGroup.Success
+                || !nameGroup.Value.Equals(attributeName, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            return CleanMetadataValue(valueGroup.Value);
         }
 
-        Group valueGroup = match.Groups["value"];
-        return valueGroup.Success ? CleanMetadataValue(valueGroup.Value) : string.Empty;
+        return string.Empty;
     }
 
     private static double ResolveAngularScaleToDegree(Tiff tiff)
