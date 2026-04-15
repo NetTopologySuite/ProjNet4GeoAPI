@@ -8,6 +8,7 @@ namespace ProjNet.IO.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -53,6 +54,18 @@ public static partial class CoordinateSystemWktReader
         }
 
         return ParseCore(wkt, sourceText: null);
+    }
+
+    [DoesNotReturn]
+    private static void ThrowWktParseException(string message)
+    {
+        throw new WktParseException(message);
+    }
+
+    [DoesNotReturn]
+    private static T ThrowWktParseException<T>(string message)
+    {
+        throw new WktParseException(message);
     }
 
     private static bool IsWhitespaceOnly(ReadOnlySpan<char> value)

@@ -99,22 +99,22 @@ public static partial class CoordinateSystemWktReader
         {
             if (horizontalDatum is not null)
             {
-                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS must use BASEGEOGCRS or BASEGEODCRS instead of a top-level DATUM block.");
+                ThrowWktParseException("WKT2 derived geodetic CRS must use BASEGEOGCRS or BASEGEODCRS instead of a top-level DATUM block.");
             }
 
             if (baseGeographicCoordinateSystem is null)
             {
-                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing a BASEGEOGCRS or BASEGEODCRS block.");
+                ThrowWktParseException("WKT2 derived geodetic CRS is missing a BASEGEOGCRS or BASEGEODCRS block.");
             }
 
             if (derivingConversion is null)
             {
-                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing a DERIVINGCONVERSION block.");
+                ThrowWktParseException("WKT2 derived geodetic CRS is missing a DERIVINGCONVERSION block.");
             }
 
             if (string.IsNullOrWhiteSpace(coordinateSystemType))
             {
-                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing a CS block.");
+                ThrowWktParseException("WKT2 derived geodetic CRS is missing a CS block.");
             }
 
             if (!string.Equals(coordinateSystemType, "ellipsoidal", StringComparison.OrdinalIgnoreCase))
@@ -129,12 +129,12 @@ public static partial class CoordinateSystemWktReader
 
             if (axisInfo.Count != coordinateSystemDimension)
             {
-                ArgumentGuard.ThrowArgument($"WKT2 derived geodetic CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+                ThrowWktParseException($"WKT2 derived geodetic CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
             }
 
             if (angularUnit is null)
             {
-                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing an ANGLEUNIT block.");
+                ThrowWktParseException("WKT2 derived geodetic CRS is missing an ANGLEUNIT block.");
             }
 
             AffineTransform transform = DerivedCoordinateSystemSupport.CreateAffineTransform(derivingConversion);
@@ -153,17 +153,17 @@ public static partial class CoordinateSystemWktReader
 
         if (horizontalDatum is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 geodetic CRS is missing a DATUM block.");
+            ThrowWktParseException("WKT2 geodetic CRS is missing a DATUM block.");
         }
 
         if (string.IsNullOrWhiteSpace(coordinateSystemType))
         {
-            ArgumentGuard.ThrowArgument("WKT2 geodetic CRS is missing a CS block.");
+            ThrowWktParseException("WKT2 geodetic CRS is missing a CS block.");
         }
 
         if (axisInfo.Count != coordinateSystemDimension)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 geodetic CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+            ThrowWktParseException($"WKT2 geodetic CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
         }
 
         if (string.Equals(coordinateSystemType, "ellipsoidal", StringComparison.OrdinalIgnoreCase))
@@ -172,12 +172,12 @@ public static partial class CoordinateSystemWktReader
             {
                 if (angularUnit is null)
                 {
-                    ArgumentGuard.ThrowArgument("WKT2 ellipsoidal CRS is missing ANGLEUNIT metadata.");
+                    ThrowWktParseException("WKT2 ellipsoidal CRS is missing ANGLEUNIT metadata.");
                 }
 
                 if (linearUnit is null)
                 {
-                    ArgumentGuard.ThrowArgument("WKT2 three-dimensional ellipsoidal CRS is missing LENGTHUNIT metadata.");
+                    ThrowWktParseException("WKT2 three-dimensional ellipsoidal CRS is missing LENGTHUNIT metadata.");
                 }
 
                 primeMeridian ??= PrimeMeridian.Greenwich;
@@ -199,7 +199,7 @@ public static partial class CoordinateSystemWktReader
 
             if (angularUnit is null)
             {
-                ArgumentGuard.ThrowArgument("WKT2 ellipsoidal CRS is missing ANGLEUNIT metadata.");
+                ThrowWktParseException("WKT2 ellipsoidal CRS is missing ANGLEUNIT metadata.");
             }
 
             primeMeridian ??= PrimeMeridian.Greenwich;
@@ -225,7 +225,7 @@ public static partial class CoordinateSystemWktReader
 
             if (linearUnit is null)
             {
-                ArgumentGuard.ThrowArgument("WKT2 cartesian geodetic CRS is missing LENGTHUNIT metadata.");
+                ThrowWktParseException("WKT2 cartesian geodetic CRS is missing LENGTHUNIT metadata.");
             }
 
             primeMeridian ??= PrimeMeridian.Greenwich;
@@ -373,7 +373,7 @@ public static partial class CoordinateSystemWktReader
             return AxisOrientationEnum.North;
         }
 
-        return ArgumentGuard.ThrowArgument<AxisOrientationEnum>($"Invalid WKT2 axis orientation '{orientationToken}'.");
+        return ThrowWktParseException<AxisOrientationEnum>($"Invalid WKT2 axis orientation '{orientationToken}'.");
     }
 
     private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktKeywordNode node)
@@ -451,7 +451,7 @@ public static partial class CoordinateSystemWktReader
 
         if (ellipsoid is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 DATUM is missing an ELLIPSOID block.");
+            ThrowWktParseException("WKT2 DATUM is missing an ELLIPSOID block.");
         }
 
         return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -510,17 +510,17 @@ public static partial class CoordinateSystemWktReader
 
         if (members.Count == 0)
         {
-            ArgumentGuard.ThrowArgument("WKT2 ENSEMBLE is missing MEMBER blocks.");
+            ThrowWktParseException("WKT2 ENSEMBLE is missing MEMBER blocks.");
         }
 
         if (requireEllipsoid && ellipsoid is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 ENSEMBLE is missing an ELLIPSOID block.");
+            ThrowWktParseException("WKT2 ENSEMBLE is missing an ELLIPSOID block.");
         }
 
         if (accuracy is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 ENSEMBLE is missing an ENSEMBLEACCURACY block.");
+            ThrowWktParseException("WKT2 ENSEMBLE is missing an ENSEMBLEACCURACY block.");
         }
 
         return new DatumEnsemble(name, members, accuracy.Value, ellipsoid, authority, authorityCode);
@@ -606,7 +606,7 @@ public static partial class CoordinateSystemWktReader
 
         if (axisUnit is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 ELLIPSOID is missing a LENGTHUNIT block.");
+            ThrowWktParseException("WKT2 ELLIPSOID is missing a LENGTHUNIT block.");
         }
 
         return new Ellipsoid(semiMajorAxis, 0d, inverseFlattening, true, axisUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -764,7 +764,7 @@ public static partial class CoordinateSystemWktReader
     {
         if (axisUnits.Count != dimension)
         {
-            ArgumentGuard.ThrowArgument($"{context} declared dimension {dimension}, but provided {axisUnits.Count} AXIS blocks.");
+            ThrowWktParseException($"{context} declared dimension {dimension}, but provided {axisUnits.Count} AXIS blocks.");
         }
 
         var resolvedUnits = new List<IUnit>(dimension);
@@ -775,7 +775,7 @@ public static partial class CoordinateSystemWktReader
             {
                 if (rootUnit is null)
                 {
-                    ArgumentGuard.ThrowArgument($"{context} axis {i.ToString(CultureInfo.InvariantCulture)} is missing a unit definition.");
+                    ThrowWktParseException($"{context} axis {i.ToString(CultureInfo.InvariantCulture)} is missing a unit definition.");
                 }
 
                 axisUnit = rootUnit;
@@ -861,7 +861,7 @@ public static partial class CoordinateSystemWktReader
 
         if (string.IsNullOrWhiteSpace(timeOrigin))
         {
-            ArgumentGuard.ThrowArgument("WKT2 temporal datum is missing a TIMEORIGIN block.");
+            ThrowWktParseException("WKT2 temporal datum is missing a TIMEORIGIN block.");
         }
 
         return new TemporalDatum(timeOrigin, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -956,12 +956,12 @@ public static partial class CoordinateSystemWktReader
 
         if (engineeringDatum is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 engineering CRS is missing an EDATUM or ENGINEERINGDATUM block.");
+            ThrowWktParseException("WKT2 engineering CRS is missing an EDATUM or ENGINEERINGDATUM block.");
         }
 
         if (string.IsNullOrWhiteSpace(coordinateSystemType))
         {
-            ArgumentGuard.ThrowArgument("WKT2 engineering CRS is missing a CS block.");
+            ThrowWktParseException("WKT2 engineering CRS is missing a CS block.");
         }
 
         List<IUnit> resolvedUnits = ResolveWkt2CoordinateSystemUnits(rootUnit, axisUnits, coordinateSystemDimension, "WKT2 engineering CRS", allowMixedUnits: true);
@@ -1031,7 +1031,7 @@ public static partial class CoordinateSystemWktReader
 
         if (temporalDatum is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 temporal CRS is missing a TDATUM or TIMEDATUM block.");
+            ThrowWktParseException("WKT2 temporal CRS is missing a TDATUM or TIMEDATUM block.");
         }
 
         if (!string.Equals(coordinateSystemType, "temporal", StringComparison.OrdinalIgnoreCase))
@@ -1110,7 +1110,7 @@ public static partial class CoordinateSystemWktReader
 
         if (parametricDatum is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 parametric CRS is missing a PDATUM or PARAMETRICDATUM block.");
+            ThrowWktParseException("WKT2 parametric CRS is missing a PDATUM or PARAMETRICDATUM block.");
         }
 
         if (!string.Equals(coordinateSystemType, "parametric", StringComparison.OrdinalIgnoreCase))
@@ -1184,17 +1184,17 @@ public static partial class CoordinateSystemWktReader
 
         if (sourceCoordinateSystem is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 coordinate operation is missing a SOURCECRS block.");
+            ThrowWktParseException("WKT2 coordinate operation is missing a SOURCECRS block.");
         }
 
         if (targetCoordinateSystem is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 coordinate operation is missing a TARGETCRS block.");
+            ThrowWktParseException("WKT2 coordinate operation is missing a TARGETCRS block.");
         }
 
         if (string.IsNullOrWhiteSpace(methodName))
         {
-            ArgumentGuard.ThrowArgument("WKT2 coordinate operation is missing a METHOD block.");
+            ThrowWktParseException("WKT2 coordinate operation is missing a METHOD block.");
         }
 
         sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
@@ -1282,12 +1282,12 @@ public static partial class CoordinateSystemWktReader
 
         if (sourceCoordinateSystem is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 concatenated operation is missing a SOURCECRS block.");
+            ThrowWktParseException("WKT2 concatenated operation is missing a SOURCECRS block.");
         }
 
         if (targetCoordinateSystem is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 concatenated operation is missing a TARGETCRS block.");
+            ThrowWktParseException("WKT2 concatenated operation is missing a TARGETCRS block.");
         }
 
         sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
@@ -1336,7 +1336,7 @@ public static partial class CoordinateSystemWktReader
         ReadOnlySpan<WktNode> children = node.GetChildrenSpan();
         if (children.Length < 2)
         {
-            throw new ArgumentException("WKT2 ID is missing an authority code.", nameof(node));
+            ThrowWktParseException("WKT2 ID is missing an authority code.");
         }
 
         authority = node.GetLeafTextChild(0);
@@ -1484,17 +1484,17 @@ public static partial class CoordinateSystemWktReader
         string name = node.GetStringChild(0);
         if (baseProjectedCoordinateSystem is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a BASEPROJCRS block.");
+            ThrowWktParseException("WKT2 derived projected CRS is missing a BASEPROJCRS block.");
         }
 
         if (derivingConversion is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a DERIVINGCONVERSION block.");
+            ThrowWktParseException("WKT2 derived projected CRS is missing a DERIVINGCONVERSION block.");
         }
 
         if (string.IsNullOrWhiteSpace(coordinateSystemType))
         {
-            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a CS block.");
+            ThrowWktParseException("WKT2 derived projected CRS is missing a CS block.");
         }
 
         if (!string.Equals(coordinateSystemType, "cartesian", StringComparison.OrdinalIgnoreCase))
@@ -1509,12 +1509,12 @@ public static partial class CoordinateSystemWktReader
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a LENGTHUNIT block.");
+            ThrowWktParseException("WKT2 derived projected CRS is missing a LENGTHUNIT block.");
         }
 
         if (axisInfo.Count != coordinateSystemDimension)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 derived projected CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+            ThrowWktParseException($"WKT2 derived projected CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
         }
 
         baseProjectedCoordinateSystem = ArgumentGuard.ThrowIfNull(baseProjectedCoordinateSystem, nameof(baseProjectedCoordinateSystem));
@@ -1604,17 +1604,17 @@ public static partial class CoordinateSystemWktReader
         string name = node.GetStringChild(0);
         if (geographicCS is null)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 {crsContext} is missing a BASEGEOGCRS block.");
+            ThrowWktParseException($"WKT2 {crsContext} is missing a BASEGEOGCRS block.");
         }
 
         if (projection is null)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 {crsContext} is missing a CONVERSION block.");
+            ThrowWktParseException($"WKT2 {crsContext} is missing a CONVERSION block.");
         }
 
         if (string.IsNullOrWhiteSpace(coordinateSystemType))
         {
-            ArgumentGuard.ThrowArgument($"WKT2 {crsContext} is missing a CS block.");
+            ThrowWktParseException($"WKT2 {crsContext} is missing a CS block.");
         }
 
         if (!string.Equals(coordinateSystemType, "cartesian", StringComparison.OrdinalIgnoreCase))
@@ -1629,12 +1629,12 @@ public static partial class CoordinateSystemWktReader
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 {crsContext} is missing a LENGTHUNIT block.");
+            ThrowWktParseException($"WKT2 {crsContext} is missing a LENGTHUNIT block.");
         }
 
         if (axisInfo.Count != coordinateSystemDimension)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 {crsContext} declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+            ThrowWktParseException($"WKT2 {crsContext} declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
         }
 
         geographicCS = ArgumentGuard.ThrowIfNull(geographicCS, nameof(geographicCS));
@@ -1696,7 +1696,7 @@ public static partial class CoordinateSystemWktReader
 
         if (horizontalDatum is null)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 {rootKeyword} is missing a DATUM block.");
+            ThrowWktParseException($"WKT2 {rootKeyword} is missing a DATUM block.");
         }
 
         horizontalDatum = ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum));
@@ -1767,7 +1767,7 @@ public static partial class CoordinateSystemWktReader
 
         if (string.IsNullOrWhiteSpace(methodName))
         {
-            ArgumentGuard.ThrowArgument($"WKT2 {keyword} is missing a METHOD block.");
+            ThrowWktParseException($"WKT2 {keyword} is missing a METHOD block.");
         }
 
         return new Projection(methodName, parameters, conversionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -1882,12 +1882,12 @@ public static partial class CoordinateSystemWktReader
         string name = node.GetStringChild(0);
         if (verticalDatum is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a VDATUM or ENSEMBLE block.");
+            ThrowWktParseException("WKT2 vertical CRS is missing a VDATUM or ENSEMBLE block.");
         }
 
         if (string.IsNullOrWhiteSpace(coordinateSystemType))
         {
-            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a CS block.");
+            ThrowWktParseException("WKT2 vertical CRS is missing a CS block.");
         }
 
         if (!string.Equals(coordinateSystemType, "vertical", StringComparison.OrdinalIgnoreCase))
@@ -1902,12 +1902,12 @@ public static partial class CoordinateSystemWktReader
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a LENGTHUNIT block.");
+            ThrowWktParseException("WKT2 vertical CRS is missing a LENGTHUNIT block.");
         }
 
         if (axisInfo.Count != coordinateSystemDimension)
         {
-            ArgumentGuard.ThrowArgument($"WKT2 vertical CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+            ThrowWktParseException($"WKT2 vertical CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
         }
 
         verticalDatum = ApplyVerticalDatumTypeForAxis(ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum)), axisInfo[0]);
@@ -2159,7 +2159,7 @@ public static partial class CoordinateSystemWktReader
 
         if (string.IsNullOrWhiteSpace(methodName))
         {
-            ArgumentGuard.ThrowArgument("WKT2 ABRIDGEDTRANSFORMATION is missing a METHOD block.");
+            ThrowWktParseException("WKT2 ABRIDGEDTRANSFORMATION is missing a METHOD block.");
         }
 
         return BoundCoordinateSystemSupport.CreateBoundTransformation(
