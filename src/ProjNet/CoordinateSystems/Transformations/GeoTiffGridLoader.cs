@@ -567,7 +567,7 @@ internal static partial class GeoTiffGridLoader
         if (TryGetStringField(tiff, (TiffTag)GdalMetadataTag, out string? gdalMetadataCandidate)
             && !string.IsNullOrWhiteSpace(gdalMetadataCandidate))
         {
-            string gdalMetadata = ArgumentGuard.ThrowIfNull(gdalMetadataCandidate, nameof(gdalMetadataCandidate));
+            string gdalMetadata = gdalMetadataCandidate;
             string sanitizedMetadata = SanitizeXmlMetadata(gdalMetadata);
             ParseMetadataItems(sanitizedMetadata, samplesPerPixel, descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, unitTypeBySample, ref useBiquadraticInterpolation);
         }
@@ -575,7 +575,7 @@ internal static partial class GeoTiffGridLoader
         double? noDataValue = default;
         if (TryGetStringField(tiff, (TiffTag)GdalNoDataTag, out string? noDataTextCandidate)
             && double.TryParse(
-                CleanMetadataValue(ArgumentGuard.ThrowIfNull(noDataTextCandidate, nameof(noDataTextCandidate))),
+                CleanMetadataValue(noDataTextCandidate),
                 NumberStyles.Float | NumberStyles.AllowThousands,
                 CultureInfo.InvariantCulture,
                 out double parsedNoData))
@@ -589,11 +589,6 @@ internal static partial class GeoTiffGridLoader
 
     private static string SanitizeXmlMetadata(string metadata)
     {
-        if (metadata is null)
-        {
-            return string.Empty;
-        }
-
         string sanitized = metadata.Trim('\0', '\uFEFF', ' ', '\t', '\r', '\n');
 #if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         int firstTag = sanitized.IndexOf('<', StringComparison.Ordinal);
@@ -616,7 +611,7 @@ internal static partial class GeoTiffGridLoader
 
     private static string CleanMetadataValue(string value)
     {
-        return value?.Trim('\0', ' ', '\t', '\r', '\n') ?? string.Empty;
+        return value.Trim('\0', ' ', '\t', '\r', '\n');
     }
 
     private static void ParseMetadataItems(
@@ -683,7 +678,7 @@ internal static partial class GeoTiffGridLoader
                 continue;
             }
 
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
             {
                 continue;
             }
