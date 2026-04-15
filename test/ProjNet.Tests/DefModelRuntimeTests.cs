@@ -204,6 +204,74 @@ public class DefModelRuntimeTests
         AssertCoordinateClose(recovered, input, tolerance);
     }
 
+    /// <summary>
+    /// Verifies velocity-based time scaling against representative epochs.
+    /// </summary>
+    /// <param name="observationEpoch">Observation epoch in decimal years.</param>
+    /// <param name="expectedScaleFactor">Expected scale factor at the supplied epoch.</param>
+    [Theory]
+    [InlineData(2020d, 0d)]
+    [InlineData(2021d, 1d)]
+    [InlineData(2022d, 2d)]
+    public void DefModelVelocityTimeFunction_ScalesOffsetsByEpochDelta(double observationEpoch, double expectedScaleFactor)
+    {
+        MathTransform transform = CreateTransform(BuildDefModelOperation("simple_model_degree_horizontal_velocity.json"));
+        double[] output = transform.Transform(CreatePoint(2d, 49d, 30d, observationEpoch));
+
+        AssertCoordinateClose(output, CreateScaledHorizontalExpected(expectedScaleFactor, observationEpoch), 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies reverse-step time scaling before and after the configured epoch.
+    /// </summary>
+    /// <param name="observationEpoch">Observation epoch in decimal years.</param>
+    /// <param name="expectedScaleFactor">Expected scale factor at the supplied epoch.</param>
+    [Theory]
+    [InlineData(2020d, -1d)]
+    [InlineData(2021d, 0d)]
+    [InlineData(2022d, 0d)]
+    public void DefModelReverseStepTimeFunction_SwitchesFromNegativeToZero(double observationEpoch, double expectedScaleFactor)
+    {
+        MathTransform transform = CreateTransform(BuildDefModelOperation("simple_model_degree_horizontal_reverse_step.json"));
+        double[] output = transform.Transform(CreatePoint(2d, 49d, 30d, observationEpoch));
+
+        AssertCoordinateClose(output, CreateScaledHorizontalExpected(expectedScaleFactor, observationEpoch), 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies piecewise time scaling for interpolation and linear extrapolation.
+    /// </summary>
+    /// <param name="observationEpoch">Observation epoch in decimal years.</param>
+    /// <param name="expectedScaleFactor">Expected scale factor at the supplied epoch.</param>
+    [Theory]
+    [InlineData(2019d, -1d)]
+    [InlineData(2021d, 1d)]
+    [InlineData(2023d, 3d)]
+    public void DefModelPiecewiseTimeFunction_InterpolatesAndExtrapolates(double observationEpoch, double expectedScaleFactor)
+    {
+        MathTransform transform = CreateTransform(BuildDefModelOperation("simple_model_degree_horizontal_piecewise.json"));
+        double[] output = transform.Transform(CreatePoint(2d, 49d, 30d, observationEpoch));
+
+        AssertCoordinateClose(output, CreateScaledHorizontalExpected(expectedScaleFactor, observationEpoch), 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies exponential time scaling before the reference epoch, during relaxation, and after the end epoch clamp.
+    /// </summary>
+    /// <param name="observationEpoch">Observation epoch in decimal years.</param>
+    /// <param name="expectedScaleFactor">Expected scale factor at the supplied epoch.</param>
+    [Theory]
+    [InlineData(2019d, 0d)]
+    [InlineData(2021d, 0.6321205588285577d)]
+    [InlineData(2030d, 0.9816843611112658d)]
+    public void DefModelExponentialTimeFunction_AppliesRelaxationCurve(double observationEpoch, double expectedScaleFactor)
+    {
+        MathTransform transform = CreateTransform(BuildDefModelOperation("simple_model_degree_horizontal_exponential.json"));
+        double[] output = transform.Transform(CreatePoint(2d, 49d, 30d, observationEpoch));
+
+        AssertCoordinateClose(output, CreateScaledHorizontalExpected(expectedScaleFactor, observationEpoch), 1e-9d);
+    }
+
     private static TheoryDataRow<string, double[], double[], double> Case(string operation, double[] input, double[] expected, double tolerance)
     {
         return new TheoryDataRow<string, double[], double[], double>(operation, input, expected, tolerance);
@@ -257,6 +325,11 @@ public class DefModelRuntimeTests
     private static double[] CreatePoint(double x, double y, double z, double t)
     {
         return [x, y, z, t];
+    }
+
+    private static double[] CreateScaledHorizontalExpected(double scaleFactor, double observationEpoch)
+    {
+        return CreatePoint(2d + scaleFactor, 49d + (2d * scaleFactor), 30d, observationEpoch);
     }
 
     private static double[] ConvertMercatorProjectedPointToGeographic(double[] point)

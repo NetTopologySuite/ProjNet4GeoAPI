@@ -1,0 +1,58 @@
+{
+  "file_type": "deformation_model_master_file",
+  "format_version": "1.0",
+  "source_crs": "EPSG:4326",
+  "target_crs": "foo:ignored",
+  "definition_crs": "EPSG:4326",
+  "horizontal_offset_unit": "degree",
+  "horizontal_offset_method": "addition",
+  "extent": {
+    "type": "bbox",
+    "parameters": {
+      "bbox": [
+        -180,
+        -90,
+        180,
+        90
+      ]
+    }
+  },
+  "time_extent": {
+    "first": "1900-01-01T00:00:00Z",
+    "last": "2050-01-01T00:00:00Z"
+  },
+  "components": [
+    {
+      "description": "exponential test",
+      "displacement_type": "horizontal",
+      "uncertainty_type": "none",
+      "extent": {
+        "type": "bbox",
+        "parameters": {
+          "bbox": [
+            -180,
+            -90,
+            180,
+            90
+          ]
+        }
+      },
+      "spatial_model": {
+        "type": "GeoTIFF",
+        "interpolation_method": "bilinear",
+        "filename": "tests/simple_model_degree_3d_grid.tif"
+      },
+      "time_function": {
+        "type": "exponential",
+        "parameters": {
+          "reference_epoch": "2020-01-01T00:00:00Z",
+          "end_epoch": "2024-01-01T00:00:00Z",
+          "relaxation_constant": 1.0,
+          "before_scale_factor": 0.0,
+          "initial_scale_factor": 0.0,
+          "final_scale_factor": 1.0
+        }
+      }
+    }
+  ]
+}
