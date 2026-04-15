@@ -66,6 +66,25 @@ public class EngineeringCoordinateSystemTests
     }
 
     /// <summary>
+    /// Verifies that WKT2 roundtrips preserve mixed per-axis engineering units.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_WithMixedUnits_RoundTripsEngineeringAxisUnits()
+    {
+        EngineeringCoordinateSystem original = CreateEngineeringCoordinateSystem([LinearUnit.Metre, new ParametricUnit(1d, "unity", string.Empty, -1, string.Empty, string.Empty, string.Empty)]);
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+
+        EngineeringCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<EngineeringCoordinateSystem>(
+            new CoordinateSystemFactory(),
+            wkt);
+
+        Assert.True(original.EqualParams(roundTripped));
+        Assert.IsType<LinearUnit>(roundTripped.AxisUnits[0]);
+        Assert.IsType<ParametricUnit>(roundTripped.AxisUnits[1]);
+        Assert.Equal("unity", roundTripped.AxisUnits[1].Name);
+    }
+
+    /// <summary>
     /// Verifies that equivalent engineering coordinate systems compare equal.
     /// </summary>
     [Fact]

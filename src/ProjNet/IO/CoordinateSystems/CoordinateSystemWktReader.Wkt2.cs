@@ -358,6 +358,11 @@ public static partial class CoordinateSystemWktReader
             return AxisOrientationEnum.Down;
         }
 
+        if (string.Equals(orientationToken, "OTHER", StringComparison.OrdinalIgnoreCase))
+        {
+            return AxisOrientationEnum.Other;
+        }
+
         if (string.Equals(orientationToken, "GEOCENTRICX", StringComparison.OrdinalIgnoreCase))
         {
             return AxisOrientationEnum.Other;

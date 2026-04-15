@@ -60,6 +60,25 @@ public class ParametricCoordinateSystemTests
         Assert.Contains("PARAMETRICUNIT[\"pressure\"", wkt, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that WKT2 roundtrips preserve the parametric unit metadata.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_RoundTripsParametricCoordinateSystemWithParametricUnit()
+    {
+        ParametricCoordinateSystem original = CreateParametricCoordinateSystem();
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+
+        ParametricCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<ParametricCoordinateSystem>(
+            new CoordinateSystemFactory(),
+            wkt);
+
+        Assert.True(original.EqualParams(roundTripped));
+        ParametricUnit unit = Assert.IsType<ParametricUnit>(roundTripped.ParametricUnit);
+        Assert.Equal(original.ParametricUnit.ConversionFactor, unit.ConversionFactor);
+        Assert.Equal(original.ParametricUnit.Name, unit.Name);
+    }
+
     private static ParametricCoordinateSystem CreateParametricCoordinateSystem()
     {
         return new ParametricCoordinateSystem(

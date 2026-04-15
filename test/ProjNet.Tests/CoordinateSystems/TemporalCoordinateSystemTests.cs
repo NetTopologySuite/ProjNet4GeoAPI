@@ -62,6 +62,25 @@ public class TemporalCoordinateSystemTests
         Assert.Contains("TIMEUNIT[\"second\"", wkt, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that WKT2 roundtrips preserve the temporal unit metadata.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_RoundTripsTemporalCoordinateSystemWithTimeUnit()
+    {
+        TemporalCoordinateSystem original = CreateTemporalCoordinateSystem();
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+
+        TemporalCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<TemporalCoordinateSystem>(
+            new CoordinateSystemFactory(),
+            wkt);
+
+        Assert.True(original.EqualParams(roundTripped));
+        TimeUnit unit = Assert.IsType<TimeUnit>(roundTripped.TimeUnit);
+        Assert.Equal(original.TimeUnit.ConversionFactor, unit.ConversionFactor);
+        Assert.Equal(original.TimeUnit.Name, unit.Name);
+    }
+
     private static TemporalCoordinateSystem CreateTemporalCoordinateSystem()
     {
         return new TemporalCoordinateSystem(
