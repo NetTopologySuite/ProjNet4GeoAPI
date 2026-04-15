@@ -8,56 +8,10 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Rebuilds immutable info-backed model objects while replacing their top-level authority metadata.
-/// Typed overloads back the concrete <c>With*</c> APIs, while the generic <see cref="Info"/> overloads remain
-/// the fallback for callers that only hold a base-typed reference.
+/// Rebuilds immutable info-backed model objects while replacing top-level metadata for the typed <c>With*</c> APIs.
 /// </summary>
 internal static partial class InfoAuthorityCloneHelper
 {
-    /// <summary>
-    /// Creates a deep clone of the supplied info-backed model object with replacement authority metadata.
-    /// This generic entry point remains the fallback for base-typed <see cref="Info"/> callers.
-    /// </summary>
-    /// <param name="info">Object to clone.</param>
-    /// <param name="authority">Replacement authority name.</param>
-    /// <param name="authorityCode">Replacement authority code.</param>
-    /// <returns>A cloned object of the same runtime type.</returns>
-    internal static Info CloneWithAuthority(Info info, string authority, long authorityCode)
-    {
-        info = ArgumentGuard.ThrowIfNull(info, nameof(info));
-        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
-
-        return info switch
-        {
-            AngularUnit angularUnit => CloneAngularUnit(angularUnit, authority, authorityCode),
-            LinearUnit linearUnit => CloneLinearUnit(linearUnit, authority, authorityCode),
-            Unit unit => CloneUnit(unit, authority, authorityCode),
-            ParametricUnit parametricUnit => CloneParametricUnit(parametricUnit, authority, authorityCode),
-            TimeUnit timeUnit => CloneTimeUnit(timeUnit, authority, authorityCode),
-            Ellipsoid ellipsoid => CloneEllipsoid(ellipsoid, authority, authorityCode),
-            PrimeMeridian primeMeridian => ClonePrimeMeridian(primeMeridian, authority, authorityCode),
-            Projection projection => CloneProjection(projection, authority, authorityCode),
-            HorizontalDatum horizontalDatum => CloneHorizontalDatum(horizontalDatum, authority, authorityCode),
-            VerticalDatum verticalDatum => CloneVerticalDatum(verticalDatum, authority, authorityCode),
-            EngineeringDatum engineeringDatum => CloneEngineeringDatum(engineeringDatum, authority, authorityCode),
-            ParametricDatum parametricDatum => CloneParametricDatum(parametricDatum, authority, authorityCode),
-            TemporalDatum temporalDatum => CloneTemporalDatum(temporalDatum, authority, authorityCode),
-            GeographicCoordinateSystem geographicCoordinateSystem => CloneGeographicCoordinateSystem(geographicCoordinateSystem, authority, authorityCode),
-            ProjectedCoordinateSystem projectedCoordinateSystem => CloneProjectedCoordinateSystem(projectedCoordinateSystem, authority, authorityCode),
-            GeocentricCoordinateSystem geocentricCoordinateSystem => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, authority, authorityCode),
-            VerticalCoordinateSystem verticalCoordinateSystem => CloneVerticalCoordinateSystem(verticalCoordinateSystem, authority, authorityCode),
-            CompoundCoordinateSystem compoundCoordinateSystem => CloneCompoundCoordinateSystem(compoundCoordinateSystem, authority, authorityCode),
-            BoundCoordinateSystem boundCoordinateSystem => CloneBoundCoordinateSystem(boundCoordinateSystem, authority, authorityCode),
-            FittedCoordinateSystem fittedCoordinateSystem => CloneFittedCoordinateSystem(fittedCoordinateSystem, authority, authorityCode),
-            EngineeringCoordinateSystem engineeringCoordinateSystem => CloneEngineeringCoordinateSystem(engineeringCoordinateSystem, authority, authorityCode),
-            ParametricCoordinateSystem parametricCoordinateSystem => CloneParametricCoordinateSystem(parametricCoordinateSystem, authority, authorityCode),
-            TemporalCoordinateSystem temporalCoordinateSystem => CloneTemporalCoordinateSystem(temporalCoordinateSystem, authority, authorityCode),
-            CoordinateOperation coordinateOperation => CloneCoordinateOperation(coordinateOperation, authority, authorityCode),
-            ConcatenatedOperation concatenatedOperation => CloneConcatenatedOperation(concatenatedOperation, authority, authorityCode),
-            _ => throw new NotSupportedException($"WithAuthority is not supported for info type '{info.GetType().FullName}'."),
-        };
-    }
-
     /// <summary>
     /// Creates a deep clone of the supplied angular unit with replacement authority metadata.
     /// </summary>
@@ -222,49 +176,6 @@ internal static partial class InfoAuthorityCloneHelper
     {
         horizontalDatum = ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum));
         return CloneHorizontalDatum(horizontalDatum, wgs84Parameters);
-    }
-
-    /// <summary>
-    /// Creates a deep clone of the supplied info-backed model object with a replacement name.
-    /// This generic entry point remains the fallback for base-typed <see cref="Info"/> callers.
-    /// </summary>
-    /// <param name="info">Object to clone.</param>
-    /// <param name="name">Replacement name.</param>
-    /// <returns>A cloned object of the same runtime type.</returns>
-    internal static Info CloneWithName(Info info, string name)
-    {
-        info = ArgumentGuard.ThrowIfNull(info, nameof(info));
-        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
-
-        return info switch
-        {
-            AngularUnit angularUnit => CloneAngularUnit(angularUnit, name: name),
-            LinearUnit linearUnit => CloneLinearUnit(linearUnit, name: name),
-            Unit unit => CloneUnit(unit, name: name),
-            ParametricUnit parametricUnit => CloneParametricUnit(parametricUnit, name: name),
-            TimeUnit timeUnit => CloneTimeUnit(timeUnit, name: name),
-            Ellipsoid ellipsoid => CloneEllipsoid(ellipsoid, name: name),
-            PrimeMeridian primeMeridian => ClonePrimeMeridian(primeMeridian, name: name),
-            Projection projection => CloneProjection(projection, name: name),
-            HorizontalDatum horizontalDatum => CloneHorizontalDatum(horizontalDatum, name: name),
-            VerticalDatum verticalDatum => CloneVerticalDatum(verticalDatum, name: name),
-            EngineeringDatum engineeringDatum => CloneEngineeringDatum(engineeringDatum, name: name),
-            ParametricDatum parametricDatum => CloneParametricDatum(parametricDatum, name: name),
-            TemporalDatum temporalDatum => CloneTemporalDatum(temporalDatum, name: name),
-            GeographicCoordinateSystem geographicCoordinateSystem => CloneGeographicCoordinateSystem(geographicCoordinateSystem, name: name),
-            ProjectedCoordinateSystem projectedCoordinateSystem => CloneProjectedCoordinateSystem(projectedCoordinateSystem, name: name),
-            GeocentricCoordinateSystem geocentricCoordinateSystem => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, name: name),
-            VerticalCoordinateSystem verticalCoordinateSystem => CloneVerticalCoordinateSystem(verticalCoordinateSystem, name: name),
-            CompoundCoordinateSystem compoundCoordinateSystem => CloneCompoundCoordinateSystem(compoundCoordinateSystem, name: name),
-            BoundCoordinateSystem boundCoordinateSystem => CloneBoundCoordinateSystem(boundCoordinateSystem, name: name),
-            FittedCoordinateSystem fittedCoordinateSystem => CloneFittedCoordinateSystem(fittedCoordinateSystem, name: name),
-            EngineeringCoordinateSystem engineeringCoordinateSystem => CloneEngineeringCoordinateSystem(engineeringCoordinateSystem, name: name),
-            ParametricCoordinateSystem parametricCoordinateSystem => CloneParametricCoordinateSystem(parametricCoordinateSystem, name: name),
-            TemporalCoordinateSystem temporalCoordinateSystem => CloneTemporalCoordinateSystem(temporalCoordinateSystem, name: name),
-            CoordinateOperation coordinateOperation => CloneCoordinateOperation(coordinateOperation, name: name),
-            ConcatenatedOperation concatenatedOperation => CloneConcatenatedOperation(concatenatedOperation, name: name),
-            _ => throw new NotSupportedException($"WithName is not supported for info type '{info.GetType().FullName}'."),
-        };
     }
 
     /// <summary>

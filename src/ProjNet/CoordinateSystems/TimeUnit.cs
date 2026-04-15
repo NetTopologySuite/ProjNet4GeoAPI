@@ -128,4 +128,10 @@ public sealed class TimeUnit : Info, IUnit
     {
         return obj is TimeUnit timeUnit && timeUnit.ConversionFactor == this.ConversionFactor;
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code) => this.WithAuthority(authority, code);
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name) => this.WithName(name);
 }

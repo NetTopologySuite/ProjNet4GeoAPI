@@ -4,6 +4,8 @@
 
 namespace ProjNet.CoordinateSystems;
 
+using System;
+
 using System.Globalization;
 using System.Xml.Linq;
 
@@ -134,7 +136,7 @@ public abstract class Info : IInfo
     public Info WithAuthority(string authority, long code)
     {
         authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
-        return InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+        return this.CloneWithAuthorityCore(authority, code);
     }
 
     /// <summary>
@@ -145,7 +147,7 @@ public abstract class Info : IInfo
     public Info WithName(string name)
     {
         name = ArgumentGuard.ThrowIfNull(name, nameof(name));
-        return InfoAuthorityCloneHelper.CloneWithName(this, name);
+        return this.CloneWithNameCore(name);
     }
 
     /// <summary>
@@ -162,4 +164,25 @@ public abstract class Info : IInfo
     /// <param name="obj">The object to compare against.</param>
     /// <returns><see langword="true"/> if all coordinate system parameters are equal; otherwise, <see langword="false"/>.</returns>
     public abstract bool EqualParams(object obj);
+
+    /// <summary>
+    /// Creates a clone of this instance with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A cloned instance of the same runtime type.</returns>
+    private protected virtual Info CloneWithAuthorityCore(string authority, long code)
+    {
+        throw new NotSupportedException($"WithAuthority is not supported for info type '{this.GetType().FullName}'.");
+    }
+
+    /// <summary>
+    /// Creates a clone of this instance with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned instance of the same runtime type.</returns>
+    private protected virtual Info CloneWithNameCore(string name)
+    {
+        throw new NotSupportedException($"WithName is not supported for info type '{this.GetType().FullName}'.");
+    }
 }

@@ -181,4 +181,10 @@ public sealed class CoordinateOperation : Info
 
         return true;
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code) => this.WithAuthority(authority, code);
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name) => this.WithName(name);
 }

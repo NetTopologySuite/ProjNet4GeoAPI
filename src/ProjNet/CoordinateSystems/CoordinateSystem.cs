@@ -166,4 +166,42 @@ public abstract class CoordinateSystem : Info
 
         return (double[])envelope.Clone();
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code)
+    {
+        return this switch
+        {
+            GeographicCoordinateSystem geographicCoordinateSystem => geographicCoordinateSystem.WithAuthority(authority, code),
+            ProjectedCoordinateSystem projectedCoordinateSystem => projectedCoordinateSystem.WithAuthority(authority, code),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => geocentricCoordinateSystem.WithAuthority(authority, code),
+            VerticalCoordinateSystem verticalCoordinateSystem => verticalCoordinateSystem.WithAuthority(authority, code),
+            CompoundCoordinateSystem compoundCoordinateSystem => compoundCoordinateSystem.WithAuthority(authority, code),
+            BoundCoordinateSystem boundCoordinateSystem => boundCoordinateSystem.WithAuthority(authority, code),
+            FittedCoordinateSystem fittedCoordinateSystem => fittedCoordinateSystem.WithAuthority(authority, code),
+            EngineeringCoordinateSystem engineeringCoordinateSystem => engineeringCoordinateSystem.WithAuthority(authority, code),
+            ParametricCoordinateSystem parametricCoordinateSystem => parametricCoordinateSystem.WithAuthority(authority, code),
+            TemporalCoordinateSystem temporalCoordinateSystem => temporalCoordinateSystem.WithAuthority(authority, code),
+            _ => throw new NotSupportedException($"WithAuthority is not supported for coordinate system type '{this.GetType().FullName}'."),
+        };
+    }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name)
+    {
+        return this switch
+        {
+            GeographicCoordinateSystem geographicCoordinateSystem => geographicCoordinateSystem.WithName(name),
+            ProjectedCoordinateSystem projectedCoordinateSystem => projectedCoordinateSystem.WithName(name),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => geocentricCoordinateSystem.WithName(name),
+            VerticalCoordinateSystem verticalCoordinateSystem => verticalCoordinateSystem.WithName(name),
+            CompoundCoordinateSystem compoundCoordinateSystem => compoundCoordinateSystem.WithName(name),
+            BoundCoordinateSystem boundCoordinateSystem => boundCoordinateSystem.WithName(name),
+            FittedCoordinateSystem fittedCoordinateSystem => fittedCoordinateSystem.WithName(name),
+            EngineeringCoordinateSystem engineeringCoordinateSystem => engineeringCoordinateSystem.WithName(name),
+            ParametricCoordinateSystem parametricCoordinateSystem => parametricCoordinateSystem.WithName(name),
+            TemporalCoordinateSystem temporalCoordinateSystem => temporalCoordinateSystem.WithName(name),
+            _ => throw new NotSupportedException($"WithName is not supported for coordinate system type '{this.GetType().FullName}'."),
+        };
+    }
 }

@@ -282,10 +282,10 @@ public class InfoTests
     }
 
     /// <summary>
-    /// Verifies that base-typed <see cref="Info.WithAuthority"/> callers still use the generic fallback dispatch.
+    /// Verifies that base-typed <see cref="Info.WithAuthority"/> callers dispatch to the concrete clone path.
     /// </summary>
     [Fact]
-    public void InfoWithAuthority_OnBaseTypedReference_UsesFallbackDispatch()
+    public void InfoWithAuthority_OnBaseTypedReference_UsesVirtualDispatch()
     {
         Info info = CreateTestBoundCoordinateSystem();
 
@@ -297,16 +297,44 @@ public class InfoTests
     }
 
     /// <summary>
-    /// Verifies that base-typed <see cref="Info.WithName"/> callers still use the generic fallback dispatch.
+    /// Verifies that base-typed <see cref="Info.WithName"/> callers dispatch to the concrete clone path.
     /// </summary>
     [Fact]
-    public void InfoWithName_OnBaseTypedReference_UsesFallbackDispatch()
+    public void InfoWithName_OnBaseTypedReference_UsesVirtualDispatch()
     {
         Info info = CreateTestConcatenatedOperation();
 
         Info clone = info.WithName("Fallback clone");
 
         Assert.Equal("Fallback clone", Assert.IsType<ConcatenatedOperation>(clone).Name);
+    }
+
+    /// <summary>
+    /// Verifies that generic <see cref="Unit"/> instances remain supported through the base-typed clone path.
+    /// </summary>
+    [Fact]
+    public void InfoWithAuthority_OnGenericUnit_UsesCloneCoreDispatch()
+    {
+        Info info = new Unit("unity", 1d);
+
+        Info clone = info.WithAuthority("TEST", 6001);
+
+        Unit typedClone = Assert.IsType<Unit>(clone);
+        Assert.Equal("TEST", typedClone.Authority);
+        Assert.Equal(6001, typedClone.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies that generic <see cref="Unit"/> instances remain supported through the base-typed name clone path.
+    /// </summary>
+    [Fact]
+    public void InfoWithName_OnGenericUnit_UsesCloneCoreDispatch()
+    {
+        Info info = new Unit("unity", 1d);
+
+        Info clone = info.WithName("custom unity");
+
+        Assert.Equal("custom unity", Assert.IsType<Unit>(clone).Name);
     }
 
     /// <summary>

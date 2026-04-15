@@ -98,4 +98,16 @@ public class Unit : Info, IUnit
     {
         return obj is Unit unit && unit.ConversionFactor == this.ConversionFactor;
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code)
+    {
+        return new Unit(this.ConversionFactor, this.Name, authority, code, this.Alias, this.Abbreviation, this.Remarks);
+    }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name)
+    {
+        return new Unit(this.ConversionFactor, name, this.Authority, this.AuthorityCode, this.Alias, this.Abbreviation, this.Remarks);
+    }
 }

@@ -167,4 +167,10 @@ public class LinearUnit : Info, IUnit
     {
         return obj is LinearUnit linearUnit && linearUnit.MetersPerUnit == this.MetersPerUnit;
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code) => this.WithAuthority(authority, code);
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name) => this.WithName(name);
 }

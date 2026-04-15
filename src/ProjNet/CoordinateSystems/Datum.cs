@@ -72,4 +72,32 @@ public abstract class Datum : Info
     {
         return obj is Datum datum && datum.DatumType == this.DatumType;
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code)
+    {
+        return this switch
+        {
+            HorizontalDatum horizontalDatum => horizontalDatum.WithAuthority(authority, code),
+            VerticalDatum verticalDatum => verticalDatum.WithAuthority(authority, code),
+            EngineeringDatum engineeringDatum => engineeringDatum.WithAuthority(authority, code),
+            ParametricDatum parametricDatum => parametricDatum.WithAuthority(authority, code),
+            TemporalDatum temporalDatum => temporalDatum.WithAuthority(authority, code),
+            _ => throw new NotSupportedException($"WithAuthority is not supported for datum type '{this.GetType().FullName}'."),
+        };
+    }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name)
+    {
+        return this switch
+        {
+            HorizontalDatum horizontalDatum => horizontalDatum.WithName(name),
+            VerticalDatum verticalDatum => verticalDatum.WithName(name),
+            EngineeringDatum engineeringDatum => engineeringDatum.WithName(name),
+            ParametricDatum parametricDatum => parametricDatum.WithName(name),
+            TemporalDatum temporalDatum => temporalDatum.WithName(name),
+            _ => throw new NotSupportedException($"WithName is not supported for datum type '{this.GetType().FullName}'."),
+        };
+    }
 }

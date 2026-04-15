@@ -219,4 +219,10 @@ public class PrimeMeridian : Info
     {
         return obj is PrimeMeridian prime && prime.AngularUnit.EqualParams(this.AngularUnit) && prime.Longitude == this.Longitude;
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code) => this.WithAuthority(authority, code);
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name) => this.WithName(name);
 }

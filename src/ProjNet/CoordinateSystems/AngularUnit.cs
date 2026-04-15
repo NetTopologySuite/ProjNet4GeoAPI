@@ -172,4 +172,10 @@ public class AngularUnit : Info, IUnit
     {
         return obj is AngularUnit angularUnit && Math.Abs(angularUnit.RadiansPerUnit - this.RadiansPerUnit) < EqualityTolerance;
     }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code) => this.WithAuthority(authority, code);
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name) => this.WithName(name);
 }
