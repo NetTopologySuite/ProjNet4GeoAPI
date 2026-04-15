@@ -137,7 +137,7 @@ public class MathTransformInvertibilityTests
 
     private static MathTransform CreateTransform(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
         return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }

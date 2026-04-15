@@ -29,7 +29,7 @@ public class HorizontalGridShiftRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = $"+proj=hgridshift +grids={gridPath}";
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
         double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInput);
@@ -50,7 +50,7 @@ public class HorizontalGridShiftRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = $"+inv +proj=hgridshift +grids={gridPath}";
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
         Assert.Throws<ArgumentException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInverseInput));
@@ -68,7 +68,7 @@ public class HorizontalGridShiftRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = $"+proj=gridshift +grids={gridPath}";
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
         double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInput);

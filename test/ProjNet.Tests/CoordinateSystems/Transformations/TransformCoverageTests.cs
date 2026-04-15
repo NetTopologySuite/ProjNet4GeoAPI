@@ -636,7 +636,7 @@ public class TransformCoverageTests
     public void ObTranWithAlphaCreatesSuccessfully()
     {
         const string operation = "+proj=ob_tran +R=6400000 +o_proj=latlon +o_lon_c=0 +o_lat_c=30 +o_alpha=45";
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(
             operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
@@ -652,7 +652,7 @@ public class TransformCoverageTests
     public void ObTranMissingOProjFails()
     {
         const string operation = "+proj=ob_tran +R=6400000";
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(
             operation, out _, out string? skipReason);
 
         Assert.False(ok);
@@ -1222,7 +1222,7 @@ public class TransformCoverageTests
     // ──────────────────────────────────────────────────────────────────────
     private static MathTransform CreatePipelineTransform(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(
             operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
         return Assert.IsType<MathTransform>(transform, exactMatch: false);

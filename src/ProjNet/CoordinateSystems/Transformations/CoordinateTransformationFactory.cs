@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.Data;
 using ProjNet.Data.Generated;
@@ -120,29 +118,12 @@ public partial class CoordinateTransformationFactory
     }
 
     /// <summary>
-    /// Attempts to create a projection pipeline math transform from a PROJ-style operation string.
-    /// </summary>
-    /// <param name="operation">Operation string in pipeline syntax.</param>
-    /// <param name="transform">Created math transform when successful.</param>
-    /// <param name="skipReason">Reason why the transform could not be created.</param>
-    /// <returns><see langword="true"/> when the transform was created; otherwise <see langword="false"/>.</returns>
-    internal static bool TryCreateProjPipelineMathTransform(string operation, [NotNullWhen(true)] out MathTransform? transform, out string? skipReason) => ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out transform, out skipReason);
-
-    /// <summary>
     /// Attempts to resolve a grid resource name to a concrete file path.
     /// </summary>
     /// <param name="gridName">Grid resource name or path token.</param>
     /// <param name="resolvedPath">Resolved local file path when available.</param>
     /// <returns><see langword="true"/> when resolution succeeded; otherwise <see langword="false"/>.</returns>
     internal static bool TryResolveGridResourcePath(string gridName, [NotNullWhen(true)] out string? resolvedPath) => GetGridResolver().TryResolve(gridName, out resolvedPath);
-
-    /// <summary>
-    /// Asynchronously attempts to resolve a grid resource name to a concrete file path.
-    /// </summary>
-    /// <param name="gridName">Grid resource name or path token.</param>
-    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
-    /// <returns>The resolved local file path when available; otherwise <see langword="null"/>.</returns>
-    internal static Task<string?> TryResolveGridResourcePathAsync(string gridName, CancellationToken cancellationToken = default) => GetGridResolver().TryResolveAsync(gridName, cancellationToken);
 
     private ICoordinateTransformation? CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {

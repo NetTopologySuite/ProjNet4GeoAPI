@@ -856,7 +856,7 @@ public class GieBuiltinsTheoryTests
         }
 
         string normalizedOperation = NormalizeOperationForRuntime(operation);
-        if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(normalizedOperation, out MathTransform? mathTransform, out skipReason))
+        if (!ProjPipelineMathTransformFactory.TryCreateMathTransform(normalizedOperation, out MathTransform? mathTransform, out skipReason))
         {
             if (!TryWrapStandaloneStackTransferOperation(normalizedOperation, out string? wrappedOperation))
             {
@@ -864,7 +864,7 @@ public class GieBuiltinsTheoryTests
             }
 
             string wrappedOperationValue = Assert.IsType<string>(wrappedOperation);
-            if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(wrappedOperationValue, out mathTransform, out skipReason))
+            if (!ProjPipelineMathTransformFactory.TryCreateMathTransform(wrappedOperationValue, out mathTransform, out skipReason))
             {
                 return false;
             }

@@ -87,7 +87,7 @@ public class PipelineRuntimeTests
     {
         string operation = CreateNestedPipelineOperation(6);
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out _, out string? skipReason);
 
         Assert.False(ok);
         Assert.Contains("maximum of 4", Assert.IsType<string>(skipReason), StringComparison.Ordinal);
@@ -958,14 +958,14 @@ public class PipelineRuntimeTests
 
     private static MathTransform RequirePipelineMathTransform(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
         return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }
 
     private static string RequirePipelineValidationFailure(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
         return Assert.IsType<string>(skipReason);
     }

@@ -102,10 +102,9 @@ public sealed class HttpGridResourceFetchClientTests
 
             CoordinateTransformationFactory.ConfigureGridResolution();
 
-            string? resolvedPath = await CoordinateTransformationFactory.TryResolveGridResourcePathAsync(
-                "network-grid.gsb",
-                TestContext.Current.CancellationToken);
+            bool resolved = CoordinateTransformationFactory.TryResolveGridResourcePath("network-grid.gsb", out string? resolvedPath);
 
+            Assert.True(resolved);
             Assert.NotNull(resolvedPath);
             Assert.Equal("server-grid", await File.ReadAllTextAsync(resolvedPath, TestContext.Current.CancellationToken));
             Assert.Equal(1, server.RequestCount);

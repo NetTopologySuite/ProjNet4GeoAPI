@@ -29,7 +29,7 @@ public class VerticalGridShiftRuntimeTests
         string gridPath = FindGridPath("egm96_15.gtx");
         string operation = $"+proj=vgridshift +grids={gridPath}{multiplierToken}";
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
         double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(VerticalGridInput);
@@ -48,8 +48,8 @@ public class VerticalGridShiftRuntimeTests
         string forwardOperation = $"+proj=vgridshift +grids={gridPath}";
         string inverseOperation = $"+inv +proj=vgridshift +grids={gridPath}";
 
-        bool forwardOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(forwardOperation, out MathTransform? forward, out string? forwardSkipReason);
-        bool inverseOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(inverseOperation, out MathTransform? inverse, out string? inverseSkipReason);
+        bool forwardOk = ProjPipelineMathTransformFactory.TryCreateMathTransform(forwardOperation, out MathTransform? forward, out string? forwardSkipReason);
+        bool inverseOk = ProjPipelineMathTransformFactory.TryCreateMathTransform(inverseOperation, out MathTransform? inverse, out string? inverseSkipReason);
 
         Assert.True(forwardOk, forwardSkipReason);
         Assert.True(inverseOk, inverseSkipReason);
@@ -71,7 +71,7 @@ public class VerticalGridShiftRuntimeTests
         string gridPath = FindGridPath("test_nodata.gtx");
         string operation = $"+proj=vgridshift +grids={gridPath}";
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
         Assert.Throws<ArgumentException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(VerticalGridInput));
