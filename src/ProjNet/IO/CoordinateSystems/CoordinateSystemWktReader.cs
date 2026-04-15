@@ -241,7 +241,7 @@ public static partial class CoordinateSystemWktReader
             "GEOCCS" => ReadGeocentricCoordinateSystem(node),
             "COMPD_CS" => ReadCompoundCoordinateSystem(node),
             "VERT_CS" => ReadVerticalCoordinateSystem(node),
-            _ => ArgumentGuard.ThrowArgument<CoordinateSystem>($"'{node.Keyword}' is not recognized."),
+            _ => ThrowWktParseException<CoordinateSystem>($"'{node.Keyword}' is not recognized."),
         };
     }
 
@@ -435,7 +435,7 @@ public static partial class CoordinateSystemWktReader
             "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
                 => ReadCoordinateSystemNode(rootNode),
             "BOUNDCRS" => throw new NotSupportedException("BOUNDCRS coordinate system is not supported."),
-            _ => ArgumentGuard.ThrowArgument<IInfo>($"'{rootNode.Keyword}' is not recognized."),
+            _ => ThrowWktParseException<IInfo>($"'{rootNode.Keyword}' is not recognized."),
         };
     }
 }

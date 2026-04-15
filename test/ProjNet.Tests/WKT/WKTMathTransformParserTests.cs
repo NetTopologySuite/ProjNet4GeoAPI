@@ -10,6 +10,7 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
+using ProjNet.IO.Wkt;
 using Xunit;
 
 /// <summary>
@@ -157,6 +158,32 @@ public class WKTMathTransformParserTests
 
         Assert.Equal(original.WKT, parsed.WKT);
         Assert.Equal(IdentitySamplePoint, parsedResult);
+    }
+
+    /// <summary>
+    /// Verifies unknown top-level math transform keywords surface as parser failures.
+    /// </summary>
+    [Fact]
+    public void ParseWithUnknownRootKeywordThrowsWktParseException()
+    {
+        const string wkt = """UNKNOWN_MT["Custom"]""";
+
+        WktParseException exception = Assert.Throws<WktParseException>(() => MathTransformWktReader.Parse(wkt));
+
+        Assert.Contains("not recognized", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies malformed affine metadata is reported as a parser failure.
+    /// </summary>
+    [Fact]
+    public void ParseAffineTransformWithInvalidRowCountThrowsWktParseException()
+    {
+        const string wkt = """PARAM_MT["Affine",PARAMETER["num_row",0],PARAMETER["num_col",3]]""";
+
+        WktParseException exception = Assert.Throws<WktParseException>(() => MathTransformWktReader.Parse(wkt));
+
+        Assert.Contains("num_row", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

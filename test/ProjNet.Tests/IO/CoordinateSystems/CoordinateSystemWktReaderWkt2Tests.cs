@@ -826,9 +826,9 @@ public class CoordinateSystemWktReaderWkt2Tests
     /// <param name="expectedMessageFragment">The keyword fragment currently surfaced by the reader path.</param>
     [Theory]
     [MemberData(nameof(UnsupportedTopLevelWkt2Rows))]
-    public void CreateFromWkt_WithUnsupportedTopLevelWkt2Keyword_ThrowsArgumentException(string keyword, string wkt, string expectedMessageFragment)
+    public void CreateFromWkt_WithUnsupportedTopLevelWkt2Keyword_ThrowsWktParseException(string keyword, string wkt, string expectedMessageFragment)
     {
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+        WktParseException exception = Assert.Throws<WktParseException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
 
         Assert.True(
             exception.Message.Contains(expectedMessageFragment, StringComparison.OrdinalIgnoreCase),

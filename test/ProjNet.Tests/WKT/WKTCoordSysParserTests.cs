@@ -198,6 +198,18 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
+    /// Verifies malformed WKT1 TOWGS84 parameter counts surface as parser failures.
+    /// </summary>
+    [Fact]
+    public void ParseTowgs84WithInvalidValueCountThrowsWktParseException()
+    {
+        const string malformedWkt =
+            """GEOGCS["Custom",DATUM["Custom_Datum",SPHEROID["Custom Spheroid",6378137,298.257223563],TOWGS84[1,2]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]""";
+
+        Assert.Throws<WktParseException>(() => ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(malformedWkt));
+    }
+
+    /// <summary>
     /// Verifies non-numeric AUTHORITY codes are represented as unknown authority code <c>-1</c>.
     /// </summary>
     [Fact]

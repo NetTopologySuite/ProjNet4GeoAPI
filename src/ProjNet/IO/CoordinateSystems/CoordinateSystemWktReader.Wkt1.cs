@@ -84,7 +84,7 @@ public static partial class CoordinateSystemWktReader
             "SOUTH" => new AxisInfo(axisName, AxisOrientationEnum.South),
             "UP" => new AxisInfo(axisName, AxisOrientationEnum.Up),
             "WEST" => new AxisInfo(axisName, AxisOrientationEnum.West),
-            _ => ArgumentGuard.ThrowArgument<AxisInfo>($"Invalid axis name '{unitname}' in WKT"),
+            _ => ThrowWktParseException<AxisInfo>($"Invalid axis name '{unitname}' in WKT"),
         };
     }
 
@@ -122,7 +122,7 @@ public static partial class CoordinateSystemWktReader
         IReadOnlyList<double> values = node.GetAllNumbers();
         if (values.Count is not 3 and not 6 and not 7)
         {
-            ArgumentGuard.ThrowArgument("WKT1 TOWGS84 must contain 3, 6, or 7 numeric values.");
+            ThrowWktParseException("WKT1 TOWGS84 must contain 3, 6, or 7 numeric values.");
         }
 
         ReadOnlySpan<WktNode> children = node.GetChildrenSpan();

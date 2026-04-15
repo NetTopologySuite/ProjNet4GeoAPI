@@ -8,6 +8,7 @@ namespace ProjNet.IO.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
@@ -38,7 +39,7 @@ public static class MathTransformWktReader
         {
             "PARAM_MT" => ReadMathTransform(tokenizer),
             "INVERSE_MT" => ReadInverseMathTransform(tokenizer),
-            _ => ArgumentGuard.ThrowArgument<MathTransform>($"'{objectName}' is not recognized."),
+            _ => ThrowWktParseException<MathTransform>($"'{objectName}' is not recognized."),
         };
     }
 
@@ -148,8 +149,7 @@ public static class MathTransformWktReader
             return transform.Inverse();
         }
 
-        ArgumentGuard.ThrowArgument("INVERSE_MT does not contain a nested math transform.", nameof(node));
-        return null!;
+        return ThrowWktParseException<MathTransform>("INVERSE_MT does not contain a nested math transform.");
     }
 
     private static ParameterInfo ReadParameters(WktTokenizer tokenizer)
@@ -229,12 +229,12 @@ public static class MathTransformWktReader
 
         if (rowParamCandidate is null)
         {
-            ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_row' parameter", nameof(tokenizer));
+            ThrowWktParseException("Affine transform does not contain 'num_row' parameter");
         }
 
         if (colParamCandidate is null)
         {
-            ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_col' parameter", nameof(tokenizer));
+            ThrowWktParseException("Affine transform does not contain 'num_col' parameter");
         }
 
         Parameter rowParam = ArgumentGuard.ThrowIfNull(rowParamCandidate, nameof(rowParamCandidate));
@@ -247,12 +247,12 @@ public static class MathTransformWktReader
 
         if (rowVal <= 0)
         {
-            ArgumentGuard.ThrowArgument("Affine transform contains invalid value of 'num_row' parameter");
+            ThrowWktParseException("Affine transform contains invalid value of 'num_row' parameter");
         }
 
         if (colVal <= 0)
         {
-            ArgumentGuard.ThrowArgument("Affine transform contains invalid value of 'num_col' parameter");
+            ThrowWktParseException("Affine transform contains invalid value of 'num_col' parameter");
         }
 
         // creates working matrix;
@@ -342,12 +342,12 @@ public static class MathTransformWktReader
 
         if (rowParamCandidate is null)
         {
-            ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_row' parameter", nameof(node));
+            ThrowWktParseException("Affine transform does not contain 'num_row' parameter");
         }
 
         if (colParamCandidate is null)
         {
-            ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_col' parameter", nameof(node));
+            ThrowWktParseException("Affine transform does not contain 'num_col' parameter");
         }
 
         Parameter rowParam = ArgumentGuard.ThrowIfNull(rowParamCandidate, nameof(rowParamCandidate));
@@ -360,12 +360,12 @@ public static class MathTransformWktReader
 
         if (rowVal <= 0)
         {
-            ArgumentGuard.ThrowArgument("Affine transform contains invalid value of 'num_row' parameter");
+            ThrowWktParseException("Affine transform contains invalid value of 'num_row' parameter");
         }
 
         if (colVal <= 0)
         {
-            ArgumentGuard.ThrowArgument("Affine transform contains invalid value of 'num_col' parameter");
+            ThrowWktParseException("Affine transform contains invalid value of 'num_col' parameter");
         }
 
         double[,] matrix = new double[rowVal, colVal];
@@ -446,13 +446,13 @@ public static class MathTransformWktReader
         Parameter? dimensionParam = paramInfo.GetParameterByName("dimension");
         if (dimensionParam is null)
         {
-            ArgumentGuard.ThrowArgument("Identity transform does not contain 'dimension' parameter", nameof(tokenizer));
+            ThrowWktParseException("Identity transform does not contain 'dimension' parameter");
         }
 
         int dimension = (int)dimensionParam.Value;
         if (dimension <= 0)
         {
-            ArgumentGuard.ThrowArgument("Identity transform contains invalid value of 'dimension' parameter", nameof(tokenizer));
+            ThrowWktParseException("Identity transform contains invalid value of 'dimension' parameter");
         }
 
         if (tokenizer.GetStringValue() != "]")
@@ -469,13 +469,13 @@ public static class MathTransformWktReader
         Parameter? dimensionParam = paramInfo.GetParameterByName("dimension");
         if (dimensionParam is null)
         {
-            ArgumentGuard.ThrowArgument("Identity transform does not contain 'dimension' parameter", nameof(node));
+            ThrowWktParseException("Identity transform does not contain 'dimension' parameter");
         }
 
         int dimension = (int)dimensionParam.Value;
         if (dimension <= 0)
         {
-            ArgumentGuard.ThrowArgument("Identity transform contains invalid value of 'dimension' parameter", nameof(node));
+            ThrowWktParseException("Identity transform contains invalid value of 'dimension' parameter");
         }
 
         return new IdentityMathTransform(dimension);
@@ -529,5 +529,17 @@ public static class MathTransformWktReader
         }
 
         return ProjectionsRegistry.CreateProjection(transformName, projectionParameters);
+    }
+
+    [DoesNotReturn]
+    private static void ThrowWktParseException(string message)
+    {
+        throw new WktParseException(message);
+    }
+
+    [DoesNotReturn]
+    private static T ThrowWktParseException<T>(string message)
+    {
+        throw new WktParseException(message);
     }
 }
