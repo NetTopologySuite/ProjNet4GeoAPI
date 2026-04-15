@@ -41,6 +41,43 @@ public class GeoTiffGridRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that the direct <see cref="GeoTiffHGridShiftMathTransform"/> path applies the expected forward shift for the 2-D horizontal fixtures.
+    /// </summary>
+    /// <param name="gridFileName">GeoTIFF horizontal grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_hgrid.tif")]
+    [InlineData("test_hgrid_positive_west.tif")]
+    public void GeoTiffHGridShiftMathTransformAppliesExpectedForwardShift(string gridFileName)
+    {
+        string gridPath = FindGridPath(gridFileName);
+        var transform = new GeoTiffHGridShiftMathTransform([gridPath]);
+
+        double[] output = transform.Transform(GeoTiffGridInput);
+
+        Assert.Equal(5.875d, output[0], 9);
+        Assert.Equal(55.375d, output[1], 9);
+        Assert.Equal(0d, output[2], 12);
+    }
+
+    /// <summary>
+    /// Verifies that the inverse <see cref="GeoTiffHGridShiftMathTransform"/> signals an outside-grid failure for the synthetic 2-D fixtures once the reverse iteration leaves the valid extent.
+    /// </summary>
+    /// <param name="gridFileName">GeoTIFF horizontal grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_hgrid.tif")]
+    [InlineData("test_hgrid_positive_west.tif")]
+    public void GeoTiffHGridShiftMathTransformInverseSignalsOutsideGridForSyntheticFixture(string gridFileName)
+    {
+        string gridPath = FindGridPath(gridFileName);
+        MathTransform inverse = new GeoTiffHGridShiftMathTransform([gridPath]).Inverse();
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => inverse.Transform([5d, 53d, 0d]));
+
+        Assert.Contains("outside the horizontal GeoTIFF grid extent", exception.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// Verifies that a projected GeoTIFF <c>gridshift</c> grid applies both the raster delta and the metadata-defined constant offsets in projected coordinates.
     /// </summary>
     [Fact]
