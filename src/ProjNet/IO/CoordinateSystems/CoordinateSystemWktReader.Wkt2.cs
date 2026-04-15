@@ -22,11 +22,6 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public static partial class CoordinateSystemWktReader
 {
-    private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2GeodeticCoordinateReferenceSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktKeywordNode node)
     {
         string rootKeyword = node.Keyword;
@@ -288,16 +283,6 @@ public static partial class CoordinateSystemWktReader
         return new CompoundCoordinateSystem(head, tail, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "CS")
-        {
-            tokenizer.ReadToken("CS");
-        }
-
-        return ReadWkt2CoordinateSystemDefinition(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktKeywordNode node)
     {
         if (!node.KeywordEquals("CS"))
@@ -326,16 +311,6 @@ public static partial class CoordinateSystemWktReader
         }
 
         return (coordinateSystemType, dimension);
-    }
-
-    private static AxisInfo ReadWkt2Axis(WktTokenizer tokenizer, out AngularUnit? angularUnit, out LinearUnit? linearUnit)
-    {
-        if (tokenizer.GetStringValue() != "AXIS")
-        {
-            tokenizer.ReadToken("AXIS");
-        }
-
-        return ReadWkt2Axis(WktKeywordNode.ParseSubtree(tokenizer), out angularUnit, out linearUnit);
     }
 
     private static AxisInfo ReadWkt2Axis(WktKeywordNode node, out AngularUnit? angularUnit, out LinearUnit? linearUnit)
@@ -403,16 +378,6 @@ public static partial class CoordinateSystemWktReader
         return ArgumentGuard.ThrowArgument<AxisOrientationEnum>($"Invalid WKT2 axis orientation '{orientationToken}'.");
     }
 
-    private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "AXIS")
-        {
-            tokenizer.ReadToken("AXIS");
-        }
-
-        return ReadWkt2AxisDefinition(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktKeywordNode node)
     {
         if (!node.KeywordEquals("AXIS"))
@@ -450,71 +415,6 @@ public static partial class CoordinateSystemWktReader
         }
 
         return (new AxisInfo(axisName, orientation), unit);
-    }
-
-    private static HorizontalDatum ReadWkt2HorizontalDatum(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "DATUM")
-        {
-            tokenizer.ReadToken("DATUM");
-        }
-
-        return ReadWkt2HorizontalDatum(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static HorizontalDatum ReadWkt2HorizontalDatumEnsemble(WktTokenizer tokenizer)
-    {
-        return ReadWkt2HorizontalDatumEnsemble(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static DatumEnsemble ReadWkt2DatumEnsemble(WktTokenizer tokenizer, bool requireEllipsoid)
-    {
-        if (tokenizer.GetStringValue() != "ENSEMBLE")
-        {
-            tokenizer.ReadToken("ENSEMBLE");
-        }
-
-        return ReadWkt2DatumEnsemble(WktKeywordNode.ParseSubtree(tokenizer), requireEllipsoid);
-    }
-
-    private static DatumEnsembleMember ReadWkt2DatumEnsembleMember(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "MEMBER")
-        {
-            tokenizer.ReadToken("MEMBER");
-        }
-
-        return ReadWkt2DatumEnsembleMember(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static double ReadWkt2DatumEnsembleAccuracy(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "ENSEMBLEACCURACY")
-        {
-            tokenizer.ReadToken("ENSEMBLEACCURACY");
-        }
-
-        return ReadWkt2DatumEnsembleAccuracy(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static Ellipsoid ReadWkt2Ellipsoid(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "ELLIPSOID")
-        {
-            tokenizer.ReadToken("ELLIPSOID");
-        }
-
-        return ReadWkt2Ellipsoid(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static PrimeMeridian ReadWkt2PrimeMeridian(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "PRIMEM")
-        {
-            tokenizer.ReadToken("PRIMEM");
-        }
-
-        return ReadWkt2PrimeMeridian(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static HorizontalDatum ReadWkt2HorizontalDatum(WktKeywordNode node)
@@ -752,61 +652,6 @@ public static partial class CoordinateSystemWktReader
         return new PrimeMeridian(longitude, angularUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static AngularUnit ReadWkt2AngularUnit(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "ANGLEUNIT")
-        {
-            tokenizer.ReadToken("ANGLEUNIT");
-        }
-
-        return ReadWkt2AngularUnit(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static LinearUnit ReadWkt2LinearUnit(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "LENGTHUNIT")
-        {
-            tokenizer.ReadToken("LENGTHUNIT");
-        }
-
-        return ReadWkt2LinearUnit(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static Unit ReadWkt2ScaleUnit(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "SCALEUNIT")
-        {
-            tokenizer.ReadToken("SCALEUNIT");
-        }
-
-        return ReadWkt2ScaleUnit(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static TimeUnit ReadWkt2TimeUnit(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "TIMEUNIT")
-        {
-            tokenizer.ReadToken("TIMEUNIT");
-        }
-
-        return ReadWkt2TimeUnit(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static ParametricUnit ReadWkt2ParametricUnit(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "PARAMETRICUNIT")
-        {
-            tokenizer.ReadToken("PARAMETRICUNIT");
-        }
-
-        return ReadWkt2ParametricUnit(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static IUnit ReadWkt2Unit(WktTokenizer tokenizer)
-    {
-        return ReadWkt2Unit(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static AngularUnit ReadWkt2AngularUnit(WktKeywordNode node)
     {
         return ReadWkt2UnitFromNode(
@@ -948,31 +793,6 @@ public static partial class CoordinateSystemWktReader
         return resolvedUnits;
     }
 
-    private static EngineeringDatum ReadWkt2EngineeringDatum(WktTokenizer tokenizer)
-    {
-        return ReadWkt2EngineeringDatum(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static EngineeringCoordinateSystem ReadWkt2EngineeringCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2EngineeringCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static TemporalDatum ReadWkt2TemporalDatum(WktTokenizer tokenizer)
-    {
-        return ReadWkt2TemporalDatum(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static TemporalCoordinateSystem ReadWkt2TemporalCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2TemporalCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static ParametricDatum ReadWkt2ParametricDatum(WktTokenizer tokenizer)
-    {
-        return ReadWkt2ParametricDatum(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static EngineeringDatum ReadWkt2EngineeringDatum(WktKeywordNode node)
     {
         if (!node.KeywordEquals("EDATUM") &&
@@ -1080,11 +900,6 @@ public static partial class CoordinateSystemWktReader
         }
 
         return new ParametricDatum(name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-    }
-
-    private static ParametricCoordinateSystem ReadWkt2ParametricCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2ParametricCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static EngineeringCoordinateSystem ReadWkt2EngineeringCoordinateSystem(WktKeywordNode node)
@@ -1324,46 +1139,6 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static CoordinateOperation ReadWkt2CoordinateOperation(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "COORDINATEOPERATION")
-        {
-            tokenizer.ReadToken("COORDINATEOPERATION");
-        }
-
-        return ReadWkt2CoordinateOperation(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static Parameter ReadWkt2CoordinateOperationParameter(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "PARAMETER")
-        {
-            tokenizer.ReadToken("PARAMETER");
-        }
-
-        return ReadWkt2CoordinateOperationParameter(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static ConcatenatedOperation ReadWkt2ConcatenatedOperation(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "CONCATENATEDOPERATION")
-        {
-            tokenizer.ReadToken("CONCATENATEDOPERATION");
-        }
-
-        return ReadWkt2ConcatenatedOperation(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static CoordinateOperation ReadWkt2ConcatenatedOperationStep(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "STEP")
-        {
-            tokenizer.ReadToken("STEP");
-        }
-
-        return ReadWkt2ConcatenatedOperationStep(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static CoordinateOperation ReadWkt2CoordinateOperation(WktKeywordNode node)
     {
         string name = node.GetStringChild(0);
@@ -1553,37 +1328,6 @@ public static partial class CoordinateSystemWktReader
         return ReadWkt2CoordinateOperation(operationNode);
     }
 
-    private static void ReadIdentifierWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
-    {
-        if (tokenizer.GetStringValue() != "ID")
-        {
-            tokenizer.ReadToken("ID");
-        }
-
-        WktBracket bracket = tokenizer.ReadOpener();
-        authority = tokenizer.ReadDoubleQuotedWord();
-        tokenizer.ReadToken(",");
-        tokenizer.NextToken();
-        if (tokenizer.GetTokenType() == TokenType.Number)
-        {
-            authorityCode = (long)tokenizer.GetNumericValue();
-        }
-        else if (tokenizer.GetTokenType() == TokenType.Word)
-        {
-            authorityCode = long.TryParse(tokenizer.GetStringValue(), NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
-                ? parsedCode
-                : -1;
-        }
-        else
-        {
-            authorityCode = long.TryParse(tokenizer.ReadDoubleQuotedWord(), NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
-                ? parsedCode
-                : -1;
-        }
-
-        tokenizer.ReadCloser(bracket);
-    }
-
     private static void ReadIdentifierWithUnknownCode(WktKeywordNode node, out string authority, out long authorityCode)
     {
         if (!node.KeywordEquals("ID"))
@@ -1682,21 +1426,6 @@ public static partial class CoordinateSystemWktReader
         }
 
         throw new NotSupportedException("WKT2 axis-specific LENGTHUNIT values must match within the same CRS.");
-    }
-
-    private static ProjectedCoordinateSystem ReadWkt2ProjectedCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2ProjectedCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static FittedCoordinateSystem ReadWkt2DerivedProjectedCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2DerivedProjectedCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static ProjectedCoordinateSystem ReadWkt2BaseProjectedCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2BaseProjectedCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static ProjectedCoordinateSystem ReadWkt2ProjectedCoordinateSystem(WktKeywordNode node) =>
@@ -1928,11 +1657,6 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static GeographicCoordinateSystem ReadWkt2BaseGeographicCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2BaseGeographicCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static GeographicCoordinateSystem ReadWkt2BaseGeographicCoordinateSystem(WktKeywordNode node)
     {
         string rootKeyword = node.Keyword;
@@ -1996,12 +1720,6 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static Projection ReadWkt2Conversion(WktTokenizer tokenizer, out AngularUnit? angularUnit) =>
-        ReadWkt2Conversion(tokenizer, "CONVERSION", out angularUnit);
-
-    private static Projection ReadWkt2DerivingConversion(WktTokenizer tokenizer, out AngularUnit? angularUnit) =>
-        ReadWkt2Conversion(tokenizer, "DERIVINGCONVERSION", out angularUnit);
-
     private static Projection ReadWkt2Conversion(WktKeywordNode node, out AngularUnit? angularUnit)
     {
         return ReadWkt2Conversion(node, "CONVERSION", out angularUnit);
@@ -2010,16 +1728,6 @@ public static partial class CoordinateSystemWktReader
     private static Projection ReadWkt2DerivingConversion(WktKeywordNode node, out AngularUnit? angularUnit)
     {
         return ReadWkt2Conversion(node, "DERIVINGCONVERSION", out angularUnit);
-    }
-
-    private static Projection ReadWkt2Conversion(WktTokenizer tokenizer, string keyword, out AngularUnit? angularUnit)
-    {
-        if (tokenizer.GetStringValue() != keyword)
-        {
-            tokenizer.ReadToken(keyword);
-        }
-
-        return ReadWkt2Conversion(WktKeywordNode.ParseSubtree(tokenizer), keyword, out angularUnit);
     }
 
     private static Projection ReadWkt2Conversion(WktKeywordNode node, string keyword, out AngularUnit? angularUnit)
@@ -2067,16 +1775,6 @@ public static partial class CoordinateSystemWktReader
         return new Projection(methodName, parameters, conversionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static string ReadWkt2ProjectionMethod(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "METHOD")
-        {
-            tokenizer.ReadToken("METHOD");
-        }
-
-        return ReadWkt2ProjectionMethod(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static string ReadWkt2ProjectionMethod(WktKeywordNode node)
     {
         string methodName = node.GetStringChild(0);
@@ -2096,16 +1794,6 @@ public static partial class CoordinateSystemWktReader
         }
 
         return methodName;
-    }
-
-    private static ProjectionParameter ReadWkt2ProjectionParameter(WktTokenizer tokenizer, out AngularUnit? angularUnit)
-    {
-        if (tokenizer.GetStringValue() != "PARAMETER")
-        {
-            tokenizer.ReadToken("PARAMETER");
-        }
-
-        return ReadWkt2ProjectionParameter(WktKeywordNode.ParseSubtree(tokenizer), out angularUnit);
     }
 
     private static ProjectionParameter ReadWkt2ProjectionParameter(WktKeywordNode node, out AngularUnit? angularUnit)
@@ -2141,11 +1829,6 @@ public static partial class CoordinateSystemWktReader
     }
 
     private static string NormalizeWkt2ProjectionParameterName(string parameterName) => ProjectionParameterNameNormalizer.Normalize(parameterName);
-
-    private static VerticalCoordinateSystem ReadWkt2VerticalCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2VerticalCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
 
     private static VerticalCoordinateSystem ReadWkt2VerticalCoordinateSystem(WktKeywordNode node)
     {
@@ -2243,21 +1926,6 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static VerticalDatum ReadWkt2VerticalDatum(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "VDATUM")
-        {
-            tokenizer.ReadToken("VDATUM");
-        }
-
-        return ReadWkt2VerticalDatum(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static VerticalDatum ReadWkt2VerticalDatumEnsemble(WktTokenizer tokenizer)
-    {
-        return ReadWkt2VerticalDatumEnsemble(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static VerticalDatum ReadWkt2VerticalDatum(WktKeywordNode node)
     {
         if (!node.KeywordEquals("VDATUM"))
@@ -2317,21 +1985,6 @@ public static partial class CoordinateSystemWktReader
             verticalDatum.Remarks,
             verticalDatum.Abbreviation,
             verticalDatum.Ensemble);
-    }
-
-    private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2CompoundCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static BoundCoordinateSystem ReadWkt2BoundCoordinateSystem(WktTokenizer tokenizer)
-    {
-        return ReadWkt2BoundCoordinateSystem(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
-    private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktTokenizer tokenizer)
-    {
-        return ReadWkt2BoundCoordinateSystemComponent(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktKeywordNode node)
@@ -2469,16 +2122,6 @@ public static partial class CoordinateSystemWktReader
             $"WKT2 BOUNDCRS source coordinate system type '{BoundCoordinateSystemSupport.GetCoordinateSystemKeyword(coordinateSystem)}' is not supported.");
     }
 
-    private static BoundTransformation ReadWkt2AbridgedTransformationDefinition(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "ABRIDGEDTRANSFORMATION")
-        {
-            tokenizer.ReadToken("ABRIDGEDTRANSFORMATION");
-        }
-
-        return ReadWkt2AbridgedTransformationDefinition(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static BoundTransformation ReadWkt2AbridgedTransformationDefinition(WktKeywordNode node)
     {
         _ = node.GetStringChild(0);
@@ -2527,16 +2170,6 @@ public static partial class CoordinateSystemWktReader
             parameterFileName);
     }
 
-    private static void ReadWkt2AbridgedTransformationParameter(WktTokenizer tokenizer, Wgs84ConversionInfo parameters)
-    {
-        if (tokenizer.GetStringValue() != "PARAMETER")
-        {
-            tokenizer.ReadToken("PARAMETER");
-        }
-
-        ReadWkt2AbridgedTransformationParameter(WktKeywordNode.ParseSubtree(tokenizer), parameters);
-    }
-
     private static void ReadWkt2AbridgedTransformationParameter(WktKeywordNode node, Wgs84ConversionInfo parameters)
     {
         string parameterName = NormalizeWkt2BoundTransformationParameterName(node.GetStringChild(0));
@@ -2581,16 +2214,6 @@ public static partial class CoordinateSystemWktReader
             NormalizeWkt2BoundTransformationParameterValue(parameterName, value, angularUnit, linearUnit, scaleUnitFactor));
     }
 
-    private static string ReadWkt2AbridgedTransformationParameterFile(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "PARAMETERFILE")
-        {
-            tokenizer.ReadToken("PARAMETERFILE");
-        }
-
-        return ReadWkt2AbridgedTransformationParameterFile(WktKeywordNode.ParseSubtree(tokenizer));
-    }
-
     private static string ReadWkt2AbridgedTransformationParameterFile(WktKeywordNode node)
     {
         _ = node.GetStringChild(0);
@@ -2611,16 +2234,6 @@ public static partial class CoordinateSystemWktReader
         }
 
         return parameterFileName;
-    }
-
-    private static double ReadWkt2ScaleUnitFactor(WktTokenizer tokenizer)
-    {
-        if (tokenizer.GetStringValue() != "SCALEUNIT")
-        {
-            tokenizer.ReadToken("SCALEUNIT");
-        }
-
-        return ReadWkt2ScaleUnitFactor(WktKeywordNode.ParseSubtree(tokenizer));
     }
 
     private static double ReadWkt2ScaleUnitFactor(WktKeywordNode node)
