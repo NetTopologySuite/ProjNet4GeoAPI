@@ -1053,6 +1053,13 @@ namespace ProjNet.IO.Wkt
         public override string ToFormattedString(int indentLevel = 0, int indentSize = 4) { }
         public override string ToString() { }
     }
+    [System.Serializable]
+    public sealed class WktParseException : System.Exception
+    {
+        public WktParseException() { }
+        public WktParseException(string message) { }
+        public WktParseException(string message, System.Exception innerException) { }
+    }
     public sealed class WktQuotedString : ProjNet.IO.Wkt.WktNode
     {
         public WktQuotedString(string value) { }
