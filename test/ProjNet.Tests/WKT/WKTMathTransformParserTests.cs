@@ -145,6 +145,90 @@ public class WKTMathTransformParserTests
     }
 
     /// <summary>
+    /// Verifies that affine transform nodes can be imported through both the string and node readers.
+    /// </summary>
+    [Fact]
+    public void AffineTransformNodeImport_RoundTripsThroughStringAndNodeReaders()
+    {
+        AffineTransform original = CreateAffineTransform();
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(original.ToWktNode());
+
+        AffineTransform parsedFromString = Assert.IsType<AffineTransform>(MathTransformWktReader.Parse(node.ToString()));
+        AffineTransform parsedFromNode = Assert.IsType<AffineTransform>(MathTransformWktReader.ReadMathTransform(node));
+
+        AssertTransformMatchesExpected(original, parsedFromString, AffineSamplePoint);
+        AssertTransformMatchesExpected(original, parsedFromNode, AffineSamplePoint);
+    }
+
+    /// <summary>
+    /// Verifies that identity transform nodes can be imported through both the string and node readers.
+    /// </summary>
+    [Fact]
+    public void IdentityTransformNodeImport_RoundTripsThroughStringAndNodeReaders()
+    {
+        var original = new IdentityMathTransform(IdentitySamplePoint.Length);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(original.ToWktNode());
+
+        IdentityMathTransform parsedFromString = Assert.IsType<IdentityMathTransform>(MathTransformWktReader.Parse(node.ToString()));
+        IdentityMathTransform parsedFromNode = Assert.IsType<IdentityMathTransform>(MathTransformWktReader.ReadMathTransform(node));
+
+        AssertTransformMatchesExpected(original, parsedFromString, IdentitySamplePoint);
+        AssertTransformMatchesExpected(original, parsedFromNode, IdentitySamplePoint);
+    }
+
+    /// <summary>
+    /// Verifies that map projection nodes can be imported through both the string and node readers.
+    /// </summary>
+    [Fact]
+    public void MapProjectionNodeImport_RoundTripsThroughStringAndNodeReaders()
+    {
+        MapProjection original = CreateMercatorProjection();
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(original.ToWktNode());
+
+        MapProjection parsedFromString = Assert.IsAssignableFrom<MapProjection>(MathTransformWktReader.Parse(node.ToString()));
+        MapProjection parsedFromNode = Assert.IsAssignableFrom<MapProjection>(MathTransformWktReader.ReadMathTransform(node));
+
+        AssertTransformMatchesExpected(original, parsedFromString, GeographicSamplePoint);
+        AssertTransformMatchesExpected(original, parsedFromNode, GeographicSamplePoint);
+    }
+
+    /// <summary>
+    /// Verifies that inverse map projection nodes can be imported through both the string and node readers.
+    /// </summary>
+    [Fact]
+    public void InverseMapProjectionNodeImport_RoundTripsThroughStringAndNodeReaders()
+    {
+        MapProjection forward = CreateMercatorProjection();
+        MapProjection original = Assert.IsAssignableFrom<MapProjection>(forward.Inverse());
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(original.ToWktNode());
+        double[] projectedSamplePoint = forward.Transform(GeographicSamplePoint);
+
+        MapProjection parsedFromString = Assert.IsAssignableFrom<MapProjection>(MathTransformWktReader.Parse(node.ToString()));
+        MapProjection parsedFromNode = Assert.IsAssignableFrom<MapProjection>(MathTransformWktReader.ReadInverseMathTransform(node));
+
+        AssertTransformMatchesExpected(original, parsedFromString, projectedSamplePoint);
+        AssertTransformMatchesExpected(original, parsedFromNode, projectedSamplePoint);
+    }
+
+    /// <summary>
+    /// Verifies that nested inverse map projection nodes resolve back to the forward projection for both readers.
+    /// </summary>
+    [Fact]
+    public void NestedInverseMapProjectionNodeImport_RoundTripsThroughStringAndNodeReaders()
+    {
+        MapProjection original = CreateMercatorProjection();
+        WktKeywordNode inverseNode = Assert.IsType<WktKeywordNode>(original.Inverse().ToWktNode());
+        var nestedInverseNode = new WktKeywordNode("INVERSE_MT", inverseNode);
+
+        MapProjection parsedFromString = Assert.IsAssignableFrom<MapProjection>(MathTransformWktReader.Parse(nestedInverseNode.ToString()));
+        MapProjection parsedFromNode = Assert.IsAssignableFrom<MapProjection>(MathTransformWktReader.ReadInverseMathTransform(nestedInverseNode));
+
+        AssertTransformMatchesExpected(original, parsedFromString, GeographicSamplePoint, assertWkt: false);
+        AssertTransformMatchesExpected(original, parsedFromNode, GeographicSamplePoint, assertWkt: false);
+        Assert.Equal(parsedFromString.WKT, parsedFromNode.WKT);
+    }
+
+    /// <summary>
     /// Verifies that identity transform WKT roundtrips through the parser without changing dimensionality.
     /// </summary>
     [Fact]
@@ -245,5 +329,25 @@ public class WKTMathTransformParserTests
             new("false_northing", 0d),
             new("unit", 1d),
         ];
+    }
+
+    private static void AssertTransformMatchesExpected(MathTransform expected, MathTransform actual, double[] samplePoint, bool assertWkt = true)
+    {
+        double[] expectedResult = expected.Transform(samplePoint);
+        double[] actualResult = actual.Transform(samplePoint);
+
+        Assert.Equal(expected.DimSource, actual.DimSource);
+        Assert.Equal(expected.DimTarget, actual.DimTarget);
+        if (assertWkt)
+        {
+            Assert.Equal(expected.WKT, actual.WKT);
+        }
+
+        Assert.Equal(expectedResult.Length, actualResult.Length);
+
+        for (int index = 0; index < expectedResult.Length; index++)
+        {
+            Assert.Equal(expectedResult[index], actualResult[index], 12);
+        }
     }
 }
