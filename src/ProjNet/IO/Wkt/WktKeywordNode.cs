@@ -199,7 +199,16 @@ public sealed class WktKeywordNode : WktNode
     /// <returns>The first matching child, or <see langword="null"/>.</returns>
     internal WktKeywordNode? FindChild(string keyword)
     {
-        return this.FindChild([keyword]);
+        for (int childIndex = 0; childIndex < this.children.Length; childIndex++)
+        {
+            if (this.children[childIndex] is WktKeywordNode keywordChild
+                && keywordChild.KeywordEquals(keyword))
+            {
+                return keywordChild;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
