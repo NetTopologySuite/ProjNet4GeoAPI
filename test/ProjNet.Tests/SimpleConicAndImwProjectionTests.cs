@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -209,9 +208,8 @@ public class SimpleConicAndImwProjectionTests
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
             CoordinateSystemFactory,
             BuildProjectedWkt(projectionName, Sphere6400000, ",PARAMETER[\"lat_1\",1],PARAMETER[\"lat_2\",1]"));
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(
+        Assert.Throws<ArgumentException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
-        Assert.IsType<ArgumentException>(exception.InnerException);
     }
 
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)

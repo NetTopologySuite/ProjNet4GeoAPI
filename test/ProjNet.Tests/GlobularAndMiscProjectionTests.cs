@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -190,8 +189,7 @@ public class GlobularAndMiscProjectionTests
     public void LagrangeRejectsInvalidW()
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("lagrng", false, ",PARAMETER[\"W\",-1],PARAMETER[\"lat_1\",0.5]"));
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        Assert.Throws<ArgumentException>(() => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
     }
 
     /// <summary>
@@ -201,8 +199,7 @@ public class GlobularAndMiscProjectionTests
     public void LagrangeRejectsInvalidLat1()
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("lagrng", false, ",PARAMETER[\"lat_1\",90.00001]"));
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        Assert.Throws<ArgumentException>(() => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
     }
 
     private static string BuildProjectedWkt(string projectionName, bool useWgs84, string? extraParameters)

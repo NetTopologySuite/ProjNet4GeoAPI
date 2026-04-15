@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -227,15 +226,13 @@ public class NearSidedPerspectiveLabordeProjectionTests
     [InlineData(1e11d)]
     public void RejectsInvalidNsperHeight(double h)
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             string wkt = BuildNsperProjectedWkt("nsper", 1d, h, 0d, 0d, null, null);
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
             ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
             forward.MathTransform.Transform(CreatePoint(2d, 1d));
         });
-
-        Assert.IsType<ArgumentException>(exception.InnerException);
     }
 
     /// <summary>
@@ -244,15 +241,13 @@ public class NearSidedPerspectiveLabordeProjectionTests
     [Fact]
     public void RejectsInvalidLabrdLatitudeOfOrigin()
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             string wkt = BuildLabrdProjectedWkt("labrd", 0d, 0.5d, 0d);
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
             ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
             forward.MathTransform.Transform(CreatePoint(2d, 1d));
         });
-
-        Assert.IsType<ArgumentException>(exception.InnerException);
     }
 
     private static string BuildNsperProjectedWkt(

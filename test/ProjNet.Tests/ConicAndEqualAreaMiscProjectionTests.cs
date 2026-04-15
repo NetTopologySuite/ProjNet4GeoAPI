@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -190,9 +189,8 @@ public class ConicAndEqualAreaMiscProjectionTests
     public void TwoPointEquidistantRejectsDegeneratePolarControlPoints()
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildTpeqdDegenerateWkt());
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(
+        Assert.Throws<ArgumentException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
-        Assert.IsType<ArgumentException>(exception.InnerException);
     }
 
     private static string BuildAliasWkt(string projectionName)

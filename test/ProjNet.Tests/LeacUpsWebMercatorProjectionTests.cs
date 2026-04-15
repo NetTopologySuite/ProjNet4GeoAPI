@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -149,13 +148,11 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void UpsRejectsSphericalEllipsoid()
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        Assert.Throws<NotSupportedException>(() =>
         {
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Sphere6400000, false));
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
-
-        Assert.IsType<NotSupportedException>(exception.InnerException);
     }
 
     /// <summary>

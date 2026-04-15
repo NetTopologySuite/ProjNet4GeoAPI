@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -140,8 +139,7 @@ public class CentralCylindricalAndUrmaevProjectionTests
     public void Urm5RejectsInvalidNAlphaCombination()
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("urm5", false, ",PARAMETER[\"n\",1],PARAMETER[\"alpha\",90]"));
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        Assert.Throws<ArgumentException>(() => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
     }
 
     /// <summary>

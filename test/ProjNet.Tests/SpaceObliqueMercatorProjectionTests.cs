@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -136,14 +135,13 @@ public class SpaceObliqueMercatorProjectionTests
     [InlineData("som", Grs80, ",PARAMETER[\"inc_angle\",98.30382],PARAMETER[\"asc_lon\",127.7605356226]")]
     public void RejectsInvalidSpaceObliqueMercatorParameterSets(string projectionName, string spheroidClause, string extraParameters)
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
         {
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
 
-        ArgumentException inner = Assert.IsType<ArgumentException>(exception.InnerException);
-        Assert.Equal("parameters", inner.ParamName);
+        Assert.Equal("parameters", exception.ParamName);
     }
 
     private static string BuildAliasWkt(string projectionName)

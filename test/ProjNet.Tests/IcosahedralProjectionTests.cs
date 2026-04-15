@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -226,15 +225,13 @@ public class IcosahedralProjectionTests
     [InlineData(3d, 3d, 31d)]
     public void IseaRejectsUnsupportedModes(double modeCode, double aperture, double resolution)
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        Assert.Throws<NotSupportedException>(() =>
         {
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
                 CoordinateSystemFactory,
                 BuildIseaWkt("isea", Sphere6400000, 0d, modeCode, aperture, resolution, 0d));
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
-
-        Assert.IsType<NotSupportedException>(exception.InnerException);
     }
 
     /// <summary>
@@ -243,7 +240,7 @@ public class IcosahedralProjectionTests
     [Fact]
     public void AiroceanRejectsInvalidOrientationWithParametersParamName()
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
         {
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
                 CoordinateSystemFactory,
@@ -251,8 +248,7 @@ public class IcosahedralProjectionTests
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
 
-        ArgumentException inner = Assert.IsType<ArgumentException>(exception.InnerException);
-        Assert.Equal("parameters", inner.ParamName);
+        Assert.Equal("parameters", exception.ParamName);
     }
 
     /// <summary>

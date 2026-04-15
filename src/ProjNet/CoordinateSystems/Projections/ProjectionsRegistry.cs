@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>Register</c>, and <c>RegisterAlias</c> briefly serialize on that shared lock.
 /// </para>
 /// </remarks>
-public class ProjectionsRegistry
+public partial class ProjectionsRegistry
 {
     private static readonly Dictionary<string, ProjectionRegistration> TypeRegistry = [];
 
@@ -366,6 +366,8 @@ public class ProjectionsRegistry
 
         Register("gnomonic", typeof(GnomonicProjection));
         Register("gnom", typeof(GnomonicProjection));
+
+        ValidateBuiltInFactories();
     }
 
     /// <summary>
@@ -404,28 +406,19 @@ public class ProjectionsRegistry
             ArgumentGuard.ThrowArgument("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", nameof(type));
         }
 
-        Type? ci = CheckConstructor(type);
-        if (ci is null)
+        Func<IEnumerable<ProjectionParameter>, MathTransform>? factory = TryGetBuiltInFactory(type);
+        if (factory is null)
         {
-            ArgumentGuard.ThrowArgument("The provided type is lacking a suitable constructor", nameof(type));
-        }
-
-        string key = ProjectionNameToRegistryKey(name);
-        lock (RegistryLock)
-        {
-            if (TypeRegistry.TryGetValue(key, out ProjectionRegistration? registration))
+            ConstructorInfo? constructor = CheckConstructor(type);
+            if (constructor is null)
             {
-                if (ReferenceEquals(type, registration.ProjectionType))
-                {
-                    return;
-                }
-
-                ArgumentGuard.ThrowArgument("A different projection type has been registered with this name", nameof(name));
+                ArgumentGuard.ThrowArgument("The provided type is lacking a suitable constructor", nameof(type));
             }
 
-            ci = ArgumentGuard.ThrowIfNull(ci, nameof(ci));
-            TypeRegistry.Add(key, new ProjectionRegistration(type, ci));
+            factory = CreateReflectionFactory(type, constructor);
         }
+
+        Register(name, type, factory);
     }
 
     /// <summary>
@@ -459,42 +452,36 @@ public class ProjectionsRegistry
     /// <returns>Constructed projection transform.</returns>
     internal static MathTransform CreateProjection(string className, IEnumerable<ProjectionParameter> parameters)
     {
+        parameters = ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
         string key = ProjectionNameToRegistryKey(className);
 
-        Type? projectionType;
-        Type? constructorParameterType;
+        ProjectionRegistration? registration;
 
         lock (RegistryLock)
         {
-            if (!TypeRegistry.TryGetValue(key, out ProjectionRegistration? registration))
+            if (!TypeRegistry.TryGetValue(key, out registration))
             {
                 throw new NotSupportedException($"Projection {className} is not supported.");
             }
-
-            projectionType = registration.ProjectionType;
-            constructorParameterType = registration.ConstructorParameterType;
         }
 
-        if (projectionType is null)
+        registration = ArgumentGuard.ThrowIfNull(registration, nameof(registration));
+        using IDisposable projectionIdentityOverride = MapProjection.BeginProjectionIdentityOverride(registration.ProjectionType, className);
+        return registration.Factory(parameters);
+    }
+
+    private static void ValidateBuiltInFactories()
+    {
+        lock (RegistryLock)
         {
-            ProjectionThrowHelper.ThrowInvalidOperation($"Projection {className} is not supported.");
+            foreach (ProjectionRegistration registration in TypeRegistry.Values)
+            {
+                if (!BuiltInFactories.ContainsKey(registration.ProjectionType))
+                {
+                    ProjectionThrowHelper.ThrowInvalidOperation($"Built-in projection registration for {registration.ProjectionType.Name} is missing a compiled factory delegate.");
+                }
+            }
         }
-
-        if (constructorParameterType is null)
-        {
-            ProjectionThrowHelper.ThrowInvalidOperation($"Projection {className} has no registered constructor.");
-        }
-
-        if (!constructorParameterType.IsInstanceOfType(parameters))
-        {
-            parameters = new List<ProjectionParameter>(parameters);
-        }
-
-        using IDisposable projectionIdentityOverride = MapProjection.BeginProjectionIdentityOverride(projectionType, className);
-        var res = Activator.CreateInstance(projectionType, parameters) as MathTransform;
-        res = ArgumentGuard.ThrowIfNull(res, nameof(projectionType));
-
-        return res;
     }
 
     private static string ProjectionNameToRegistryKey(string name)
@@ -502,7 +489,92 @@ public class ProjectionsRegistry
         return name.ToLowerInvariant().Replace(' ', '_').Replace('-', '_');
     }
 
-    private static Type? CheckConstructor(
+    private static void Register(
+        string name,
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type type,
+        Func<IEnumerable<ProjectionParameter>, MathTransform> factory)
+    {
+        string key = ProjectionNameToRegistryKey(name);
+        lock (RegistryLock)
+        {
+            if (TypeRegistry.TryGetValue(key, out ProjectionRegistration? registration))
+            {
+                if (ReferenceEquals(type, registration.ProjectionType))
+                {
+                    return;
+                }
+
+                ArgumentGuard.ThrowArgument("A different projection type has been registered with this name", nameof(name));
+            }
+
+            TypeRegistry.Add(key, new ProjectionRegistration(type, factory));
+        }
+    }
+
+    private static Func<IEnumerable<ProjectionParameter>, MathTransform>? TryGetBuiltInFactory(
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type type)
+    {
+        return BuiltInFactories.TryGetValue(type, out Func<IEnumerable<ProjectionParameter>, MathTransform>? factory)
+            ? factory
+            : null;
+    }
+
+    private static Func<IEnumerable<ProjectionParameter>, MathTransform> CreateReflectionFactory(
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type projectionType,
+        ConstructorInfo constructor)
+    {
+        Type parameterType = constructor.GetParameters()[0].ParameterType;
+        return parameters =>
+        {
+            object constructorArgument = parameterType.IsInstanceOfType(parameters)
+                ? parameters
+                : AsProjectionParameterList(parameters);
+            return InvokeProjectionConstructor(projectionType, constructor, constructorArgument);
+        };
+    }
+
+    private static MathTransform InvokeProjectionConstructor(
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type projectionType,
+        ConstructorInfo constructor,
+        object constructorArgument)
+    {
+        if (constructor.Invoke([constructorArgument]) is MathTransform projection)
+        {
+            return projection;
+        }
+
+        ThrowProjectionFactoryReturnedNull(projectionType);
+        return null!;
+    }
+
+    private static List<ProjectionParameter> AsProjectionParameterList(IEnumerable<ProjectionParameter> parameters)
+    {
+        return parameters as List<ProjectionParameter> ?? [.. parameters];
+    }
+
+    [DoesNotReturn]
+    private static void ThrowProjectionFactoryReturnedNull(
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type projectionType)
+    {
+        ProjectionThrowHelper.ThrowInvalidOperation($"Projection {projectionType.Name} factory returned null.");
+    }
+
+    private static ConstructorInfo? CheckConstructor(
 #if NET5_0_OR_GREATER
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 #endif
@@ -517,7 +589,7 @@ public class ProjectionsRegistry
             ParameterInfo[] parameters = c.GetParameters();
             if (parameters.Length == 1 && parameters[0].ParameterType.IsAssignableFrom(typeof(List<ProjectionParameter>)))
             {
-                return parameters[0].ParameterType;
+                return c;
             }
         }
 
@@ -531,10 +603,10 @@ public class ProjectionsRegistry
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
 #endif
             Type projectionType,
-            Type constructorParameterType)
+            Func<IEnumerable<ProjectionParameter>, MathTransform> factory)
         {
             this.ProjectionType = projectionType;
-            this.ConstructorParameterType = constructorParameterType;
+            this.Factory = factory;
         }
 
 #if NET5_0_OR_GREATER
@@ -542,6 +614,6 @@ public class ProjectionsRegistry
 #endif
         internal Type ProjectionType { get; }
 
-        internal Type ConstructorParameterType { get; }
+        internal Func<IEnumerable<ProjectionParameter>, MathTransform> Factory { get; }
     }
 }

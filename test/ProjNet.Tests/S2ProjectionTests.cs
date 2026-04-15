@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -165,15 +164,14 @@ public class S2ProjectionTests
     [Fact]
     public void RejectsInvalidUvToStMode()
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
         {
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("s2", 0d, 0d, 9d));
             ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
             forward.MathTransform.Transform(CreatePoint(0d, 0d));
         });
 
-        ArgumentException inner = Assert.IsType<ArgumentException>(exception.InnerException);
-        Assert.Equal("parameters", inner.ParamName);
+        Assert.Equal("parameters", exception.ParamName);
     }
 
     private static string BuildProjectedWkt(string projectionName, double lat0, double lon0, double? uvToSt)

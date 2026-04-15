@@ -44,6 +44,26 @@ public class ProjectionsRegistryTests
         Assert.Equal("EPSG", projection.Authority);
     }
 
+    /// <summary>
+    /// Verifies custom registrations that still use the public <see cref="ProjectionsRegistry.Register(string, System.Type)"/>
+    /// surface retain the requested alias metadata.
+    /// </summary>
+    [Fact]
+    public void Register_WithCustomAlias_PreservesRequestedName()
+    {
+        const string alias = "copilot_mercator_test_alias";
+        ProjectionsRegistry.Register(alias, typeof(Mercator));
+
+        MapProjection projection = Assert.IsAssignableFrom<MapProjection>(
+            ProjectionsRegistry.CreateProjection(alias, CreateMercatorParameters()));
+
+        Assert.Equal(alias, projection.Name);
+        Assert.Equal(alias, projection.ClassName);
+        Assert.Equal("Mercator_2SP", projection.Alias);
+        Assert.Equal("EPSG", projection.Authority);
+        Assert.Equal(9805, projection.AuthorityCode);
+    }
+
     private static List<ProjectionParameter> CreateMercatorParameters(double? scaleFactor = null)
     {
         var parameters = new List<ProjectionParameter>

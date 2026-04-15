@@ -159,11 +159,13 @@ public class AdamsGuyouPeirceProjectionTests
     [InlineData(",PARAMETER[\"shape\",5],PARAMETER[\"scrolly\",-1.5]")]
     public void RejectsInvalidPeirceParameters(string? extraParameters)
     {
-        Assert.Throws<System.Reflection.TargetInvocationException>(() =>
+        ArgumentException exception = Assert.Throws<ArgumentException>(() =>
         {
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("peirce_q", Sphere6370997, extraParameters));
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
+
+        Assert.Equal("parameters", exception.ParamName);
     }
 
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)

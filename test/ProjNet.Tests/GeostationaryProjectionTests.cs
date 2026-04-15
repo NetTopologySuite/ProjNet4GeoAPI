@@ -6,7 +6,6 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
-using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -144,15 +143,13 @@ public class GeostationaryProjectionTests
     [InlineData(1e11d)]
     public void RejectsInvalidHeightValues(double satelliteHeight)
     {
-        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        Assert.Throws<ArgumentException>(() =>
         {
             string wkt = BuildProjectedWkt("geos", true, 1d, 0d, satelliteHeight);
             ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
             ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
             forward.MathTransform.Transform(CreatePoint(2d, 1d));
         });
-
-        Assert.IsType<ArgumentException>(exception.InnerException);
     }
 
     /// <summary>
