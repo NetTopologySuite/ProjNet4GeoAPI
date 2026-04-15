@@ -15,6 +15,20 @@ using Xunit;
 public class MathTransformDerivativeTests
 {
     /// <summary>
+    /// Gets representative projection operations used to validate local derivative linearization.
+    /// </summary>
+    public static TheoryData<string, double, double> ProjectionDerivativeCases =>
+        new()
+        {
+            { "+proj=merc +ellps=WGS84", 10d, 45d },
+            { "+proj=tmerc +ellps=WGS84 +lat_0=0 +lon_0=9 +k_0=0.9996 +x_0=500000 +y_0=0", 10d, 45d },
+            { "+proj=utm +ellps=GRS80 +zone=32", 10d, 55d },
+            { "+proj=lcc +lon_0=3 +lat_0=46.5 +lat_1=44 +lat_2=49 +x_0=700000 +y_0=6600000 +ellps=GRS80", 3d, 47d },
+            { "+proj=aea +ellps=GRS80 +lat_1=43 +lat_2=62 +lat_0=30 +lon_0=10 +x_0=0 +y_0=0", 12d, 50d },
+            { "+proj=laea +ellps=GRS80 +lat_0=52 +lon_0=10 +x_0=4321000 +y_0=3210000", 12d, 50d },
+        };
+
+    /// <summary>
     /// Verifies that affine derivatives return the non-translating linear matrix with the expected dimensions.
     /// </summary>
     [Fact]
@@ -53,8 +67,56 @@ public class MathTransformDerivativeTests
         AssertInTolerance(derivative[1, 1], expectedLatitudeScale, 1e-2d);
     }
 
+    /// <summary>
+    /// Verifies representative projection derivatives locally linearize the transform around the sample point.
+    /// </summary>
+    /// <param name="operation">The projection operation string.</param>
+    /// <param name="longitude">The sample longitude in degrees.</param>
+    /// <param name="latitude">The sample latitude in degrees.</param>
+    [Theory]
+    [MemberData(nameof(ProjectionDerivativeCases))]
+    public void Derivative_OnProjectionTransforms_LinearizesLocalOffsets(string operation, double longitude, double latitude)
+    {
+        MathTransform transform = CreateTransform(operation);
+        double[] point = [longitude, latitude];
+        double[] baseValue = transform.Transform(point);
+        double[,] derivative = transform.Derivative(point);
+
+        Assert.Equal(baseValue.Length, derivative.GetLength(0));
+        Assert.Equal(point.Length, derivative.GetLength(1));
+
+        AssertLocalLinearization([1e-6d, 0d]);
+        AssertLocalLinearization([0d, 1e-6d]);
+        AssertLocalLinearization([1e-6d, -2e-6d]);
+
+        void AssertLocalLinearization(double[] delta)
+        {
+            double[] displacedPoint = [point[0] + delta[0], point[1] + delta[1]];
+            double[] displacedValue = transform.Transform(displacedPoint);
+
+            for (int targetIndex = 0; targetIndex < displacedValue.Length; targetIndex++)
+            {
+                double predictedOffset = 0d;
+                for (int sourceIndex = 0; sourceIndex < delta.Length; sourceIndex++)
+                {
+                    predictedOffset += derivative[targetIndex, sourceIndex] * delta[sourceIndex];
+                }
+
+                double actualOffset = displacedValue[targetIndex] - baseValue[targetIndex];
+                AssertInTolerance(actualOffset, predictedOffset, 5e-3d);
+            }
+        }
+    }
+
     private static void AssertInTolerance(double actual, double expected, double tolerance)
     {
         Assert.InRange(Math.Abs(actual - expected), 0d, tolerance);
+    }
+
+    private static MathTransform CreateTransform(string operation)
+    {
+        bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        Assert.True(ok, skipReason);
+        return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }
 }
