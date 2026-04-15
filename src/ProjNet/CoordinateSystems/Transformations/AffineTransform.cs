@@ -84,12 +84,12 @@ public sealed class AffineTransform : MathTransform
         matrix = ArgumentGuard.ThrowIfNull(matrix, nameof(matrix));
         if (matrix.GetLength(0) <= 1)
         {
-            ArgumentGuard.ThrowArgument("Transformation matrix must have at least 2 rows.");
+            ArgumentGuard.ThrowArgument("Transformation matrix must have at least 2 rows.", nameof(matrix));
         }
 
         if (matrix.GetLength(1) <= 1)
         {
-            ArgumentGuard.ThrowArgument("Transformation matrix must have at least 2 columns.");
+            ArgumentGuard.ThrowArgument("Transformation matrix must have at least 2 columns.", nameof(matrix));
         }
 
         // fill dimensionlity - dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].

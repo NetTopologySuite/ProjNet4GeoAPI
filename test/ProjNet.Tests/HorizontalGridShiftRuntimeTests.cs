@@ -53,7 +53,7 @@ public class HorizontalGridShiftRuntimeTests
         bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        Assert.Throws<ArgumentException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInverseInput));
+        Assert.Throws<InvalidOperationException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInverseInput));
     }
 
     /// <summary>

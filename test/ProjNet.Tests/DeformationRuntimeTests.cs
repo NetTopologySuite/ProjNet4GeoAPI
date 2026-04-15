@@ -109,6 +109,18 @@ public class DeformationRuntimeTests
     }
 
     /// <summary>
+    /// Verifies the 3D overload is not supported when deformation requires an explicit observation epoch.
+    /// </summary>
+    [Fact]
+    public void Deformation3DTransformWithoutObservationEpochIsNotSupported()
+    {
+        MathTransform transform = CreateTransform("+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80 +t_epoch=2016.0");
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(
+            () => transform.Transform(CreateCartesianPoint(-3004295.5882503074d, -1093474.1690603832d, 5500477.1338251457d)));
+        Assert.Contains("time", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// Verifies coordinates outside configured grid extents are rejected.
     /// </summary>
     [Fact]
@@ -116,7 +128,7 @@ public class DeformationRuntimeTests
     {
         MathTransform transform = CreateTransform("+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80 +dt=16");
         double[] input = GeographicToCartesian(-120d, 40d, 0d);
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(input));
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => transform.Transform(input));
         Assert.Contains("outside", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 

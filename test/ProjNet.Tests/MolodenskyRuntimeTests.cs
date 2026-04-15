@@ -87,7 +87,7 @@ public class MolodenskyRuntimeTests
         const string operation = "+proj=molodensky +a=6378137 +b=1e-200 +da=0 +df=0 +dx=0 +dy=0 +dz=1 +abridged";
         MathTransform transform = CreateTransform(operation);
 
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
         Assert.Contains("dphi", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 

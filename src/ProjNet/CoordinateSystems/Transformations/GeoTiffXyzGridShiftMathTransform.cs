@@ -175,7 +175,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
                 return;
             }
 
-            ArgumentGuard.ThrowArgument("Coordinate is outside the XYZ GeoTIFF grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the XYZ GeoTIFF grid extent.");
         }
 
         if (index + 1 < size)
@@ -190,7 +190,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
             return;
         }
 
-        ArgumentGuard.ThrowArgument("Coordinate is outside the XYZ GeoTIFF grid extent.");
+        TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the XYZ GeoTIFF grid extent.");
     }
 
     private static bool IsConverged(double error)
@@ -202,7 +202,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     {
         if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
         {
-            ArgumentGuard.ThrowArgument("Coordinate is outside the XYZ GeoTIFF grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the XYZ GeoTIFF grid extent.");
         }
 
         int indexX = (int)Math.Floor(gridX);
@@ -244,7 +244,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     {
         if (!this.TryGetShift(x, y, z, out double dx, out double dy, out double dz))
         {
-            ArgumentGuard.ThrowArgument("Coordinate is outside the XYZ GeoTIFF grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the XYZ GeoTIFF grid extent.");
         }
 
         x += factor * dx;
@@ -266,7 +266,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         {
             if (!this.TryGetShift(candidateX, candidateY, candidateZ, out double dx, out double dy, out double dz))
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside the XYZ GeoTIFF grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the XYZ GeoTIFF grid extent.");
             }
 
             dx *= factor;
@@ -290,7 +290,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 
         if (!converged)
         {
-            ArgumentGuard.ThrowArgument("Inverse XYZ GeoTIFF grid shift did not converge.");
+            TransformationThrowHelper.ThrowInvalidOperation("Inverse XYZ GeoTIFF grid shift did not converge.");
         }
 
         x = candidateX;

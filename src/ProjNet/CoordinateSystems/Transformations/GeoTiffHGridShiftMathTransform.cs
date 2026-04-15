@@ -99,7 +99,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     {
         if (!this.TryFindGridForPoint(x, y, out HorizontalGrid? gridCandidate))
         {
-            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
 
         HorizontalGrid grid = ArgumentGuard.ThrowIfNull(gridCandidate, nameof(gridCandidate));
@@ -146,14 +146,14 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             }
         }
 
-        ArgumentGuard.ThrowArgument("Inverse horizontal GeoTIFF grid shift did not converge.");
+        TransformationThrowHelper.ThrowInvalidOperation("Inverse horizontal GeoTIFF grid shift did not converge.");
     }
 
     private (double LonShift, double LatShift) InterpolateShift(HorizontalGrid grid, double longitude, double latitude)
     {
         if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
         {
-            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
 
         return this.ShouldUseBiquadraticInterpolation(grid)
@@ -281,7 +281,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
                     return;
                 }
 
-                ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal GeoTIFF grid extent.");
             }
 
             if (index + 1 < size)
@@ -296,7 +296,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
                 return;
             }
 
-            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
 
         private static void NormalizeBiquadraticWindow(int size, ref int index, ref double fraction)

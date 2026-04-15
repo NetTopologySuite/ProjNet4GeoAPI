@@ -189,7 +189,7 @@ public class TinShiftRuntimeTests
     public void TinShiftOutsideTriangulationWithoutFallbackFails()
     {
         MathTransform transform = CreateTransform(BuildTinShiftOperation("tinshift_crs_implicit.json"));
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
         Assert.Contains("failed", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
@@ -200,7 +200,7 @@ public class TinShiftRuntimeTests
     public void TinShiftCppUnitReferenceOutsideTriangleFails()
     {
         MathTransform transform = CreateTransform(BuildTinShiftOperation("tinshift_unit_basic_horizontal.json"));
-        Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(-0.1d, 0d, 1000d)));
+        Assert.Throws<InvalidOperationException>(() => transform.Transform(CreatePoint(-0.1d, 0d, 1000d)));
     }
 
     /// <summary>
@@ -219,7 +219,7 @@ public class TinShiftRuntimeTests
         }
 
         MathTransform transform = CreateTransform(operation);
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
         Assert.Contains("failed", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 

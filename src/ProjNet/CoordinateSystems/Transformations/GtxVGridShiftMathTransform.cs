@@ -100,7 +100,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     {
         if (!this.TryFindGridForPoint(x, y, out GtxGrid? selectedGridCandidate))
         {
-            ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the vertical grid extent.");
         }
 
         GtxGrid selectedGrid = ArgumentGuard.ThrowIfNull(selectedGridCandidate, nameof(selectedGridCandidate));
@@ -147,7 +147,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
         int indexY = (int)Math.Floor(gridY);
         if (indexX < 0 || indexX >= grid.Width || indexY < 0 || indexY >= grid.Height)
         {
-            ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the vertical grid extent.");
         }
 
         double fractionX = gridX - indexX;
@@ -164,7 +164,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
             }
             else
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the vertical grid extent.");
             }
         }
 
@@ -179,7 +179,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
             }
             else
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the vertical grid extent.");
             }
         }
 
@@ -195,7 +195,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
         int validCount = (aValid ? 1 : 0) + (bValid ? 1 : 0) + (cValid ? 1 : 0) + (dValid ? 1 : 0);
         if (validCount == 0)
         {
-            ArgumentGuard.ThrowArgument("Coordinate falls on vertical grid nodata region.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate falls on vertical grid nodata region.");
         }
 
         double gridXy = fractionX * fractionY;
@@ -238,7 +238,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
 
         if (totalWeight == 0d)
         {
-            ArgumentGuard.ThrowArgument("Coordinate falls on vertical grid nodata region.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate falls on vertical grid nodata region.");
         }
 
         return (weightedValue / totalWeight) * multiplier;

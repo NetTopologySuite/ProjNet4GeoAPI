@@ -125,10 +125,10 @@ internal sealed partial class DeformationMathTransform : MathTransform
         {
             if (missingTime)
             {
-                ArgumentGuard.ThrowArgument("deformation requires a valid observation time.");
+                TransformationThrowHelper.ThrowNotSupported("deformation requires a valid observation time.");
             }
 
-            ArgumentGuard.ThrowArgument("deformation could not resolve delta time.");
+            TransformationThrowHelper.ThrowInvalidOperation("deformation could not resolve delta time.");
         }
 
         this.TransformCore(ref x, ref y, ref z, deltaTime);
@@ -340,10 +340,10 @@ internal sealed partial class DeformationMathTransform : MathTransform
         {
             if (missingTime)
             {
-                ArgumentGuard.ThrowArgument("deformation requires a valid observation time.");
+                ArgumentGuard.ThrowArgument("deformation requires a valid observation time.", nameof(t));
             }
 
-            ArgumentGuard.ThrowArgument("deformation could not resolve delta time.");
+            TransformationThrowHelper.ThrowInvalidOperation("deformation could not resolve delta time.");
         }
 
         this.TransformCore(ref x, ref y, ref z, deltaTime);
@@ -655,7 +655,7 @@ internal sealed partial class DeformationMathTransform : MathTransform
         {
             if (!this.TryGetGridShift(x, y, z, out double shiftX, out double shiftY, out double shiftZ))
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside deformation model grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside deformation model grid extent.");
             }
 
             x += deltaTime * shiftX;
@@ -666,7 +666,7 @@ internal sealed partial class DeformationMathTransform : MathTransform
 
         if (!this.TryReverseShift(x, y, z, deltaTime, out double xOut, out double yOut, out double zOut))
         {
-            ArgumentGuard.ThrowArgument("deformation inverse transformation failed.");
+            TransformationThrowHelper.ThrowInvalidOperation("deformation inverse transformation failed.");
         }
 
         x = xOut;

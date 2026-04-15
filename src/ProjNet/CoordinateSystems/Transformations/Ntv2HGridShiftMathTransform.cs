@@ -95,7 +95,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     {
         if (!this.TryFindGridForPoint(x, y, out Ntv2Grid? selectedGridCandidate))
         {
-            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal grid extent.");
+            TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal grid extent.");
         }
 
         Ntv2Grid selectedGrid = ArgumentGuard.ThrowIfNull(selectedGridCandidate, nameof(selectedGridCandidate));
@@ -139,7 +139,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             }
         }
 
-        ArgumentGuard.ThrowArgument("Inverse horizontal grid shift did not converge.");
+        TransformationThrowHelper.ThrowInvalidOperation("Inverse horizontal grid shift did not converge.");
     }
 
     private static (double LonShift, double LatShift) InterpolateShift(Ntv2Grid grid, double longitude, double latitude, bool compensateNtConvention)
@@ -168,7 +168,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             }
             else
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal grid extent.");
             }
         }
         else if (indexX + 1 >= grid.Width)
@@ -180,7 +180,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             }
             else
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal grid extent.");
             }
         }
 
@@ -193,7 +193,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             }
             else
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal grid extent.");
             }
         }
         else if (indexY + 1 >= grid.Height)
@@ -205,7 +205,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             }
             else
             {
-                ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal grid extent.");
+                TransformationThrowHelper.ThrowInvalidOperation("Coordinate is outside the horizontal grid extent.");
             }
         }
 

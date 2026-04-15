@@ -66,7 +66,7 @@ internal sealed partial class DefModelMathTransform : MathTransform
         this.geocentricForward = new GeocentricTransform(parameters, false);
         this.geocentricInverse = (GeocentricTransform)this.geocentricForward.Inverse();
 
-        ValidateCompatibility(model, this.isGeographicCrs, this.isHorizontalUnitDegree, this.isAddition);
+        ValidateCompatibility(model, this.isGeographicCrs, this.isHorizontalUnitDegree, this.isAddition, nameof(model));
     }
 
     private DefModelMathTransform(DefModelMathTransform source, bool isInverted)
@@ -226,14 +226,14 @@ internal sealed partial class DefModelMathTransform : MathTransform
     {
         if (!TransformationMath.IsValidObservationEpoch(t, TransformationMath.MissingObservationEpoch))
         {
-            ArgumentGuard.ThrowArgument("defmodel requires a valid observation epoch.");
+            ArgumentGuard.ThrowArgument("defmodel requires a valid observation epoch.", nameof(t));
         }
 
         if (!this.isInverted)
         {
             if (!this.TryForward(x, y, z, t, false, out double xOut, out double yOut, out double zOut))
             {
-                ArgumentGuard.ThrowArgument("defmodel forward transformation failed.");
+                TransformationThrowHelper.ThrowInvalidOperation("defmodel forward transformation failed.");
             }
 
             x = xOut;
@@ -244,7 +244,7 @@ internal sealed partial class DefModelMathTransform : MathTransform
 
         if (!this.TryInverse(x, y, z, t, out double xInv, out double yInv, out double zInv))
         {
-            ArgumentGuard.ThrowArgument("defmodel inverse transformation failed.");
+            TransformationThrowHelper.ThrowInvalidOperation("defmodel inverse transformation failed.");
         }
 
         x = xInv;
@@ -878,16 +878,17 @@ internal sealed partial class DefModelMathTransform : MathTransform
         ModelDefinition model,
         bool isGeographicCrs,
         bool isHorizontalUnitDegree,
-        bool isAddition)
+        bool isAddition,
+        string modelParamName)
     {
         if (!isGeographicCrs && isHorizontalUnitDegree)
         {
-            ArgumentGuard.ThrowArgument("definition_crs = projected CRS and horizontal_offset_unit = degree are incompatible.");
+            ArgumentGuard.ThrowArgument("definition_crs = projected CRS and horizontal_offset_unit = degree are incompatible.", modelParamName);
         }
 
         if (!isGeographicCrs && !isAddition)
         {
-            ArgumentGuard.ThrowArgument("definition_crs = projected CRS and horizontal_offset_method = geocentric are incompatible.");
+            ArgumentGuard.ThrowArgument("definition_crs = projected CRS and horizontal_offset_method = geocentric are incompatible.", modelParamName);
         }
 
         if (isGeographicCrs)
@@ -899,7 +900,7 @@ internal sealed partial class DefModelMathTransform : MathTransform
         {
             if (model.Components[i].InterpolationMethod == InterpolationMethod.GeocentricBilinear)
             {
-                ArgumentGuard.ThrowArgument("definition_crs = projected CRS and interpolation_method = geocentric_bilinear are incompatible.");
+                ArgumentGuard.ThrowArgument("definition_crs = projected CRS and interpolation_method = geocentric_bilinear are incompatible.", modelParamName);
             }
         }
     }

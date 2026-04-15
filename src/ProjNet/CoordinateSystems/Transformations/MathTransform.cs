@@ -369,7 +369,7 @@ public abstract class MathTransform
 
         if (elementsX != elementsY)
         {
-            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.");
+            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.", nameof(ys));
         }
 
         Span<double> dummyZ = stackalloc double[] { 0 };
@@ -399,7 +399,7 @@ public abstract class MathTransform
         int elementsY = (ys.Length / strideY) + (ys.Length % strideY) != 0 ? 1 : 0;
         if (elementsX != elementsY)
         {
-            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.");
+            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.", nameof(ys));
         }
 
         if (zs.IsEmpty)
@@ -412,7 +412,7 @@ public abstract class MathTransform
         int elementsZ = (zs.Length / strideZ) + (zs.Length % strideZ) != 0 ? 1 : 0;
         if (elementsZ != elementsX)
         {
-            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.");
+            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.", nameof(zs));
         }
 
         this.TransformCore(xs, ys, zs, strideX, strideY, strideZ);
@@ -436,7 +436,7 @@ public abstract class MathTransform
 
             if (xys.Length != ((zs.Length / strideZ) + (zs.Length % strideZ != 0 ? 1 : 0)))
             {
-                ArgumentGuard.ThrowArgument("Provided spans don't match in size.");
+                ArgumentGuard.ThrowArgument("Provided spans don't match in size.", nameof(zs));
             }
         }
 

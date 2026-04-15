@@ -119,7 +119,7 @@ public class HornerRuntimeTests
     public void HornerThrowsForCoordinatesOutsideConfiguredRange()
     {
         MathTransform transform = CreateTransform("+proj=horner +deg=1 +range=10 +fwd_origin=0,0 +fwd_u=0,1,0 +fwd_v=0,0,1");
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(0d, 11d, 0d)));
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => transform.Transform(CreatePoint(0d, 11d, 0d)));
         Assert.Contains("outside horner operation range", exception.Message, StringComparison.Ordinal);
     }
 

@@ -250,7 +250,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
         double dPhiDenominator = rho + h;
         if (dPhiDenominator == 0d)
         {
-            ArgumentGuard.ThrowArgument("Molodensky standard produced invalid denominator for dphi.");
+            TransformationThrowHelper.ThrowInvalidOperation("Molodensky standard produced invalid denominator for dphi.");
         }
 
         dPhi /= dPhiDenominator;
@@ -258,7 +258,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
         double dLamDenominator = (nu + h) * cosPhi;
         if (dLamDenominator == 0d)
         {
-            ArgumentGuard.ThrowArgument("Molodensky standard produced invalid denominator for dlam.");
+            TransformationThrowHelper.ThrowInvalidOperation("Molodensky standard produced invalid denominator for dlam.");
         }
 
         double dLam = ((-this.dx * sinLam) + (this.dy * cosLam)) / dLamDenominator;
@@ -286,7 +286,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
         double dPhiDenominator = this.ComputeRm(phi);
         if (dPhiDenominator == 0d)
         {
-            ArgumentGuard.ThrowArgument("Molodensky abridged produced invalid denominator for dphi.");
+            TransformationThrowHelper.ThrowInvalidOperation("Molodensky abridged produced invalid denominator for dphi.");
         }
 
         dPhi /= dPhiDenominator;
@@ -294,7 +294,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
         double dLamDenominator = this.ComputeRn(phi) * cosPhi;
         if (dLamDenominator == 0d)
         {
-            ArgumentGuard.ThrowArgument("Molodensky abridged produced invalid denominator for dlam.");
+            TransformationThrowHelper.ThrowInvalidOperation("Molodensky abridged produced invalid denominator for dlam.");
         }
 
         double dLam = ((-this.dx * sinLam) + (this.dy * cosLam)) / dLamDenominator;

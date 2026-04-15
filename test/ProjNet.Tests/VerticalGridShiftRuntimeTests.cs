@@ -74,7 +74,7 @@ public class VerticalGridShiftRuntimeTests
         bool ok = ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        Assert.Throws<ArgumentException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(VerticalGridInput));
+        Assert.Throws<InvalidOperationException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(VerticalGridInput));
     }
 
     private static string FindGridPath(string fileName)

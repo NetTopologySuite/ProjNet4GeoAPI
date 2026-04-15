@@ -79,7 +79,7 @@ internal sealed class TinShiftMathTransform : MathTransform
     {
         if (!this.TryTransformInternal(x, y, z, out double xOut, out double yOut, out double zOut))
         {
-            ArgumentGuard.ThrowArgument("tinshift transformation failed for input coordinate.");
+            TransformationThrowHelper.ThrowInvalidOperation("tinshift transformation failed for input coordinate.");
         }
 
         x = xOut;

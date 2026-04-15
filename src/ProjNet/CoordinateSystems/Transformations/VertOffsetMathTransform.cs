@@ -62,7 +62,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
         double oneMinusEsSinLat0Square = 1d - (eccentricitySquared * sinLat0 * sinLat0);
         if (oneMinusEsSinLat0Square <= 0d)
         {
-            ArgumentGuard.ThrowArgument("vertoffset produced invalid ellipsoid curvature terms.");
+            ArgumentGuard.ThrowArgument("vertoffset produced invalid ellipsoid curvature terms.", nameof(semiMinor));
         }
 
         double sqrtDenominator = Math.Sqrt(oneMinusEsSinLat0Square);
