@@ -289,6 +289,40 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
+    /// Verifies malformed WKT definitions are skipped during initialization while valid definitions still load.
+    /// </summary>
+    [Fact]
+    public void InitializationSkipsMalformedDefinitions()
+    {
+        CoordinateSystemDefinition[] definitions =
+        [
+            new CoordinateSystemDefinition(999001, "GEODCRS[\"Broken\""),
+            new CoordinateSystemDefinition(4326, GeographicCoordinateSystem.WGS84.WKT),
+        ];
+        var css = new CoordinateSystemServices(definitions);
+
+        Assert.Null(css.GetCoordinateSystem(999001));
+        Assert.NotNull(css.GetCoordinateSystem(4326));
+    }
+
+    /// <summary>
+    /// Verifies unsupported WKT definitions are skipped during initialization while valid definitions still load.
+    /// </summary>
+    [Fact]
+    public void InitializationSkipsUnsupportedDefinitions()
+    {
+        CoordinateSystemDefinition[] definitions =
+        [
+            new CoordinateSystemDefinition(999002, "BoundCrs[]"),
+            new CoordinateSystemDefinition(4326, GeographicCoordinateSystem.WGS84.WKT),
+        ];
+        var css = new CoordinateSystemServices(definitions);
+
+        Assert.Null(css.GetCoordinateSystem(999002));
+        Assert.NotNull(css.GetCoordinateSystem(4326));
+    }
+
+    /// <summary>
     /// Validates CSV-backed constructor loading for coordinate system definitions.
     /// </summary>
     /// <param name="csvPath">Path to the CSV definition file, or empty for embedded defaults.</param>

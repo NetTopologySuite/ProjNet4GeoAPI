@@ -13,6 +13,7 @@ using System.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Data;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Provides coordinate system lookup and transformation creation backed by a registry of SRID-keyed systems.
@@ -391,9 +392,19 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         {
             return coordinateSystemFactory.CreateFromWkt(StringCompatibility.ReplaceOrdinal(wkt, "ELLIPSOID", "SPHEROID"));
         }
-        catch (Exception)
+        catch (WktParseException)
         {
-            // as a fallback we ignore projections not supported
+            // Skip malformed definitions so registry initialization can continue with the remaining rows.
+            return null;
+        }
+        catch (NotSupportedException)
+        {
+            // Skip definitions that describe constructs the current reader cannot materialize yet.
+            return null;
+        }
+        catch (FormatException)
+        {
+            // Skip definitions with invalid numeric/text formatting while loading bulk catalogs.
             return null;
         }
     }
