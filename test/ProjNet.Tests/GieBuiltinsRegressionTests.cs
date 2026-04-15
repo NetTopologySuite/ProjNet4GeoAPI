@@ -1581,7 +1581,7 @@ public class GieBuiltinsRegressionTests
     [Fact]
     public void GetCasesFromFixtureWithNkgFixtureReturnsMappedTheoryRows()
     {
-        List<object> rows = GetCasesFromFixtureRows("nkg.gie", 300);
+        List<object> rows = GetCasesFromFixtureRows("nkg.gie");
 
         Assert.True(rows.Count > 20, $"Expected mapped NKG rows, but found only {rows.Count}.");
     }
@@ -1598,7 +1598,7 @@ public class GieBuiltinsRegressionTests
     [InlineData("nkg.gie")]
     public void GetCasesFromFixtureForFormerNoApplicableFixturesReturnsConcreteRow(string fixtureName)
     {
-        List<object> rows = GetCasesFromFixtureRows(fixtureName, 300);
+        List<object> rows = GetCasesFromFixtureRows(fixtureName);
 
         Assert.NotEmpty(rows);
 
@@ -1655,13 +1655,13 @@ public class GieBuiltinsRegressionTests
         return created;
     }
 
-    private static List<object> GetCasesFromFixtureRows(string fixtureName, int maxCount)
+    private static List<object> GetCasesFromFixtureRows(string fixtureName)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("GetCasesFromFixture", BindingFlags.Static | BindingFlags.NonPublic)
             ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.GetCasesFromFixture.");
 
         var rows = new List<object>();
-        foreach (object row in Assert.IsAssignableFrom<System.Collections.IEnumerable>(method.Invoke(null, [fixtureName, maxCount])))
+        foreach (object row in Assert.IsAssignableFrom<System.Collections.IEnumerable>(method.Invoke(null, [fixtureName])))
         {
             rows.Add(row);
         }
