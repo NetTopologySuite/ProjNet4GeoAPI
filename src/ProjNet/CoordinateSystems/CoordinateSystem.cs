@@ -6,7 +6,6 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Xml.Linq;
 using ProjNet.IO.CoordinateSystems;
 using ProjNet.IO.Wkt;
@@ -147,7 +146,7 @@ public abstract class CoordinateSystem : Info
     {
         if (dimension >= this.AxisInfo.Count || dimension < 0)
         {
-            ArgumentGuard.ThrowArgument($"AxisInfo not available for dimension {dimension.ToString(CultureInfo.InvariantCulture)}");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(dimension), "AxisInfo not available for the requested dimension.");
         }
 
         return this.AxisInfo[dimension];

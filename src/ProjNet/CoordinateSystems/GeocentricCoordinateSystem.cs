@@ -182,7 +182,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
 
         if (this.AxisInfo.Count != this.Dimension)
         {
-            ArgumentGuard.ThrowArgument($"Geocentric coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
+            throw new InvalidOperationException($"Geocentric coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
         }
 
         var children = new List<WktNode>
@@ -248,7 +248,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
         axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
         if (axisInfo.Count != 3)
         {
-            ArgumentGuard.ThrowArgument("Axis info should contain three axes for geocentric coordinate systems");
+            ArgumentGuard.ThrowArgument("Axis info should contain three axes for geocentric coordinate systems", nameof(axisInfo));
         }
 
         return axisInfo;

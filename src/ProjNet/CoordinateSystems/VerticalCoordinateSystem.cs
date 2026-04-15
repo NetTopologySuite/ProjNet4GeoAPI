@@ -235,7 +235,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
 
         if (this.AxisInfo.Count != 1)
         {
-            ArgumentGuard.ThrowArgument($"Vertical coordinate system '{this.Name}' must provide exactly one axis for WKT2 output.");
+            throw new InvalidOperationException($"Vertical coordinate system '{this.Name}' must provide exactly one axis for WKT2 output.");
         }
 
         var children = new List<WktNode>

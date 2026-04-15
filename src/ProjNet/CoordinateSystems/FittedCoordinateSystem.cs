@@ -180,7 +180,7 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
 
         if (axisInfo.Count != baseSystem.Dimension)
         {
-            ArgumentGuard.ThrowArgument($"Fitted coordinate system '{name}' expects {baseSystem.Dimension} axes but received {axisInfo.Count}.");
+            ArgumentGuard.ThrowArgument($"Fitted coordinate system '{name}' expects {baseSystem.Dimension} axes but received {axisInfo.Count}.", nameof(axisInfo));
         }
 
         var explicitAxisInfo = new List<AxisInfo>(axisInfo.Count);

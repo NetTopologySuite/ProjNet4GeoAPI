@@ -50,7 +50,7 @@ public abstract class HorizontalCoordinateSystem : CoordinateSystem
         axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
         if (axisInfo.Count != 2)
         {
-            ArgumentGuard.ThrowArgument("Axis info should contain two axes for horizontal coordinate systems");
+            ArgumentGuard.ThrowArgument("Axis info should contain two axes for horizontal coordinate systems", nameof(axisInfo));
         }
 
         return axisInfo;

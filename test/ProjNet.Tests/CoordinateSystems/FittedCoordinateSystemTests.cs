@@ -110,6 +110,26 @@ public class FittedCoordinateSystemTests
     }
 
     /// <summary>
+    /// Verifies that explicit fitted axes report <c>axisInfo</c> when the axis count does not match the base system.
+    /// </summary>
+    [Fact]
+    public void Constructor_MismatchedExplicitAxisCount_ThrowsArgumentExceptionWithAxisInfoParamName()
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => new FittedCoordinateSystem(
+            GeographicCoordinateSystem.WGS84,
+            CreateTransform(),
+            "Custom fitted",
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty,
+            [new AxisInfo("Latitude", AxisOrientationEnum.North)]));
+
+        Assert.Equal("axisInfo", exception.ParamName);
+    }
+
+    /// <summary>
     /// Verifies that WKT contains the fitted keyword, transform, and base coordinate system.
     /// </summary>
     [Fact]

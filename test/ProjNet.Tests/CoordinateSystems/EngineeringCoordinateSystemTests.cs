@@ -77,6 +77,27 @@ public class EngineeringCoordinateSystemTests
         Assert.True(first.EqualParams(second));
     }
 
+    /// <summary>
+    /// Verifies that the constructor reports the unit collection when the axis and unit counts differ.
+    /// </summary>
+    [Fact]
+    public void Constructor_MismatchedAxisAndUnitCounts_ThrowsArgumentExceptionWithUnitsParamName()
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => new EngineeringCoordinateSystem(
+            new EngineeringDatum("Local plant", "EPSG", 1098, string.Empty, string.Empty, string.Empty),
+            "Cartesian",
+            [new AxisInfo("x", AxisOrientationEnum.East), new AxisInfo("y", AxisOrientationEnum.North)],
+            [LinearUnit.Metre],
+            "Plant grid",
+            "EPSG",
+            5800,
+            string.Empty,
+            string.Empty,
+            string.Empty));
+
+        Assert.Equal("units", exception.ParamName);
+    }
+
     private static EngineeringCoordinateSystem CreateEngineeringCoordinateSystem(IUnit[] units, string name = "Plant grid")
     {
         return new EngineeringCoordinateSystem(

@@ -57,7 +57,7 @@ public sealed class EngineeringCoordinateSystem : CoordinateSystem
 
         if (axisInfo.Count != units.Count)
         {
-            ArgumentGuard.ThrowArgument("Engineering coordinate system axes and units must have the same length.");
+            ArgumentGuard.ThrowArgument("Engineering coordinate system axes and units must have the same length.", nameof(units));
         }
 
         this.units = units.Select(unit => ArgumentGuard.ThrowIfNull(unit, nameof(units))).ToList();

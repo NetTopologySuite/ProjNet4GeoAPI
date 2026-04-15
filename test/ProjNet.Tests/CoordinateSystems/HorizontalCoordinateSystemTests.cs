@@ -73,7 +73,7 @@ public class HorizontalCoordinateSystemTests
         ];
 
         ArgumentException exception = Assert.Throws<ArgumentException>(() => new TestHorizontalCoordinateSystem(datum, axisInfo));
-        Assert.Contains("Axis info should contain two axes for horizontal coordinate systems", exception.Message, StringComparison.Ordinal);
+        Assert.Equal("axisInfo", exception.ParamName);
     }
 
     private sealed class TestHorizontalCoordinateSystem : HorizontalCoordinateSystem

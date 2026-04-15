@@ -118,24 +118,24 @@ public class CoordinateSystemTests
     /// Verifies that <see cref="CoordinateSystem.GetAxis"/> rejects negative dimensions.
     /// </summary>
     [Fact]
-    public void GetAxis_WithNegativeDimension_ThrowsArgumentException()
+    public void GetAxis_WithNegativeDimension_ThrowsArgumentOutOfRangeException()
     {
         TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
 
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => coordinateSystem.GetAxis(-1));
-        Assert.Contains("AxisInfo not available for dimension -1", exception.Message, StringComparison.Ordinal);
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => coordinateSystem.GetAxis(-1));
+        Assert.Equal("dimension", exception.ParamName);
     }
 
     /// <summary>
     /// Verifies that <see cref="CoordinateSystem.GetAxis"/> rejects dimensions beyond the configured axis count.
     /// </summary>
     [Fact]
-    public void GetAxis_WithOutOfRangeDimension_ThrowsArgumentException()
+    public void GetAxis_WithOutOfRangeDimension_ThrowsArgumentOutOfRangeException()
     {
         TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
 
-        ArgumentException exception = Assert.Throws<ArgumentException>(() => coordinateSystem.GetAxis(2));
-        Assert.Contains("AxisInfo not available for dimension 2", exception.Message, StringComparison.Ordinal);
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => coordinateSystem.GetAxis(2));
+        Assert.Equal("dimension", exception.ParamName);
     }
 
     private static TestCoordinateSystem CreateCoordinateSystem(List<AxisInfo>? axisInfo = null, double[]? defaultEnvelope = null)

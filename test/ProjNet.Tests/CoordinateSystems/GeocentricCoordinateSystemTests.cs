@@ -179,7 +179,7 @@ public class GeocentricCoordinateSystemTests
             string.Empty,
             string.Empty));
 
-        Assert.Equal("Axis info should contain three axes for geocentric coordinate systems", exception.Message);
+        Assert.Equal("axisInfo", exception.ParamName);
     }
 
     /// <summary>

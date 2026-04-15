@@ -230,7 +230,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 
         if (this.AxisInfo.Count != this.Dimension)
         {
-            ArgumentGuard.ThrowArgument($"Projected coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
+            throw new InvalidOperationException($"Projected coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
         }
 
         BoundCoordinateSystem? boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(this);
@@ -317,7 +317,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 
         if (this.AxisInfo.Count != this.Dimension)
         {
-            ArgumentGuard.ThrowArgument($"Projected coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
+            throw new InvalidOperationException($"Projected coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
         }
 
         if (BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(this) is not null)
