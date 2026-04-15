@@ -58,6 +58,7 @@ public class WktTokenizerTests
     [InlineData("-1.7976931348623157E+308", -1.7976931348623157E+308)]
     [InlineData("2.2250738585072014E-308", 2.2250738585072014E-308)]
     [InlineData("5.235E+4", 52350d)]
+    [InlineData("1.", 1d)]
     [InlineData("-.5", -0.5d)]
     [InlineData("+.75", 0.75d)]
     [InlineData("-0.0", -0d)]
@@ -69,6 +70,33 @@ public class WktTokenizerTests
         Assert.True(tokenizer.TryGetNumericValue(out double parsed));
         Assert.Equal(expected, parsed);
         Assert.Equal(expected, tokenizer.GetNumericValue());
+    }
+
+    /// <summary>
+    /// Verifies malformed scientific notation is split at the valid numeric prefix instead of consuming the invalid suffix.
+    /// </summary>
+    /// <param name="tokenText">Input token stream to parse.</param>
+    /// <param name="expectedNumberToken">Expected numeric prefix token.</param>
+    /// <param name="expectedRemainderTokens">Expected remaining token texts after the numeric prefix.</param>
+    [Theory]
+    [InlineData("1e", "1", "e")]
+    [InlineData(".5e-", ".5", "e", "-")]
+    public void NextTokenOnMalformedScientificNotationStopsAtValidNumericPrefix(string tokenText, string expectedNumberToken, params string[] expectedRemainderTokens)
+    {
+        ArgumentNullException.ThrowIfNull(expectedRemainderTokens);
+        var tokenizer = new WktTokenizer(tokenText);
+
+        Assert.Equal(TokenType.Number, tokenizer.NextToken());
+        Assert.Equal(expectedNumberToken, tokenizer.GetStringValue());
+        Assert.True(tokenizer.TryGetNumericValue(out _));
+
+        foreach (string expectedToken in expectedRemainderTokens)
+        {
+            Assert.NotEqual(TokenType.Eof, tokenizer.NextToken());
+            Assert.Equal(expectedToken, tokenizer.GetStringValue());
+        }
+
+        Assert.Equal(TokenType.Eof, tokenizer.NextToken());
     }
 
     /// <summary>
@@ -107,6 +135,24 @@ public class WktTokenizerTests
         var tokenizer = new WktTokenizer("WORD");
 
         Assert.Equal(TokenType.Word, tokenizer.NextToken());
+
+        WktParseException exception = Assert.Throws<WktParseException>(() => tokenizer.GetNumericValue());
+        Assert.Contains("is not a number", exception.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies named non-finite values are treated as words rather than numeric tokens.
+    /// </summary>
+    /// <param name="tokenText">Named non-finite token candidate.</param>
+    [Theory]
+    [InlineData("NaN")]
+    [InlineData("Infinity")]
+    public void GetNumericValueWithNamedNonFiniteTokenThrowsWktParseException(string tokenText)
+    {
+        var tokenizer = new WktTokenizer(tokenText);
+
+        Assert.Equal(TokenType.Word, tokenizer.NextToken());
+        Assert.False(tokenizer.TryGetNumericValue(out _));
 
         WktParseException exception = Assert.Throws<WktParseException>(() => tokenizer.GetNumericValue());
         Assert.Contains("is not a number", exception.Message, StringComparison.Ordinal);
