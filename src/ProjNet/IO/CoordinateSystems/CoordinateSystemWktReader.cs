@@ -177,7 +177,7 @@ public static partial class CoordinateSystemWktReader
         {
             rootNode = WktKeywordNode.ParseTree(tokenizer);
         }
-        catch (ArgumentException)
+        catch (WktParseException)
         {
             info = null;
             return false;

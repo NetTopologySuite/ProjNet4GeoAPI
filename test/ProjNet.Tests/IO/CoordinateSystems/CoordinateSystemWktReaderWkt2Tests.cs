@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.Data;
@@ -968,6 +969,34 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.Equal(CatalogEntries.Value.Count, successfulRoundTrips);
     }
 
+    /// <summary>
+    /// Verifies structural WKT2 parse failures are treated as a native-reader miss instead of leaking out of the fallback probe.
+    /// </summary>
+    [Fact]
+    public void TryParseNativeWkt2_WithStructuralParseFailure_ReturnsFalse()
+    {
+        const string malformedWkt = "GEODCRS[\"WGS 84\"";
+
+        bool parsed = TryInvokeNativeWkt2(malformedWkt, out IInfo? info);
+
+        Assert.False(parsed);
+        Assert.Null(info);
+    }
+
+    /// <summary>
+    /// Verifies non-parse exceptions are not swallowed by the native-reader probe.
+    /// </summary>
+    [Fact]
+    public void TryParseNativeWkt2_WithNullInput_PropagatesArgumentNullException()
+    {
+        MethodInfo method = GetTryParseNativeWkt2Method();
+        object?[] arguments = [null, null];
+
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() => method.Invoke(null, arguments));
+
+        Assert.IsType<ArgumentNullException>(exception.InnerException);
+    }
+
     private static string GetCatalogWkt(int srid)
     {
         Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out string? wkt), $"SRID {srid} not found in managed EPSG catalog.");
@@ -1004,6 +1033,29 @@ public class CoordinateSystemWktReaderWkt2Tests
                         ID["EPSG",9661]],
                     PARAMETERFILE["Geoid (height correction) model file","{{outerParameterFileName}}"]]]
             """;
+    }
+
+    private static bool TryInvokeNativeWkt2(string wkt, out IInfo? info)
+    {
+        MethodInfo method = GetTryParseNativeWkt2Method();
+        object?[] arguments = [wkt, null];
+
+        bool result = Assert.IsType<bool>(method.Invoke(null, arguments));
+        info = (IInfo?)arguments[1];
+        return result;
+    }
+
+    private static MethodInfo GetTryParseNativeWkt2Method()
+    {
+        MethodInfo? method = typeof(CoordinateSystemWktReader).GetMethod(
+            "TryParseNativeWkt2",
+            BindingFlags.Static | BindingFlags.NonPublic,
+            binder: null,
+            types: [typeof(string), typeof(IInfo).MakeByRefType()],
+            modifiers: null);
+
+        Assert.NotNull(method);
+        return method;
     }
 
     private static bool AreCoordinateSystemsSemanticallyEquivalent(CoordinateSystem original, CoordinateSystem parsed)
