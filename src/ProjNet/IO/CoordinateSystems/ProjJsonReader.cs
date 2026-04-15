@@ -132,7 +132,7 @@ public static class ProjJsonReader
 
         if (angularUnit is null)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON GeographicCRS is missing axis angular units.");
+            ArgumentGuard.ThrowArgument("PROJJSON GeographicCRS is missing axis angular units.", nameof(element));
         }
 
         ReadIdentifier(element, out string authority, out long authorityCode);
@@ -194,7 +194,7 @@ public static class ProjJsonReader
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON geocentric GeodeticCRS is missing axis linear units.");
+            ArgumentGuard.ThrowArgument("PROJJSON geocentric GeodeticCRS is missing axis linear units.", nameof(element));
         }
 
         ReadIdentifier(element, out string authority, out long authorityCode);
@@ -237,7 +237,7 @@ public static class ProjJsonReader
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON ProjectedCRS is missing axis linear units.");
+            ArgumentGuard.ThrowArgument("PROJJSON ProjectedCRS is missing axis linear units.", nameof(element));
         }
 
         ReadIdentifier(element, out string authority, out long authorityCode);
@@ -287,7 +287,7 @@ public static class ProjJsonReader
 
         if (angularUnit is null)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON derived geodetic CRS is missing axis angular units.");
+            ArgumentGuard.ThrowArgument("PROJJSON derived geodetic CRS is missing axis angular units.", nameof(element));
         }
 
         ReadIdentifier(element, out string authority, out long authorityCode);
@@ -326,7 +326,7 @@ public static class ProjJsonReader
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON derived projected CRS is missing axis linear units.");
+            ArgumentGuard.ThrowArgument("PROJJSON derived projected CRS is missing axis linear units.", nameof(element));
         }
 
         ReadIdentifier(element, out string authority, out long authorityCode);
@@ -378,7 +378,7 @@ public static class ProjJsonReader
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON VerticalCRS is missing axis linear units.");
+            ArgumentGuard.ThrowArgument("PROJJSON VerticalCRS is missing axis linear units.", nameof(element));
         }
 
         verticalDatum = ApplyVerticalDatumTypeForAxis(verticalDatum, axisInfo[0]);
@@ -401,7 +401,7 @@ public static class ProjJsonReader
         JsonElement componentsElement = GetRequiredProperty(element, "components");
         if (componentsElement.ValueKind != JsonValueKind.Array)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON CompoundCRS components must be an array.");
+            ArgumentGuard.ThrowArgument("PROJJSON CompoundCRS components must be an array.", nameof(element));
         }
 
         var components = new List<CoordinateSystem>();
@@ -417,7 +417,7 @@ public static class ProjJsonReader
 
         if (components.Count < 2)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON CompoundCRS must contain at least two components.");
+            ArgumentGuard.ThrowArgument("PROJJSON CompoundCRS must contain at least two components.", nameof(element));
         }
 
         ReadIdentifier(element, out string authority, out long authorityCode);
@@ -447,7 +447,7 @@ public static class ProjJsonReader
         JsonElement parametersElement = GetRequiredProperty(element, "parameters");
         if (parametersElement.ValueKind != JsonValueKind.Array)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameters must be an array.");
+            ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameters must be an array.", nameof(element));
         }
 
         var parameters = new Wgs84ConversionInfo();
@@ -468,13 +468,13 @@ public static class ProjJsonReader
 
             if (valueElement.ValueKind != JsonValueKind.String)
             {
-                ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameter values must be numbers or strings.");
+                ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameter values must be numbers or strings.", nameof(element));
             }
 
             string candidateParameterFileName = valueElement.GetString() ?? string.Empty;
             if (string.IsNullOrWhiteSpace(candidateParameterFileName))
             {
-                ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameter file references must be non-empty.");
+                ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameter file references must be non-empty.", nameof(element));
             }
 
             if (parameterFileName is not null
@@ -502,7 +502,7 @@ public static class ProjJsonReader
         {
             if (parametersElement.ValueKind != JsonValueKind.Array)
             {
-                ArgumentGuard.ThrowArgument("PROJJSON conversion parameters must be an array.");
+                ArgumentGuard.ThrowArgument("PROJJSON conversion parameters must be an array.", nameof(element));
             }
 
             foreach (JsonElement parameterElement in parametersElement.EnumerateArray())
@@ -564,7 +564,7 @@ public static class ProjJsonReader
         JsonElement axisArray = GetRequiredProperty(element, "axis");
         if (axisArray.ValueKind != JsonValueKind.Array)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON coordinate system axis definition must be an array.");
+            ArgumentGuard.ThrowArgument("PROJJSON coordinate system axis definition must be an array.", nameof(element));
         }
 
         foreach (JsonElement axisElement in axisArray.EnumerateArray())
@@ -605,7 +605,7 @@ public static class ProjJsonReader
         bool hasDatumEnsemble = element.TryGetProperty("datum_ensemble", out JsonElement datumEnsembleElement);
         if (hasDatum == hasDatumEnsemble)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON geodetic CRS must contain exactly one of datum or datum_ensemble.");
+            ArgumentGuard.ThrowArgument("PROJJSON geodetic CRS must contain exactly one of datum or datum_ensemble.", nameof(element));
         }
 
         return hasDatum
@@ -619,7 +619,7 @@ public static class ProjJsonReader
         bool hasDatumEnsemble = element.TryGetProperty("datum_ensemble", out JsonElement datumEnsembleElement);
         if (hasDatum == hasDatumEnsemble)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON vertical CRS must contain exactly one of datum or datum_ensemble.");
+            ArgumentGuard.ThrowArgument("PROJJSON vertical CRS must contain exactly one of datum or datum_ensemble.", nameof(element));
         }
 
         return hasDatum
@@ -704,7 +704,7 @@ public static class ProjJsonReader
         JsonElement membersElement = GetRequiredProperty(element, "members");
         if (membersElement.ValueKind != JsonValueKind.Array)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON datum_ensemble members must be an array.");
+            ArgumentGuard.ThrowArgument("PROJJSON datum_ensemble members must be an array.", nameof(element));
         }
 
         var members = new List<DatumEnsembleMember>();
@@ -718,13 +718,13 @@ public static class ProjJsonReader
             : null;
         if (requireEllipsoid && ellipsoid is null)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON datum_ensemble for geodetic CRS is missing an ellipsoid.");
+            ArgumentGuard.ThrowArgument("PROJJSON datum_ensemble for geodetic CRS is missing an ellipsoid.", nameof(element));
         }
 
         string accuracyToken = GetRequiredString(element, "accuracy");
         if (!double.TryParse(accuracyToken, NumberStyles.Any, CultureInfo.InvariantCulture, out double accuracy))
         {
-            ArgumentGuard.ThrowArgument($"Invalid PROJJSON datum_ensemble accuracy '{accuracyToken}'.");
+            ArgumentGuard.ThrowArgument($"Invalid PROJJSON datum_ensemble accuracy '{accuracyToken}'.", nameof(element));
         }
 
         ArgumentGuard.ThrowIfNotFinite(accuracy, nameof(element), "PROJJSON datum_ensemble accuracy must be finite.");
@@ -747,7 +747,7 @@ public static class ProjJsonReader
         bool hasSemiMinorAxis = element.TryGetProperty("semi_minor_axis", out JsonElement semiMinorAxisElement);
         if (!hasInverseFlattening && !hasSemiMinorAxis)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON ellipsoid requires either inverse_flattening or semi_minor_axis.");
+            ArgumentGuard.ThrowArgument("PROJJSON ellipsoid requires either inverse_flattening or semi_minor_axis.", nameof(element));
         }
 
         LinearUnit axisUnit = element.TryGetProperty("unit", out JsonElement unitElement)
@@ -897,7 +897,7 @@ public static class ProjJsonReader
             "GEOCENTRICX" => AxisOrientationEnum.Other,
             "GEOCENTRICY" => AxisOrientationEnum.East,
             "GEOCENTRICZ" => AxisOrientationEnum.North,
-            _ => ArgumentGuard.ThrowArgument<AxisOrientationEnum>($"Invalid PROJJSON axis orientation '{orientationToken}'."),
+            _ => ArgumentGuard.ThrowArgument<AxisOrientationEnum>($"Invalid PROJJSON axis orientation '{orientationToken}'.", nameof(orientationToken)),
         };
     }
 
@@ -915,7 +915,7 @@ public static class ProjJsonReader
 
         if (!current.EqualParams(candidate))
         {
-            ArgumentGuard.ThrowArgument("PROJJSON axis angular units must match.");
+            ArgumentGuard.ThrowArgument("PROJJSON axis angular units must match.", nameof(candidate));
         }
 
         return current;
@@ -935,7 +935,7 @@ public static class ProjJsonReader
 
         if (!current.EqualParams(candidate))
         {
-            ArgumentGuard.ThrowArgument("PROJJSON axis linear units must match.");
+            ArgumentGuard.ThrowArgument("PROJJSON axis linear units must match.", nameof(candidate));
         }
 
         return current;
@@ -971,7 +971,7 @@ public static class ProjJsonReader
         JsonElement property = GetRequiredProperty(element, propertyName);
         if (property.ValueKind != JsonValueKind.String)
         {
-            ArgumentGuard.ThrowArgument($"PROJJSON property '{propertyName}' must be a string.");
+            ArgumentGuard.ThrowArgument($"PROJJSON property '{propertyName}' must be a string.", nameof(element));
         }
 
         return property.GetString() ?? string.Empty;
@@ -998,7 +998,7 @@ public static class ProjJsonReader
     {
         if (element.ValueKind != JsonValueKind.Number)
         {
-            ArgumentGuard.ThrowArgument("PROJJSON numeric property must be a number.");
+            ArgumentGuard.ThrowArgument("PROJJSON numeric property must be a number.", nameof(element));
         }
 
         return element.GetDouble();
@@ -1008,7 +1008,7 @@ public static class ProjJsonReader
     {
         if (!element.TryGetProperty(propertyName, out JsonElement property))
         {
-            ArgumentGuard.ThrowArgument($"PROJJSON property '{propertyName}' is required.");
+            ArgumentGuard.ThrowArgument($"PROJJSON property '{propertyName}' is required.", nameof(element));
         }
 
         return property;

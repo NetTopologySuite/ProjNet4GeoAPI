@@ -817,6 +817,81 @@ public class ProjJsonReaderTests
         Assert.Contains(type, exception.Message, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies non-object PROJJSON roots report the public <c>json</c> parameter.
+    /// </summary>
+    [Fact]
+    public void Parse_WithNonObjectRoot_ThrowsArgumentExceptionForJson()
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ProjJsonReader.Parse("[]"));
+
+        Assert.Equal("json", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies missing required top-level members report the parsed element parameter.
+    /// </summary>
+    [Fact]
+    public void Parse_WithMissingType_ThrowsArgumentExceptionForElement()
+    {
+        string json = Serialize(Obj(("name", "Missing type")));
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ProjJsonReader.Parse(json));
+
+        Assert.Equal("element", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies invalid axis direction tokens report the orientation-token helper parameter.
+    /// </summary>
+    [Fact]
+    public void Parse_WithInvalidAxisOrientation_ThrowsArgumentExceptionForOrientationToken()
+    {
+        string json = Serialize(
+            GeographicCrsObject(
+                4326,
+                "WGS 84",
+                GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030), 6326),
+                GreenwichPrimeMeridianObject(),
+                "degree",
+                ("Geodetic latitude", "Lat", "north"),
+                ("Geodetic longitude", "Lon", "sideways")));
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ProjJsonReader.Parse(json));
+
+        Assert.Equal("orientationToken", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies inconsistent angular units report the conflicting candidate unit parameter.
+    /// </summary>
+    [Fact]
+    public void Parse_WithMismatchedAxisUnits_ThrowsArgumentExceptionForCandidate()
+    {
+        object[] axes =
+        [
+            AxisObject("Geodetic latitude", "Lat", "north", AngularUnitObject("degree", 0.0174532925199433d, 9122)),
+            AxisObject("Geodetic longitude", "Lon", "east", AngularUnitObject("grad", 0.015707963267949d, 9105)),
+        ];
+
+        Dictionary<string, object?> coordinateSystem = Obj(
+            ("subtype", "ellipsoidal"),
+            ("axis", axes));
+
+        string json = Serialize(
+            Obj(
+                ("type", "GeographicCRS"),
+                ("name", "WGS 84"),
+                ("datum", GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030), 6326)),
+                ("prime_meridian", GreenwichPrimeMeridianObject()),
+                ("coordinate_system", coordinateSystem),
+                ("id", IdObject("EPSG", 4326))));
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ProjJsonReader.Parse(json));
+
+        Assert.Equal("candidate", exception.ParamName);
+    }
+
     private static string GetCatalogWkt(int srid)
     {
         if (!CatalogDefinitions.Value.TryGetValue(srid, out string? wkt))
