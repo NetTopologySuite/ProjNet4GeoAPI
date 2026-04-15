@@ -5,6 +5,7 @@
 namespace ProjNet.IO.CoordinateSystems;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -143,12 +144,15 @@ internal sealed class WktTokenizer
     {
         if (this.tokenType != TokenType.Number)
         {
-            throw new WktParseException($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
+            ThrowWktParseException($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
         }
 
-        return this.TryGetNumericValue(out double value)
-            ? value
-            : throw new WktParseException($"The token '{this.GetTokenString()}' is not a valid number at line {this.LineNumber} column {this.Column}.");
+        if (!this.TryGetNumericValue(out double value))
+        {
+            ThrowWktParseException($"The token '{this.GetTokenString()}' is not a valid number at line {this.LineNumber} column {this.Column}.");
+        }
+
+        return value;
     }
 
     /// <summary>
@@ -234,7 +238,7 @@ internal sealed class WktTokenizer
         this.NextToken();
         if (!this.IsCurrentToken(expectedToken.AsSpan()))
         {
-            throw new WktParseException(
+            ThrowWktParseException(
                 $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
         }
     }
@@ -258,7 +262,7 @@ internal sealed class WktTokenizer
         {
             if (this.tokenType == TokenType.Eof)
             {
-                throw new WktParseException(
+                ThrowWktParseException(
                     $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
             }
 
@@ -299,7 +303,7 @@ internal sealed class WktTokenizer
         {
             if (this.tokenType == TokenType.Eof)
             {
-                throw new WktParseException(
+                ThrowWktParseException(
                     $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
             }
 
@@ -344,7 +348,7 @@ internal sealed class WktTokenizer
         }
 
         string expectedToken = expectedBracket == WktBracket.Square ? "[" : "(";
-        throw new WktParseException(
+        return ThrowWktParseException<WktBracket>(
             $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
     }
 
@@ -381,7 +385,7 @@ internal sealed class WktTokenizer
         }
 
         string expectedToken = expectedBracket == WktBracket.Square ? "]" : ")";
-        throw new WktParseException(
+        ThrowWktParseException(
             $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
     }
 
@@ -496,6 +500,18 @@ internal sealed class WktTokenizer
                 return this.tokenType;
             }
         }
+    }
+
+    [DoesNotReturn]
+    private static void ThrowWktParseException(string message)
+    {
+        throw new WktParseException(message);
+    }
+
+    [DoesNotReturn]
+    private static T ThrowWktParseException<T>(string message)
+    {
+        throw new WktParseException(message);
     }
 
     private void ConsumeWord()
