@@ -155,7 +155,7 @@ public class EckertProjectionTests
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("eck4"));
         ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
-        Assert.Throws<ArgumentException>(() => inverse.MathTransform.Transform(CreatePoint(x, y)));
+        Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(x, y)));
     }
 
     private static string BuildProjectedWkt(string projectionName)

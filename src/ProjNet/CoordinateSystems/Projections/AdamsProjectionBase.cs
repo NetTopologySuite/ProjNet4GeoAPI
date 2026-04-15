@@ -158,7 +158,7 @@ internal abstract class AdamsProjectionBase : MapProjection
         {
             if (!this.TryInverseAdamsWs2(xUnit, yUnit, out double lambda, out double phi))
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             x = Adjust_lon(this.centralMeridian + lambda);
@@ -168,7 +168,7 @@ internal abstract class AdamsProjectionBase : MapProjection
 
         if (!this.TryInversePeirce(xUnit, yUnit, out double peirceLambda, out double peircePhi))
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + peirceLambda);
@@ -237,7 +237,7 @@ internal abstract class AdamsProjectionBase : MapProjection
             case AdamsMode.Guyou:
                 if ((Math.Abs(lambda) - Tolerance) > HalfPi)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 if (Math.Abs(Math.Abs(phi) - HalfPi) < Tolerance)
@@ -262,12 +262,12 @@ internal abstract class AdamsProjectionBase : MapProjection
             case AdamsMode.PeirceQ:
                 if (this.peirceShape == PeirceShape.NHemisphere && phi < -Tolerance)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 if (this.peirceShape == PeirceShape.SHemisphere && phi > -Tolerance)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 {
@@ -285,7 +285,7 @@ internal abstract class AdamsProjectionBase : MapProjection
             case AdamsMode.AdamsHemi:
                 if ((Math.Abs(lambda) - Tolerance) > HalfPi)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 {

@@ -78,7 +78,7 @@ internal sealed class HammerProjection : MapProjection
         double denominator = 1d + (cosPhi * Math.Cos(lambda));
         if (denominator == 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double d = Math.Sqrt(2d / denominator);
@@ -95,13 +95,13 @@ internal sealed class HammerProjection : MapProjection
         double z = 1d - (0.25d * this.w * this.w * xUnit * xUnit) - (0.25d * yUnit * yUnit);
         if (z < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         z = Math.Sqrt(z);
         if (Math.Abs((2d * z * z) - 1d) < Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambda = Math.Atan2(this.w * xUnit * z, (2d * z * z) - 1d) / this.w;

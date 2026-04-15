@@ -225,7 +225,7 @@ internal sealed partial class IseaProjection : MapProjection
             this.vertexLatSinCos,
             out GeoPoint geographicPoint))
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         x = Adjust_lon(geographicPoint.Lon);
@@ -323,7 +323,7 @@ internal sealed partial class IseaProjection : MapProjection
             1 => TableH,
             2 => -TableH,
             3 => -5d * TableH,
-            _ => ArgumentGuard.ThrowArgument<double>("Input data outside projection domain."),
+            _ => throw new System.InvalidOperationException("Input data outside projection domain."),
         };
 
         return new IseaPoint(x * RPrimeOverR, y * RPrimeOverR);
@@ -551,8 +551,6 @@ internal sealed partial class IseaProjection : MapProjection
             return i;
         }
 
-        ArgumentGuard.ThrowArgument("Input data outside projection domain.");
-        output = default;
-        return -1;
+        throw new System.InvalidOperationException("Input data outside projection domain.");
     }
 }

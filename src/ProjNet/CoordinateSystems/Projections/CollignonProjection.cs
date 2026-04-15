@@ -88,7 +88,7 @@ internal sealed class CollignonProjection : MapProjection
         }
         else if (absPhi > OneEps)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
         else
         {

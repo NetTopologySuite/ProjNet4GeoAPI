@@ -154,7 +154,7 @@ internal sealed class LabordeProjection : MapProjection
 
         if (!converged)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double t = this.e * Math.Sin(pe);

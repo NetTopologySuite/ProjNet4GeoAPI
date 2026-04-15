@@ -139,7 +139,7 @@ internal sealed class BonneProjection : MapProjection
             double absPhiSphere = Math.Abs(phiSphere);
             if (absPhiSphere > HalfPi)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             double lambdaSphere = 0d;
@@ -172,7 +172,7 @@ internal sealed class BonneProjection : MapProjection
         }
         else if ((absPhi - HalfPi) > Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

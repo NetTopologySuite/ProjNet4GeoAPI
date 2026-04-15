@@ -264,7 +264,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("tobmerc", Sphere6370997, null));
         ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
-        Assert.Throws<ArgumentException>(() => forward.MathTransform.Transform(CreatePoint(0d, latitude)));
+        Assert.Throws<InvalidOperationException>(() => forward.MathTransform.Transform(CreatePoint(0d, latitude)));
     }
 
     /// <summary>

@@ -129,7 +129,7 @@ internal sealed class NearSidedPerspectiveProjection : MapProjection
 
         if (yValue < this.rp)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         yValue = this.pn1 / (this.p - yValue);
@@ -178,13 +178,13 @@ internal sealed class NearSidedPerspectiveProjection : MapProjection
             double sinz = 1d - ((rh * rh) * this.pfact);
             if (sinz < 0d)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             sinz = (this.p - Math.Sqrt(sinz)) / ((this.pn1 / rh) + (rh / this.pn1));
             if (Math.Abs(sinz) > 1d + Eps10)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             sinz = Math.Max(-1d, Math.Min(1d, sinz));

@@ -169,7 +169,7 @@ internal sealed class GeostationarySatelliteProjection : MapProjection
 
         if (((this.radiusG - vx) * vx) - (vy * vy) - (vz * vz * this.radiusPInv2) < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double tmp = this.radiusG - vx;
@@ -205,7 +205,7 @@ internal sealed class GeostationarySatelliteProjection : MapProjection
         double det = (b * b) - (4d * a * this.c);
         if (det < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double k = (-b - Math.Sqrt(det)) / (2d * a);
@@ -238,7 +238,7 @@ internal sealed class GeostationarySatelliteProjection : MapProjection
         double det = (b * b) - (4d * a * this.c);
         if (det < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double k = (-b - Math.Sqrt(det)) / (2d * a);

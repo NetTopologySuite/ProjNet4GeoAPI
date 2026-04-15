@@ -66,7 +66,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 double tissotDomain = (this.rhoC - (2d * Math.Sin(this.latOrigin))) / this.n;
                 if (tissotDomain < 0d)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 this.rho0 = Math.Sqrt(tissotDomain);
@@ -84,7 +84,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 double cosDelta = Math.Cos(delta);
                 if (cosDelta < 0d)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 double cs = Math.Sqrt(cosDelta);

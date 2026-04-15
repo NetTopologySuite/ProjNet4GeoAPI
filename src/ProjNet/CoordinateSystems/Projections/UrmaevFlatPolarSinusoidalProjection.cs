@@ -79,7 +79,7 @@ internal class UrmaevFlatPolarSinusoidalProjection : MapProjection
         double denominator = Cx * Math.Cos(phiNormalized);
         if (Math.Abs(denominator) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

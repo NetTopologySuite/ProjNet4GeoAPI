@@ -112,7 +112,7 @@ internal sealed class InterruptedMollweideOceanicProjection : InterruptedMollwei
         int zone = DetermineInverseZone(xUnit, yUnit, this.boundary12, this.boundary23, this.boundary45, this.boundary56);
         if (zone == 0)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         MollweideZoneDefinition def = this.zones[zone - 1];
@@ -131,7 +131,7 @@ internal sealed class InterruptedMollweideOceanicProjection : InterruptedMollwei
                 (D90, D180, false),
             ]))
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

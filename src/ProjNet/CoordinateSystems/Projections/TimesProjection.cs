@@ -82,7 +82,7 @@ internal sealed class TimesProjection : MapProjection
         double denominator = X0 - (X1 * s2);
         if (Math.Abs(denominator) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

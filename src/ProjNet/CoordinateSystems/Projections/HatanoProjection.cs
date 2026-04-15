@@ -101,7 +101,7 @@ internal sealed class HatanoProjection : MapProjection
         {
             if (absTh > OneTol)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             th = th > 0d ? HalfPi : -HalfPi;
@@ -114,7 +114,7 @@ internal sealed class HatanoProjection : MapProjection
         double cosTh = Math.Cos(th);
         if (Math.Abs(cosTh) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambda = (Rxc * xx) / cosTh;
@@ -125,7 +125,7 @@ internal sealed class HatanoProjection : MapProjection
         {
             if (absPhi > OneTol)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             phi = phi > 0d ? HalfPi : -HalfPi;

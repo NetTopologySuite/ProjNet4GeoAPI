@@ -126,7 +126,7 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
             double denominator = ty - yc;
             if (denominator == 0d && Math.Abs(ty - yUnit) > Eps10)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             if (denominator != 0d || Math.Abs(ty - yUnit) <= Eps10)
@@ -150,7 +150,7 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
             }
         }
 
-        ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+        throw new System.InvalidOperationException("Input data outside projection domain.");
     }
 
     private void ComputeLocalForward(double lambda, double phi, out double x, out double y, out double yc)

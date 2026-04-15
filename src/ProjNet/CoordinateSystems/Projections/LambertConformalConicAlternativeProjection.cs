@@ -118,7 +118,7 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 
         if (iteration == MaximumIterations)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double phi = this.Inv_mlfn(s + this.m0);

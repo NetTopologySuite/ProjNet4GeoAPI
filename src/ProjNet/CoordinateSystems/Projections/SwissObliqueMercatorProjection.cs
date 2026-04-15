@@ -106,7 +106,7 @@ internal sealed class SwissObliqueMercatorProjection : MapProjection
         double cosPhiDoublePrime = Math.Cos(phiDoublePrime);
         if (Math.Abs(cosPhiDoublePrime) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambdaDoublePrime = Asinz((cosPhiPrime * Math.Sin(lambdaPrime)) / cosPhiDoublePrime);
@@ -125,7 +125,7 @@ internal sealed class SwissObliqueMercatorProjection : MapProjection
         double cosPhiPrime = Math.Cos(phiPrime);
         if (Math.Abs(cosPhiPrime) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambdaPrime = Asinz((cosPhiDoublePrime * Math.Sin(lambdaDoublePrime)) / cosPhiPrime);
@@ -150,7 +150,7 @@ internal sealed class SwissObliqueMercatorProjection : MapProjection
 
         if (!converged)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + (lambdaPrime * this.reciprocalC));

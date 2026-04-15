@@ -99,7 +99,7 @@ internal sealed class Bertin1953Projection : MapProjection
         double denom = 1d + (cosPhi * Math.Cos(lambda * 0.5d));
         if (Math.Abs(denom) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double dd = Math.Sqrt(2d / denom);

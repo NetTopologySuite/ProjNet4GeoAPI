@@ -74,7 +74,7 @@ internal sealed class CalCoFiProjection : MapProjection
     {
         if (Math.Abs(Math.Abs(lat) - HalfPi) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double xMercator = lon;

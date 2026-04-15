@@ -128,7 +128,7 @@ public class IcosahedralProjectionTests
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", 0d));
         ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
-        Assert.Throws<ArgumentException>(() => inverse.MathTransform.Transform(CreatePoint(0d, 0d)));
+        Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(0d, 0d)));
     }
 
     /// <summary>

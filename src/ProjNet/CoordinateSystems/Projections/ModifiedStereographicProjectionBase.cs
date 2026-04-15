@@ -215,7 +215,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         double denominator = 1d + (this.schio * schi) + (this.cchio * cchi * cosLambda);
         if (Math.Abs(denominator) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double s = 2d / denominator;
@@ -261,7 +261,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
 
         if (!converged)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double rh = Hypot(p.Real, p.Imaginary);
@@ -388,8 +388,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
             }
         }
 
-        ArgumentGuard.ThrowArgument("Input data outside projection domain.");
-        return conformalLatitude;
+        throw new System.InvalidOperationException("Input data outside projection domain.");
     }
 
     /// <summary>

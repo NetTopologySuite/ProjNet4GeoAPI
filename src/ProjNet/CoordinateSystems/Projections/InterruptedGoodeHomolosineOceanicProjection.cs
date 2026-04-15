@@ -122,7 +122,7 @@ internal sealed class InterruptedGoodeHomolosineOceanicProjection : MapProjectio
         int zone = DetermineInverseZone(xUnit, yUnit, this.dy0);
         if (zone == 0)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         ZoneDefinition def = this.zones[zone - 1];
@@ -140,7 +140,7 @@ internal sealed class InterruptedGoodeHomolosineOceanicProjection : MapProjectio
         double lambda = lambdaLocal + def.Lambda0;
         if (!IsInZone(zone, lambda, phi))
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

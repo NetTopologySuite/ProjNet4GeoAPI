@@ -104,7 +104,7 @@ internal sealed class ExtendedTransverseMercator : MapProjection
 
         if (Math.Abs(normalizedEasting) > DomainLimit)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         lon = this.meridianQuadrantScale * normalizedEasting;
@@ -119,7 +119,7 @@ internal sealed class ExtendedTransverseMercator : MapProjection
 
         if (Math.Abs(normalizedEasting) > DomainLimit)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double sinArgumentReal = Math.Sin(2d * normalizedNorthing);

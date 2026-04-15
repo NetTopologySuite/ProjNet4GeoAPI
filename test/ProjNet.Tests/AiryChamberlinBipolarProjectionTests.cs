@@ -165,7 +165,7 @@ public class AiryChamberlinBipolarProjectionTests
         Assert.InRange(Math.Abs(northZero[1] - (-1.3863d)), 0d, 1e-4);
         Assert.InRange(Math.Abs(northAtPole[0] - 0d), 0d, 1e-6);
         Assert.InRange(Math.Abs(northAtPole[1] - 0d), 0d, 1e-6);
-        Assert.Throws<ArgumentException>(() => northForward.MathTransform.Transform(CreatePoint(0d, -90d)));
+        Assert.Throws<InvalidOperationException>(() => northForward.MathTransform.Transform(CreatePoint(0d, -90d)));
 
         ProjectedCoordinateSystem noCut = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
             CoordinateSystemFactory,

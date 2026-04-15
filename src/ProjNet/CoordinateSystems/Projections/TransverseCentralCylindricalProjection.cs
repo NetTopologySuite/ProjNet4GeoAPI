@@ -58,7 +58,7 @@ internal sealed class TransverseCentralCylindricalProjection : MapProjection
         double bt = 1d - (b * b);
         if (bt < Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double x = b / Math.Sqrt(bt);

@@ -102,7 +102,7 @@ internal class GeneralSinusoidalProjection : MapProjection
 
             if (i == 0)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
         }
 
@@ -122,7 +122,7 @@ internal class GeneralSinusoidalProjection : MapProjection
         double denominator = this.cX * (this.m + Math.Cos(phiNormalized));
         if (Math.Abs(denominator) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

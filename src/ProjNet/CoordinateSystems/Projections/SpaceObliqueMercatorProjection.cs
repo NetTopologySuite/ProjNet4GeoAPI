@@ -79,7 +79,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         this.oneEs = 1d - this.es;
         if (this.oneEs <= 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         this.roneEs = 1d / this.oneEs;
@@ -162,7 +162,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
 
         if (l == 0)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double sp = Math.Sin(phi);
@@ -236,7 +236,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         double denom = 1d - (sppsq * (1d + this.u));
         if (denom == 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lamt = Math.Atan(

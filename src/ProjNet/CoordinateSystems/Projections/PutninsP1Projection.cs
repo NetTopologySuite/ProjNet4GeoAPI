@@ -59,7 +59,7 @@ internal sealed class PutninsP1Projection : MapProjection
         double underRoot = 1d - (B * lat * lat);
         if (underRoot < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double x = Cx * lambda * (A + Math.Sqrt(underRoot));
@@ -77,13 +77,13 @@ internal sealed class PutninsP1Projection : MapProjection
         double underRoot = 1d - (B * phi * phi);
         if (underRoot < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double denominator = Cx * (A + Math.Sqrt(underRoot));
         if (Math.Abs(denominator) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

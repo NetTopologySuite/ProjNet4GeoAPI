@@ -85,7 +85,7 @@ internal sealed class LagrangeProjection : MapProjection
             double c = (0.5d * (v + (1d / v))) + Math.Cos(lambdaScaled);
             if (c < Eps10)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             x = 2d * Math.Sin(lambdaScaled) / c;
@@ -111,7 +111,7 @@ internal sealed class LagrangeProjection : MapProjection
             double c = (y2p * y2m) - x2;
             if (Math.Abs(c) < Eps10)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             phi =

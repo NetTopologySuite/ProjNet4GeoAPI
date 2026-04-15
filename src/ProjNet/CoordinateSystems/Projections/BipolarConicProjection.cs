@@ -95,7 +95,7 @@ internal sealed class BipolarConicProjection : MapProjection
             {
                 if (Math.Abs(z) > OneEpsilon)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 z = z < 0d ? -1d : 1d;
@@ -118,7 +118,7 @@ internal sealed class BipolarConicProjection : MapProjection
             {
                 if (Math.Abs(z) > OneEpsilon)
                 {
-                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                    throw new System.InvalidOperationException("Input data outside projection domain.");
                 }
 
                 z = z < 0d ? -1d : 1d;
@@ -131,7 +131,7 @@ internal sealed class BipolarConicProjection : MapProjection
 
         if (z < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         double t = Math.Pow(Math.Tan(0.5d * z), N);
@@ -139,7 +139,7 @@ internal sealed class BipolarConicProjection : MapProjection
         double al = 0.5d * (R104 - z);
         if (al < 0d)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         al = (t + Math.Pow(al, N)) / T;
@@ -147,7 +147,7 @@ internal sealed class BipolarConicProjection : MapProjection
         {
             if (Math.Abs(al) > OneEpsilon)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             al = al < 0d ? -1d : 1d;
@@ -163,7 +163,7 @@ internal sealed class BipolarConicProjection : MapProjection
             double denominator = Math.Cos(al + (tag ? t : -t));
             if (Math.Abs(denominator) <= Eps10)
             {
-                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                throw new System.InvalidOperationException("Input data outside projection domain.");
             }
 
             r /= denominator;
@@ -237,7 +237,7 @@ internal sealed class BipolarConicProjection : MapProjection
 
         if (i == 0)
         {
-            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            throw new System.InvalidOperationException("Input data outside projection domain.");
         }
 
         az = av - (az / N);
