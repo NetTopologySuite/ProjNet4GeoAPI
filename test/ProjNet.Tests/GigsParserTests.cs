@@ -24,11 +24,6 @@ public class GigsParserTests
         get
         {
             string gigsDirectory = FindGigsDirectory();
-            if (gigsDirectory is null)
-            {
-                yield break;
-            }
-
             foreach (string file in Directory.GetFiles(gigsDirectory, "*.gie")
                          .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
                          .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
@@ -65,11 +60,6 @@ public class GigsParserTests
     public void ParseGigsFixturesParsesAllNonFailingFiles()
     {
         string gigsDirectory = FindGigsDirectory();
-        if (gigsDirectory is null)
-        {
-            Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
-        }
-
         string[] files = [.. Directory.GetFiles(gigsDirectory, "*.gie")
             .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)];
@@ -102,11 +92,6 @@ public class GigsParserTests
     public void ParseGigsFixturesPreservesPipelineOperations()
     {
         string gigsDirectory = FindGigsDirectory();
-        if (gigsDirectory is null)
-        {
-            Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
-        }
-
         string[] files = [.. Directory.GetFiles(gigsDirectory, "*.gie")
             .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)];
@@ -150,6 +135,6 @@ public class GigsParserTests
             current = current.Parent;
         }
 
-        return default!;
+        throw new DirectoryNotFoundException("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
     }
 }

@@ -264,17 +264,12 @@ public class Gigs5101TheoryTests
     private static IEnumerable<GieCase> EnumerateFixtureCases(IReadOnlyList<string> fileNames)
     {
         string gigsDirectory = FindGigsDirectory();
-        if (string.IsNullOrEmpty(gigsDirectory))
-        {
-            yield break;
-        }
-
         foreach (string fileName in fileNames)
         {
             string path = Path.Combine(gigsDirectory, fileName);
             if (!File.Exists(path))
             {
-                continue;
+                throw new FileNotFoundException(FormattableString.Invariant($"Required GIGS fixture '{fileName}' was not found."), path);
             }
 
             IReadOnlyList<GieCase> parsed = GieParser.ParseFile(
@@ -845,7 +840,7 @@ public class Gigs5101TheoryTests
             current = current.Parent;
         }
 
-        return string.Empty;
+        throw new DirectoryNotFoundException("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
     }
 
     private static double ToNumericTolerance(double value, string unit)
