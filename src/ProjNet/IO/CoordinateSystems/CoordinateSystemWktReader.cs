@@ -210,18 +210,6 @@ public static partial class CoordinateSystemWktReader
         return info is not null;
     }
 
-    private static string GetWktNodeText(WktNode node)
-    {
-        return node switch
-        {
-            WktQuotedString quotedString => quotedString.Value,
-            WktIdentifier identifier => identifier.Name,
-            WktInteger integer => integer.Value.ToString(CultureInfo.InvariantCulture),
-            WktNumber number => number.Value.ToString(CultureInfo.InvariantCulture),
-            _ => throw new ArgumentException($"Expected a leaf WKT node value but found '{node.GetType().Name}'.", nameof(node)),
-        };
-    }
-
     private static CoordinateSystem ReadCoordinateSystemNode(WktKeywordNode node)
     {
         return node.Keyword switch
