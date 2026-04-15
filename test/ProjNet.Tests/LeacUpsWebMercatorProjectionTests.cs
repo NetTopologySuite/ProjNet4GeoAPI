@@ -235,7 +235,7 @@ public class LeacUpsWebMercatorProjectionTests
         double[] batchedLongitudes = [0d, 10d, 20d, 30d, 40d, 50d, 60d, 70d];
         double[] batchedLatitudes = [0d, 10d, 20d, 30d, 40d, 50d, 60d, 90d];
 
-        Assert.Throws<ArgumentException>(() => forward.MathTransform.Transform(batchedLongitudes, batchedLatitudes));
+        Assert.Throws<InvalidOperationException>(() => forward.MathTransform.Transform(batchedLongitudes, batchedLatitudes));
     }
 
     private static string BuildLeacWkt(string projectionName, string spheroidClause, double standardParallel1, bool south)

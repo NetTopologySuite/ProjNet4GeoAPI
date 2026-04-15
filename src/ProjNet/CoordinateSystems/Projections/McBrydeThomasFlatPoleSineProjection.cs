@@ -66,7 +66,7 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
             double denominator = (ProjectionConstants.OneThird * Math.Cos(t)) + Math.Cos(phi);
             if (Math.Abs(denominator) <= Eps10)
             {
-                throw new System.InvalidOperationException("Input data outside projection domain.");
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
 
             double v = ((C1 * Math.Sin(t)) + Math.Sin(phi) - k) / denominator;
@@ -92,7 +92,7 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
         double denominator = CX * (1d + ((3d * Math.Cos(phi)) / Math.Cos(t)));
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = xUnit / denominator;

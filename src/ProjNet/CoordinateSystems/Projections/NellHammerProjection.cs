@@ -96,7 +96,7 @@ internal sealed class NellHammerProjection : MapProjection
         {
             if (Math.Abs(1d + Math.Cos(phi)) <= Eps10)
             {
-                throw new System.InvalidOperationException("Input data outside projection domain.");
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
         }
 

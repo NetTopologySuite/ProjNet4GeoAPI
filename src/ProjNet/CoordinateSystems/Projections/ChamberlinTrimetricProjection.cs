@@ -71,7 +71,7 @@ internal sealed class ChamberlinTrimetricProjection : MapProjection
 
             if (Math.Abs(this.control[i].Arc.R) <= Tolerance)
             {
-                ArgumentGuard.ThrowArgument("Invalid value for control points: they should be distinct.");
+                ArgumentGuard.ThrowArgument("Invalid value for control points: they should be distinct.", nameof(parameters));
             }
         }
 

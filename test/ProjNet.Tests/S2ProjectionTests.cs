@@ -172,7 +172,8 @@ public class S2ProjectionTests
             forward.MathTransform.Transform(CreatePoint(0d, 0d));
         });
 
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        ArgumentException inner = Assert.IsType<ArgumentException>(exception.InnerException);
+        Assert.Equal("parameters", inner.ParamName);
     }
 
     private static string BuildProjectedWkt(string projectionName, double lat0, double lon0, double? uvToSt)

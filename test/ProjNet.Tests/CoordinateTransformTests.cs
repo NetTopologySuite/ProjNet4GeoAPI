@@ -1367,10 +1367,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         // Check that the algorithm correctly identifies a point that cannot be seen
         Action action1 = () => trans.MathTransform.Transform(OrthographicHorizonTestPoint);
-        Assert.Throws<ArgumentOutOfRangeException>(action1);
+        Assert.Throws<InvalidOperationException>(action1);
 
         Action action2 = () => trans2.MathTransform.Transform(OrthographicHorizonTestPoint);
-        Assert.Throws<ArgumentOutOfRangeException>(action2);
+        Assert.Throws<InvalidOperationException>(action2);
     }
 
     /// <summary>

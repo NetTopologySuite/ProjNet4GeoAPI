@@ -67,7 +67,7 @@ internal sealed class Wagner7Projection : MapProjection
         double denominator = Math.Sqrt(0.5d * (1d + (cosTheta * Math.Cos(lambdaThird))));
         if (denominator <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double scale = 1d / denominator;

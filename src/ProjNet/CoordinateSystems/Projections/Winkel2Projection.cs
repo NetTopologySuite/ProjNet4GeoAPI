@@ -127,7 +127,7 @@ internal sealed class Winkel2Projection : MapProjection
                 double determinant = (derivXLambda * derivYPhi) - (derivXPhi * derivYLambda);
                 if (determinant == 0d)
                 {
-                    throw new System.InvalidOperationException("Input data outside projection domain.");
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 derivLamX = derivYPhi / determinant;
@@ -161,7 +161,7 @@ internal sealed class Winkel2Projection : MapProjection
             }
         }
 
-        throw new System.InvalidOperationException("Input data outside projection domain.");
+        ProjectionThrowHelper.ThrowOutsideProjectionDomain();
     }
 
     private void ForwardNormalized(double lambda, double phi, out double x, out double y)

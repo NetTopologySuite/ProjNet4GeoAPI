@@ -43,7 +43,7 @@ internal sealed class ExtendedTransverseMercator : MapProjection
     {
         if (this.es <= 0d)
         {
-            ArgumentGuard.ThrowArgument("Extended Transverse Mercator requires an ellipsoidal model.");
+            ProjectionThrowHelper.ThrowNotSupported("Extended Transverse Mercator requires an ellipsoidal model.");
         }
 
         this.Name = "Extended_Transverse_Mercator";
@@ -104,7 +104,7 @@ internal sealed class ExtendedTransverseMercator : MapProjection
 
         if (Math.Abs(normalizedEasting) > DomainLimit)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         lon = this.meridianQuadrantScale * normalizedEasting;
@@ -119,7 +119,7 @@ internal sealed class ExtendedTransverseMercator : MapProjection
 
         if (Math.Abs(normalizedEasting) > DomainLimit)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double sinArgumentReal = Math.Sin(2d * normalizedNorthing);

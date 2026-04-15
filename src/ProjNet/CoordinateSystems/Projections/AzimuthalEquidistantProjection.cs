@@ -325,7 +325,7 @@ internal sealed class AzimuthalEquidistantProjection : MapProjection
     {
         if (this.scaleFactor == 0d)
         {
-            ArgumentGuard.ThrowArgument("Scale factor must be non-zero for Guam Azimuthal Equidistant inverse.");
+            ProjectionThrowHelper.ThrowInvalidOperation("Scale factor must be non-zero for Guam Azimuthal Equidistant inverse.");
         }
 
         double x = xMeter * this.InverseSphericalRadius;
@@ -374,7 +374,7 @@ internal sealed class AzimuthalEquidistantProjection : MapProjection
 
         if (this.scaleFactor == 0d)
         {
-            ArgumentGuard.ThrowArgument("Scale factor must be non-zero for ellipsoidal Azimuthal Equidistant inverse.");
+            ProjectionThrowHelper.ThrowInvalidOperation("Scale factor must be non-zero for ellipsoidal Azimuthal Equidistant inverse.");
         }
 
         double azimuth = Math.Atan2(xMeter, yMeter);

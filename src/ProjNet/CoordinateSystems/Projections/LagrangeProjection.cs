@@ -47,7 +47,7 @@ internal sealed class LagrangeProjection : MapProjection
         this.w = this.Parameters.GetOptionalParameterValue("W", 2d);
         if (this.w <= 0d)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for W: it should be > 0");
+            ArgumentGuard.ThrowArgument("Invalid value for W: it should be > 0", nameof(parameters));
         }
 
         this.hw = 0.5d * this.w;
@@ -56,7 +56,7 @@ internal sealed class LagrangeProjection : MapProjection
         double sinPhi1 = Math.Sin(DegreesToRadians(this.Parameters.GetParameterValue("lat_1")));
         if (Math.Abs(Math.Abs(sinPhi1) - 1d) < Eps10)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be < 90°");
+            ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be < 90°", nameof(parameters));
         }
 
         this.a1 = Math.Pow((1d - sinPhi1) / (1d + sinPhi1), this.hrw);
@@ -85,7 +85,7 @@ internal sealed class LagrangeProjection : MapProjection
             double c = (0.5d * (v + (1d / v))) + Math.Cos(lambdaScaled);
             if (c < Eps10)
             {
-                throw new System.InvalidOperationException("Input data outside projection domain.");
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
 
             x = 2d * Math.Sin(lambdaScaled) / c;
@@ -111,7 +111,7 @@ internal sealed class LagrangeProjection : MapProjection
             double c = (y2p * y2m) - x2;
             if (Math.Abs(c) < Eps10)
             {
-                throw new System.InvalidOperationException("Input data outside projection domain.");
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
 
             phi =

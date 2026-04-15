@@ -105,7 +105,7 @@ internal sealed class IghProjection : MapProjection
         int zoneIndex = DetermineInverseZone(xUnit, yUnit, this.dy0);
         if (zoneIndex < 0)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         ZoneDefinition zone = this.zones[zoneIndex];
@@ -123,7 +123,7 @@ internal sealed class IghProjection : MapProjection
         double lambda = lambdaLocal + zone.Lambda0;
         if (!IsPointInZone(zoneIndex, lambda, phi))
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

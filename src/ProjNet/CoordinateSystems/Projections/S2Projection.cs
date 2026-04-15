@@ -215,13 +215,13 @@ internal sealed class S2Projection : MapProjection
         double value = parameters.GetOptionalParameterValue("uv_to_st", 1d, "uvtost");
         if (double.IsNaN(value) || double.IsInfinity(value))
         {
-            ArgumentGuard.ThrowArgument("Invalid value for uv_to_st parameter: expected linear, quadratic, tangent or none.");
+            ArgumentGuard.ThrowArgument("Invalid value for uv_to_st parameter: expected linear, quadratic, tangent or none.", nameof(parameters));
         }
 
         int mode = (int)Math.Round(value);
         if (Math.Abs(value - mode) > Eps10)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for uv_to_st parameter: expected linear, quadratic, tangent or none.");
+            ArgumentGuard.ThrowArgument("Invalid value for uv_to_st parameter: expected linear, quadratic, tangent or none.", nameof(parameters));
         }
 
         switch (mode)
@@ -235,8 +235,7 @@ internal sealed class S2Projection : MapProjection
             case 3:
                 return UvToStProjectionType.None;
             default:
-                ArgumentGuard.ThrowArgument("Invalid value for uv_to_st parameter: expected linear, quadratic, tangent or none.");
-                return UvToStProjectionType.None;
+                return ArgumentGuard.ThrowArgument<UvToStProjectionType>("Invalid value for uv_to_st parameter: expected linear, quadratic, tangent or none.", nameof(parameters));
         }
     }
 

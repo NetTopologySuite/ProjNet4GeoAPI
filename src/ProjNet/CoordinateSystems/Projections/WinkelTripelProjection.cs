@@ -54,7 +54,7 @@ internal sealed class WinkelTripelProjection : MapProjection
             this.cosphi1 = Math.Cos(lat1);
             if (Math.Abs(this.cosphi1) <= Eps10)
             {
-                ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be < 90°.");
+                ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be < 90°.", nameof(parameters));
             }
         }
         else

@@ -234,7 +234,25 @@ public class IcosahedralProjectionTests
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
 
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        Assert.IsType<NotSupportedException>(exception.InnerException);
+    }
+
+    /// <summary>
+    /// Verifies invalid Airocean orientation values report the projection parameter container as the failing argument.
+    /// </summary>
+    [Fact]
+    public void AiroceanRejectsInvalidOrientationWithParametersParamName()
+    {
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
+        {
+            ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+                CoordinateSystemFactory,
+                BuildAiroceanWkt("airocean", 9d));
+            CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        });
+
+        ArgumentException inner = Assert.IsType<ArgumentException>(exception.InnerException);
+        Assert.Equal("parameters", inner.ParamName);
     }
 
     /// <summary>

@@ -51,7 +51,7 @@ internal sealed class ToblerMercatorProjection : MapProjection
     {
         if (Math.Abs(lat) >= HalfPi)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = Adjust_lon(lon - this.centralMeridian);

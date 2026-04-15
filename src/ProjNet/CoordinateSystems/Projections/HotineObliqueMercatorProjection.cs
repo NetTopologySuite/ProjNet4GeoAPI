@@ -129,7 +129,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         }
         else
         {
-            ArgumentGuard.ThrowArgument("Input data error");
+            ArgumentGuard.ThrowArgument("Input data error", nameof(parameters));
         }
 
         Sincos(rectifiedGridAngle, out this.singrid, out this.cosgrid);
@@ -149,8 +149,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
                 return true;
             }
 
-            ArgumentGuard.ThrowArgument("AuthorityCode");
-            return false;
+            return ProjectionThrowHelper.ThrowInvalidOperation<bool>($"Unexpected Hotine Oblique Mercator authority code {this.AuthorityCode}.");
         }
     }
 

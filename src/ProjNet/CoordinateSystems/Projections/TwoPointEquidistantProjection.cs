@@ -63,7 +63,7 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
 
         if (Math.Abs(phi1 - phi2) < Eps10 && Math.Abs(Adjust_lon(lam1 - lam2)) < Eps10)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for lat_1/lon_1/lat_2/lon_2: the 2 points should be distinct.");
+            ArgumentGuard.ThrowArgument("Invalid value for lat_1/lon_1/lat_2/lon_2: the 2 points should be distinct.", nameof(parameters));
         }
 
         this.centralMeridian = Adjust_lon(0.5d * (lam1 + lam2));
@@ -83,7 +83,7 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
             (this.sp1 * this.sp2) + (this.cp1 * this.cp2 * Math.Cos(rawDlam2)));
         if (Math.Abs(z0) <= Eps10)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for lat_1 and lat_2: their absolute value should be < 90°.");
+            ArgumentGuard.ThrowArgument("Invalid value for lat_1 and lat_2: their absolute value should be < 90°.", nameof(parameters));
         }
 
         this.hz0 = 0.5d * z0;
@@ -128,7 +128,7 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
         double yRadicand = (4d * this.z02 * z2Squared) - (t * t);
         if (yRadicand < -ProjectionConstants.Tolerance1E12)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double yUnit = this.r2z0 * Math.Sqrt(Math.Max(0d, yRadicand));

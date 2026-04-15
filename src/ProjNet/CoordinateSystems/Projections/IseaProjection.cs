@@ -130,7 +130,8 @@ internal sealed partial class IseaProjection : MapProjection
 
         int orientationCode = ReadDiscreteCode(
             this.Parameters.GetOptionalParameterValue("isea_orient", OrientIsea, "orient"),
-            "orient");
+            "orient",
+            nameof(parameters));
         switch (orientationCode)
         {
             case OrientIsea:
@@ -142,7 +143,7 @@ internal sealed partial class IseaProjection : MapProjection
                 this.orientationLongitude = 0d;
                 break;
             default:
-                ArgumentGuard.ThrowArgument("Invalid value for orient: only isea or pole are supported.");
+                ArgumentGuard.ThrowArgument("Invalid value for orient: only isea or pole are supported.", nameof(parameters));
                 break;
         }
 
@@ -151,26 +152,29 @@ internal sealed partial class IseaProjection : MapProjection
 
         this.aperture = ReadDiscreteCode(
             this.Parameters.GetOptionalParameterValue("isea_aperture", 3d, "aperture"),
-            "aperture");
+            "aperture",
+            nameof(parameters));
         this.resolution = ReadDiscreteCode(
             this.Parameters.GetOptionalParameterValue("isea_resolution", 4d, "resolution"),
-            "resolution");
+            "resolution",
+            nameof(parameters));
 
         int modeCode = ReadDiscreteCode(
             this.Parameters.GetOptionalParameterValue("isea_mode", ModePlane, "mode"),
-            "mode");
+            "mode",
+            nameof(parameters));
         this.outputMode = modeCode switch
         {
             ModePlane => IseaOutputMode.Plane,
             ModeDi => IseaOutputMode.Di,
             ModeDd => IseaOutputMode.Dd,
             ModeHex => IseaOutputMode.Hex,
-            _ => ArgumentGuard.ThrowArgument<IseaOutputMode>("Invalid value for mode: only plane, di, dd or hex are supported."),
+            _ => ArgumentGuard.ThrowArgument<IseaOutputMode>("Invalid value for mode: only plane, di, dd or hex are supported.", nameof(parameters)),
         };
 
         if (this.outputMode != IseaOutputMode.Plane)
         {
-            ArgumentGuard.ThrowArgument("ISEA mode is not supported in this wave. Only plane mode is currently implemented.");
+            ProjectionThrowHelper.ThrowNotSupported("ISEA mode is not supported in this wave. Only plane mode is currently implemented.");
         }
 
         for (int i = 0; i < NumIcosahedronFaces; i++)
@@ -225,24 +229,24 @@ internal sealed partial class IseaProjection : MapProjection
             this.vertexLatSinCos,
             out GeoPoint geographicPoint))
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         x = Adjust_lon(geographicPoint.Lon);
         y = geographicPoint.Lat;
     }
 
-    private static int ReadDiscreteCode(double value, string parameterName)
+    private static int ReadDiscreteCode(double value, string parameterName, string paramName)
     {
         if (double.IsNaN(value) || double.IsInfinity(value))
         {
-            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.");
+            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.", paramName);
         }
 
         int rounded = (int)Math.Round(value, MidpointRounding.AwayFromZero);
         if (Math.Abs(value - rounded) > ProjectionConstants.Tolerance1E12)
         {
-            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.");
+            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.", paramName);
         }
 
         return rounded;
@@ -323,7 +327,7 @@ internal sealed partial class IseaProjection : MapProjection
             1 => TableH,
             2 => -TableH,
             3 => -5d * TableH,
-            _ => throw new System.InvalidOperationException("Input data outside projection domain."),
+            _ => ProjectionThrowHelper.ThrowOutsideProjectionDomain<double>(),
         };
 
         return new IseaPoint(x * RPrimeOverR, y * RPrimeOverR);
@@ -551,6 +555,7 @@ internal sealed partial class IseaProjection : MapProjection
             return i;
         }
 
-        throw new System.InvalidOperationException("Input data outside projection domain.");
+        output = default;
+        return ProjectionThrowHelper.ThrowOutsideProjectionDomain<int>();
     }
 }

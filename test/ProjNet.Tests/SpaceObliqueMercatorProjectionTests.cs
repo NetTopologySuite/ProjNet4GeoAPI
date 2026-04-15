@@ -142,7 +142,8 @@ public class SpaceObliqueMercatorProjectionTests
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
 
-        Assert.IsType<ArgumentException>(exception.InnerException);
+        ArgumentException inner = Assert.IsType<ArgumentException>(exception.InnerException);
+        Assert.Equal("parameters", inner.ParamName);
     }
 
     private static string BuildAliasWkt(string projectionName)

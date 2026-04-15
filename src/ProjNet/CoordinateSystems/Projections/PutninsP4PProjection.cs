@@ -66,7 +66,7 @@ internal class PutninsP4PProjection : MapProjection
         double cosPhiThird = Math.Cos(phiThird);
         if (Math.Abs(cosPhiThird) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         x /= cosPhiThird;
@@ -86,7 +86,7 @@ internal class PutninsP4PProjection : MapProjection
         double cosPhiThird = Math.Cos(phiThird);
         if (Math.Abs(this.cx) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = (xx * cosPhiThird) / this.cx;
@@ -94,7 +94,7 @@ internal class PutninsP4PProjection : MapProjection
         double cosPhi = Math.Cos(phi);
         if (Math.Abs(cosPhi) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         lambda /= cosPhi;

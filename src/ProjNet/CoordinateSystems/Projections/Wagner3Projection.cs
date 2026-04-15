@@ -45,7 +45,7 @@ internal sealed class Wagner3Projection : MapProjection
         double denominator = Math.Cos((2d * ts) / 3d);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         this.cx = Math.Cos(ts) / denominator;
@@ -80,7 +80,7 @@ internal sealed class Wagner3Projection : MapProjection
         double denominator = this.cx * Math.Cos(ProjectionConstants.TwoThirds * phi);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = xx / denominator;

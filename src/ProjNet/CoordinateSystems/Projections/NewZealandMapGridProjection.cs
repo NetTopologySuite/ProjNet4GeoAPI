@@ -161,7 +161,7 @@ internal sealed class NewZealandMapGridProjection : MapProjection
 
         if (!converged)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double phi = Tphi[Ntphi];

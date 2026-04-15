@@ -53,7 +53,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
 
         if (Math.Abs(delta) < Eps10 || Math.Abs(this.sig) < Eps10)
         {
-            ArgumentGuard.ThrowArgument("Illegal value for lat_1 and lat_2: |lat_1 - lat_2| and |lat_1 + lat_2| should be > 0.");
+            ArgumentGuard.ThrowArgument("Illegal value for lat_1 and lat_2: |lat_1 - lat_2| and |lat_1 + lat_2| should be > 0.", nameof(parameters));
         }
 
         switch (type)
@@ -66,7 +66,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 double tissotDomain = (this.rhoC - (2d * Math.Sin(this.latOrigin))) / this.n;
                 if (tissotDomain < 0d)
                 {
-                    throw new System.InvalidOperationException("Input data outside projection domain.");
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 this.rho0 = Math.Sqrt(tissotDomain);
@@ -84,7 +84,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 double cosDelta = Math.Cos(delta);
                 if (cosDelta < 0d)
                 {
-                    throw new System.InvalidOperationException("Input data outside projection domain.");
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 double cs = Math.Sqrt(cosDelta);

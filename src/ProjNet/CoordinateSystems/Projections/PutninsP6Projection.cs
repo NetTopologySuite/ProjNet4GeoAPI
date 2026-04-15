@@ -113,7 +113,7 @@ internal class PutninsP6Projection : MapProjection
         double denominator = this.cx * (this.d - r);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = xx / denominator;

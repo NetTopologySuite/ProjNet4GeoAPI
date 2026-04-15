@@ -67,7 +67,7 @@ internal sealed class AugustProjection : MapProjection
         double c = 1d + (c1 * Math.Cos(lambda));
         if (Math.Abs(c) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double x1 = Math.Sin(lambda) * c1 / c;

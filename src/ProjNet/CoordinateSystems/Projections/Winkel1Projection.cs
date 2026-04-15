@@ -77,7 +77,7 @@ internal sealed class Winkel1Projection : MapProjection
         double denominator = this.cosphi1 + Math.Cos(yy);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = 2d * xx / denominator;

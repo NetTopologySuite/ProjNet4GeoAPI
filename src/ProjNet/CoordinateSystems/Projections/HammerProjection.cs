@@ -50,13 +50,13 @@ internal sealed class HammerProjection : MapProjection
         this.w = Math.Abs(this.Parameters.GetOptionalParameterValue("W", 0.5d, "w"));
         if (this.w <= 0d)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for W: it should be > 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for W: it should be > 0.", nameof(parameters));
         }
 
         this.m = Math.Abs(this.Parameters.GetOptionalParameterValue("M", 1d, "m"));
         if (this.m <= 0d)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for M: it should be > 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for M: it should be > 0.", nameof(parameters));
         }
 
         this.inverseM = 1d / this.m;
@@ -78,7 +78,7 @@ internal sealed class HammerProjection : MapProjection
         double denominator = 1d + (cosPhi * Math.Cos(lambda));
         if (denominator == 0d)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double d = Math.Sqrt(2d / denominator);
@@ -95,13 +95,13 @@ internal sealed class HammerProjection : MapProjection
         double z = 1d - (0.25d * this.w * this.w * xUnit * xUnit) - (0.25d * yUnit * yUnit);
         if (z < 0d)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         z = Math.Sqrt(z);
         if (Math.Abs((2d * z * z) - 1d) < Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = Math.Atan2(this.w * xUnit * z, (2d * z * z) - 1d) / this.w;

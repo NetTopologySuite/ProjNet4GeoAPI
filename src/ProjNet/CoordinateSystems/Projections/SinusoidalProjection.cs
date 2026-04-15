@@ -97,7 +97,7 @@ internal sealed class SinusoidalProjection : MapProjection
             }
             else if ((absPhi - Eps10) >= HalfPi)
             {
-                throw new System.InvalidOperationException("Input data outside projection domain.");
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
 
             x = Adjust_lon(this.centralMeridian + lambdaEllipsoid);

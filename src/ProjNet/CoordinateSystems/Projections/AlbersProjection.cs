@@ -102,7 +102,7 @@ internal class AlbersProjection : MapProjection
 
         if (Math.Abs(lat1 + lat2) < Eps10)
         {
-            ArgumentGuard.ThrowArgument("Equal latitudes for standard parallels on opposite sides of Equator.");
+            ArgumentGuard.ThrowArgument("Equal latitudes for standard parallels on opposite sides of Equator.", nameof(parameters));
         }
 
         double alpha1 = this.Alpha(lat1);
@@ -180,7 +180,7 @@ internal class AlbersProjection : MapProjection
                 iterationCounter++;
                 if (iterationCounter > 25)
                 {
-                    ArgumentGuard.ThrowArgument(
+                    ProjectionThrowHelper.ThrowInvalidOperation(
                         "Transformation failed to converge in Albers backwards transformation");
                 }
             }

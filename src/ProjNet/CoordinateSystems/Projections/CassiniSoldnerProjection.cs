@@ -137,7 +137,7 @@ internal sealed class CassiniSoldnerProjection : MapProjection
 
         if (this.hyperbolic && !this.TryRefineInverseNormalized(targetX, targetY, ref lambda, ref phi))
         {
-            ArgumentGuard.ThrowArgument("Convergence error.");
+            ProjectionThrowHelper.ThrowInvalidOperation("Convergence error.");
         }
 
         x = Adjust_lon(lambda + this.centralMeridian);
@@ -164,8 +164,7 @@ internal sealed class CassiniSoldnerProjection : MapProjection
             }
         }
 
-        ArgumentGuard.ThrowArgument("Convergence error.");
-        return 0d;
+        return ProjectionThrowHelper.ThrowInvalidOperation<double>("Convergence error.");
     }
 
     private void ForwardNormalized(double lambda, double phi, out double x, out double y)

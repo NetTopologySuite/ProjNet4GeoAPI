@@ -58,7 +58,7 @@ internal sealed class GeostationarySatelliteProjection : MapProjection
         this.radiusG1 = h / this.semiMajor;
         if (this.radiusG1 <= 0d || this.radiusG1 > MaximumHeightRatio)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for h.");
+            ArgumentGuard.ThrowArgument("Invalid value for h.", nameof(parameters));
         }
 
         this.radiusG = 1d + this.radiusG1;
@@ -169,7 +169,7 @@ internal sealed class GeostationarySatelliteProjection : MapProjection
 
         if (((this.radiusG - vx) * vx) - (vy * vy) - (vz * vz * this.radiusPInv2) < 0d)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double tmp = this.radiusG - vx;
@@ -205,7 +205,7 @@ internal sealed class GeostationarySatelliteProjection : MapProjection
         double det = (b * b) - (4d * a * this.c);
         if (det < 0d)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double k = (-b - Math.Sqrt(det)) / (2d * a);
@@ -238,7 +238,7 @@ internal sealed class GeostationarySatelliteProjection : MapProjection
         double det = (b * b) - (4d * a * this.c);
         if (det < 0d)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double k = (-b - Math.Sqrt(det)) / (2d * a);

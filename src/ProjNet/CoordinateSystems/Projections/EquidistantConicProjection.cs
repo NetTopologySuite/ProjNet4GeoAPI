@@ -73,7 +73,7 @@ internal sealed class EquidistantConicProjection : MapProjection
                 double ml2 = this.Mlfn(standardParallel2, sinParallel2, cosParallel2);
                 if (ml1 == ml2)
                 {
-                    ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
+                    ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.", nameof(parameters));
                 }
 
                 this.n = (m1 - Msfnz(this.e, sinParallel2, cosParallel2)) / (ml2 - ml1);
@@ -81,7 +81,7 @@ internal sealed class EquidistantConicProjection : MapProjection
 
             if (Math.Abs(this.n) <= Eps10)
             {
-                ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
+                ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.", nameof(parameters));
             }
 
             this.g = ml1 + (m1 / this.n);
@@ -97,7 +97,7 @@ internal sealed class EquidistantConicProjection : MapProjection
 
             if (Math.Abs(this.n) <= Eps10)
             {
-                ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
+                ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.", nameof(parameters));
             }
 
             this.g = (Math.Cos(standardParallel1) / this.n) + standardParallel1;

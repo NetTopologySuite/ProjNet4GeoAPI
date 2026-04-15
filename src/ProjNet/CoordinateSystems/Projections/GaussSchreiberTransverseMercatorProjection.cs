@@ -88,7 +88,7 @@ internal sealed class GaussSchreiberTransverseMercatorProjection : MapProjection
         double phi = -Phi2z(this.e, Math.Exp((lc - this.c) / this.n1), out long flag);
         if (flag != 0)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

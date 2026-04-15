@@ -47,7 +47,7 @@ internal sealed class FoucautSinusoidalProjection : MapProjection
         this.n = this.Parameters.GetOptionalParameterValue("n", 0d);
         if (this.n < 0d || this.n > 1d)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for n: it should be in [0,1] range.");
+            ArgumentGuard.ThrowArgument("Invalid value for n: it should be in [0,1] range.", nameof(parameters));
         }
 
         this.n1 = 1d - this.n;
@@ -69,7 +69,7 @@ internal sealed class FoucautSinusoidalProjection : MapProjection
         double denominator = this.n + (this.n1 * t);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         lon = this.SphericalRadius * (lambda * t / denominator);
@@ -113,7 +113,7 @@ internal sealed class FoucautSinusoidalProjection : MapProjection
         double cos = Math.Cos(phi);
         if (Math.Abs(cos) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = xx * (this.n + (this.n1 * cos)) / cos;

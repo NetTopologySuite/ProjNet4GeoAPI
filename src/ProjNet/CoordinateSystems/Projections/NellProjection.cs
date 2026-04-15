@@ -86,7 +86,7 @@ internal sealed class NellProjection : MapProjection
         double denominator = 1d + Math.Cos(yy);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double lambda = (2d * xx) / denominator;

@@ -444,7 +444,7 @@ public class ProjectionsRegistry
         {
             if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out ProjectionRegistration? existingRegistration))
             {
-                ArgumentGuard.ThrowArgument($"{existingName} is not a registered projection type");
+                ArgumentGuard.ThrowArgument($"{existingName} is not a registered projection type", nameof(existingName));
             }
 
             Register(aliasName, ArgumentGuard.ThrowIfNull(existingRegistration, nameof(existingRegistration)).ProjectionType);
@@ -477,12 +477,12 @@ public class ProjectionsRegistry
 
         if (projectionType is null)
         {
-            ArgumentGuard.ThrowArgument($"Projection {className} is not supported.");
+            ProjectionThrowHelper.ThrowInvalidOperation($"Projection {className} is not supported.");
         }
 
         if (constructorParameterType is null)
         {
-            ArgumentGuard.ThrowArgument($"Projection {className} has no registered constructor.");
+            ProjectionThrowHelper.ThrowInvalidOperation($"Projection {className} has no registered constructor.");
         }
 
         if (!constructorParameterType.IsInstanceOfType(parameters))

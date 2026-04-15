@@ -18,10 +18,11 @@ public class ProjectionTransformBenchmarks
 {
     private const int PointCount = 10_000;
 
-    private MathTransform mercatorTransform = null!;
-    private MathTransform utm32NTransform = null!;
-    private MathTransform lambert93Transform = null!;
-    private MathTransform krovakTransform = null!;
+    private CoordinateSystemServices services = null!;
+    private MathTransform? mercatorTransform;
+    private MathTransform? utm32NTransform;
+    private MathTransform? lambert93Transform;
+    private MathTransform? krovakTransform;
 
     private double[] longitudes = [];
     private double[] latitudes = [];
@@ -34,21 +35,7 @@ public class ProjectionTransformBenchmarks
     [GlobalSetup]
     public void GlobalSetup()
     {
-        var services = new CoordinateSystemServices();
-
-        ICoordinateTransformation mercator = services.CreateTransformation(4326, 3857)
-            ?? throw new InvalidOperationException("EPSG:4326->3857 transformation lookup returned null.");
-        ICoordinateTransformation utm32N = services.CreateTransformation(4326, 32632)
-            ?? throw new InvalidOperationException("EPSG:4326->32632 transformation lookup returned null.");
-        ICoordinateTransformation lambert93 = services.CreateTransformation(4326, 2154)
-            ?? throw new InvalidOperationException("EPSG:4326->2154 transformation lookup returned null.");
-        ICoordinateTransformation krovak = services.CreateTransformation(4326, 5514)
-            ?? throw new InvalidOperationException("EPSG:4326->5514 transformation lookup returned null.");
-
-        this.mercatorTransform = mercator.MathTransform;
-        this.utm32NTransform = utm32N.MathTransform;
-        this.lambert93Transform = lambert93.MathTransform;
-        this.krovakTransform = krovak.MathTransform;
+        this.services = new CoordinateSystemServices();
 
         this.longitudes = new double[PointCount];
         this.latitudes = new double[PointCount];
@@ -70,7 +57,7 @@ public class ProjectionTransformBenchmarks
     public void TransformBatchMercator()
     {
         this.PrepareInput();
-        this.mercatorTransform.Transform(this.xBuffer, this.yBuffer);
+        this.GetOrCreateTransform(ref this.mercatorTransform, 4326, 3857).Transform(this.xBuffer, this.yBuffer);
     }
 
     /// <summary>
@@ -80,7 +67,7 @@ public class ProjectionTransformBenchmarks
     public void TransformBatchUtm32N()
     {
         this.PrepareInput();
-        this.utm32NTransform.Transform(this.xBuffer, this.yBuffer);
+        this.GetOrCreateTransform(ref this.utm32NTransform, 4326, 32632).Transform(this.xBuffer, this.yBuffer);
     }
 
     /// <summary>
@@ -90,7 +77,7 @@ public class ProjectionTransformBenchmarks
     public void TransformBatchLambert93()
     {
         this.PrepareInput();
-        this.lambert93Transform.Transform(this.xBuffer, this.yBuffer);
+        this.GetOrCreateTransform(ref this.lambert93Transform, 4326, 2154).Transform(this.xBuffer, this.yBuffer);
     }
 
     /// <summary>
@@ -100,12 +87,25 @@ public class ProjectionTransformBenchmarks
     public void TransformBatchKrovak()
     {
         this.PrepareInput();
-        this.krovakTransform.Transform(this.xBuffer, this.yBuffer);
+        this.GetOrCreateTransform(ref this.krovakTransform, 4326, 5514).Transform(this.xBuffer, this.yBuffer);
     }
 
     private void PrepareInput()
     {
         this.longitudes.CopyTo(this.xBuffer.AsSpan());
         this.latitudes.CopyTo(this.yBuffer.AsSpan());
+    }
+
+    private MathTransform GetOrCreateTransform(ref MathTransform? transform, int sourceSrid, int targetSrid)
+    {
+        if (transform is not null)
+        {
+            return transform;
+        }
+
+        ICoordinateTransformation projection = this.services.CreateTransformation(sourceSrid, targetSrid)
+            ?? throw new InvalidOperationException(FormattableString.Invariant($"EPSG:{sourceSrid}->{targetSrid} transformation lookup returned null."));
+        transform = projection.MathTransform;
+        return transform;
     }
 }

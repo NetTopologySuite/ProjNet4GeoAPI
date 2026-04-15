@@ -48,7 +48,7 @@ internal sealed class LoximuthalProjection : MapProjection
         this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
         if (Math.Abs(Math.Abs(this.referenceLatitude) - HalfPi) <= Epsln)
         {
-            ArgumentGuard.ThrowArgument("The reference latitude cannot be at the poles.");
+            ArgumentGuard.ThrowArgument("The reference latitude cannot be at the poles.", nameof(parameters));
         }
 
         this.referenceMercatorTerm = Math.Log(Math.Tan(FortPi + (0.5d * this.referenceLatitude)));

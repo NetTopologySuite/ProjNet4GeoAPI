@@ -1068,8 +1068,7 @@ public abstract class MapProjection : MathTransform, IProjection
             }
         }
 
-        ArgumentGuard.ThrowArgument("Convergence error.");
-        return 0d;
+        return ProjectionThrowHelper.ThrowInvalidOperation<double>("Convergence error.");
     }
 
     /// <summary>
@@ -1118,8 +1117,7 @@ public abstract class MapProjection : MathTransform, IProjection
             }
         }
 
-        ArgumentGuard.ThrowArgument("Convergence error - phi2z-conv");
-        return 0d;
+        return ProjectionThrowHelper.ThrowInvalidOperation<double>("Convergence error - phi2z-conv");
     }
 
     /// <summary>

@@ -52,13 +52,13 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         this.n = this.Parameters.GetParameterValue("n");
         if (this.n <= 0d)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for n: it should be > 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for n: it should be > 0.", nameof(parameters));
         }
 
         this.m = this.Parameters.GetParameterValue("m");
         if (this.m <= 0d)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for m: it should be > 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for m: it should be > 0.", nameof(parameters));
         }
 
         this.theta = DegreesToRadians(this.Parameters.GetOptionalParameterValue("theta", 0d));
@@ -94,14 +94,14 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         double denominator = Math.Cos(mAngle * this.twoRM);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double nAngle = Asinz((shz * Math.Cos(az) * Math.Cos(mAngle)) / denominator);
         double cosNScaled = Math.Cos(nAngle * this.twoRN);
         if (Math.Abs(cosNScaled) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double yUnit = this.n * Math.Sin(nAngle * this.twoRN);
@@ -122,7 +122,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         double cosN = Math.Cos(nAngle);
         if (Math.Abs(cosN) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double mArg = ProjectionConstants.Clamp(xUnit * this.rm * Math.Cos(nAngle * this.twoRN) / cosN, -1d, 1d);
@@ -132,7 +132,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         double cosM = Math.Cos(mAngle);
         if (Math.Abs(cosM) <= Eps10)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
 
         double yp = 2d * Math.Sin(nAngle) * Math.Cos(mAngle * this.twoRM) / cosM;

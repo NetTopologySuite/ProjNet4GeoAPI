@@ -67,7 +67,7 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
         double sig = 0.5d * (this.phi2 + this.phi1);
         if (Math.Abs(del) < Eps10 || Math.Abs(sig) < Eps10)
         {
-            ArgumentGuard.ThrowArgument("Illegal value for lat_1 and lat_2: |lat_1 - lat_2| and |lat_1 + lat_2| should be > 0.");
+            ArgumentGuard.ThrowArgument("Illegal value for lat_1 and lat_2: |lat_1 - lat_2| and |lat_1 + lat_2| should be > 0.", nameof(parameters));
         }
 
         double lam1 = this.Parameters.ContainsKey("lon_1")
@@ -126,7 +126,7 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
             double denominator = ty - yc;
             if (denominator == 0d && Math.Abs(ty - yUnit) > Eps10)
             {
-                throw new System.InvalidOperationException("Input data outside projection domain.");
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
             }
 
             if (denominator != 0d || Math.Abs(ty - yUnit) <= Eps10)
@@ -150,7 +150,7 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
             }
         }
 
-        throw new System.InvalidOperationException("Input data outside projection domain.");
+        ProjectionThrowHelper.ThrowOutsideProjectionDomain();
     }
 
     private void ComputeLocalForward(double lambda, double phi, out double x, out double y, out double yc)

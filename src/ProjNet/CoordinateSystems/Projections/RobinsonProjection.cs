@@ -163,7 +163,7 @@ internal sealed class RobinsonProjection : MapProjection
 
         if (!converged)
         {
-            ArgumentGuard.ThrowArgument("Robinson inverse did not converge.");
+            ProjectionThrowHelper.ThrowInvalidOperation("Robinson inverse did not converge.");
         }
 
         double phi = DegreesToRadians((5d * index) + t);

@@ -84,13 +84,13 @@ internal static class AitoffMath
                 double c = 1d - (value * value);
                 if (c <= Tolerance)
                 {
-                    throw new System.InvalidOperationException("Input data outside projection domain.");
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 double denominator = Math.Pow(c, 1.5d);
                 if (Math.Abs(denominator) <= ProjectionConstants.JacobianTolerance)
                 {
-                    throw new System.InvalidOperationException("Input data outside projection domain.");
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 double d = Math.Acos(ProjectionConstants.Clamp(value, -1d, 1d)) / denominator;
@@ -117,7 +117,7 @@ internal static class AitoffMath
                 double determinant = (f1p * f2l) - (f2p * f1l);
                 if (Math.Abs(determinant) <= ProjectionConstants.JacobianTolerance)
                 {
-                    throw new System.InvalidOperationException("Input data outside projection domain.");
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
                 }
 
                 double deltaLambda = ((f2 * f1p) - (f1 * f2p)) / determinant;
@@ -157,7 +157,7 @@ internal static class AitoffMath
 
         if (!converged)
         {
-            throw new System.InvalidOperationException("Input data outside projection domain.");
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
         }
     }
 }
