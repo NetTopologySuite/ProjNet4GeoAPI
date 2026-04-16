@@ -169,7 +169,7 @@ public class GieBuiltinsTheoryTests
         ["poly"] = "polyconic",
         ["robin"] = "robin",
         ["sterea"] = "oblique_stereographic",
-        ["stere"] = "polar_stereographic",
+        ["stere"] = "stere",
         ["sinu"] = "sinusoidal",
         ["somerc"] = "swiss_oblique_mercator",
         ["aitoff"] = "aitoff",

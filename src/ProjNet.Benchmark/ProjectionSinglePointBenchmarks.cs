@@ -20,17 +20,29 @@ public class ProjectionSinglePointBenchmarks
     private MathTransform adamsHemisphereForward = null!;
     private MathTransform obliqueMercatorForward = null!;
     private MathTransform obliqueMercatorNoRotationForward = null!;
+    private MathTransform stereographicPolarForward = null!;
+    private MathTransform stereographicObliqueForward = null!;
+    private MathTransform stereographicEquatorialForward = null!;
     private MathTransform laeaInverse = null!;
     private MathTransform orthographicInverse = null!;
     private MathTransform robinsonInverse = null!;
+    private MathTransform stereographicPolarInverse = null!;
+    private MathTransform stereographicObliqueInverse = null!;
+    private MathTransform stereographicEquatorialInverse = null!;
 
     private double[] guyouInput = null!;
     private double[] peirceInput = null!;
     private double[] adamsHemisphereInput = null!;
     private double[] obliqueMercatorInput = null!;
+    private double[] stereographicPolarInput = null!;
+    private double[] stereographicObliqueInput = null!;
+    private double[] stereographicEquatorialInput = null!;
     private double[] laeaInput = null!;
     private double[] orthographicInput = null!;
     private double[] robinsonInput = null!;
+    private double[] stereographicPolarInverseInput = null!;
+    private double[] stereographicObliqueInverseInput = null!;
+    private double[] stereographicEquatorialInverseInput = null!;
 
     /// <summary>
     /// Executes one pass of every single-point projection benchmark and validates that the results stay finite.
@@ -45,9 +57,15 @@ public class ProjectionSinglePointBenchmarks
         EnsureFinite(benchmark.TransformAdamsHemisphereSinglePoint());
         EnsureFinite(benchmark.TransformObliqueMercatorSinglePoint());
         EnsureFinite(benchmark.TransformObliqueMercatorNoRotationSinglePoint());
+        EnsureFinite(benchmark.TransformStereographicPolarSinglePoint());
+        EnsureFinite(benchmark.TransformStereographicObliqueSinglePoint());
+        EnsureFinite(benchmark.TransformStereographicEquatorialSinglePoint());
         EnsureFinite(benchmark.TransformLambertAzimuthalEqualAreaInverseSinglePoint());
         EnsureFinite(benchmark.TransformOrthographicInverseSinglePoint());
         EnsureFinite(benchmark.TransformRobinsonInverseSinglePoint());
+        EnsureFinite(benchmark.TransformStereographicPolarInverseSinglePoint());
+        EnsureFinite(benchmark.TransformStereographicObliqueInverseSinglePoint());
+        EnsureFinite(benchmark.TransformStereographicEquatorialInverseSinglePoint());
     }
 
     /// <summary>
@@ -61,6 +79,9 @@ public class ProjectionSinglePointBenchmarks
         this.adamsHemisphereForward = BenchmarkPipelineTransformFactory.Create("+proj=adams_hemi");
         this.obliqueMercatorForward = BenchmarkPipelineTransformFactory.Create("+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2");
         this.obliqueMercatorNoRotationForward = BenchmarkPipelineTransformFactory.Create("+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2 +no_rot");
+        this.stereographicPolarForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=90 +lat_ts=70");
+        this.stereographicObliqueForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=45");
+        this.stereographicEquatorialForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=0");
 
         MathTransform laeaForward = BenchmarkPipelineTransformFactory.Create("+proj=laea +R=6371000 +lat_0=45");
         MathTransform orthographicForward = BenchmarkPipelineTransformFactory.Create("+proj=ortho +ellps=WGS84 +lat_0=30");
@@ -69,14 +90,23 @@ public class ProjectionSinglePointBenchmarks
         this.laeaInverse = laeaForward.Inverse();
         this.orthographicInverse = orthographicForward.Inverse();
         this.robinsonInverse = robinsonForward.Inverse();
+        this.stereographicPolarInverse = this.stereographicPolarForward.Inverse();
+        this.stereographicObliqueInverse = this.stereographicObliqueForward.Inverse();
+        this.stereographicEquatorialInverse = this.stereographicEquatorialForward.Inverse();
 
         this.guyouInput = [12d, 25d];
         this.peirceInput = [-15d, 35d];
         this.adamsHemisphereInput = [40d, 30d];
         this.obliqueMercatorInput = [2d, 1d];
+        this.stereographicPolarInput = [15d, 80d];
+        this.stereographicObliqueInput = [12d, 50d];
+        this.stereographicEquatorialInput = [18d, 25d];
         this.laeaInput = laeaForward.Transform([15d, 20d]);
         this.orthographicInput = orthographicForward.Transform([20d, 40d]);
         this.robinsonInput = robinsonForward.Transform([30d, 12d]);
+        this.stereographicPolarInverseInput = this.stereographicPolarForward.Transform(this.stereographicPolarInput);
+        this.stereographicObliqueInverseInput = this.stereographicObliqueForward.Transform(this.stereographicObliqueInput);
+        this.stereographicEquatorialInverseInput = this.stereographicEquatorialForward.Transform(this.stereographicEquatorialInput);
     }
 
     /// <summary>
@@ -115,6 +145,27 @@ public class ProjectionSinglePointBenchmarks
     public double[] TransformObliqueMercatorNoRotationSinglePoint() => this.obliqueMercatorNoRotationForward.Transform(this.obliqueMercatorInput);
 
     /// <summary>
+    /// Measures single-point forward throughput for ellipsoidal polar stereographic.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformStereographicPolarSinglePoint() => this.stereographicPolarForward.Transform(this.stereographicPolarInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for ellipsoidal oblique stereographic.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformStereographicObliqueSinglePoint() => this.stereographicObliqueForward.Transform(this.stereographicObliqueInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for ellipsoidal equatorial stereographic.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformStereographicEquatorialSinglePoint() => this.stereographicEquatorialForward.Transform(this.stereographicEquatorialInput);
+
+    /// <summary>
     /// Measures single-point inverse throughput for spherical Lambert azimuthal equal area.
     /// </summary>
     /// <returns>The reconstructed geographic coordinate pair.</returns>
@@ -134,6 +185,27 @@ public class ProjectionSinglePointBenchmarks
     /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformRobinsonInverseSinglePoint() => this.robinsonInverse.Transform(this.robinsonInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for ellipsoidal polar stereographic.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformStereographicPolarInverseSinglePoint() => this.stereographicPolarInverse.Transform(this.stereographicPolarInverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for ellipsoidal oblique stereographic.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformStereographicObliqueInverseSinglePoint() => this.stereographicObliqueInverse.Transform(this.stereographicObliqueInverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for ellipsoidal equatorial stereographic.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformStereographicEquatorialInverseSinglePoint() => this.stereographicEquatorialInverse.Transform(this.stereographicEquatorialInverseInput);
 
     private static void EnsureFinite(double[] coordinates)
     {

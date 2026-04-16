@@ -138,6 +138,7 @@ public partial class ProjectionsRegistry
             [typeof(RobinsonProjection)] = static parameters => new RobinsonProjection(parameters),
             [typeof(RoussilheStereographicProjection)] = static parameters => new RoussilheStereographicProjection(parameters),
             [typeof(S2Projection)] = static parameters => new S2Projection(parameters),
+            [typeof(StereographicProjection)] = static parameters => new StereographicProjection(parameters),
             [typeof(SchMathTransform)] = static parameters => new SchMathTransform(AsProjectionParameterList(parameters)),
             [typeof(SinusoidalProjection)] = static parameters => new SinusoidalProjection(parameters),
             [typeof(SpaceObliqueMercatorProjection)] = static parameters => new SpaceObliqueMercatorProjection(parameters),

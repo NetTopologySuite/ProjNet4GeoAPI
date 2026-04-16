@@ -64,6 +64,22 @@ public class ProjectionsRegistryTests
         Assert.Equal(9805, projection.AuthorityCode);
     }
 
+    /// <summary>
+    /// Verifies the general PROJ <c>stere</c> alias and WKT/EPSG <c>polar_stereographic</c>
+    /// remain routed to their distinct runtime implementations.
+    /// </summary>
+    [Fact]
+    public void CreateProjection_WithStereAliases_UsesExpectedRuntimeImplementation()
+    {
+        MapProjection generalStereographic = Assert.IsAssignableFrom<MapProjection>(
+            ProjectionsRegistry.CreateProjection("stere", CreateStereographicParameters(latitudeOfOrigin: 45d)));
+        MapProjection polarStereographic = Assert.IsAssignableFrom<MapProjection>(
+            ProjectionsRegistry.CreateProjection("polar_stereographic", CreateStereographicParameters(latitudeOfOrigin: -71d)));
+
+        Assert.IsType<StereographicProjection>(generalStereographic);
+        Assert.IsType<PolarStereographicProjection>(polarStereographic);
+    }
+
     private static List<ProjectionParameter> CreateMercatorParameters(double? scaleFactor = null)
     {
         var parameters = new List<ProjectionParameter>
@@ -81,5 +97,18 @@ public class ProjectionsRegistryTests
         }
 
         return parameters;
+    }
+
+    private static List<ProjectionParameter> CreateStereographicParameters(double latitudeOfOrigin)
+    {
+        return
+        [
+            new ProjectionParameter("semi_major", 6378137d),
+            new ProjectionParameter("semi_minor", 6356752.314245179d),
+            new ProjectionParameter("central_meridian", 0d),
+            new ProjectionParameter("latitude_of_origin", latitudeOfOrigin),
+            new ProjectionParameter("scale_factor", 1d),
+            new ProjectionParameter("unit", 1d),
+        ];
     }
 }

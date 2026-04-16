@@ -148,7 +148,7 @@ public partial class ProjectionsRegistry
         Register("geos", typeof(GeostationarySatelliteProjection));
         Register("new_zealand_map_grid", typeof(NewZealandMapGridProjection));
         Register("nzmg", typeof(NewZealandMapGridProjection));
-        Register("stere", typeof(PolarStereographicProjection));
+        Register("stere", typeof(StereographicProjection));
         Register("polar_stereographic", typeof(PolarStereographicProjection));
         Register("ups", typeof(UpsProjection));
 
