@@ -2126,6 +2126,165 @@ public class GieBuiltinsRegressionTests
         Assert.InRange(Math.Abs(output[1] - 50d), 0d, 1e-5d);
     }
 
+    /// <summary>
+    /// Verifies that the runtime <c>isea</c> path binds string <c>+orient=pole</c> instead of silently falling back to the default orientation.
+    /// </summary>
+    /// <param name="longitude">Input longitude degrees.</param>
+    /// <param name="latitude">Input latitude degrees.</param>
+    /// <param name="expectedX">Expected projected x coordinate.</param>
+    /// <param name="expectedY">Expected projected y coordinate.</param>
+    [Theory]
+    [InlineData(0d, 0d, 0d, -195097.13364071414d)]
+    [InlineData(90d, 0d, 9593072.435467451811d, 0d)]
+    [InlineData(0d, 45d, 0d, 4726854.770339427515864d)]
+    public void TryCreateConversionTransformWithIseaPoleOrientationReturnsExpectedCoordinate(
+        double longitude,
+        double latitude,
+        double expectedX,
+        double expectedY)
+    {
+        const string operation = "+proj=isea +R=6371007.18091875 +orient=pole";
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, longitude, latitude);
+
+        Assert.InRange(Math.Abs(output[0] - expectedX), 0d, 2e-4d);
+        Assert.InRange(Math.Abs(output[1] - expectedY), 0d, 2e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>isea</c> inverse path also honors string <c>+orient=pole</c>.
+    /// </summary>
+    /// <param name="x">Input projected x coordinate.</param>
+    /// <param name="y">Input projected y coordinate.</param>
+    /// <param name="expectedLongitude">Expected longitude in degrees.</param>
+    /// <param name="expectedLatitude">Expected latitude in degrees.</param>
+    [Theory]
+    [InlineData(0d, -195097.13364071414d, 0d, 0d)]
+    [InlineData(9593072.435467451811d, 0d, 90d, 0d)]
+    [InlineData(0d, 4726854.770339427515864d, 0d, 45d)]
+    public void TryCreateConversionTransformForDirectionWithIseaPoleOrientationReturnsExpectedCoordinate(
+        double x,
+        double y,
+        double expectedLongitude,
+        double expectedLatitude)
+    {
+        const string operation = "+proj=isea +R=6371007.18091875 +orient=pole";
+        bool created = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([x, y]);
+        Assert.InRange(Math.Abs(output[0] - expectedLongitude), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(output[1] - expectedLatitude), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>lagrng</c> path binds the PROJ <c>lat_1</c> and <c>W</c> parameters instead of silently using constructor defaults.
+    /// </summary>
+    /// <param name="operation">Projection operation string.</param>
+    /// <param name="longitude">Input longitude degrees.</param>
+    /// <param name="latitude">Input latitude degrees.</param>
+    /// <param name="expectedX">Expected projected x coordinate.</param>
+    /// <param name="expectedY">Expected projected y coordinate.</param>
+    /// <param name="tolerance">Allowed projected-coordinate tolerance in meters.</param>
+    [Theory]
+    [InlineData("+proj=lagrng +a=6400000 +W=2 +lat_1=0.5", 2d, 1d, 111703.375917226d, 27929.831908033d, 1e-4d)]
+    [InlineData("+proj=lagrng +R=1 +lat_1=56", 12d, 56d, 0.10d, 0d, 0.01d)]
+    public void TryCreateConversionTransformWithLagrangeProjParametersReturnsExpectedCoordinate(
+        string operation,
+        double longitude,
+        double latitude,
+        double expectedX,
+        double expectedY,
+        double tolerance)
+    {
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, longitude, latitude);
+
+        Assert.InRange(Math.Abs(output[0] - expectedX), 0d, tolerance);
+        Assert.InRange(Math.Abs(output[1] - expectedY), 0d, tolerance);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>lagrng</c> inverse path reconstructs coordinates for the repaired <c>lat_1</c> and <c>W</c> cases.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformForDirectionWithLagrangeProjParametersReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=lagrng +a=6400000 +W=2 +lat_1=0.5";
+        bool created = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([111703.375917226d, 27929.831908033d]);
+        Assert.InRange(Math.Abs(output[0] - 2d), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(output[1] - 1d), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that the repaired runtime <c>lagrng</c> path remains stable across the 100 roundtrips exercised by the GIE row.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLagrangeProjParametersRoundtripsProjectedCoordinate()
+    {
+        AssertRuntimeProjectedRoundtrip(
+            "+proj=lagrng +a=6400000 +W=2 +lat_1=0.5",
+            [2d, 1d],
+            111703.375917226d,
+            27929.831908033d,
+            roundtripCount: 100,
+            tolerance: 1e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>vandg</c> path applies <c>+over</c> instead of wrapping longitudes back into the default range.
+    /// </summary>
+    /// <param name="longitude">Input longitude degrees.</param>
+    /// <param name="latitude">Input latitude degrees.</param>
+    /// <param name="expectedX">Expected projected x coordinate.</param>
+    /// <param name="expectedY">Expected projected y coordinate.</param>
+    [Theory]
+    [InlineData(180.1d, 50d, 18569963.6471d, 7734997.6218d)]
+    [InlineData(-180.1d, -50d, -18569963.6471d, -7734997.6218d)]
+    public void TryCreateConversionTransformWithVanDerGrintenOverReturnsExpectedCoordinate(
+        double longitude,
+        double latitude,
+        double expectedX,
+        double expectedY)
+    {
+        const string operation = "+proj=vandg +a=6400000 +over";
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, longitude, latitude);
+
+        Assert.InRange(Math.Abs(output[0] - expectedX), 0d, 5e-4d);
+        Assert.InRange(Math.Abs(output[1] - expectedY), 0d, 5e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>vandg</c> inverse path preserves <c>+over</c> longitudes beyond 180 degrees.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformForDirectionWithVanDerGrintenOverReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=vandg +a=6400000 +over";
+        bool created = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([18569963.6471d, 7734997.6218d]);
+        Assert.InRange(Math.Abs(output[0] - 180.1d), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(output[1] - 50d), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that the repaired runtime <c>vandg</c> path remains stable across the 10 roundtrips exercised by the GIE row.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithVanDerGrintenOverRoundtripsProjectedCoordinate()
+    {
+        AssertRuntimeProjectedRoundtrip(
+            "+proj=vandg +a=6400000 +over",
+            [180.1d, 50d],
+            18569963.6471d,
+            7734997.6218d,
+            roundtripCount: 10,
+            tolerance: 5e-4d);
+    }
+
     private static void AssertCaseWithinToleranceDoesNotSkip(GieCase testCase)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
@@ -2212,6 +2371,34 @@ public class GieBuiltinsRegressionTests
         bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
         Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
         return Assert.IsType<Func<double[], double[]>>(transform)(input);
+    }
+
+    private static void AssertRuntimeProjectedRoundtrip(
+        string operation,
+        double[] geographic,
+        double expectedX,
+        double expectedY,
+        int roundtripCount,
+        double tolerance)
+    {
+        bool createdForward = TryCreateConversionTransform(operation, out Func<double[], double[]>? forwardTransform, out string? forwardSkipReason);
+        Assert.True(createdForward, forwardSkipReason ?? "TryCreateConversionTransform returned false.");
+
+        bool createdInverse = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? inverseTransform, out string? inverseSkipReason);
+        Assert.True(createdInverse, inverseSkipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        Func<double[], double[]> forward = Assert.IsType<Func<double[], double[]>>(forwardTransform);
+        Func<double[], double[]> inverse = Assert.IsType<Func<double[], double[]>>(inverseTransform);
+        double[] geographicCurrent = [geographic[0], geographic[1]];
+        double[] projected = forward(geographicCurrent);
+        for (int i = 0; i < roundtripCount; i++)
+        {
+            geographicCurrent = inverse(projected);
+            projected = forward(geographicCurrent);
+        }
+
+        Assert.InRange(Math.Abs(projected[0] - expectedX), 0d, tolerance);
+        Assert.InRange(Math.Abs(projected[1] - expectedY), 0d, tolerance);
     }
 
     private static double[] RequireBuiltinsProjectedOutput(string operation)

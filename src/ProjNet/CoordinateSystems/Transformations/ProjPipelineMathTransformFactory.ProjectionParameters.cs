@@ -140,6 +140,10 @@ internal static partial class ProjPipelineMathTransformFactory
                 return TryApplyAeqdProjectionParameters(args, parameters, out skipReason);
             case "AIROCEAN":
                 return TryApplyAiroceanProjectionParameters(args, parameters, out skipReason);
+            case "ISEA":
+                return TryApplyIseaProjectionParameters(args, parameters, out skipReason);
+            case "LAGRNG":
+                return TryApplyLagrangeProjectionParameters(args, parameters, out skipReason);
             case "PEIRCE_Q":
                 return TryApplyPeirceProjectionParameters(args, parameters, out skipReason);
             case "HEALPIX":
@@ -169,6 +173,8 @@ internal static partial class ProjPipelineMathTransformFactory
                 return TryApplyUrm5ProjectionParameters(args, parameters, out skipReason);
             case "UTM":
                 return TryApplyUtmProjectionParameters(args, unitFactor, parameters, out skipReason);
+            case "VANDG":
+                return TryApplyVanDerGrintenProjectionParameters(args, parameters, out skipReason);
             default:
                 skipReason = null;
                 return true;
@@ -222,6 +228,48 @@ internal static partial class ProjPipelineMathTransformFactory
 
         SetOrAddProjectionParameter(parameters, "airocean_orient", orientationCode);
         return true;
+    }
+
+    private static bool TryApplyIseaProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (args.TryGetValue("orient", out string? orientationToken) && !string.IsNullOrWhiteSpace(orientationToken))
+        {
+            if (!TryResolveIseaOrientationCode(orientationToken, out double orientationCode))
+            {
+                skipReason = "Invalid value for +orient on isea step.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "isea_orient", orientationCode);
+        }
+
+        if (args.TryGetValue("mode", out string? modeToken) && !string.IsNullOrWhiteSpace(modeToken))
+        {
+            if (!TryResolveIseaModeCode(modeToken, out double modeCode))
+            {
+                skipReason = "Invalid value for +mode on isea step.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "isea_mode", modeCode);
+        }
+
+        return TryApplyOptionalProjectionParameter(args, "azi", "isea_azimuth", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "aperture", "isea_aperture", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "resolution", "isea_resolution", parameters, out skipReason);
+    }
+
+    private static bool TryApplyLagrangeProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        return TryApplyOptionalProjectionParameter(args, "lat_1", "lat_1", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "W", "W", parameters, out skipReason);
     }
 
     private static bool TryApplyPeirceProjectionParameters(
@@ -403,6 +451,20 @@ internal static partial class ProjPipelineMathTransformFactory
 
         return TryApplyOptionalProjectionParameter(args, "azi", "azi", parameters, out skipReason)
             && TryApplyOptionalProjectionParameter(args, "rot", "rot", parameters, out skipReason);
+    }
+
+    private static bool TryApplyVanDerGrintenProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (args.ContainsKey("over"))
+        {
+            SetOrAddProjectionParameter(parameters, "over", 1d);
+        }
+
+        return true;
     }
 
     private static bool TryApplyObliqueMercatorProjectionParameters(
@@ -598,6 +660,80 @@ internal static partial class ProjPipelineMathTransformFactory
             "QUADRATIC" => 1d,
             "TANGENT" => 2d,
             "NONE" => 3d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(modeCode);
+    }
+
+    private static bool TryResolveIseaOrientationCode(string token, out double orientationCode)
+    {
+        orientationCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (SpanParseUtility.TryParseFiniteDouble(normalized, out double rawValue))
+        {
+            int orientation = (int)Math.Round(rawValue);
+            if (Math.Abs(rawValue - orientation) > 1e-10d)
+            {
+                return false;
+            }
+
+            if (orientation < 0 || orientation > 1)
+            {
+                return false;
+            }
+
+            orientationCode = orientation;
+            return true;
+        }
+
+        orientationCode = normalized.ToUpperInvariant() switch
+        {
+            "ISEA" => 0d,
+            "POLE" => 1d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(orientationCode);
+    }
+
+    private static bool TryResolveIseaModeCode(string token, out double modeCode)
+    {
+        modeCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (SpanParseUtility.TryParseFiniteDouble(normalized, out double rawValue))
+        {
+            int mode = (int)Math.Round(rawValue);
+            if (Math.Abs(rawValue - mode) > 1e-10d)
+            {
+                return false;
+            }
+
+            if (mode < 0 || mode > 3)
+            {
+                return false;
+            }
+
+            modeCode = mode;
+            return true;
+        }
+
+        modeCode = normalized.ToUpperInvariant() switch
+        {
+            "PLANE" => 0d,
+            "DI" => 1d,
+            "DD" => 2d,
+            "HEX" => 3d,
             _ => double.NaN,
         };
 

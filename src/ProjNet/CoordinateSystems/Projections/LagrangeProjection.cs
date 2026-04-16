@@ -53,7 +53,7 @@ internal sealed class LagrangeProjection : MapProjection
         this.hw = 0.5d * this.w;
         this.rw = 1d / this.w;
         this.hrw = 0.5d * this.rw;
-        double sinPhi1 = Math.Sin(DegreesToRadians(this.Parameters.GetParameterValue("lat_1")));
+        double sinPhi1 = Math.Sin(DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", 0d, "standard_parallel_1")));
         if (Math.Abs(Math.Abs(sinPhi1) - 1d) < Eps10)
         {
             ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be < 90°", nameof(parameters));

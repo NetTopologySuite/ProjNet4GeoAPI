@@ -29,6 +29,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
     private const double TwoPiSquared = 2d * PiSquared;
     private const double HalfPiSquared = 0.5d * PiSquared;
     private const double InverseDomainEpsilon = 1e-16d;
+    private readonly bool over;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrintenProjection"/> class.
@@ -48,6 +49,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "VanDerGrinten";
+        this.over = this.Parameters.GetOptionalParameterValue("over", 0d) != 0d;
     }
 
     /// <inheritdoc />
@@ -61,7 +63,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
     /// <inheritdoc />
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
-        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double lambda = this.over ? lon - this.centralMeridian : Adjust_lon(lon - this.centralMeridian);
         double p2 = Math.Abs(lat / HalfPi);
         if ((p2 - Eps10) > 1d)
         {
@@ -86,7 +88,8 @@ internal sealed class VanDerGrintenProjection : MapProjection
         }
         else if (Math.Abs(lat) > Eps10)
         {
-            double al = 0.5d * Math.Abs((PI / lambda) - (lambda / PI));
+            int sign = this.over && Math.Abs(lambda) > PI ? -1 : 1;
+            double al = 0.5d * sign * Math.Abs((PI / lambda) - (lambda / PI));
             double al2 = al * al;
             double g = Math.Sqrt(1d - (p2 * p2));
             g /= p2 + g - 1d;
@@ -146,7 +149,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
             y = 0d;
             double t = (x2 * x2) + (TwoPiSquared * (x2 + HalfPiSquared));
             double lambdaEquator = Math.Abs(xx) <= Eps10 ? 0d : (0.5d * ((x2 - PiSquared) + Math.Sqrt(t)) / xx);
-            x = Adjust_lon(this.centralMeridian + lambdaEquator);
+            x = this.over ? this.centralMeridian + lambdaEquator : Adjust_lon(this.centralMeridian + lambdaEquator);
             return;
         }
 
@@ -197,7 +200,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
             ? 0d
             : (0.5d * (r - PiSquared + (t2 <= 0d ? 0d : Math.Sqrt(t2))) / lambdaDenominator);
 
-        x = Adjust_lon(this.centralMeridian + lambda);
+        x = this.over ? this.centralMeridian + lambda : Adjust_lon(this.centralMeridian + lambda);
         y = phi;
     }
 }

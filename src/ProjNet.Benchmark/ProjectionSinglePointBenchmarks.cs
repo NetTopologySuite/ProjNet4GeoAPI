@@ -21,6 +21,8 @@ public class ProjectionSinglePointBenchmarks
     private MathTransform obliqueMercatorForward = null!;
     private MathTransform obliqueMercatorNoRotationForward = null!;
     private MathTransform krovakForward = null!;
+    private MathTransform iseaPolarForward = null!;
+    private MathTransform lagrangeForward = null!;
     private MathTransform loximuthalForward = null!;
     private MathTransform mercatorForward = null!;
     private MathTransform nzmgForward = null!;
@@ -33,10 +35,13 @@ public class ProjectionSinglePointBenchmarks
     private MathTransform stereographicPolarForward = null!;
     private MathTransform stereographicObliqueForward = null!;
     private MathTransform stereographicEquatorialForward = null!;
+    private MathTransform vanDerGrintenOverForward = null!;
     private MathTransform laeaInverse = null!;
+    private MathTransform iseaPolarInverse = null!;
     private MathTransform orthographicInverse = null!;
     private MathTransform robinsonInverse = null!;
     private MathTransform krovakInverse = null!;
+    private MathTransform lagrangeInverse = null!;
     private MathTransform loximuthalInverse = null!;
     private MathTransform mercatorInverse = null!;
     private MathTransform nzmgInverse = null!;
@@ -48,12 +53,15 @@ public class ProjectionSinglePointBenchmarks
     private MathTransform stereographicPolarInverse = null!;
     private MathTransform stereographicObliqueInverse = null!;
     private MathTransform stereographicEquatorialInverse = null!;
+    private MathTransform vanDerGrintenOverInverse = null!;
 
     private double[] guyouInput = null!;
     private double[] peirceInput = null!;
     private double[] adamsHemisphereInput = null!;
     private double[] obliqueMercatorInput = null!;
     private double[] krovakInput = null!;
+    private double[] iseaPolarInput = null!;
+    private double[] lagrangeInput = null!;
     private double[] loximuthalInput = null!;
     private double[] mercatorInput = null!;
     private double[] nzmgInput = null!;
@@ -65,7 +73,10 @@ public class ProjectionSinglePointBenchmarks
     private double[] stereographicPolarInput = null!;
     private double[] stereographicObliqueInput = null!;
     private double[] stereographicEquatorialInput = null!;
+    private double[] vanDerGrintenOverInput = null!;
+    private double[] iseaPolarInverseInput = null!;
     private double[] krovakInverseInput = null!;
+    private double[] lagrangeInverseInput = null!;
     private double[] laeaInput = null!;
     private double[] loximuthalInverseInput = null!;
     private double[] orthographicInput = null!;
@@ -80,6 +91,7 @@ public class ProjectionSinglePointBenchmarks
     private double[] stereographicPolarInverseInput = null!;
     private double[] stereographicObliqueInverseInput = null!;
     private double[] stereographicEquatorialInverseInput = null!;
+    private double[] vanDerGrintenOverInverseInput = null!;
 
     /// <summary>
     /// Executes one pass of every single-point projection benchmark and validates that the results stay finite.
@@ -95,6 +107,8 @@ public class ProjectionSinglePointBenchmarks
         EnsureFinite(benchmark.TransformObliqueMercatorSinglePoint());
         EnsureFinite(benchmark.TransformObliqueMercatorNoRotationSinglePoint());
         EnsureFinite(benchmark.TransformKrovakSinglePoint());
+        EnsureFinite(benchmark.TransformIseaPolarSinglePoint());
+        EnsureFinite(benchmark.TransformLagrangeSinglePoint());
         EnsureFinite(benchmark.TransformLoximuthalSinglePoint());
         EnsureFinite(benchmark.TransformMercatorSinglePoint());
         EnsureFinite(benchmark.TransformNzmgSinglePoint());
@@ -107,8 +121,11 @@ public class ProjectionSinglePointBenchmarks
         EnsureFinite(benchmark.TransformStereographicPolarSinglePoint());
         EnsureFinite(benchmark.TransformStereographicObliqueSinglePoint());
         EnsureFinite(benchmark.TransformStereographicEquatorialSinglePoint());
+        EnsureFinite(benchmark.TransformVanDerGrintenOverSinglePoint());
         EnsureFinite(benchmark.TransformLambertAzimuthalEqualAreaInverseSinglePoint());
+        EnsureFinite(benchmark.TransformIseaPolarInverseSinglePoint());
         EnsureFinite(benchmark.TransformKrovakInverseSinglePoint());
+        EnsureFinite(benchmark.TransformLagrangeInverseSinglePoint());
         EnsureFinite(benchmark.TransformLoximuthalInverseSinglePoint());
         EnsureFinite(benchmark.TransformOrthographicInverseSinglePoint());
         EnsureFinite(benchmark.TransformRobinsonInverseSinglePoint());
@@ -122,6 +139,7 @@ public class ProjectionSinglePointBenchmarks
         EnsureFinite(benchmark.TransformStereographicPolarInverseSinglePoint());
         EnsureFinite(benchmark.TransformStereographicObliqueInverseSinglePoint());
         EnsureFinite(benchmark.TransformStereographicEquatorialInverseSinglePoint());
+        EnsureFinite(benchmark.TransformVanDerGrintenOverInverseSinglePoint());
     }
 
     /// <summary>
@@ -136,6 +154,8 @@ public class ProjectionSinglePointBenchmarks
         this.obliqueMercatorForward = BenchmarkPipelineTransformFactory.Create("+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2");
         this.obliqueMercatorNoRotationForward = BenchmarkPipelineTransformFactory.Create("+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2 +no_rot");
         this.krovakForward = BenchmarkPipelineTransformFactory.Create("+proj=krovak +ellps=GRS80");
+        this.iseaPolarForward = BenchmarkPipelineTransformFactory.Create("+proj=isea +R=6371007.18091875 +orient=pole");
+        this.lagrangeForward = BenchmarkPipelineTransformFactory.Create("+proj=lagrng +a=6400000 +W=2 +lat_1=0.5");
         this.loximuthalForward = BenchmarkPipelineTransformFactory.Create("+proj=loxim +a=6400000 +lat_1=0.5 +lat_2=2");
         this.mercatorForward = BenchmarkPipelineTransformFactory.Create("+proj=merc +ellps=GRS80");
         this.nzmgForward = BenchmarkPipelineTransformFactory.Create("+proj=nzmg +ellps=GRS80");
@@ -148,13 +168,16 @@ public class ProjectionSinglePointBenchmarks
         this.stereographicPolarForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=90 +lat_ts=70");
         this.stereographicObliqueForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=45");
         this.stereographicEquatorialForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=0");
+        this.vanDerGrintenOverForward = BenchmarkPipelineTransformFactory.Create("+proj=vandg +a=6400000 +over");
 
         MathTransform laeaForward = BenchmarkPipelineTransformFactory.Create("+proj=laea +R=6371000 +lat_0=45");
         MathTransform orthographicForward = BenchmarkPipelineTransformFactory.Create("+proj=ortho +ellps=WGS84 +lat_0=30");
         MathTransform robinsonForward = BenchmarkPipelineTransformFactory.Create("+proj=robin +a=6400000");
 
         this.laeaInverse = laeaForward.Inverse();
+        this.iseaPolarInverse = this.iseaPolarForward.Inverse();
         this.krovakInverse = this.krovakForward.Inverse();
+        this.lagrangeInverse = this.lagrangeForward.Inverse();
         this.loximuthalInverse = this.loximuthalForward.Inverse();
         this.orthographicInverse = orthographicForward.Inverse();
         this.robinsonInverse = robinsonForward.Inverse();
@@ -168,12 +191,15 @@ public class ProjectionSinglePointBenchmarks
         this.stereographicPolarInverse = this.stereographicPolarForward.Inverse();
         this.stereographicObliqueInverse = this.stereographicObliqueForward.Inverse();
         this.stereographicEquatorialInverse = this.stereographicEquatorialForward.Inverse();
+        this.vanDerGrintenOverInverse = this.vanDerGrintenOverForward.Inverse();
 
         this.guyouInput = [12d, 25d];
         this.peirceInput = [-15d, 35d];
         this.adamsHemisphereInput = [40d, 30d];
         this.obliqueMercatorInput = [2d, 1d];
         this.krovakInput = [2d, 1d];
+        this.iseaPolarInput = [0d, 45d];
+        this.lagrangeInput = [2d, 1d];
         this.loximuthalInput = [2d, 1d];
         this.mercatorInput = [18d, -85d];
         this.nzmgInput = [2d, 1d];
@@ -185,7 +211,10 @@ public class ProjectionSinglePointBenchmarks
         this.stereographicPolarInput = [15d, 80d];
         this.stereographicObliqueInput = [12d, 50d];
         this.stereographicEquatorialInput = [18d, 25d];
+        this.vanDerGrintenOverInput = [180.1d, 50d];
+        this.iseaPolarInverseInput = this.iseaPolarForward.Transform(this.iseaPolarInput);
         this.krovakInverseInput = [200d, 100d];
+        this.lagrangeInverseInput = this.lagrangeForward.Transform(this.lagrangeInput);
         this.laeaInput = laeaForward.Transform([15d, 20d]);
         this.loximuthalInverseInput = [200d, 100d];
         this.orthographicInput = orthographicForward.Transform([20d, 40d]);
@@ -200,6 +229,7 @@ public class ProjectionSinglePointBenchmarks
         this.stereographicPolarInverseInput = this.stereographicPolarForward.Transform(this.stereographicPolarInput);
         this.stereographicObliqueInverseInput = this.stereographicObliqueForward.Transform(this.stereographicObliqueInput);
         this.stereographicEquatorialInverseInput = this.stereographicEquatorialForward.Transform(this.stereographicEquatorialInput);
+        this.vanDerGrintenOverInverseInput = this.vanDerGrintenOverForward.Transform(this.vanDerGrintenOverInput);
     }
 
     /// <summary>
@@ -243,6 +273,20 @@ public class ProjectionSinglePointBenchmarks
     /// <returns>The projected coordinate pair.</returns>
     [Benchmark]
     public double[] TransformKrovakSinglePoint() => this.krovakForward.Transform(this.krovakInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for polar-oriented ISEA.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformIseaPolarSinglePoint() => this.iseaPolarForward.Transform(this.iseaPolarInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for spherical Lagrange using PROJ <c>lat_1</c> and <c>W</c>.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformLagrangeSinglePoint() => this.lagrangeForward.Transform(this.lagrangeInput);
 
     /// <summary>
     /// Measures single-point forward throughput for Loximuthal using the PROJ <c>lat_1</c> binding.
@@ -329,6 +373,13 @@ public class ProjectionSinglePointBenchmarks
     public double[] TransformStereographicEquatorialSinglePoint() => this.stereographicEquatorialForward.Transform(this.stereographicEquatorialInput);
 
     /// <summary>
+    /// Measures single-point forward throughput for van der Grinten with <c>+over</c>.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformVanDerGrintenOverSinglePoint() => this.vanDerGrintenOverForward.Transform(this.vanDerGrintenOverInput);
+
+    /// <summary>
     /// Measures single-point inverse throughput for spherical Lambert azimuthal equal area.
     /// </summary>
     /// <returns>The reconstructed geographic coordinate pair.</returns>
@@ -336,11 +387,25 @@ public class ProjectionSinglePointBenchmarks
     public double[] TransformLambertAzimuthalEqualAreaInverseSinglePoint() => this.laeaInverse.Transform(this.laeaInput);
 
     /// <summary>
+    /// Measures single-point inverse throughput for polar-oriented ISEA.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformIseaPolarInverseSinglePoint() => this.iseaPolarInverse.Transform(this.iseaPolarInverseInput);
+
+    /// <summary>
     /// Measures single-point inverse throughput for default-parameter Krovak.
     /// </summary>
     /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformKrovakInverseSinglePoint() => this.krovakInverse.Transform(this.krovakInverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for spherical Lagrange using PROJ <c>lat_1</c> and <c>W</c>.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformLagrangeInverseSinglePoint() => this.lagrangeInverse.Transform(this.lagrangeInverseInput);
 
     /// <summary>
     /// Measures single-point inverse throughput for Loximuthal using the PROJ <c>lat_1</c> binding.
@@ -432,6 +497,13 @@ public class ProjectionSinglePointBenchmarks
     /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformStereographicEquatorialInverseSinglePoint() => this.stereographicEquatorialInverse.Transform(this.stereographicEquatorialInverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for van der Grinten with <c>+over</c>.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformVanDerGrintenOverInverseSinglePoint() => this.vanDerGrintenOverInverse.Transform(this.vanDerGrintenOverInverseInput);
 
     private static void EnsureFinite(double[] coordinates)
     {
