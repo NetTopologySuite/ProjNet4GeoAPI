@@ -152,7 +152,7 @@ public class CoordinateSystemWktReaderWkt2Tests
             .ToDictionary(group => group.Key, group => group.Last().Wkt));
 
     /// <summary>
-    /// Provides WKT2 geodetic CRS examples copied from <c>spec\epsg\EPSG-v12_053-WKT.Zip</c>.
+    /// Provides WKT2 geodetic CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2Rows()
@@ -160,7 +160,7 @@ public class CoordinateSystemWktReaderWkt2Tests
         return
         [
             new TheoryDataRow<int, string>(4230, """GEOGCRS["ED50",DATUM["European Datum 1950",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6230]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4230]]"""),
-            new TheoryDataRow<int, string>(4267, """GEOGCRS["NAD27",DATUM["North American Datum 1927",ELLIPSOID["Clarke 1866",6378206.4,294.978698213898,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7008]],ID["EPSG",6267]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4267]]"""),
+            new TheoryDataRow<int, string>(4267, """GEOGCRS["NAD27",DATUM["North American Datum 1927",ELLIPSOID["Clarke 1866",6378206.4,294.978698213901,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7008]],ID["EPSG",6267]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4267]]"""),
             new TheoryDataRow<int, string>(4277, """GEOGCRS["OSGB36",DATUM["Ordnance Survey of Great Britain 1936",ELLIPSOID["Airy 1830",6377563.396,299.3249646,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7001]],ID["EPSG",6277]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4277]]"""),
             new TheoryDataRow<int, string>(4312, """GEOGCRS["MGI",DATUM["Militar-Geographische Institut",ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7004]],ID["EPSG",6312]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4312]]"""),
             new TheoryDataRow<int, string>(4314, """GEOGCRS["DHDN",DATUM["Deutsches Hauptdreiecksnetz",ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7004]],ID["EPSG",6314]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4314]]"""),
@@ -184,7 +184,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Provides datum-backed WKT2 projected CRS examples copied from <c>spec\epsg\EPSG-v12_053-WKT.Zip</c>.
+    /// Provides datum-backed WKT2 projected CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2ProjectedRows()
@@ -200,7 +200,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Provides WKT2 vertical CRS examples copied from <c>spec\epsg\EPSG-v12_053-WKT.Zip</c>.
+    /// Provides WKT2 vertical CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2VerticalRows()
@@ -214,7 +214,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Provides datum-backed WKT2 compound CRS examples copied from <c>spec\epsg\EPSG-v12_053-WKT.Zip</c>.
+    /// Provides datum-backed WKT2 compound CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2CompoundRows()

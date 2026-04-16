@@ -23,8 +23,8 @@ public class EpsgCatalogCoverageTests
             [EpsgCoordinateSystemKind.Geographic2D] = 900,
             [EpsgCoordinateSystemKind.Geocentric] = 252,
             [EpsgCoordinateSystemKind.Projected] = 5398,
-            [EpsgCoordinateSystemKind.Vertical] = 263,
-            [EpsgCoordinateSystemKind.Compound] = 368,
+            [EpsgCoordinateSystemKind.Vertical] = 265,
+            [EpsgCoordinateSystemKind.Compound] = 402,
         };
 
     private static readonly Lazy<List<CatalogCoordinateReference>> CatalogCoordinateReferences = new(GetCatalogCoordinateReferences);
