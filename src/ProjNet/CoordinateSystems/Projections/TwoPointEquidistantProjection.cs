@@ -57,9 +57,9 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
         this.Name = "Two_Point_Equidistant";
 
         double phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
-        double lam1 = DegreesToRadians(this.Parameters.GetParameterValue("lon_1"));
+        double lam1 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lon_1", 0d));
         double phi2 = DegreesToRadians(this.Parameters.GetParameterValue("lat_2", "standard_parallel_2"));
-        double lam2 = DegreesToRadians(this.Parameters.GetParameterValue("lon_2"));
+        double lam2 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lon_2", 0d));
 
         if (Math.Abs(phi1 - phi2) < Eps10 && Math.Abs(Adjust_lon(lam1 - lam2)) < Eps10)
         {

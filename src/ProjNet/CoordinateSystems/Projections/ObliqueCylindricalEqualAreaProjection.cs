@@ -53,7 +53,7 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
         if (this.Parameters.ContainsKey("alpha") || this.Parameters.ContainsKey("azimuth"))
         {
             double alpha = PI + DegreesToRadians(this.Parameters.GetOptionalParameterValue("alpha", this.Parameters.GetOptionalParameterValue("azimuth", 0d)));
-            double lonc = DegreesToRadians(this.Parameters.GetParameterValue("lonc", "longitude_of_center"));
+            double lonc = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lonc", this.Parameters.GetOptionalParameterValue("longitude_of_center", 0d)));
             Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
             lamP = Math.Atan2(-Math.Cos(alpha), -sinLatitudeOrigin * Math.Sin(alpha)) + lonc;
             phiP = Asinz(cosLatitudeOrigin * Math.Sin(alpha));
@@ -62,8 +62,8 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
         {
             double phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
             double phi2 = DegreesToRadians(this.Parameters.GetParameterValue("lat_2", "standard_parallel_2"));
-            double lam1 = DegreesToRadians(this.Parameters.GetParameterValue("lon_1"));
-            double lam2 = DegreesToRadians(this.Parameters.GetParameterValue("lon_2"));
+            double lam1 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lon_1", 0d));
+            double lam2 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lon_2", 0d));
 
             lamP = Math.Atan2(
                 (Math.Cos(phi1) * Math.Sin(phi2) * Math.Cos(lam1)) - (Math.Sin(phi1) * Math.Cos(phi2) * Math.Cos(lam2)),

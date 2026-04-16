@@ -27,7 +27,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.7, pp. 63-66.</seealso>
 internal class HotineObliqueMercatorProjection : MapProjection
 {
-    private readonly double azimuth;
+    private readonly bool noRotation;
     private readonly double sinP20;
     private readonly double cosP20;
     private readonly double bl;
@@ -38,8 +38,6 @@ internal class HotineObliqueMercatorProjection : MapProjection
     private readonly double cosgrid;
     private readonly double singam;
     private readonly double cosgam;
-    private readonly double sinaz;
-    private readonly double cosaz;
     private readonly double u;
     private readonly double vPoleNorth;
     private readonly double vPoleSouth;
@@ -64,20 +62,20 @@ internal class HotineObliqueMercatorProjection : MapProjection
         this.Authority = "EPSG";
         this.AuthorityCode = 9812;
         this.Name = "Hotine_Oblique_Mercator";
+        this.noRotation = this.Parameters.ContainsKey("no_rot");
 
-        this.azimuth = DegreesToRadians(this.Parameters.GetParameterValue("azimuth"));
-        double rectifiedGridAngle = DegreesToRadians(this.Parameters.GetParameterValue("rectified_grid_angle"));
-
+        double alpha = 0d;
+        double gamma0;
+        double rotationAngle;
         Sincos(this.latOrigin, out this.sinP20, out this.cosP20);
         double con = 1.0 - (this.es * Math.Pow(this.sinP20, 2));
         double com = Math.Sqrt(1.0 - this.es);
         this.bl = Math.Sqrt(1.0 + (this.es * Math.Pow(this.cosP20, 4.0) / (1.0 - this.es)));
         this.al = this.semiMajor * this.bl * this.scaleFactor * com / con;
 
-        double f = 1.0;
+        double fValue = 1.0;
         if (Math.Abs(this.latOrigin) < Epsln)
         {
-            // ts = 1.0;
             this.d = 1.0;
             this.el = 1.0;
         }
@@ -90,49 +88,132 @@ internal class HotineObliqueMercatorProjection : MapProjection
             {
                 if (this.latOrigin >= 0.0)
                 {
-                    f = this.d + Math.Sqrt((this.d * this.d) - 1.0);
+                    fValue = this.d + Math.Sqrt((this.d * this.d) - 1.0);
                 }
                 else
                 {
-                    f = this.d - Math.Sqrt((this.d * this.d) - 1.0);
+                    fValue = this.d - Math.Sqrt((this.d * this.d) - 1.0);
                 }
             }
             else
             {
-                f = this.d;
+                fValue = this.d;
             }
 
-            this.el = f * Math.Pow(ts, this.bl);
+            this.el = fValue * Math.Pow(ts, this.bl);
         }
 
-        double g = .5 * (f - (1.0 / f));
-        double gama = Asinz(Math.Sin(this.azimuth) / this.d);
-        this.Lon_origin -= Asinz(g * Math.Tan(gama)) / this.bl;
-        double arB = this.al / this.bl;
-        double halfGamma = .5 * gama;
-        this.vPoleNorth = arB * Math.Log(Math.Tan(FortPi - halfGamma));
-        this.vPoleSouth = arB * Math.Log(Math.Tan(FortPi + halfGamma));
-
-        con = Math.Abs(this.latOrigin);
-        if ((con > Epsln) && (Math.Abs(con - HalfPi) > Epsln))
+        bool hasAzimuth = this.Parameters.ContainsKey("alpha") || this.Parameters.ContainsKey("azimuth");
+        bool hasRotationAngle = this.Parameters.ContainsKey("gamma") || this.Parameters.ContainsKey("rectified_grid_angle");
+        if (hasAzimuth || hasRotationAngle)
         {
-            Sincos(gama, out this.singam, out this.cosgam);
-            Sincos(this.azimuth, out this.sinaz, out this.cosaz);
-            if (this.latOrigin >= 0)
+            alpha = DegreesToRadians(this.Parameters.GetOptionalParameterValue("alpha", this.Parameters.GetOptionalParameterValue("azimuth", 0d)));
+            rotationAngle = DegreesToRadians(this.Parameters.GetOptionalParameterValue("gamma", this.Parameters.GetOptionalParameterValue("rectified_grid_angle", RadiansToDegrees(alpha))));
+            if (Math.Abs(Math.Abs(this.latOrigin) - HalfPi) <= Eps7)
             {
-                this.u = (this.al / this.bl) * Math.Atan(Math.Sqrt((this.d * this.d) - 1.0) / this.cosaz);
+                ArgumentGuard.ThrowArgument("Invalid value for lat_0: |lat_0| should be < 90°", nameof(parameters));
+            }
+
+            if (hasAzimuth)
+            {
+                gamma0 = Asinz(Math.Sin(alpha) / this.d);
+                if (!hasRotationAngle)
+                {
+                    rotationAngle = alpha;
+                }
             }
             else
             {
-                this.u = -(this.al / this.bl) * Math.Atan(Math.Sqrt((this.d * this.d) - 1.0) / this.cosaz);
+                gamma0 = rotationAngle;
+                alpha = Asinz(this.d * Math.Sin(gamma0));
+            }
+
+            double g = 0.5 * (fValue - (1.0 / fValue));
+            this.Lon_origin -= Asinz(g * Math.Tan(gamma0)) / this.bl;
+        }
+        else
+        {
+            double phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
+            double phi2 = DegreesToRadians(this.Parameters.GetParameterValue("lat_2", "standard_parallel_2"));
+            double lam1 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lon_1", 0d));
+            double lam2 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lon_2", 0d));
+
+            if (Math.Abs(phi1) > HalfPi - Eps7)
+            {
+                ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be < 90°", nameof(parameters));
+            }
+
+            if (Math.Abs(phi2) > HalfPi - Eps7)
+            {
+                ArgumentGuard.ThrowArgument("Invalid value for lat_2: |lat_2| should be < 90°", nameof(parameters));
+            }
+
+            if (Math.Abs(phi1 - phi2) <= Eps7)
+            {
+                ArgumentGuard.ThrowArgument("Invalid value for lat_1/lat_2: lat_1 should be different from lat_2", nameof(parameters));
+            }
+
+            if (Math.Abs(phi1) <= Eps7)
+            {
+                ArgumentGuard.ThrowArgument("Invalid value for lat_1: lat_1 should be different from 0", nameof(parameters));
+            }
+
+            if (Math.Abs(Math.Abs(this.latOrigin) - HalfPi) <= Eps7)
+            {
+                ArgumentGuard.ThrowArgument("Invalid value for lat_0: |lat_0| should be < 90°", nameof(parameters));
+            }
+
+            double h = Math.Pow(Tsfnz(this.e, phi1, Math.Sin(phi1)), this.bl);
+            double l = Math.Pow(Tsfnz(this.e, phi2, Math.Sin(phi2)), this.bl);
+            double f = this.el / h;
+            double p = (l - h) / (l + h);
+            if (Math.Abs(p) <= Epsln)
+            {
+                ArgumentGuard.ThrowArgument("Invalid value for eccentricity", nameof(parameters));
+            }
+
+            double j = this.el * this.el;
+            j = (j - (l * h)) / (j + (l * h));
+            double lamDifference = lam1 - lam2;
+            if (lamDifference < -PI)
+            {
+                lam2 -= TwoPi;
+            }
+            else if (lamDifference > PI)
+            {
+                lam2 += TwoPi;
+            }
+
+            this.Lon_origin = Adjust_lon((0.5 * (lam1 + lam2)) - (Math.Atan(j * Math.Tan(0.5 * this.bl * (lam1 - lam2)) / p) / this.bl));
+            double denominator = f - (1.0 / f);
+            if (Math.Abs(denominator) <= Epsln)
+            {
+                ArgumentGuard.ThrowArgument("Invalid value for eccentricity", nameof(parameters));
+            }
+
+            gamma0 = Math.Atan(2.0 * Math.Sin(this.bl * Adjust_lon(lam1 - this.Lon_origin)) / denominator);
+            rotationAngle = alpha = Asinz(this.d * Math.Sin(gamma0));
+        }
+
+        Sincos(gamma0, out this.singam, out this.cosgam);
+        Sincos(rotationAngle, out this.singrid, out this.cosgrid);
+        double arB = this.al / this.bl;
+        if (!this.NaturalOriginOffsets)
+        {
+            this.u = Math.Abs(arB * Math.Atan(Math.Sqrt(Math.Max(0d, (this.d * this.d) - 1.0)) / Math.Cos(alpha)));
+            if (this.latOrigin < 0.0)
+            {
+                this.u = -this.u;
             }
         }
         else
         {
-            ArgumentGuard.ThrowArgument("Input data error", nameof(parameters));
+            this.u = 0d;
         }
 
-        Sincos(rectifiedGridAngle, out this.singrid, out this.cosgrid);
+        double halfGamma = 0.5 * gamma0;
+        this.vPoleNorth = arB * Math.Log(Math.Tan(FortPi - halfGamma));
+        this.vPoleSouth = arB * Math.Log(Math.Tan(FortPi + halfGamma));
     }
 
     private bool NaturalOriginOffsets
@@ -217,13 +298,21 @@ internal class HotineObliqueMercatorProjection : MapProjection
             throw new InvalidOperationException("Point projects into infinity");
         }
 
-        if (!this.NaturalOriginOffsets)
+        if (this.noRotation)
         {
-            us -= this.u;
+            lon = us;
+            lat = vs;
         }
+        else
+        {
+            if (!this.NaturalOriginOffsets)
+            {
+                us -= this.u;
+            }
 
-        lon = (vs * this.cosgrid) + (us * this.singrid);
-        lat = (us * this.cosgrid) - (vs * this.singrid);
+            lon = (vs * this.cosgrid) + (us * this.singrid);
+            lat = (us * this.cosgrid) - (vs * this.singrid);
+        }
     }
 
     /// <inheritdoc/>
@@ -231,11 +320,21 @@ internal class HotineObliqueMercatorProjection : MapProjection
     {
         // Inverse equations
         // -----------------
-        double vs = (x * this.cosgrid) - (y * this.singrid);
-        double us = (y * this.cosgrid) + (x * this.singrid);
-        if (!this.NaturalOriginOffsets)
+        double vs;
+        double us;
+        if (this.noRotation)
         {
-            us += this.u;
+            vs = y;
+            us = x;
+        }
+        else
+        {
+            vs = (x * this.cosgrid) - (y * this.singrid);
+            us = (y * this.cosgrid) + (x * this.singrid);
+            if (!this.NaturalOriginOffsets)
+            {
+                us += this.u;
+            }
         }
 
         double q = Math.Exp(-this.bl * vs / this.al);

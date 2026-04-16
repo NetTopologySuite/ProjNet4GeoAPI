@@ -183,6 +183,48 @@ public class ConicAndEqualAreaMiscProjectionTests
     }
 
     /// <summary>
+    /// Verifies <c>ocea</c> two-point mode defaults omitted longitudes to zero like PROJ.
+    /// </summary>
+    [Fact]
+    public void ObliqueCylindricalEqualAreaSupportsImplicitZeroLongitudesInTwoPointMode()
+    {
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildOceaTwoPointWithoutLongitudesWkt("ocea"));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
+
+        Assert.InRange(Math.Abs(projectedPoint[0] - 19994423.837934088d), 0d, 1e-3d);
+        Assert.InRange(Math.Abs(projectedPoint[1] - 223322.760576728d), 0d, 1e-6d);
+    }
+
+    /// <summary>
+    /// Verifies <c>ocea</c> alpha mode defaults an omitted <c>lonc</c> parameter to zero like PROJ.
+    /// </summary>
+    [Fact]
+    public void ObliqueCylindricalEqualAreaSupportsImplicitZeroLongitudeOfCenter()
+    {
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildOceaAlphaWithoutLoncWkt("ocea"));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
+
+        Assert.InRange(Math.Abs(projectedPoint[0] - 19994423.837934091687d), 0d, 1e-3d);
+        Assert.InRange(Math.Abs(projectedPoint[1] - 223322.760576728586d), 0d, 1e-6d);
+    }
+
+    /// <summary>
+    /// Verifies <c>tpeqd</c> defaults omitted control-point longitudes to zero like PROJ.
+    /// </summary>
+    [Fact]
+    public void TwoPointEquidistantSupportsImplicitZeroLongitudes()
+    {
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildTpeqdWithoutLongitudesWkt("tpeqd"));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
+
+        Assert.InRange(Math.Abs(projectedPoint[0] - -27845.882978485d), 0d, 1e-6d);
+        Assert.InRange(Math.Abs(projectedPoint[1] - -223362.430695260d), 0d, 1e-6d);
+    }
+
+    /// <summary>
     /// Verifies <c>tpeqd</c> rejects degenerate pole control points.
     /// </summary>
     [Fact]
@@ -270,6 +312,16 @@ public class ConicAndEqualAreaMiscProjectionTests
         return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}-alpha\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",45],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"alpha\",0],PARAMETER[\"lonc\",0],UNIT[\"metre\",1]]");
     }
 
+    private static string BuildOceaTwoPointWithoutLongitudesWkt(string projectionName)
+    {
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}-implicit-lon\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],UNIT[\"metre\",1]]");
+    }
+
+    private static string BuildOceaAlphaWithoutLoncWkt(string projectionName)
+    {
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}-implicit-lonc\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",45],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"alpha\",0],UNIT[\"metre\",1]]");
+    }
+
     private static string BuildOeaWkt(string projectionName)
     {
         return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"n\",1],PARAMETER[\"m\",2],PARAMETER[\"theta\",3],UNIT[\"metre\",1]]");
@@ -283,6 +335,11 @@ public class ConicAndEqualAreaMiscProjectionTests
     private static string BuildTpeqdWkt(string projectionName)
     {
         return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Grs80}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]");
+    }
+
+    private static string BuildTpeqdWithoutLongitudesWkt(string projectionName)
+    {
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}-implicit-lon\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],UNIT[\"metre\",1]]");
     }
 
     private static string BuildTpeqdDegenerateWkt()

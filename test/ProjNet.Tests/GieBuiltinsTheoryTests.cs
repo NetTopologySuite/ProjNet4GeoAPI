@@ -161,7 +161,7 @@ public class GieBuiltinsTheoryTests
         ["moll"] = "moll",
         ["natearth"] = "natearth",
         ["natearth2"] = "natearth2",
-        ["omerc"] = "oblique_mercator",
+        ["omerc"] = "hotine_oblique_mercator",
         ["ortho"] = "orthographic",
         ["pconic"] = "perspective_conic",
         ["peirce_q"] = "peirce_quincuncial",
@@ -2211,6 +2211,11 @@ public class GieBuiltinsTheoryTests
         if (args.ContainsKey("no_cut"))
         {
             ReplaceParameter(parameters, "no_cut", 1d);
+        }
+
+        if (args.ContainsKey("no_rot"))
+        {
+            ReplaceParameter(parameters, "no_rot", 1d);
         }
 
         if (args.ContainsKey("ns") || args.ContainsKey("noskew"))

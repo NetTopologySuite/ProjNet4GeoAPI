@@ -1630,6 +1630,135 @@ public class GieBuiltinsRegressionTests
         Assert.NotEmpty(firstCase.Operation);
     }
 
+    /// <summary>
+    /// Verifies that the former <c>ocea</c> two-point creation skip now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardOceaImplicitZeroLongitudesCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 5087,
+            Operation = "+proj=ocea +a=6400000 +lat_1=0.5 +lat_2=2",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [19994423.837934088d, 223322.760576728d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former <c>ocea</c> alpha-mode creation skip now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardOceaImplicitLoncCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 5118,
+            Operation = "+proj=ocea +a=6400000 +lat_0=45 +alpha=0",
+            ToleranceValue = 1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [19994423.837934091687d, 223322.760576728586d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former <c>tpeqd</c> creation skip with implicit zero longitudes now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardTpeqdImplicitZeroLongitudesCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 7570,
+            Operation = "+proj=tpeqd +a=6400000 +lat_1=0.5 +lat_2=2",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [-27845.882978485d, -223362.430695260d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former two-point <c>omerc</c> creation skip now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardOmercTwoPointCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 5227,
+            Operation = "+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [222650.796885261d, 110642.229314984d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former <c>omerc +no_rot</c> creation skip now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardOmercNoRotCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 5250,
+            Operation = "+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2 +no_rot",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [110642.229314984d, 222650.796885261d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former alpha-mode <c>omerc</c> creation skip now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardOmercImplicitGammaCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 5290,
+            Operation = "+proj=omerc +a=6400000 +lat_0=45 +alpha=35.264383770917604",
+            ToleranceValue = 1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [-3569.825230822232d, -5093592.310871849768d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    private static void AssertCaseWithinToleranceDoesNotSkip(GieCase testCase)
+    {
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
     private static bool TryIsRuntimeOperationSupported(string operation)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("TryIsRuntimeOperationSupported", BindingFlags.Static | BindingFlags.NonPublic)

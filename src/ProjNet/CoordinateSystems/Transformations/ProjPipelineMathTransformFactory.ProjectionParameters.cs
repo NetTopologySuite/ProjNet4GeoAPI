@@ -145,10 +145,16 @@ internal static partial class ProjPipelineMathTransformFactory
             case "KROVAK":
             case "MOD_KROVAK":
                 return TryApplyKrovakProjectionParameters(args, parameters, out skipReason);
+            case "OMERC":
+                return TryApplyObliqueMercatorProjectionParameters(args, parameters, out skipReason);
+            case "OCEA":
+                return TryApplyObliqueCylindricalEqualAreaProjectionParameters(args, parameters, out skipReason);
             case "SPILHAUS":
                 return TryApplySpilhausProjectionParameters(args, parameters, out skipReason);
             case "AIRY":
                 return TryApplyAiryProjectionParameters(args, parameters, out skipReason);
+            case "TPEQD":
+                return TryApplyTwoPointEquidistantProjectionParameters(args, parameters, out skipReason);
             case "URM5":
                 return TryApplyUrm5ProjectionParameters(args, parameters, out skipReason);
             case "UTM":
@@ -283,6 +289,38 @@ internal static partial class ProjPipelineMathTransformFactory
             && TryApplyOptionalProjectionParameter(args, "rot", "rot", parameters, out skipReason);
     }
 
+    private static bool TryApplyObliqueMercatorProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        if (!TryApplyOptionalProjectionParameter(args, "alpha", "alpha", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "gamma", "gamma", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lon_1", "lon_1", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lon_2", "lon_2", parameters, out skipReason))
+        {
+            return false;
+        }
+
+        if (args.ContainsKey("no_rot"))
+        {
+            SetOrAddProjectionParameter(parameters, "no_rot", 1d);
+        }
+
+        skipReason = null;
+        return true;
+    }
+
+    private static bool TryApplyObliqueCylindricalEqualAreaProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        return TryApplyOptionalProjectionParameter(args, "alpha", "alpha", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "lon_1", "lon_1", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "lon_2", "lon_2", parameters, out skipReason);
+    }
+
     private static bool TryApplyAiryProjectionParameters(
         Dictionary<string, string> args,
         List<ProjectionParameter> parameters,
@@ -321,6 +359,15 @@ internal static partial class ProjPipelineMathTransformFactory
         SetOrAddProjectionParameter(parameters, "n", n);
         return TryApplyOptionalProjectionParameter(args, "q", "q", parameters, out skipReason)
             && TryApplyOptionalProjectionParameter(args, "alpha", "alpha", parameters, out skipReason);
+    }
+
+    private static bool TryApplyTwoPointEquidistantProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        return TryApplyOptionalProjectionParameter(args, "lon_1", "lon_1", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "lon_2", "lon_2", parameters, out skipReason);
     }
 
     private static bool TryApplyUtmProjectionParameters(

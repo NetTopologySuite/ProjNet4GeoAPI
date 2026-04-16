@@ -123,7 +123,7 @@ public partial class ProjectionsRegistry
 
         Register("cass", typeof(CassiniSoldnerProjection));
         Register("cassini_soldner", typeof(CassiniSoldnerProjection));
-        Register("omerc", typeof(ObliqueMercatorProjection));
+        Register("omerc", typeof(HotineObliqueMercatorProjection));
         Register("hotine_oblique_mercator", typeof(HotineObliqueMercatorProjection));
         Register("hotine_oblique_mercator_azimuth_center", typeof(HotineObliqueMercatorProjection));
         Register("oblique_mercator", typeof(ObliqueMercatorProjection));
