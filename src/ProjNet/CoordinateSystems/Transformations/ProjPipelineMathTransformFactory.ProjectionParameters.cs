@@ -142,6 +142,8 @@ internal static partial class ProjPipelineMathTransformFactory
                 return TryApplyAiroceanProjectionParameters(args, parameters, out skipReason);
             case "PEIRCE_Q":
                 return TryApplyPeirceProjectionParameters(args, parameters, out skipReason);
+            case "HEALPIX":
+                return TryApplyHealpixProjectionParameters(args, parameters, out skipReason);
             case "KROVAK":
             case "MOD_KROVAK":
                 return TryApplyKrovakProjectionParameters(args, parameters, out skipReason);
@@ -157,6 +159,10 @@ internal static partial class ProjPipelineMathTransformFactory
                 return TryApplySpilhausProjectionParameters(args, parameters, out skipReason);
             case "AIRY":
                 return TryApplyAiryProjectionParameters(args, parameters, out skipReason);
+            case "RHEALPIX":
+                return TryApplyRhealpixProjectionParameters(args, parameters, out skipReason);
+            case "S2":
+                return TryApplyS2ProjectionParameters(args, parameters, out skipReason);
             case "TPEQD":
                 return TryApplyTwoPointEquidistantProjectionParameters(args, parameters, out skipReason);
             case "URM5":
@@ -237,6 +243,57 @@ internal static partial class ProjPipelineMathTransformFactory
 
         return TryApplyOptionalProjectionParameter(args, "scrollx", "scrollx", parameters, out skipReason)
             && TryApplyOptionalProjectionParameter(args, "scrolly", "scrolly", parameters, out skipReason);
+    }
+
+    private static bool TryApplyHealpixProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        return TryApplyOptionalProjectionParameter(args, "rot_xy", "rot_xy", parameters, out skipReason);
+    }
+
+    private static bool TryApplyRhealpixProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        SetOrAddProjectionParameter(parameters, "rhealpix_mode", 1d);
+        if (!TryResolveIndexedQuadrant(args, "north_square", out double northSquare, out skipReason)
+            || !TryResolveIndexedQuadrant(args, "south_square", out double southSquare, out skipReason))
+        {
+            return false;
+        }
+
+        SetOrAddProjectionParameter(parameters, "north_square", northSquare);
+        SetOrAddProjectionParameter(parameters, "south_square", southSquare);
+        return true;
+    }
+
+    private static bool TryApplyS2ProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (!args.TryGetValue("uv_to_st", out string? token) || string.IsNullOrWhiteSpace(token))
+        {
+            args.TryGetValue("uvtost", out token);
+        }
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return true;
+        }
+
+        if (!TryResolveS2ProjectionTypeCode(token, out double modeCode))
+        {
+            skipReason = "Invalid value for +UVtoST on s2 step.";
+            return false;
+        }
+
+        SetOrAddProjectionParameter(parameters, "uv_to_st", modeCode);
+        return true;
     }
 
     private static bool TryApplyKrovakProjectionParameters(
@@ -477,6 +534,74 @@ internal static partial class ProjPipelineMathTransformFactory
         };
 
         return !double.IsNaN(shapeCode);
+    }
+
+    private static bool TryResolveIndexedQuadrant(
+        Dictionary<string, string> args,
+        string key,
+        out double value,
+        out string? skipReason)
+    {
+        value = 0d;
+        skipReason = null;
+        if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
+        {
+            return true;
+        }
+
+        if (!SpanParseUtility.TryParseFiniteDouble(token, out double rawValue))
+        {
+            skipReason = $"Invalid value for +{key}.";
+            return false;
+        }
+
+        int quadrant = (int)Math.Round(rawValue);
+        if (Math.Abs(rawValue - quadrant) > 1e-10d || quadrant < 0 || quadrant > 3)
+        {
+            skipReason = $"Invalid value for +{key}.";
+            return false;
+        }
+
+        value = quadrant;
+        return true;
+    }
+
+    private static bool TryResolveS2ProjectionTypeCode(string token, out double modeCode)
+    {
+        modeCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (SpanParseUtility.TryParseFiniteDouble(normalized, out double rawValue))
+        {
+            int mode = (int)Math.Round(rawValue);
+            if (Math.Abs(rawValue - mode) > 1e-10d)
+            {
+                return false;
+            }
+
+            if (mode < 0 || mode > 3)
+            {
+                return false;
+            }
+
+            modeCode = mode;
+            return true;
+        }
+
+        modeCode = normalized.ToUpperInvariant() switch
+        {
+            "LINEAR" => 0d,
+            "QUADRATIC" => 1d,
+            "TANGENT" => 2d,
+            "NONE" => 3d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(modeCode);
     }
 
     private static bool TryResolveProjectionUnitFactor(

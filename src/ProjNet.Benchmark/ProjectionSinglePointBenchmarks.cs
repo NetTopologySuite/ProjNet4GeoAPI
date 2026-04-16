@@ -25,6 +25,9 @@ public class ProjectionSinglePointBenchmarks
     private MathTransform mercatorForward = null!;
     private MathTransform nzmgForward = null!;
     private MathTransform orthographicLocalForward = null!;
+    private MathTransform s2Forward = null!;
+    private MathTransform healpixRotatedForward = null!;
+    private MathTransform rhealpixForward = null!;
     private MathTransform transverseMercatorExactForward = null!;
     private MathTransform transverseMercatorApproxForward = null!;
     private MathTransform stereographicPolarForward = null!;
@@ -37,6 +40,9 @@ public class ProjectionSinglePointBenchmarks
     private MathTransform loximuthalInverse = null!;
     private MathTransform mercatorInverse = null!;
     private MathTransform nzmgInverse = null!;
+    private MathTransform s2Inverse = null!;
+    private MathTransform healpixRotatedInverse = null!;
+    private MathTransform rhealpixInverse = null!;
     private MathTransform transverseMercatorExactInverse = null!;
     private MathTransform transverseMercatorApproxInverse = null!;
     private MathTransform stereographicPolarInverse = null!;
@@ -52,6 +58,9 @@ public class ProjectionSinglePointBenchmarks
     private double[] mercatorInput = null!;
     private double[] nzmgInput = null!;
     private double[] orthographicLocalInput = null!;
+    private double[] s2Input = null!;
+    private double[] healpixRotatedInput = null!;
+    private double[] rhealpixInput = null!;
     private double[] transverseMercatorInput = null!;
     private double[] stereographicPolarInput = null!;
     private double[] stereographicObliqueInput = null!;
@@ -63,6 +72,9 @@ public class ProjectionSinglePointBenchmarks
     private double[] robinsonInput = null!;
     private double[] mercatorInverseInput = null!;
     private double[] nzmgInverseInput = null!;
+    private double[] s2InverseInput = null!;
+    private double[] healpixRotatedInverseInput = null!;
+    private double[] rhealpixInverseInput = null!;
     private double[] transverseMercatorExactInverseInput = null!;
     private double[] transverseMercatorApproxInverseInput = null!;
     private double[] stereographicPolarInverseInput = null!;
@@ -87,6 +99,9 @@ public class ProjectionSinglePointBenchmarks
         EnsureFinite(benchmark.TransformMercatorSinglePoint());
         EnsureFinite(benchmark.TransformNzmgSinglePoint());
         EnsureFinite(benchmark.TransformOrthographicLocalSinglePoint());
+        EnsureFinite(benchmark.TransformS2SinglePoint());
+        EnsureFinite(benchmark.TransformHealpixRotatedSinglePoint());
+        EnsureFinite(benchmark.TransformRhealpixSinglePoint());
         EnsureFinite(benchmark.TransformTransverseMercatorExactSinglePoint());
         EnsureFinite(benchmark.TransformTransverseMercatorApproxSinglePoint());
         EnsureFinite(benchmark.TransformStereographicPolarSinglePoint());
@@ -99,6 +114,9 @@ public class ProjectionSinglePointBenchmarks
         EnsureFinite(benchmark.TransformRobinsonInverseSinglePoint());
         EnsureFinite(benchmark.TransformMercatorInverseSinglePoint());
         EnsureFinite(benchmark.TransformNzmgInverseSinglePoint());
+        EnsureFinite(benchmark.TransformS2InverseSinglePoint());
+        EnsureFinite(benchmark.TransformHealpixRotatedInverseSinglePoint());
+        EnsureFinite(benchmark.TransformRhealpixInverseSinglePoint());
         EnsureFinite(benchmark.TransformTransverseMercatorExactInverseSinglePoint());
         EnsureFinite(benchmark.TransformTransverseMercatorApproxInverseSinglePoint());
         EnsureFinite(benchmark.TransformStereographicPolarInverseSinglePoint());
@@ -122,6 +140,9 @@ public class ProjectionSinglePointBenchmarks
         this.mercatorForward = BenchmarkPipelineTransformFactory.Create("+proj=merc +ellps=GRS80");
         this.nzmgForward = BenchmarkPipelineTransformFactory.Create("+proj=nzmg +ellps=GRS80");
         this.orthographicLocalForward = BenchmarkPipelineTransformFactory.Create("+proj=ortho +lat_0=37.628969166666664 +lon_0=-122.39394166666668 +k_0=0.9999968 +alpha=27.7927777777777 +ellps=GRS80");
+        this.s2Forward = BenchmarkPipelineTransformFactory.Create("+proj=s2 +ellps=WGS84 +lat_0=90 +UVtoST=tangent");
+        this.healpixRotatedForward = BenchmarkPipelineTransformFactory.Create("+proj=healpix +R=6400000 +rot_xy=42");
+        this.rhealpixForward = BenchmarkPipelineTransformFactory.Create("+proj=rhealpix +south_square=2 +north_square=3 +ellps=WGS84");
         this.transverseMercatorExactForward = BenchmarkPipelineTransformFactory.Create("+proj=tmerc +ellps=GRS80");
         this.transverseMercatorApproxForward = BenchmarkPipelineTransformFactory.Create("+proj=tmerc +ellps=GRS80 +approx");
         this.stereographicPolarForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=90 +lat_ts=70");
@@ -139,6 +160,9 @@ public class ProjectionSinglePointBenchmarks
         this.robinsonInverse = robinsonForward.Inverse();
         this.mercatorInverse = this.mercatorForward.Inverse();
         this.nzmgInverse = this.nzmgForward.Inverse();
+        this.s2Inverse = this.s2Forward.Inverse();
+        this.healpixRotatedInverse = this.healpixRotatedForward.Inverse();
+        this.rhealpixInverse = this.rhealpixForward.Inverse();
         this.transverseMercatorExactInverse = this.transverseMercatorExactForward.Inverse();
         this.transverseMercatorApproxInverse = this.transverseMercatorApproxForward.Inverse();
         this.stereographicPolarInverse = this.stereographicPolarForward.Inverse();
@@ -154,6 +178,9 @@ public class ProjectionSinglePointBenchmarks
         this.mercatorInput = [18d, -85d];
         this.nzmgInput = [2d, 1d];
         this.orthographicLocalInput = [-122.3846388888889d, 37.62607694444444d];
+        this.s2Input = [20d, 70.12337013762532d];
+        this.healpixRotatedInput = [2d, 1d];
+        this.rhealpixInput = [45d, 50d];
         this.transverseMercatorInput = [44.69d, 35.37d];
         this.stereographicPolarInput = [15d, 80d];
         this.stereographicObliqueInput = [12d, 50d];
@@ -165,6 +192,9 @@ public class ProjectionSinglePointBenchmarks
         this.robinsonInput = robinsonForward.Transform([30d, 12d]);
         this.mercatorInverseInput = this.mercatorForward.Transform(this.mercatorInput);
         this.nzmgInverseInput = [200000d, 100000d];
+        this.s2InverseInput = [0.29020309743436806d, 0.4211558922141421d];
+        this.healpixRotatedInverseInput = this.healpixRotatedForward.Transform(this.healpixRotatedInput);
+        this.rhealpixInverseInput = this.rhealpixForward.Transform(this.rhealpixInput);
         this.transverseMercatorExactInverseInput = this.transverseMercatorExactForward.Transform(this.transverseMercatorInput);
         this.transverseMercatorApproxInverseInput = this.transverseMercatorApproxForward.Transform(this.transverseMercatorInput);
         this.stereographicPolarInverseInput = this.stereographicPolarForward.Transform(this.stereographicPolarInput);
@@ -241,6 +271,27 @@ public class ProjectionSinglePointBenchmarks
     /// <returns>The projected coordinate pair.</returns>
     [Benchmark]
     public double[] TransformOrthographicLocalSinglePoint() => this.orthographicLocalForward.Transform(this.orthographicLocalInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for <c>s2</c> using tangent UV-to-ST mapping.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformS2SinglePoint() => this.s2Forward.Transform(this.s2Input);
+
+    /// <summary>
+    /// Measures single-point forward throughput for rotated spherical HEALPix.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformHealpixRotatedSinglePoint() => this.healpixRotatedForward.Transform(this.healpixRotatedInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for ellipsoidal rHEALPix with explicit polar-square placement.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformRhealpixSinglePoint() => this.rhealpixForward.Transform(this.rhealpixInput);
 
     /// <summary>
     /// Measures single-point forward throughput for exact ellipsoidal transverse Mercator.
@@ -325,6 +376,27 @@ public class ProjectionSinglePointBenchmarks
     /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformNzmgInverseSinglePoint() => this.nzmgInverse.Transform(this.nzmgInverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for <c>s2</c> using tangent UV-to-ST mapping.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformS2InverseSinglePoint() => this.s2Inverse.Transform(this.s2InverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for rotated spherical HEALPix.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformHealpixRotatedInverseSinglePoint() => this.healpixRotatedInverse.Transform(this.healpixRotatedInverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for ellipsoidal rHEALPix with explicit polar-square placement.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformRhealpixInverseSinglePoint() => this.rhealpixInverse.Transform(this.rhealpixInverseInput);
 
     /// <summary>
     /// Measures single-point inverse throughput for exact ellipsoidal transverse Mercator.

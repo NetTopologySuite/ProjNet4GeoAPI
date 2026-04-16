@@ -2018,6 +2018,114 @@ public class GieBuiltinsRegressionTests
         AssertCaseWithinToleranceDoesNotSkip(testCase);
     }
 
+    /// <summary>
+    /// Verifies that the runtime <c>s2</c> path binds string <c>+UVtoST=</c> modes instead of silently falling back to the quadratic default.
+    /// </summary>
+    /// <param name="operation">Projection operation string.</param>
+    /// <param name="longitude">Input longitude degrees.</param>
+    /// <param name="latitude">Input latitude degrees.</param>
+    /// <param name="expectedX">Expected projected x coordinate.</param>
+    /// <param name="expectedY">Expected projected y coordinate.</param>
+    [Theory]
+    [InlineData("+proj=s2 +ellps=WGS84 +lat_0=0 +lon_0=0 +UVtoST=linear", 20d, 20.124006563576454d, 0.6819851171331012d, 0.6936645165744716d)]
+    [InlineData("+proj=s2 +ellps=WGS84 +lat_0=90 +UVtoST=tangent", 20d, 70.12337013762532d, 0.29020309743436806d, 0.4211558922141421d)]
+    [InlineData("+proj=s2 +ellps=WGS84 +lat_0=0 +lon_0=180 +UVtoST=none", 160d, 20.124006563576454d, -0.3873290331489431d, -0.3639702342662023d)]
+    public void TryCreateConversionTransformWithS2StringUvToStModesReturnsExpectedCoordinate(
+        string operation,
+        double longitude,
+        double latitude,
+        double expectedX,
+        double expectedY)
+    {
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, longitude, latitude);
+
+        Assert.InRange(Math.Abs(output[0] - expectedX), 0d, 1e-12d);
+        Assert.InRange(Math.Abs(output[1] - expectedY), 0d, 1e-12d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>s2</c> inverse path also honors string <c>+UVtoST=</c> modes.
+    /// </summary>
+    /// <param name="operation">Projection operation string.</param>
+    /// <param name="x">Input projected x coordinate.</param>
+    /// <param name="y">Input projected y coordinate.</param>
+    /// <param name="expectedLongitude">Expected longitude in degrees.</param>
+    /// <param name="expectedLatitude">Expected latitude in degrees.</param>
+    [Theory]
+    [InlineData("+proj=s2 +ellps=WGS84 +lat_0=0 +lon_0=0 +UVtoST=linear", 0.6819851171331012d, 0.6936645165744716d, 20d, 20.124006563576454d)]
+    [InlineData("+proj=s2 +ellps=WGS84 +lat_0=90 +UVtoST=tangent", 0.29020309743436806d, 0.4211558922141421d, 20d, 70.12337013762532d)]
+    [InlineData("+proj=s2 +ellps=WGS84 +lat_0=0 +lon_0=180 +UVtoST=none", -0.3873290331489431d, -0.3639702342662023d, 160d, 20.124006563576454d)]
+    public void TryCreateConversionTransformForDirectionWithS2StringUvToStModesReturnsExpectedCoordinate(
+        string operation,
+        double x,
+        double y,
+        double expectedLongitude,
+        double expectedLatitude)
+    {
+        bool created = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([x, y]);
+        Assert.InRange(Math.Abs(output[0] - expectedLongitude), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(output[1] - expectedLatitude), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>healpix</c> path applies the PROJ <c>rot_xy</c> parameter.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithRotatedHealpixReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=healpix +R=6400000 +lat_1=0.5 +lat_2=2 +rot_xy=42";
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, 2d, 1d);
+
+        Assert.InRange(Math.Abs(output[0] - 254069.735470912856d), 0d, 1e-6d);
+        Assert.InRange(Math.Abs(output[1] - -51696.237925639456d), 0d, 1e-6d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>healpix</c> inverse path undoes the PROJ <c>rot_xy</c> rotation.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformForDirectionWithRotatedHealpixReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=healpix +R=6400000 +lat_1=0.5 +lat_2=2 +rot_xy=42";
+        bool created = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([254069.735470912856d, -51696.237925639456d]);
+        Assert.InRange(Math.Abs(output[0] - 2d), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(output[1] - 1d), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>rhealpix</c> path combines polar caps using the configured north and south square indices.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithRhealpixPolarSquaresReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=rhealpix +south_square=2 +north_square=3 +ellps=WGS84";
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, 45d, 50d);
+
+        Assert.InRange(Math.Abs(output[0] - 10806592d), 0d, 0.75d);
+        Assert.InRange(Math.Abs(output[1] - 10007554d), 0d, 0.75d);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>rhealpix</c> inverse path disassembles polar squares back into the HEALPix cap layout.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformForDirectionWithRhealpixPolarSquaresReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=rhealpix +south_square=2 +north_square=3 +ellps=WGS84";
+        bool created = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([10806592d, 10007554d]);
+        Assert.InRange(Math.Abs(output[0] - 45d), 0d, 1e-5d);
+        Assert.InRange(Math.Abs(output[1] - 50d), 0d, 1e-5d);
+    }
+
     private static void AssertCaseWithinToleranceDoesNotSkip(GieCase testCase)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)

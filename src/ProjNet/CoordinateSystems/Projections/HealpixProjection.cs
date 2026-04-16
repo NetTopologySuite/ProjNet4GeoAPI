@@ -26,15 +26,19 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/HEALPix">Wikipedia: HEALPix.</seealso>
 internal sealed class HealpixProjection : MapProjection
 {
+    private const double CapEpsilon = 1e-15d;
     private static readonly double Phi0Limit = Math.Asin(ProjectionConstants.TwoThirds);
 
     private readonly double radius;
     private readonly double inverseRadius;
     private readonly bool isEllipsoidal;
+    private readonly bool isRhealpix;
     private readonly double oneEs;
     private readonly double qp;
     private readonly double[] apa;
     private readonly double rotationRadians;
+    private readonly int northSquare;
+    private readonly int southSquare;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HealpixProjection"/> class.
@@ -53,7 +57,10 @@ internal sealed class HealpixProjection : MapProjection
     public HealpixProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
-        this.Name = "HEALPix";
+        this.isRhealpix = this.Parameters.GetOptionalParameterValue("rhealpix_mode", 0d) > Eps10;
+        this.northSquare = ReadSquareIndex(this.Parameters, "north_square");
+        this.southSquare = ReadSquareIndex(this.Parameters, "south_square");
+        this.Name = this.isRhealpix ? "rHEALPix" : "HEALPix";
         this.rotationRadians = DegreesToRadians(this.Parameters.GetOptionalParameterValue("rot_xy", 0d));
         this.isEllipsoidal = this.es > 0d;
 
@@ -90,7 +97,14 @@ internal sealed class HealpixProjection : MapProjection
         double phi = this.isEllipsoidal ? this.GeographicToAuthalic(lat) : lat;
 
         ToHealpixSphere(lambda, phi, out double xUnit, out double yUnit);
-        Rotate(ref xUnit, ref yUnit, -this.rotationRadians);
+        if (this.isRhealpix)
+        {
+            CombineCaps(ref xUnit, ref yUnit, this.northSquare, this.southSquare, inverse: false);
+        }
+        else
+        {
+            Rotate(ref xUnit, ref yUnit, -this.rotationRadians);
+        }
 
         lon = this.radius * xUnit;
         lat = this.radius * yUnit;
@@ -102,7 +116,15 @@ internal sealed class HealpixProjection : MapProjection
         double xUnit = x * this.inverseRadius;
         double yUnit = y * this.inverseRadius;
 
-        Rotate(ref xUnit, ref yUnit, this.rotationRadians);
+        if (this.isRhealpix)
+        {
+            CombineCaps(ref xUnit, ref yUnit, this.northSquare, this.southSquare, inverse: true);
+        }
+        else
+        {
+            Rotate(ref xUnit, ref yUnit, this.rotationRadians);
+        }
+
         FromHealpixSphere(xUnit, yUnit, out double lambda, out double phiAuthalic);
 
         x = Adjust_lon(this.centralMeridian + lambda);
@@ -171,6 +193,208 @@ internal sealed class HealpixProjection : MapProjection
 
         lambda = -PI;
         phi = Sign(y) * HalfPi;
+    }
+
+    private static void CombineCaps(ref double x, ref double y, int northSquare, int southSquare, bool inverse)
+    {
+        GetCap(
+            x,
+            y,
+            northSquare,
+            southSquare,
+            inverse,
+            out bool isPolar,
+            out bool isNorth,
+            out int capNumber,
+            out double capX,
+            out double capY);
+        if (!isPolar)
+        {
+            return;
+        }
+
+        double deltaX = x - capX;
+        double deltaY = y - capY;
+        int pole = isNorth ? northSquare : southSquare;
+        int quarterTurns = inverse
+            ? (isNorth ? -(capNumber - pole) : capNumber - pole)
+            : (isNorth ? capNumber - pole : -(capNumber - pole));
+        RotateQuarterTurns(ref deltaX, ref deltaY, quarterTurns);
+
+        double anchorX = (-3d * FortPi) + ((inverse ? capNumber : pole) * HalfPi);
+        double anchorY = isNorth ? HalfPi : -HalfPi;
+        x = deltaX + anchorX;
+        y = deltaY + anchorY;
+    }
+
+    private static void GetCap(
+        double x,
+        double y,
+        int northSquare,
+        int southSquare,
+        bool inverse,
+        out bool isPolar,
+        out bool isNorth,
+        out int capNumber,
+        out double capX,
+        out double capY)
+    {
+        isPolar = false;
+        isNorth = false;
+        capNumber = 0;
+        capX = x;
+        capY = y;
+
+        if (!inverse)
+        {
+            if (y > FortPi)
+            {
+                isPolar = true;
+                isNorth = true;
+                capY = HalfPi;
+            }
+            else if (y < -FortPi)
+            {
+                isPolar = true;
+                capY = -HalfPi;
+            }
+            else
+            {
+                return;
+            }
+
+            if (x < -HalfPi)
+            {
+                capX = -3d * FortPi;
+                capNumber = 0;
+            }
+            else if (x < 0d)
+            {
+                capX = -FortPi;
+                capNumber = 1;
+            }
+            else if (x < HalfPi)
+            {
+                capX = FortPi;
+                capNumber = 2;
+            }
+            else
+            {
+                capX = 3d * FortPi;
+                capNumber = 3;
+            }
+
+            return;
+        }
+
+        double classificationX = x;
+        if (y > FortPi)
+        {
+            isPolar = true;
+            isNorth = true;
+            capX = (-3d * FortPi) + (northSquare * HalfPi);
+            capY = HalfPi;
+            classificationX -= northSquare * HalfPi;
+        }
+        else if (y < -FortPi)
+        {
+            isPolar = true;
+            capX = (-3d * FortPi) + (southSquare * HalfPi);
+            capY = -HalfPi;
+            classificationX -= southSquare * HalfPi;
+        }
+        else
+        {
+            return;
+        }
+
+        if (isNorth)
+        {
+            if (y >= -classificationX - FortPi - CapEpsilon && y < classificationX + (5d * FortPi) - CapEpsilon)
+            {
+                capNumber = (northSquare + 1) % 4;
+                return;
+            }
+
+            if (y > -classificationX - FortPi + CapEpsilon && y >= classificationX + (5d * FortPi) - CapEpsilon)
+            {
+                capNumber = (northSquare + 2) % 4;
+                return;
+            }
+
+            if (y <= -classificationX - FortPi + CapEpsilon && y > classificationX + (5d * FortPi) + CapEpsilon)
+            {
+                capNumber = (northSquare + 3) % 4;
+                return;
+            }
+
+            capNumber = northSquare;
+            return;
+        }
+
+        if (y <= classificationX + FortPi + CapEpsilon && y > -classificationX - (5d * FortPi) + CapEpsilon)
+        {
+            capNumber = (southSquare + 1) % 4;
+            return;
+        }
+
+        if (y < classificationX + FortPi - CapEpsilon && y <= -classificationX - (5d * FortPi) + CapEpsilon)
+        {
+            capNumber = (southSquare + 2) % 4;
+            return;
+        }
+
+        if (y >= classificationX + FortPi - CapEpsilon && y < -classificationX - (5d * FortPi) - CapEpsilon)
+        {
+            capNumber = (southSquare + 3) % 4;
+            return;
+        }
+
+        capNumber = southSquare;
+    }
+
+    private static int ReadSquareIndex(ProjectionParameterSet parameters, string name)
+    {
+        double value = parameters.GetOptionalParameterValue(name, 0d);
+        if (double.IsNaN(value) || double.IsInfinity(value))
+        {
+            ArgumentGuard.ThrowArgument($"Invalid value for {name} parameter: expected an integer between 0 and 3.", nameof(parameters));
+        }
+
+        int square = (int)Math.Round(value);
+        if (Math.Abs(value - square) > Eps10 || square < 0 || square > 3)
+        {
+            return ArgumentGuard.ThrowArgument<int>($"Invalid value for {name} parameter: expected an integer between 0 and 3.", nameof(parameters));
+        }
+
+        return square;
+    }
+
+    private static void RotateQuarterTurns(ref double x, ref double y, int quarterTurns)
+    {
+        int normalized = quarterTurns % 4;
+        if (normalized < 0)
+        {
+            normalized += 4;
+        }
+
+        double originalX = x;
+        double originalY = y;
+        switch (normalized)
+        {
+            case 1:
+                x = -originalY;
+                y = originalX;
+                break;
+            case 2:
+                x = -originalX;
+                y = -originalY;
+                break;
+            case 3:
+                x = originalY;
+                y = -originalX;
+                break;
+        }
     }
 
     private static void Rotate(ref double x, ref double y, double angle)

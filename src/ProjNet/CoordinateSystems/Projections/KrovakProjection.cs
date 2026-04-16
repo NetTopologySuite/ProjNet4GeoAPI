@@ -61,16 +61,6 @@ internal class KrovakProjection : MapProjection
     private readonly double reciprocSemiMajor;
     private readonly bool eastingNorthing;
 
-    private static double ClampToUnit(double value)
-    {
-        if (value > 1d)
-        {
-            return 1d;
-        }
-
-        return value < -1d ? -1d : value;
-    }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="KrovakProjection"/> class.
     /// </summary>
@@ -133,6 +123,16 @@ internal class KrovakProjection : MapProjection
         this.rop = this.ro0 * Math.Pow(this.tanS2, this.n);
 
         this.reciprocSemiMajor = 1 / this.semiMajor;
+    }
+
+    private static double ClampToUnit(double value)
+    {
+        if (value > 1d)
+        {
+            return 1d;
+        }
+
+        return value < -1d ? -1d : value;
     }
 
     /// <inheritdoc />

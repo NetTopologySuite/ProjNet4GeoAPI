@@ -2388,16 +2388,6 @@ public class GieBuiltinsTheoryTests
             {
                 return true;
             }
-
-            if (TryGetDouble(args, "north_square", out double northSquare) && Math.Abs(northSquare) > 1e-12d)
-            {
-                return true;
-            }
-
-            if (TryGetDouble(args, "south_square", out double southSquare) && Math.Abs(southSquare) > 1e-12d)
-            {
-                return true;
-            }
         }
 
         return false;
