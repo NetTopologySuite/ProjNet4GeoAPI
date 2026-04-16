@@ -74,36 +74,42 @@ public class ProjectionSinglePointBenchmarks
     /// <summary>
     /// Measures single-point forward throughput for the Guyou projection.
     /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
     [Benchmark(Baseline = true)]
     public double[] TransformGuyouSinglePoint() => this.guyouForward.Transform(this.guyouInput);
 
     /// <summary>
     /// Measures single-point forward throughput for the Peirce quincuncial projection.
     /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
     [Benchmark]
     public double[] TransformPeirceQuincuncialSinglePoint() => this.peirceForward.Transform(this.peirceInput);
 
     /// <summary>
     /// Measures single-point forward throughput for the Adams hemisphere-in-a-square projection.
     /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
     [Benchmark]
     public double[] TransformAdamsHemisphereSinglePoint() => this.adamsHemisphereForward.Transform(this.adamsHemisphereInput);
 
     /// <summary>
     /// Measures single-point inverse throughput for spherical Lambert azimuthal equal area.
     /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformLambertAzimuthalEqualAreaInverseSinglePoint() => this.laeaInverse.Transform(this.laeaInput);
 
     /// <summary>
     /// Measures single-point inverse throughput for oblique ellipsoidal Orthographic.
     /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformOrthographicInverseSinglePoint() => this.orthographicInverse.Transform(this.orthographicInput);
 
     /// <summary>
     /// Measures single-point inverse throughput for Robinson.
     /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformRobinsonInverseSinglePoint() => this.robinsonInverse.Transform(this.robinsonInput);
 

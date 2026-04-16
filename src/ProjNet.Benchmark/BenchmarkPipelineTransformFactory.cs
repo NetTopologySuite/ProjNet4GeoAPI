@@ -7,10 +7,18 @@ using System;
 using System.Reflection;
 using ProjNet.CoordinateSystems.Transformations;
 
+/// <summary>
+/// Creates pipeline transforms for benchmark scenarios by calling the internal runtime pipeline factory.
+/// </summary>
 internal static class BenchmarkPipelineTransformFactory
 {
     private static readonly MethodInfo CreatePipelineTransformMethod = ResolveCreatePipelineTransformMethod();
 
+    /// <summary>
+    /// Creates a runtime pipeline transform for the supplied PROJ operation string.
+    /// </summary>
+    /// <param name="operation">The PROJ pipeline or single-step operation string to resolve.</param>
+    /// <returns>The created math transform.</returns>
     public static MathTransform Create(string operation)
     {
         ArgumentNullException.ThrowIfNull(operation);

@@ -19,6 +19,10 @@ using Xunit;
 /// </summary>
 public class PostGisSpatialRefSysTableParserTests
 {
+    private const string AppSettingsFileName = "appsettings.json";
+    private const string ConnectionStringEnvironmentVariableName = "PROJNET_POSTGIS_CONNECTION";
+    private const string MissingConnectionSkipReason = "No PostGIS connection string provided or configured connection string is invalid. Set PROJNET_POSTGIS_CONNECTION or add appsettings.json with ConnectionString.";
+
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new(() => new CoordinateSystemFactory());
 
@@ -36,42 +40,18 @@ public class PostGisSpatialRefSysTableParserTests
                 return PostGisSpatialRefSysTableParserTests.connectionString;
             }
 
-            if (!File.Exists("appsettings.json"))
+            foreach (string candidate in GetConfiguredConnectionStrings())
             {
-                return null;
-            }
-
-            string? connStr;
-            using (FileStream fs = File.OpenRead("appsettings.json"))
-            using (var doc = JsonDocument.Parse(fs))
-            {
-                if (!doc.RootElement.TryGetProperty(nameof(ConnectionString), out JsonElement connElement))
+                if (!TryValidateConnectionString(candidate))
                 {
-                    return null;
+                    continue;
                 }
 
-                connStr = connElement.GetString();
+                PostGisSpatialRefSysTableParserTests.connectionString = candidate;
+                return PostGisSpatialRefSysTableParserTests.connectionString;
             }
 
-            if (string.IsNullOrWhiteSpace(connStr))
-            {
-                return null;
-            }
-
-            try
-            {
-                using (var cn = new NpgsqlConnection(connStr))
-                {
-                    cn.Open();
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            PostGisSpatialRefSysTableParserTests.connectionString = connStr;
-            return PostGisSpatialRefSysTableParserTests.connectionString;
+            return null;
         }
     }
 
@@ -83,7 +63,7 @@ public class PostGisSpatialRefSysTableParserTests
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))
         {
-            Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
+            Xunit.Assert.Skip(MissingConnectionSkipReason);
         }
 
         using (var cn = new NpgsqlConnection(ConnectionString))
@@ -137,7 +117,7 @@ public class PostGisSpatialRefSysTableParserTests
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))
         {
-            Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
+            Xunit.Assert.Skip(MissingConnectionSkipReason);
         }
 
         string outputPath = GetTrackedTestFilePath("SRID.csv");
@@ -223,6 +203,85 @@ public class PostGisSpatialRefSysTableParserTests
         CoordinateSystem parsed = CreateRequiredCoordinateSystem(customWkt);
 
         Assert.Equal(customWkt, GetTrackedSridCsvWkt(999999, customWkt, parsed));
+    }
+
+    private static IEnumerable<string> GetConfiguredConnectionStrings()
+    {
+        string? environmentConnectionString = Environment.GetEnvironmentVariable(ConnectionStringEnvironmentVariableName);
+        if (!string.IsNullOrWhiteSpace(environmentConnectionString))
+        {
+            yield return environmentConnectionString;
+        }
+
+        string? appSettingsConnectionString = TryReadAppSettingsConnectionString();
+        if (!string.IsNullOrWhiteSpace(appSettingsConnectionString)
+            && !string.Equals(appSettingsConnectionString, environmentConnectionString, StringComparison.Ordinal))
+        {
+            yield return appSettingsConnectionString;
+        }
+    }
+
+    private static string? TryReadAppSettingsConnectionString()
+    {
+        if (!File.Exists(AppSettingsFileName))
+        {
+            return null;
+        }
+
+        using (FileStream fs = File.OpenRead(AppSettingsFileName))
+        using (var doc = JsonDocument.Parse(fs))
+        {
+            if (doc.RootElement.TryGetProperty(nameof(ConnectionString), out JsonElement connElement))
+            {
+                string? connectionStringValue = connElement.GetString();
+                if (!string.IsNullOrWhiteSpace(connectionStringValue))
+                {
+                    return connectionStringValue;
+                }
+            }
+
+            if (doc.RootElement.TryGetProperty("ConnectionStrings", out JsonElement connectionStringsElement)
+                && connectionStringsElement.ValueKind == JsonValueKind.Object
+                && connectionStringsElement.TryGetProperty("PostGisSpatialRefSys", out JsonElement namedConnectionElement))
+            {
+                string? connectionStringValue = namedConnectionElement.GetString();
+                if (!string.IsNullOrWhiteSpace(connectionStringValue))
+                {
+                    return connectionStringValue;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private static bool TryValidateConnectionString(string candidate)
+    {
+        try
+        {
+            using (var connection = new NpgsqlConnection(candidate))
+            {
+                connection.Open();
+            }
+
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+        catch (FormatException)
+        {
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
+        catch (NpgsqlException)
+        {
+            return false;
+        }
     }
 
     private static bool ShouldIncludeInTrackedSridCsv(CoordinateSystem coordinateSystem)
