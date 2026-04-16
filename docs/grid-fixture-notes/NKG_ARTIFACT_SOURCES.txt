@@ -1,15 +1,15 @@
 NKG builtins test artifacts
 ===========================
 
-All repository paths in this note are relative to the repository root.
+All repository paths in this note are relative to this repository root.
 
 These files are vendored locally so the NKG builtins regression coverage in
-`src\ProjNet4GeoAPI\` does not depend on live network access:
+this repository does not depend on live network access:
 
-1. `src\ProjNet4GeoAPI\test\ProjNet.Tests\Fixtures\grids\NKG`
-2. `src\ProjNet4GeoAPI\test\ProjNet.Tests\Fixtures\grids\eur_nkg_nkgrf03vel_realigned.tif`
-3. `src\ProjNet4GeoAPI\test\ProjNet.Tests\Fixtures\grids\eur_nkg_nkgrf17vel.tif`
-4. `src\ProjNet4GeoAPI\test\ProjNet.Tests\Fixtures\grids\no_kv_NKGETRF14_EPSG7922_2000.tif`
+1. `test\ProjNet.Tests\Fixtures\grids\NKG`
+2. `test\ProjNet.Tests\Fixtures\grids\eur_nkg_nkgrf03vel_realigned.tif`
+3. `test\ProjNet.Tests\Fixtures\grids\eur_nkg_nkgrf17vel.tif`
+4. `test\ProjNet.Tests\Fixtures\grids\no_kv_NKGETRF14_EPSG7922_2000.tif`
 
 Source and license
 ------------------
@@ -42,9 +42,9 @@ Repository use
 --------------
 
 These fixtures are used by the NKG builtins regression coverage under
-`src\ProjNet4GeoAPI\test\ProjNet.Tests\Fixtures\gie\nkg.gie` together with the
+`test\ProjNet.Tests\Fixtures\gie\nkg.gie` together with the
 vendored grid definitions in
-`src\ProjNet4GeoAPI\test\ProjNet.Tests\Fixtures\grids\NKG`.
+`test\ProjNet.Tests\Fixtures\grids\NKG`.
 
 The Norway-specific GeoTIFF grid is required for the official pipeline behind
 `urn:ogc:def:coordinateOperation:NKG::ITRF2014_TO_NO`. The vendored Norway copy
@@ -55,4 +55,4 @@ Project-local attribution
 -------------------------
 
 Additional repository-local attribution for these vendored files is maintained
-in `src\ProjNet4GeoAPI\NOTICE.md`.
+in `NOTICE.md`.
