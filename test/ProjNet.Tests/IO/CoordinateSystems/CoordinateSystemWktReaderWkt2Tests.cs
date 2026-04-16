@@ -200,6 +200,18 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Provides representative top-level projected 3D WKT2 CRS examples from <c>EPSG-v12_054-WKT.Zip</c>.
+    /// </summary>
+    /// <returns>SRID/WKT pairs that should now parse successfully as operational compounds.</returns>
+    public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2Projected3dRows()
+    {
+        return
+        [
+            new TheoryDataRow<int, string>(9895, """PROJCRS["LUREF / Luxembourg TM (3D)",BASEGEOGCRS["LUREF",DATUM["Luxembourg Reference Frame",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6181]],ID["EPSG",9893]],CONVERSION["Luxembourg TM (3D)",METHOD["Transverse Mercator 3D",ID["EPSG",1111]],PARAMETER["Latitude of natural origin",49.8333333333336,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",6.16666666666694,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",80000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",100000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",9894]],CS[Cartesian,3,ID["EPSG",1046]],AXIS["Northing (X)",north,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Easting (Y)",east,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Ellipsoidal height (h)",up,LENGTHUNIT["metre",1,ID["EPSG",9001]]],ID["EPSG",9895]]"""),
+        ];
+    }
+
+    /// <summary>
     /// Provides WKT2 vertical CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
@@ -421,6 +433,33 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.Equal(AxisOrientationEnum.Up, parsed.GetAxis(2).Orientation);
         Assert.Equal("World Geodetic System 1984", horizontal.HorizontalDatum.Name);
         Assert.True(horizontal.HorizontalDatum.Ellipsoid.EqualParams(Ellipsoid.WGS84));
+        Assert.Equal(DatumType.VD_Ellipsoidal, vertical.VerticalDatum.DatumType);
+        Assert.Equal("metre", vertical.LinearUnit.Name);
+    }
+
+    /// <summary>
+    /// Verifies top-level projected 3D WKT2 CRS now parse through the existing operational compound representation.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="wkt">WKT2 projected CRS from the EPSG export.</param>
+    [Theory]
+    [MemberData(nameof(SupportedWkt2Projected3dRows))]
+    public void CreateFromWkt_ParsesTopLevelProjected3dCrsAsOperationalCompound(int srid, string wkt)
+    {
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ProjectedCoordinateSystem horizontal = Assert.IsType<ProjectedCoordinateSystem>(parsed.HeadCoordinateSystem);
+        VerticalCoordinateSystem vertical = Assert.IsType<VerticalCoordinateSystem>(parsed.TailCoordinateSystem);
+        ProjectedCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+        Assert.Equal(3, parsed.Dimension);
+        Assert.True(horizontal.EqualParams(reference), $"WKT2 projected 3D head mismatch for EPSG:{srid}.");
+        Assert.Equal(AxisOrientationEnum.North, parsed.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.East, parsed.GetAxis(1).Orientation);
+        Assert.Equal(AxisOrientationEnum.Up, parsed.GetAxis(2).Orientation);
         Assert.Equal(DatumType.VD_Ellipsoidal, vertical.VerticalDatum.DatumType);
         Assert.Equal("metre", vertical.LinearUnit.Name);
     }

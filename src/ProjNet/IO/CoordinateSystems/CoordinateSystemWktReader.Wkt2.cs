@@ -1431,8 +1431,8 @@ public static partial class CoordinateSystemWktReader
         throw new NotSupportedException("WKT2 axis-specific LENGTHUNIT values must match within the same CRS.");
     }
 
-    private static ProjectedCoordinateSystem ReadWkt2ProjectedCoordinateSystem(WktKeywordNode node) =>
-        ReadWkt2ProjectedCoordinateSystemCore(node, "PROJCRS", "projected CRS", "projected coordinate system");
+    private static CoordinateSystem ReadWkt2ProjectedCoordinateSystem(WktKeywordNode node) =>
+        ReadWkt2ProjectedCoordinateSystemCore(node, "PROJCRS", "projected CRS", "projected coordinate system", allowOperationalEllipsoidalHeightCompound: true);
 
     private static FittedCoordinateSystem ReadWkt2DerivedProjectedCoordinateSystem(WktKeywordNode node)
     {
@@ -1539,13 +1539,19 @@ public static partial class CoordinateSystemWktReader
     }
 
     private static ProjectedCoordinateSystem ReadWkt2BaseProjectedCoordinateSystem(WktKeywordNode node) =>
-        ReadWkt2ProjectedCoordinateSystemCore(node, "BASEPROJCRS", "base projected CRS", "base projected coordinate system");
+        (ProjectedCoordinateSystem)ReadWkt2ProjectedCoordinateSystemCore(
+            node,
+            "BASEPROJCRS",
+            "base projected CRS",
+            "base projected coordinate system",
+            allowOperationalEllipsoidalHeightCompound: false);
 
-    private static ProjectedCoordinateSystem ReadWkt2ProjectedCoordinateSystemCore(
+    private static CoordinateSystem ReadWkt2ProjectedCoordinateSystemCore(
         WktKeywordNode node,
         string rootKeyword,
         string crsContext,
-        string coordinateSystemContext)
+        string coordinateSystemContext,
+        bool allowOperationalEllipsoidalHeightCompound)
     {
         if (!node.KeywordEquals(rootKeyword))
         {
@@ -1627,9 +1633,9 @@ public static partial class CoordinateSystemWktReader
             throw new NotSupportedException($"WKT2 {coordinateSystemContext} type '{coordinateSystemType}' is not supported.");
         }
 
-        if (coordinateSystemDimension != 2)
+        if (coordinateSystemDimension != 2 && coordinateSystemDimension != 3)
         {
-            throw new NotSupportedException($"WKT2 {crsContext} dimensions other than 2 are not supported.");
+            throw new NotSupportedException($"WKT2 {crsContext} dimensions other than 2 or 3 are not supported.");
         }
 
         if (linearUnit is null)
@@ -1646,6 +1652,23 @@ public static partial class CoordinateSystemWktReader
         projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
         linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
         geographicCS = OverrideGeographicAngularUnit(geographicCS, baseAngularUnit);
+        if (coordinateSystemDimension == 3)
+        {
+            if (!allowOperationalEllipsoidalHeightCompound)
+            {
+                throw new NotSupportedException($"WKT2 {crsContext} dimensions other than 2 are not supported.");
+            }
+
+            return CreateOperationalWkt2ProjectedEllipsoidalHeightCompoundCoordinateSystem(
+                name,
+                authority,
+                authorityCode,
+                geographicCS,
+                linearUnit,
+                projection,
+                axisInfo);
+        }
+
         return new ProjectedCoordinateSystem(
             geographicCS.HorizontalDatum,
             geographicCS,
@@ -1658,6 +1681,42 @@ public static partial class CoordinateSystemWktReader
             string.Empty,
             string.Empty,
             string.Empty);
+    }
+
+    private static CompoundCoordinateSystem CreateOperationalWkt2ProjectedEllipsoidalHeightCompoundCoordinateSystem(
+        string name,
+        string authority,
+        long authorityCode,
+        GeographicCoordinateSystem geographicCoordinateSystem,
+        LinearUnit linearUnit,
+        Projection projection,
+        List<AxisInfo> axisInfo)
+    {
+        var head = new ProjectedCoordinateSystem(
+            geographicCoordinateSystem.HorizontalDatum,
+            geographicCoordinateSystem,
+            linearUnit,
+            projection,
+            [new AxisInfo(axisInfo[0]), new AxisInfo(axisInfo[1])],
+            name,
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+
+        var tail = new VerticalCoordinateSystem(
+            linearUnit,
+            new VerticalDatum(DatumType.VD_Ellipsoidal, "Ellipsoidal height datum", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+            new AxisInfo(axisInfo[2]),
+            axisInfo[2].Name,
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+
+        return new CompoundCoordinateSystem(head, tail, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
     private static GeographicCoordinateSystem ReadWkt2BaseGeographicCoordinateSystem(WktKeywordNode node)
