@@ -145,10 +145,14 @@ internal static partial class ProjPipelineMathTransformFactory
             case "KROVAK":
             case "MOD_KROVAK":
                 return TryApplyKrovakProjectionParameters(args, parameters, out skipReason);
+            case "NZMG":
+                return TryApplyNzmgProjectionParameters(args, parameters, out skipReason);
             case "OMERC":
                 return TryApplyObliqueMercatorProjectionParameters(args, parameters, out skipReason);
             case "OCEA":
                 return TryApplyObliqueCylindricalEqualAreaProjectionParameters(args, parameters, out skipReason);
+            case "ORTHO":
+                return TryApplyOrthographicProjectionParameters(args, parameters, out skipReason);
             case "SPILHAUS":
                 return TryApplySpilhausProjectionParameters(args, parameters, out skipReason);
             case "AIRY":
@@ -241,6 +245,24 @@ internal static partial class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         skipReason = null;
+        if (!args.ContainsKey("lat_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "latitude_of_origin", 49.5d);
+        }
+
+        if (!args.ContainsKey("lon_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "central_meridian", 24.8333333333333d);
+        }
+
+        if (!args.ContainsKey("k") && !args.ContainsKey("k_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "scale_factor", 0.9999d);
+        }
+
+        SetOrAddProjectionParameter(parameters, "semi_major", Ellipsoid.Bessel1841.SemiMajorAxis);
+        SetOrAddProjectionParameter(parameters, "semi_minor", Ellipsoid.Bessel1841.SemiMinorAxis);
+
         if (args.TryGetValue("lat_1", out string? pseudoStandardParallelToken) && !string.IsNullOrWhiteSpace(pseudoStandardParallelToken))
         {
             if (!SpanParseUtility.TryParseFiniteDouble(pseudoStandardParallelToken, out double pseudoStandardParallel))
@@ -267,6 +289,43 @@ internal static partial class ProjPipelineMathTransformFactory
         }
 
         return true;
+    }
+
+    private static bool TryApplyNzmgProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (!args.ContainsKey("lat_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "latitude_of_origin", -41d);
+        }
+
+        if (!args.ContainsKey("lon_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "central_meridian", 173d);
+        }
+
+        if (!args.ContainsKey("x_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "false_easting", 2510000d);
+        }
+
+        if (!args.ContainsKey("y_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "false_northing", 6023150d);
+        }
+
+        return true;
+    }
+
+    private static bool TryApplyOrthographicProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        return TryApplyOptionalProjectionParameter(args, "alpha", "alpha", parameters, out skipReason);
     }
 
     private static bool TryApplySpilhausProjectionParameters(

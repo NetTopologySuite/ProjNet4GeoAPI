@@ -61,6 +61,16 @@ internal class KrovakProjection : MapProjection
     private readonly double reciprocSemiMajor;
     private readonly bool eastingNorthing;
 
+    private static double ClampToUnit(double value)
+    {
+        if (value > 1d)
+        {
+            return 1d;
+        }
+
+        return value < -1d ? -1d : value;
+    }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="KrovakProjection"/> class.
     /// </summary>
@@ -175,8 +185,8 @@ internal class KrovakProjection : MapProjection
         double conformalLatitude = 2 * (Math.Atan(Math.Pow(Math.Tan((phi / 2) + FortPi), this.alfa) / this.k1 * conformalScale) - FortPi);
         double deltaV = -lambda * this.alfa;
         double cosConformalLatitude = Math.Cos(conformalLatitude);
-        double pseudoLatitude = Math.Asin((this.cosAzim * Math.Sin(conformalLatitude)) + (this.sinAzim * cosConformalLatitude * Math.Cos(deltaV)));
-        double pseudoLongitude = Math.Asin(cosConformalLatitude * Math.Sin(deltaV) / Math.Cos(pseudoLatitude));
+        double pseudoLatitude = Math.Asin(ClampToUnit((this.cosAzim * Math.Sin(conformalLatitude)) + (this.sinAzim * cosConformalLatitude * Math.Cos(deltaV))));
+        double pseudoLongitude = Math.Asin(ClampToUnit(cosConformalLatitude * Math.Sin(deltaV) / Math.Cos(pseudoLatitude)));
         double eps = this.n * pseudoLongitude;
         double radialDistance = this.rop / Math.Pow(Math.Tan((pseudoLatitude / 2) + FortPi), this.n);
 
@@ -201,9 +211,9 @@ internal class KrovakProjection : MapProjection
         double pseudoLongitude = eps / this.n;
         double pseudoLatitude = 2 * (Math.Atan(Math.Pow(this.ro0 / radialDistance, 1 / this.n) * this.tanS2) - FortPi);
         double cosPseudoLatitude = Math.Cos(pseudoLatitude);
-        double conformalLatitude = Math.Asin((this.cosAzim * Math.Sin(pseudoLatitude)) - (this.sinAzim * cosPseudoLatitude * Math.Cos(pseudoLongitude)));
+        double conformalLatitude = Math.Asin(ClampToUnit((this.cosAzim * Math.Sin(pseudoLatitude)) - (this.sinAzim * cosPseudoLatitude * Math.Cos(pseudoLongitude))));
         double inverseConformalScale = this.ka * Math.Pow(Math.Tan((conformalLatitude / 2.0) + FortPi), 1 / this.alfa);
-        double deltaV = Math.Asin((cosPseudoLatitude * Math.Sin(pseudoLongitude)) / Math.Cos(conformalLatitude));
+        double deltaV = Math.Asin(ClampToUnit((cosPseudoLatitude * Math.Sin(pseudoLongitude)) / Math.Cos(conformalLatitude)));
         double lambda = -deltaV / this.alfa;
         double phi = 0d;
 

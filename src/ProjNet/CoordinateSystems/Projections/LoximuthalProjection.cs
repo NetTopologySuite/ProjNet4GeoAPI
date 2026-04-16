@@ -44,7 +44,7 @@ internal sealed class LoximuthalProjection : MapProjection
     {
         this.Name = "Loximuthal";
 
-        this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "latitude_of_origin"));
+        this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "standard_parallel_1", "latitude_of_origin"));
         this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
         if (Math.Abs(Math.Abs(this.referenceLatitude) - HalfPi) <= Epsln)
         {

@@ -1868,6 +1868,156 @@ public class GieBuiltinsRegressionTests
         AssertCaseWithinToleranceDoesNotSkip(testCase);
     }
 
+    /// <summary>
+    /// Verifies that the legacy default-parameter <c>krovak</c> forward case now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardDefaultKrovakCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 3321,
+            Operation = "+proj=krovak +ellps=GRS80",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [-3196535.232563641d, -6617878.867551444d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the legacy default-parameter <c>krovak</c> inverse case now executes through the builtins harness.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithInverseDefaultKrovakCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 3333,
+            Operation = "+proj=krovak +ellps=GRS80",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Inverse,
+            Accept = [200d, 100d],
+            Expect = [24.836218919d, 59.758403933d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that <c>loxim</c> binds its PROJ <c>lat_1</c> parameter to the reference latitude used by the runtime projection.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardLoximReferenceLatitudeCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 4032,
+            Operation = "+proj=loxim +a=6400000 +lat_1=0.5 +lat_2=2",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [223382.295791339d, 55850.536063819d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that <c>loxim</c> inverse uses the PROJ reference latitude binding as well.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithInverseLoximReferenceLatitudeCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 4042,
+            Operation = "+proj=loxim +a=6400000 +lat_1=0.5 +lat_2=2",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Inverse,
+            Accept = [200d, 100d],
+            Expect = [0.001790561d, 0.500895247d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that <c>nzmg</c> applies the PROJ default origin and false offsets when the operation omits them.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardNzmgDefaultOffsetsCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 5020,
+            Operation = "+proj=nzmg +ellps=GRS80",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [3352675144.747425100d, -7043205391.100243600d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that <c>nzmg</c> inverse uses the PROJ default origin and false offsets when the operation omits them.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithInverseNzmgDefaultOffsetsCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 5030,
+            Operation = "+proj=nzmg +ellps=GRS80",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Inverse,
+            Accept = [200000d, 100000d],
+            Expect = [175.482086827d, -69.422692183d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that local orthographic forward runs with the PROJ <c>alpha</c> parameter and optional false offsets.
+    /// </summary>
+    /// <param name="lineNumber">Fixture line number.</param>
+    /// <param name="operation">Projection operation string.</param>
+    /// <param name="expectedX">Expected easting in metres.</param>
+    /// <param name="expectedY">Expected northing in metres.</param>
+    [Theory]
+    [InlineData(5806, "+proj=ortho +lat_0=37.628969166666664 +lon_0=-122.39394166666668 +k_0=0.9999968 +alpha=27.7927777777777 +x_0=0 +y_0=0 +ellps=GRS80", 876.13676d, 98.97406d)]
+    [InlineData(5813, "+proj=ortho +lat_0=37.628969166666664 +lon_0=-122.39394166666668 +k_0=0.9999968 +alpha=27.7927777777777 +x_0=10 +y_0=20 +ellps=GRS80", 886.13676d, 118.97406d)]
+    public void AssertCaseWithinToleranceWithForwardLocalOrthographicAlphaCaseDoesNotSkip(
+        int lineNumber,
+        string operation,
+        double expectedX,
+        double expectedY)
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = lineNumber,
+            Operation = operation,
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-122.3846388888889d, 37.62607694444444d],
+            Expect = [expectedX, expectedY],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
     private static void AssertCaseWithinToleranceDoesNotSkip(GieCase testCase)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
