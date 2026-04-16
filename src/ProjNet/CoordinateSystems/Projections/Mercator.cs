@@ -112,16 +112,15 @@ internal class Mercator : MapProjection
         double dLongitude = lon;
         double dLatitude = lat;
 
-        // Forward equations
-        if (Math.Abs(Math.Abs(dLatitude) - HalfPi) <= Epsln)
+        if (Math.Abs(dLatitude) >= HalfPi)
         {
             ProjectionThrowHelper.ThrowInvalidOperation("Transformation cannot be computed at the poles.");
         }
 
-        double esinphi = this.e * Math.Sin(dLatitude);
+        Sincos(dLatitude, out double sinLatitude, out double cosLatitude);
+        double esinphi = this.e * sinLatitude;
         lon = this.semiMajor * this.k0 * (dLongitude - this.centralMeridian);
-        lat = this.semiMajor * this.k0 * Math.Log(Math.Tan((PI * 0.25) + (dLatitude * 0.5)) *
-                                          Math.Pow((1 - esinphi) / (1 + esinphi), this.e * 0.5));
+        lat = this.semiMajor * this.k0 * (Asinh(sinLatitude / cosLatitude) - (this.e * Atanh(esinphi)));
     }
 
     /// <summary>
@@ -158,5 +157,17 @@ internal class Mercator : MapProjection
         this.inverse ??= new Mercator(this.Parameters.ToProjectionParameter(), this);
 
         return this.inverse;
+    }
+
+    private static double Asinh(double value)
+    {
+        return value >= 0d
+            ? Math.Log(value + Hypot(1d, value))
+            : -Math.Log(-value + Hypot(1d, value));
+    }
+
+    private static double Atanh(double value)
+    {
+        return 0.5d * Math.Log((1d + value) / (1d - value));
     }
 }

@@ -31,6 +31,7 @@ internal sealed class ObliqueStereographicProjection : MapProjection
     private const double IterationTolerance = 1E-14d;
     private const int MaximumIterations = 15;
     private const double Epsilon = 1E-6d;
+    private const double SouthPoleInitializationTolerance = 1E-10d;
 
     private readonly double globalScale;
     private readonly double reciprocGlobalScale;
@@ -83,7 +84,11 @@ internal sealed class ObliqueStereographicProjection : MapProjection
         this.sinc0 = Math.Sin(this.phic0);
         this.cosc0 = Math.Cos(this.phic0);
         this.ratexp = 0.5 * this.c * this.e;
-        this.k = Math.Tan((0.5 * this.phic0) + (Math.PI / 4)) / (Math.Pow(Math.Tan((0.5 * this.latOrigin) + (Math.PI / 4)), this.c) * this.Srat(this.e * sinLatitudeOrigin, this.ratexp));
+        double sratValue = this.Srat(this.e * sinLatitudeOrigin, this.ratexp);
+        double originAngle = (0.5 * this.latOrigin) + FortPi;
+        this.k = originAngle < SouthPoleInitializationTolerance
+            ? 1.0 / sratValue
+            : Math.Tan((0.5 * this.phic0) + FortPi) / (Math.Pow(Math.Tan(originAngle), this.c) * sratValue);
     }
 
     /// <summary>

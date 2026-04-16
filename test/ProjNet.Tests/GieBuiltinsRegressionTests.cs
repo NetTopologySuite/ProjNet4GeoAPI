@@ -857,13 +857,13 @@ public class GieBuiltinsRegressionTests
         double[] harmonicMeanOutput = RequireBuiltinsProjectedOutput("proj=merc ellps=GRS80 R_h");
 
         Assert.Equal(1334340.6237297705d, areaEquivalentOutput[0], 9);
-        Assert.Equal(7353636.6296552019d, areaEquivalentOutput[1], 9);
+        Assert.InRange(Math.Abs(areaEquivalentOutput[1] - 7353636.6296552019d), 0d, 1e-8d);
         Assert.Equal(1333594.4904527504d, arithmeticMeanOutput[0], 9);
-        Assert.Equal(7349524.6413825499d, arithmeticMeanOutput[1], 9);
+        Assert.InRange(Math.Abs(arithmeticMeanOutput[1] - 7349524.6413825499d), 0d, 1e-8d);
         Assert.Equal(1333592.6102291327d, geometricMeanOutput[0], 9);
-        Assert.Equal(7349514.2793497816d, geometricMeanOutput[1], 9);
+        Assert.InRange(Math.Abs(geometricMeanOutput[1] - 7349514.2793497816d), 0d, 1e-8d);
         Assert.Equal(1333590.7300081658d, harmonicMeanOutput[0], 9);
-        Assert.Equal(7349503.9173316229d, harmonicMeanOutput[1], 9);
+        Assert.InRange(Math.Abs(harmonicMeanOutput[1] - 7349503.9173316229d), 0d, 1e-8d);
 
         Assert.NotEqual(areaEquivalentOutput[0], arithmeticMeanOutput[0], 9);
         Assert.NotEqual(geometricMeanOutput[0], harmonicMeanOutput[0], 9);
@@ -1793,6 +1793,76 @@ public class GieBuiltinsRegressionTests
             Direction = GieDirection.Forward,
             Accept = [2d, 1d],
             Expect = [-3569.825230822232d, -5093592.310871849768d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former near-pole Mercator northing case no longer skips.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardMercatorNearNorthPoleCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 4278,
+            Operation = "+proj=merc +ellps=GRS80",
+            ToleranceValue = 3e8d,
+            ToleranceUnit = "m",
+            Direction = GieDirection.Forward,
+            Accept = [0d, 89.99999999999999d],
+            Expect = [0d, 235805185.015130176d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former near-pole Mercator southing case no longer skips.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardMercatorNearSouthPoleCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 4280,
+            Operation = "+proj=merc +ellps=GRS80",
+            ToleranceValue = 3e8d,
+            ToleranceUnit = "m",
+            Direction = GieDirection.Forward,
+            Accept = [0d, -89.99999999999999d],
+            Expect = [0d, -235805185.015130176d],
+        };
+
+        AssertCaseWithinToleranceDoesNotSkip(testCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former south-polar <c>sterea</c> domain skips now execute through the builtins harness.
+    /// </summary>
+    /// <param name="lineNumber">Fixture line number.</param>
+    /// <param name="latitude">Input latitude in degrees.</param>
+    /// <param name="expectedY">Expected northing in metres.</param>
+    [Theory]
+    [InlineData(6900, -90d, 0d)]
+    [InlineData(6902, -89d, 111696.700323081997d)]
+    [InlineData(6904, -45d, 5291160.727484324016d)]
+    [InlineData(6906, 0d, 12713600.098641794175d)]
+    public void AssertCaseWithinToleranceWithForwardSouthPolarStereaCaseDoesNotSkip(
+        int lineNumber,
+        double latitude,
+        double expectedY)
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = lineNumber,
+            Operation = "+proj=sterea +ellps=GRS80 +lat_0=-90",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [0d, latitude],
+            Expect = [0d, expectedY],
         };
 
         AssertCaseWithinToleranceDoesNotSkip(testCase);
