@@ -13,6 +13,19 @@ You need source changes if your code previously **mutated** objects returned by:
 
 If your code only reads properties, serializes WKT/XML, or creates transformations from existing coordinate systems, you usually do **not** need changes.
 
+## Important note about runtime fidelity fixes
+
+The later v3 modernization work also corrected a number of projection/runtime fidelity gaps
+(`omerc`, `tpeqd`, `ocea`, stereographic variants, exact `tmerc`/`gauss_kruger`/`utm`,
+`krovak`, `nzmg`, `loxim`, `ortho`, `s2`/`healpix`/`rhealpix`, `isea`, `lagrng`, `vandg`).
+
+These are **behavioral correctness fixes**, not additional source-breaking API changes. In most
+cases you do **not** need to rewrite calling code when upgrading, but you may need to update:
+
+- expected coordinate values in regression tests,
+- stored numeric baselines or snapshots,
+- tolerance assertions that were written against older incorrect results.
+
 ## Breaking changes at a glance
 
 | Area | v2-style usage | v3 behavior | Migration path |

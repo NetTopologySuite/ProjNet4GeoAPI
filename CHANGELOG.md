@@ -62,6 +62,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Optimized selected hot internal paths using `stackalloc`, `ReadOnlySpan<T>/Span<T>`, and `ArrayPool<T>` to reduce transient allocations.
 - Improved GIE builtins conversion fallback handling by normalizing cs2cs-style operation tokens for runtime conversion attempts and prioritizing detailed transform skip reasons.
 - Unblocked `+gamma` and `+czech` parameters in GIE test harness, enabling omerc and Krovak projection test cases.
+- Completed the remaining late-stage PROJ parity work across runtime projection dispatch and parameter bridging for `omerc`, `tpeqd`, `ocea`, stereographic variants, exact `tmerc`/`gauss_kruger`/`utm`, `krovak`, `nzmg`, `loxim`, `ortho`, `s2`, `healpix`, `rhealpix`, `isea`, `lagrng`, and `vandg`.
 - Removed legacy SQLCLR self-assignment workaround in `GeocentricTransform`, replacing anonymous delegates with lambdas.
 - Moved CS1591 (missing XML docs) suppression from `.csproj` `<NoWarn>` to `.editorconfig` for consistent suppression management.
 - Enabled full nullable context across the codebase (`<Nullable>enable</Nullable>` in library and tests, `#nullable enable` directives in source files).
@@ -81,6 +82,8 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Fixed multiple legacy naming inconsistencies in projection class families and their registry references.
 - Fixed pooled-buffer lifecycle coverage by adding explicit success/failure-path tests for `GeoTiffGridLoader` pool rental/return behavior.
 - Fixed 3 benchmark methods marked as `static` that prevented BenchmarkDotNet discovery (CatalogFirstCoordinateLookup, CatalogFirstTransformationLookup, CatalogRetainedMemory).
+- Fixed several projection/runtime correctness gaps caused by missing projection-specific pipeline parameters and flags such as `+lat_1`, `+W`, `+over`, `+orient`, `+mode`, `+azi`, `+aperture`, and `+resolution`, bringing runtime behavior into closer alignment with current PROJ expectations.
+- Fixed the remaining GIE builtins skips; the builtins parity suite now runs without skipped cases.
 
 ### Removed
 
