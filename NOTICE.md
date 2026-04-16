@@ -14,7 +14,8 @@ This project is distributed under `LGPL-2.1-or-later`.
 
 - **PROJ-derived implementation work**
   - Portions of the current projection/transformation implementation are derived from PROJ.
-  - Upstream PROJ material is provided under the MIT license.
+  - Upstream PROJ material is provided under the PROJ-specific MIT license text in
+    `LICENSES/PROJ-MIT.txt`.
 
 - **Vendored grid data from the OSGeo PROJ data CDN**
   - `NKG`, `eur_nkg_nkgrf03vel_realigned.tif`, and `eur_nkg_nkgrf17vel.tif` originate from the Nordic Geodetic Commission / NordicTransformations `eur_nkg` data family distributed via `https://cdn.proj.org/`.
@@ -28,4 +29,4 @@ This project is distributed under `LGPL-2.1-or-later`.
 ## Included license texts
 
 - `LICENSES/LGPL-2.1-or-later.txt`
-- `LICENSES/MIT.txt`
+- `LICENSES/PROJ-MIT.txt`
