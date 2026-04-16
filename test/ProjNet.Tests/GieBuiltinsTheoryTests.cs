@@ -180,7 +180,7 @@ public class GieBuiltinsTheoryTests
         ["vandg2"] = "van_der_grinten_ii",
         ["vandg3"] = "van_der_grinten_iii",
         ["vandg4"] = "van_der_grinten_iv",
-        ["tmerc"] = "transverse_mercator",
+        ["tmerc"] = "tmerc",
         ["utm"] = "utm",
         ["ups"] = "ups",
     };

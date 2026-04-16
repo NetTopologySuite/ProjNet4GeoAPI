@@ -56,6 +56,7 @@ public class ProjectionKernelAlignmentTests
     [InlineData("UTM")]
     [InlineData("ETMERC")]
     [InlineData("Extended_Transverse_Mercator")]
+    [InlineData("Approx_TMerc")]
     public void SupportsTransverseMercatorAliases(string projectionName)
     {
         ProjectedCoordinateSystem source = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
@@ -94,18 +95,18 @@ public class ProjectionKernelAlignmentTests
     }
 
     /// <summary>
-    /// Quantifies Transverse Mercator approximation error at practical and extreme zone distances.
+    /// Quantifies the remaining Snyder-kernel approximation error behind the explicit approximate transverse Mercator alias.
     /// </summary>
     [Theory]
     [InlineData(6d, 45d, 0.01d)]
     [InlineData(10d, 45d, 0.03d)]
-    public void TransverseMercatorApproximationMatchesExtendedReferenceWithinExpectedBounds(
+    public void ApproximateTransverseMercatorAliasMatchesExtendedReferenceWithinExpectedBounds(
         double deltaLongitudeDegrees,
         double latitudeDegrees,
         double maxErrorMeters)
     {
         const string tmercWkt =
-            "PROJCS[\"TM CM0\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
+            "PROJCS[\"TM CM0\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Approx_TMerc\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
         CoordinateSystem source = Assert.IsType<CoordinateSystem>(Services.GetCoordinateSystem(4326), exactMatch: false);
         ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
             CoordinateSystemFactory,

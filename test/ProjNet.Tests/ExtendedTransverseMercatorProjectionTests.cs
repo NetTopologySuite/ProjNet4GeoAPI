@@ -40,6 +40,25 @@ public class ExtendedTransverseMercatorProjectionTests
     }
 
     /// <summary>
+    /// Verifies that the PROJ-style transverse Mercator aliases resolve to the exact kernel for ellipsoidal inputs.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to validate.</param>
+    [Theory]
+    [InlineData("tmerc")]
+    [InlineData("Gauss_Kruger")]
+    public void ProjStyleTransverseMercatorAliasesUseExactKernel(string projectionName)
+    {
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildProjectedWkt(projectionName));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(44.69d, 35.37d));
+
+        Assert.InRange(Math.Abs(projectedPoint[0] - 4168136.489446198d), 0d, 1e-6d);
+        Assert.InRange(Math.Abs(projectedPoint[1] - 4985511.302287407d), 0d, 1e-6d);
+    }
+
+    /// <summary>
     /// Verifies forward ETMERC vectors from PROJ builtins, including the wide-offset hotspot.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>

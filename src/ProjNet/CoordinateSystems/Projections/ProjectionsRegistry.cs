@@ -71,12 +71,14 @@ public partial class ProjectionsRegistry
         Register("patterson", typeof(PattersonProjection));
 
         Register("transverse_mercator", typeof(TransverseMercator));
-        Register("tmerc", typeof(TransverseMercator));
+        Register("tmerc", typeof(ExtendedTransverseMercator), CreateAdaptiveTransverseMercatorFactory("tmerc"));
         Register("transverse_mercator_south_oriented", typeof(TransverseMercator));
-        Register("gauss_kruger", typeof(TransverseMercator));
-        Register("utm", typeof(TransverseMercator));
+        Register("gauss_kruger", typeof(ExtendedTransverseMercator), CreateAdaptiveTransverseMercatorFactory("gauss_kruger"));
+        Register("utm", typeof(ExtendedTransverseMercator), CreateExactTransverseMercatorFactory("utm"));
         Register("etmerc", typeof(ExtendedTransverseMercator));
         Register("extended_transverse_mercator", typeof(ExtendedTransverseMercator));
+        Register("approx_tmerc", typeof(TransverseMercator));
+        Register("approx_transverse_mercator", typeof(TransverseMercator));
         Register("swiss_oblique_mercator", typeof(SwissObliqueMercatorProjection));
         Register("somerc", typeof(SwissObliqueMercatorProjection));
 
@@ -470,6 +472,32 @@ public partial class ProjectionsRegistry
         return registration.Factory(parameters);
     }
 
+    private static Func<IEnumerable<ProjectionParameter>, MathTransform> CreateAdaptiveTransverseMercatorFactory(string requestedName)
+    {
+        requestedName = ArgumentGuard.ThrowIfNull(requestedName, nameof(requestedName));
+        return parameters =>
+        {
+            List<ProjectionParameter> parameterList = AsProjectionParameterList(parameters);
+            return UsesEllipsoidalModel(parameterList)
+                ? CreateProjectionWithIdentity(parameterList, requestedName, typeof(ExtendedTransverseMercator), static list => new ExtendedTransverseMercator(list))
+                : CreateProjectionWithIdentity(parameterList, requestedName, typeof(TransverseMercator), static list => new TransverseMercator(list));
+        };
+    }
+
+    private static Func<IEnumerable<ProjectionParameter>, MathTransform> CreateExactTransverseMercatorFactory(string requestedName)
+    {
+        requestedName = ArgumentGuard.ThrowIfNull(requestedName, nameof(requestedName));
+        return parameters =>
+        {
+            List<ProjectionParameter> parameterList = AsProjectionParameterList(parameters);
+            return CreateProjectionWithIdentity(
+                parameterList,
+                requestedName,
+                typeof(ExtendedTransverseMercator),
+                static list => new ExtendedTransverseMercator(list));
+        };
+    }
+
     private static void ValidateBuiltInFactories()
     {
         lock (RegistryLock)
@@ -562,6 +590,41 @@ public partial class ProjectionsRegistry
     private static List<ProjectionParameter> AsProjectionParameterList(IEnumerable<ProjectionParameter> parameters)
     {
         return parameters as List<ProjectionParameter> ?? [.. parameters];
+    }
+
+    private static MathTransform CreateProjectionWithIdentity(
+        List<ProjectionParameter> parameters,
+        string requestedName,
+        Type projectionType,
+        Func<List<ProjectionParameter>, MathTransform> factory)
+    {
+        using IDisposable projectionIdentityOverride = MapProjection.BeginProjectionIdentityOverride(projectionType, requestedName);
+        return factory(parameters);
+    }
+
+    private static bool UsesEllipsoidalModel(List<ProjectionParameter> parameters)
+    {
+        bool hasSemiMajor = false;
+        bool hasSemiMinor = false;
+        double semiMajor = 0d;
+        double semiMinor = 0d;
+
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            ProjectionParameter parameter = parameters[i];
+            if (parameter.Name.Equals("semi_major", StringComparison.OrdinalIgnoreCase))
+            {
+                semiMajor = parameter.Value;
+                hasSemiMajor = true;
+            }
+            else if (parameter.Name.Equals("semi_minor", StringComparison.OrdinalIgnoreCase))
+            {
+                semiMinor = parameter.Value;
+                hasSemiMinor = true;
+            }
+        }
+
+        return !hasSemiMajor || !hasSemiMinor || Math.Abs(semiMajor - semiMinor) > 1e-12d;
     }
 
     [DoesNotReturn]

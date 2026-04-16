@@ -599,10 +599,58 @@ public class GieBuiltinsRegressionTests
     public void TryCreateConversionTransformWithUtmApproxMatchesEquivalentTmercStep()
     {
         double[] utmApproxOutput = RequireBuiltinsRuntimeProjectedOutput("proj=utm zone=32 ellps=GRS80 approx", 12d, 55d);
-        double[] tmercOutput = RequireBuiltinsRuntimeProjectedOutput("proj=tmerc ellps=GRS80 lat_0=0 lon_0=9 k_0=0.9996 x_0=500000 y_0=0", 12d, 55d);
+        double[] tmercOutput = RequireBuiltinsRuntimeProjectedOutput("proj=tmerc ellps=GRS80 lat_0=0 lon_0=9 k_0=0.9996 x_0=500000 y_0=0 approx", 12d, 55d);
 
         Assert.Equal(tmercOutput[0], utmApproxOutput[0], 12);
         Assert.Equal(tmercOutput[1], utmApproxOutput[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies that the wide-offset ellipsoidal <c>+proj=tmerc</c> builtins case now uses the exact ETMERC kernel instead of skipping for fidelity reasons.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithEllipsoidalTransverseMercatorWideOffsetDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 7110,
+            Operation = "+proj=tmerc +ellps=GRS80",
+            ToleranceValue = 50d,
+            ToleranceUnit = "nm",
+            Direction = GieDirection.Forward,
+            Accept = [44.69d, 35.37d],
+            Expect = [4168136.489446198d, 4985511.302287407d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that the spherical <c>+proj=tmerc</c> builtins case uses PROJ-compatible spherical formulas instead of skipping.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithSphericalTransverseMercatorWideOffsetDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 7162,
+            Operation = "+proj=tmerc +R=6400000",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [91d, 0.01d],
+            Expect = [30344312.098578717560d, 20042191.866555366665d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
     }
 
     /// <summary>

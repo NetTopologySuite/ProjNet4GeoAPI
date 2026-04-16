@@ -13,10 +13,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// <para>This implementation ports the exact Poder/Engsager ETMERC kernel used by modern PROJ.
-/// It is limited to ellipsoidal inputs and is wired only to the <c>etmerc</c> /
-/// <c>extended_transverse_mercator</c> aliases, leaving the classic Snyder-style
-/// <see cref="TransverseMercator"/> behavior unchanged for <c>tmerc</c>, <c>utm</c>,
-/// and related aliases.</para>
+/// It is limited to ellipsoidal inputs and now backs the default ellipsoidal
+/// <c>tmerc</c>/<c>transverse_mercator</c>/<c>utm</c> aliases in addition to the
+/// explicit <c>etmerc</c> / <c>extended_transverse_mercator</c> names. Spherical
+/// and explicit <c>+approx</c> routes remain on the classic Snyder-style
+/// <see cref="TransverseMercator"/> implementation.</para>
 /// </remarks>
 internal sealed class ExtendedTransverseMercator : MapProjection
 {

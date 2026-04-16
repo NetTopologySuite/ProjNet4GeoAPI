@@ -21,11 +21,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the central meridian. The Transverse Mercator projection is appropriate for
 /// regions which have a greater extent north-south than east-west.</para>
 ///
-/// <para>This implementation follows the Snyder series approximation and is
-/// optimized for standard mapping workflows near the central meridian. It does
-/// not implement the full Poder/Engsager exact formulation used by modern PROJ.
-/// For wide offsets from the central meridian, this can introduce small
-/// additional error compared to exact TM kernels.</para>
+/// <para>This implementation follows PROJ's Evenden/Snyder approximate transverse
+/// Mercator path, including the dedicated spherical formulas. It remains useful
+/// as the explicit approximate kernel behind <c>+proj=tmerc +approx</c> and the
+/// <c>approx_tmerc</c> registry alias, while the default ellipsoidal
+/// <c>tmerc</c>/<c>utm</c> aliases are routed through the exact Poder/Engsager
+/// implementation.</para>
 ///
 /// <para>Reference: John P. Snyder, Map Projections — A Working Manual,
 /// U.S. Geological Survey Professional Paper 1395, 1987.</para>
@@ -116,11 +117,19 @@ internal sealed class TransverseMercator : MapProjection
         this.Authority = "EPSG";
         this.AuthorityCode = 9807;
 
-        this.esp = this.es / (1.0 - this.es);
-        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
-        this.ml0 = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
+        if (this.es == 0d)
+        {
+            this.esp = this.scaleFactor;
+            this.ml0 = 0.5d * this.scaleFactor;
+        }
+        else
+        {
+            this.esp = this.es / (1.0 - this.es);
+            Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+            this.ml0 = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
+        }
 
-        this.reciprocSemiMajor = 1 / this.semiMajor;
+        this.reciprocSemiMajor = 1d / this.semiMajor;
     }
 
     /// <summary>
@@ -130,8 +139,13 @@ internal sealed class TransverseMercator : MapProjection
     /// <param name="lat">The latitude of the point in radians.</param>
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
-        double x = lon;
-        x = Adjust_lon(x - this.centralMeridian);
+        double x = Adjust_lon(lon - this.centralMeridian);
+
+        if (this.es == 0d)
+        {
+            this.RadiansToMetersSpherical(x, lat, out lon, out lat);
+            return;
+        }
 
         double y = lat;
         double sinphi = Math.Sin(y);
@@ -169,6 +183,12 @@ internal sealed class TransverseMercator : MapProjection
     {
         x *= this.reciprocSemiMajor;
         y *= this.reciprocSemiMajor;
+
+        if (this.es == 0d)
+        {
+            this.MetersToRadiansSpherical(ref x, ref y);
+            return;
+        }
 
         double phi = this.Inv_mlfn(this.ml0 + (y / this.scaleFactor));
 
@@ -210,5 +230,68 @@ internal sealed class TransverseMercator : MapProjection
         this.inverse ??= new TransverseMercator(this.Parameters.ToProjectionParameter(), this);
 
         return this.inverse;
+    }
+
+    private void RadiansToMetersSpherical(double lambda, double phi, out double x, out double y)
+    {
+        double cosphi = Math.Cos(phi);
+        double b = cosphi * Math.Sin(lambda);
+        if (Math.Abs(Math.Abs(b) - 1d) <= Eps10)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        x = this.ml0 * Math.Log((1d + b) / (1d - b));
+        if (cosphi == 1d)
+        {
+            y = (lambda < -HalfPi || lambda > HalfPi) ? PI : 0d;
+        }
+        else
+        {
+            y = (cosphi * Math.Cos(lambda)) / Math.Sqrt(1d - (b * b));
+
+            double absY = Math.Abs(y);
+            if (absY >= 1d)
+            {
+                if ((absY - 1d) > Eps10)
+                {
+                    ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+                }
+
+                y = 0d;
+            }
+            else
+            {
+                y = Math.Acos(y);
+            }
+        }
+
+        if (phi < 0d)
+        {
+            y = -y;
+        }
+
+        x *= this.semiMajor;
+        y = this.semiMajor * this.esp * (y - this.latOrigin);
+    }
+
+    private void MetersToRadiansSpherical(ref double x, ref double y)
+    {
+        double h = Math.Exp(x / this.esp);
+        if (h == 0d)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        double g = 0.5d * (h - (1d / h));
+        double d = this.latOrigin + (y / this.esp);
+        h = Math.Cos(d);
+
+        double phiArgument = (1d - (h * h)) / (1d + (g * g));
+        phiArgument = ProjectionConstants.Clamp(phiArgument, 0d, 1d);
+
+        double phi = Math.Asin(Math.Sqrt(phiArgument));
+        y = d < 0d ? -Math.Abs(phi) : Math.Abs(phi);
+        x = (g != 0d || h != 0d) ? Adjust_lon(this.centralMeridian + Math.Atan2(g, h)) : this.centralMeridian;
     }
 }

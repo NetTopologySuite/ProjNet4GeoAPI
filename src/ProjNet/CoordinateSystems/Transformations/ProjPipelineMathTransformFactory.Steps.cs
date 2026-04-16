@@ -326,6 +326,18 @@ internal static partial class ProjPipelineMathTransformFactory
         Dictionary<string, string> args,
         string projCode)
     {
+        if (args.ContainsKey("approx")
+            && (projCode.Equals("utm", StringComparison.OrdinalIgnoreCase)
+                || projCode.Equals("tmerc", StringComparison.OrdinalIgnoreCase)
+                || projCode.Equals("transverse_mercator", StringComparison.OrdinalIgnoreCase)
+                || projCode.Equals("gauss_kruger", StringComparison.OrdinalIgnoreCase)
+                || projCode.Equals("transverse_mercator_south_oriented", StringComparison.OrdinalIgnoreCase)))
+        {
+            // PROJ's +approx flag opts the transverse Mercator family back into
+            // the classic Evenden/Snyder implementation.
+            return "approx_tmerc";
+        }
+
         if (projCode.Equals("utm", StringComparison.OrdinalIgnoreCase) && !args.ContainsKey("approx"))
         {
             // PROJ routes UTM through the exact Poder/Engsager transverse Mercator kernel

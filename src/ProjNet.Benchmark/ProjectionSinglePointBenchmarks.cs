@@ -20,12 +20,16 @@ public class ProjectionSinglePointBenchmarks
     private MathTransform adamsHemisphereForward = null!;
     private MathTransform obliqueMercatorForward = null!;
     private MathTransform obliqueMercatorNoRotationForward = null!;
+    private MathTransform transverseMercatorExactForward = null!;
+    private MathTransform transverseMercatorApproxForward = null!;
     private MathTransform stereographicPolarForward = null!;
     private MathTransform stereographicObliqueForward = null!;
     private MathTransform stereographicEquatorialForward = null!;
     private MathTransform laeaInverse = null!;
     private MathTransform orthographicInverse = null!;
     private MathTransform robinsonInverse = null!;
+    private MathTransform transverseMercatorExactInverse = null!;
+    private MathTransform transverseMercatorApproxInverse = null!;
     private MathTransform stereographicPolarInverse = null!;
     private MathTransform stereographicObliqueInverse = null!;
     private MathTransform stereographicEquatorialInverse = null!;
@@ -34,12 +38,15 @@ public class ProjectionSinglePointBenchmarks
     private double[] peirceInput = null!;
     private double[] adamsHemisphereInput = null!;
     private double[] obliqueMercatorInput = null!;
+    private double[] transverseMercatorInput = null!;
     private double[] stereographicPolarInput = null!;
     private double[] stereographicObliqueInput = null!;
     private double[] stereographicEquatorialInput = null!;
     private double[] laeaInput = null!;
     private double[] orthographicInput = null!;
     private double[] robinsonInput = null!;
+    private double[] transverseMercatorExactInverseInput = null!;
+    private double[] transverseMercatorApproxInverseInput = null!;
     private double[] stereographicPolarInverseInput = null!;
     private double[] stereographicObliqueInverseInput = null!;
     private double[] stereographicEquatorialInverseInput = null!;
@@ -57,12 +64,16 @@ public class ProjectionSinglePointBenchmarks
         EnsureFinite(benchmark.TransformAdamsHemisphereSinglePoint());
         EnsureFinite(benchmark.TransformObliqueMercatorSinglePoint());
         EnsureFinite(benchmark.TransformObliqueMercatorNoRotationSinglePoint());
+        EnsureFinite(benchmark.TransformTransverseMercatorExactSinglePoint());
+        EnsureFinite(benchmark.TransformTransverseMercatorApproxSinglePoint());
         EnsureFinite(benchmark.TransformStereographicPolarSinglePoint());
         EnsureFinite(benchmark.TransformStereographicObliqueSinglePoint());
         EnsureFinite(benchmark.TransformStereographicEquatorialSinglePoint());
         EnsureFinite(benchmark.TransformLambertAzimuthalEqualAreaInverseSinglePoint());
         EnsureFinite(benchmark.TransformOrthographicInverseSinglePoint());
         EnsureFinite(benchmark.TransformRobinsonInverseSinglePoint());
+        EnsureFinite(benchmark.TransformTransverseMercatorExactInverseSinglePoint());
+        EnsureFinite(benchmark.TransformTransverseMercatorApproxInverseSinglePoint());
         EnsureFinite(benchmark.TransformStereographicPolarInverseSinglePoint());
         EnsureFinite(benchmark.TransformStereographicObliqueInverseSinglePoint());
         EnsureFinite(benchmark.TransformStereographicEquatorialInverseSinglePoint());
@@ -79,6 +90,8 @@ public class ProjectionSinglePointBenchmarks
         this.adamsHemisphereForward = BenchmarkPipelineTransformFactory.Create("+proj=adams_hemi");
         this.obliqueMercatorForward = BenchmarkPipelineTransformFactory.Create("+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2");
         this.obliqueMercatorNoRotationForward = BenchmarkPipelineTransformFactory.Create("+proj=omerc +ellps=GRS80 +lat_1=0.5 +lat_2=2 +no_rot");
+        this.transverseMercatorExactForward = BenchmarkPipelineTransformFactory.Create("+proj=tmerc +ellps=GRS80");
+        this.transverseMercatorApproxForward = BenchmarkPipelineTransformFactory.Create("+proj=tmerc +ellps=GRS80 +approx");
         this.stereographicPolarForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=90 +lat_ts=70");
         this.stereographicObliqueForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=45");
         this.stereographicEquatorialForward = BenchmarkPipelineTransformFactory.Create("+proj=stere +ellps=GRS80 +lat_0=0");
@@ -90,6 +103,8 @@ public class ProjectionSinglePointBenchmarks
         this.laeaInverse = laeaForward.Inverse();
         this.orthographicInverse = orthographicForward.Inverse();
         this.robinsonInverse = robinsonForward.Inverse();
+        this.transverseMercatorExactInverse = this.transverseMercatorExactForward.Inverse();
+        this.transverseMercatorApproxInverse = this.transverseMercatorApproxForward.Inverse();
         this.stereographicPolarInverse = this.stereographicPolarForward.Inverse();
         this.stereographicObliqueInverse = this.stereographicObliqueForward.Inverse();
         this.stereographicEquatorialInverse = this.stereographicEquatorialForward.Inverse();
@@ -98,12 +113,15 @@ public class ProjectionSinglePointBenchmarks
         this.peirceInput = [-15d, 35d];
         this.adamsHemisphereInput = [40d, 30d];
         this.obliqueMercatorInput = [2d, 1d];
+        this.transverseMercatorInput = [44.69d, 35.37d];
         this.stereographicPolarInput = [15d, 80d];
         this.stereographicObliqueInput = [12d, 50d];
         this.stereographicEquatorialInput = [18d, 25d];
         this.laeaInput = laeaForward.Transform([15d, 20d]);
         this.orthographicInput = orthographicForward.Transform([20d, 40d]);
         this.robinsonInput = robinsonForward.Transform([30d, 12d]);
+        this.transverseMercatorExactInverseInput = this.transverseMercatorExactForward.Transform(this.transverseMercatorInput);
+        this.transverseMercatorApproxInverseInput = this.transverseMercatorApproxForward.Transform(this.transverseMercatorInput);
         this.stereographicPolarInverseInput = this.stereographicPolarForward.Transform(this.stereographicPolarInput);
         this.stereographicObliqueInverseInput = this.stereographicObliqueForward.Transform(this.stereographicObliqueInput);
         this.stereographicEquatorialInverseInput = this.stereographicEquatorialForward.Transform(this.stereographicEquatorialInput);
@@ -143,6 +161,20 @@ public class ProjectionSinglePointBenchmarks
     /// <returns>The projected coordinate pair.</returns>
     [Benchmark]
     public double[] TransformObliqueMercatorNoRotationSinglePoint() => this.obliqueMercatorNoRotationForward.Transform(this.obliqueMercatorInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for exact ellipsoidal transverse Mercator.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformTransverseMercatorExactSinglePoint() => this.transverseMercatorExactForward.Transform(this.transverseMercatorInput);
+
+    /// <summary>
+    /// Measures single-point forward throughput for the Snyder approximate transverse Mercator path.
+    /// </summary>
+    /// <returns>The projected coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformTransverseMercatorApproxSinglePoint() => this.transverseMercatorApproxForward.Transform(this.transverseMercatorInput);
 
     /// <summary>
     /// Measures single-point forward throughput for ellipsoidal polar stereographic.
@@ -185,6 +217,20 @@ public class ProjectionSinglePointBenchmarks
     /// <returns>The reconstructed geographic coordinate pair.</returns>
     [Benchmark]
     public double[] TransformRobinsonInverseSinglePoint() => this.robinsonInverse.Transform(this.robinsonInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for exact ellipsoidal transverse Mercator.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformTransverseMercatorExactInverseSinglePoint() => this.transverseMercatorExactInverse.Transform(this.transverseMercatorExactInverseInput);
+
+    /// <summary>
+    /// Measures single-point inverse throughput for the Snyder approximate transverse Mercator path.
+    /// </summary>
+    /// <returns>The reconstructed geographic coordinate pair.</returns>
+    [Benchmark]
+    public double[] TransformTransverseMercatorApproxInverseSinglePoint() => this.transverseMercatorApproxInverse.Transform(this.transverseMercatorApproxInverseInput);
 
     /// <summary>
     /// Measures single-point inverse throughput for ellipsoidal polar stereographic.

@@ -288,8 +288,8 @@ public class GitHubIssueRegressionTests
 
         ICoordinateTransformation ct = Assert.IsType<ICoordinateTransformation>(Css.CreateTransformation(epsg26910, epsg_4326), exactMatch: false);
         (double x, double y) = ct.MathTransform.Transform(ptI[0], ptI[1]);
-        Assert.InRange(x, -82.0479097 - 0.01, -82.0479097 + 0.01);
-        Assert.InRange(y, 48.4185597 - 0.01, 48.4185597 + 0.01);
+        Assert.InRange(x, -82.0479097d - 0.01d, -82.0479097d + 0.01d);
+        Assert.InRange(y, 48.4185597d - 0.01d, 48.4185597d + 0.01d);
     }
 
     /// <summary>
