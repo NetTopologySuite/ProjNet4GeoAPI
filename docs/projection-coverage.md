@@ -1,11 +1,15 @@
-# Projection Coverage Matrix (C++ PROJ vs ProjNet)
+# Projection Coverage Matrix (PROJ parity vs ProjNet)
 
-This document tracks the projection feature-parity status between `spec\PROJ` (C++ reference) and `src\ProjNet` (.NET implementation).
+This document summarizes the audited projection feature-parity status between upstream
+PROJ identifiers and the ProjNet implementation contained in this project.
 
 ## Scope
 
-- C++ source of truth: `spec\PROJ\src\projections\*.cpp` (`PROJ_HEAD(...)` projection codes).
-- .NET implementation source: `src\ProjNet\CoordinateSystems\Projections\*.cs` plus `ProjectionsRegistry.cs`.
+- PROJ reference surface: the audited set of upstream `PROJ_HEAD(...)` projection identifiers
+  captured by this matrix.
+- .NET implementation source: `src\ProjNet\CoordinateSystems\Projections\*.cs`,
+  `src\ProjNet\CoordinateSystems\Projections\ProjectionsRegistry.cs`, and the runtime
+  dispatch paths in `src\ProjNet\CoordinateSystems\Transformations\ProjPipelineMathTransformFactory*.cs`.
 - Status categories:
   - **Implemented**: projection class exists and aliases are registered in `ProjectionsRegistry`.
   - **Missing**: no registered .NET projection mapping yet.
