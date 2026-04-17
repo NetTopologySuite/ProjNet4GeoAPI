@@ -218,6 +218,139 @@ def parse_wkt_node(text: str):
     return WktParser(text).parse()
 
 
+def split_sql_values(values_part: str):
+    items = []
+    current = []
+    in_string = False
+    i = 0
+    while i < len(values_part):
+        ch = values_part[i]
+        if ch == "'":
+            current.append(ch)
+            if in_string and i + 1 < len(values_part) and values_part[i + 1] == "'":
+                current.append("'")
+                i += 1
+            else:
+                in_string = not in_string
+        elif ch == ',' and not in_string:
+            items.append(''.join(current).strip())
+            current = []
+        else:
+            current.append(ch)
+        i += 1
+
+    items.append(''.join(current).strip())
+    return items
+
+
+def parse_named_sql_insert(line: str, table_name: str):
+    prefix = f'INSERT INTO epsg_{table_name} ('
+    if not line.startswith(prefix) or not line.endswith(');'):
+        return None
+
+    columns_end = line.find(') VALUES (', len(prefix))
+    if columns_end < 0:
+        return None
+
+    columns = [column.strip() for column in line[len(prefix):columns_end].split(',')]
+    values = split_sql_values(line[columns_end + len(') VALUES ('):-2])
+    if len(columns) != len(values):
+        raise ValueError(f'Unexpected SQL insert shape for epsg_{table_name}: {len(columns)} columns, {len(values)} values.')
+
+    record = {}
+    for column, raw_value in zip(columns, values):
+        if raw_value == 'Null':
+            record[column] = None
+        elif raw_value.startswith("'") and raw_value.endswith("'"):
+            record[column] = raw_value[1:-1].replace("''", "'")
+        else:
+            record[column] = raw_value
+
+    return record
+
+
+def iter_postgresql_data_script_lines(pg_zip_path: Path):
+    with zipfile.ZipFile(pg_zip_path, 'r') as zf:
+        script_name = None
+        for name in zf.namelist():
+            if Path(name).name == 'PostgreSQL_Data_Script.sql':
+                script_name = name
+                break
+
+        if script_name is None:
+            raise FileNotFoundError(f'PostgreSQL_Data_Script.sql not found in {pg_zip_path}.')
+
+        with zf.open(script_name, 'r') as handle:
+            for raw_line in handle:
+                yield raw_line.decode('utf-8').strip()
+
+
+def extract_postgresql_operation_support_data(pg_zip_path: Path):
+    extent_bounds = {}
+    usage_extents_by_operation = {}
+    concat_steps_by_operation = {}
+
+    for line in iter_postgresql_data_script_lines(pg_zip_path):
+        if line.startswith('INSERT INTO epsg_extent '):
+            record = parse_named_sql_insert(line, 'extent')
+            if record is None:
+                continue
+
+            south_value = record.get('bbox_south_bound_lat')
+            north_value = record.get('bbox_north_bound_lat')
+            west_value = record.get('bbox_west_bound_lon')
+            east_value = record.get('bbox_east_bound_lon')
+            if south_value is None or north_value is None or west_value is None or east_value is None:
+                continue
+
+            try:
+                extent_code = int(record['extent_code'])
+                south = float(south_value)
+                north = float(north_value)
+                west = float(west_value)
+                east = float(east_value)
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            extent_bounds[extent_code] = (south, north, west, east)
+            continue
+
+        if line.startswith('INSERT INTO epsg_usage '):
+            record = parse_named_sql_insert(line, 'usage')
+            if record is None or record.get('object_table_name') != 'epsg_coordoperation':
+                continue
+
+            try:
+                operation_code = int(record['object_code'])
+                extent_code = int(record['extent_code'])
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            usage_extents_by_operation.setdefault(operation_code, set()).add(extent_code)
+            continue
+
+        if line.startswith('INSERT INTO epsg_coordoperationpath '):
+            record = parse_named_sql_insert(line, 'coordoperationpath')
+            if record is None:
+                continue
+
+            try:
+                concat_code = int(record['concat_operation_code'])
+                step_code = int(record['single_operation_code'])
+                step_index = int(record['op_path_step'])
+            except (KeyError, TypeError, ValueError):
+                continue
+
+            concat_steps_by_operation.setdefault(concat_code, []).append((step_index, step_code))
+
+    concat_paths = {}
+    for concat_code, steps in concat_steps_by_operation.items():
+        steps.sort(key=lambda item: item[0])
+        concat_paths[concat_code] = [step_code for _, step_code in steps]
+
+    return extent_bounds, usage_extents_by_operation, concat_paths
+
+
 def _looks_like_wkt(text: str):
     if text is None:
         return False
