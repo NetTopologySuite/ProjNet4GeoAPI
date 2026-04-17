@@ -35,6 +35,9 @@ public partial class CoordinateTransformationFactory
     private static readonly Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>> DirectOperationDefinitions =
         new(LoadDirectOperationDefinitions, true);
 
+    private static readonly Lazy<Dictionary<int, CoordinateOperationDefinition>> DirectOperationDefinitionsByCode =
+        new(LoadDirectOperationDefinitionsByCode, true);
+
     private static readonly Lazy<Dictionary<int, IReadOnlyDictionary<string, double>>> DirectOperationParameters =
         new(LoadDirectOperationParameters, true);
 

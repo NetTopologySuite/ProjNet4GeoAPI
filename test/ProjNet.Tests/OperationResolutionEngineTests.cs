@@ -439,6 +439,47 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
+    /// Verifies that concatenated EPSG geographic operations preserve the catalog step order and reverse later steps when required by the intermediate CRS chain.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithConcatenatedGeographicOperationUsesExpectedStepDirections()
+    {
+        var services = new CoordinateSystemServices();
+
+        ICoordinateTransformation transformation = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4289, 4230));
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(4837, transformation.AuthorityCode);
+
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
+        Assert.Collection(
+            concatenated.CoordinateTransformationList,
+            step => AssertConcatenatedStep(step, 1672, 4289, 4326),
+            step => AssertConcatenatedStep(step, 1311, 4326, 4230));
+    }
+
+    /// <summary>
+    /// Verifies that concatenated EPSG geocentric operations preserve the catalog step order and reverse intermediate step directions when required.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithConcatenatedGeocentricOperationUsesExpectedStepDirections()
+    {
+        var services = new CoordinateSystemServices();
+
+        ICoordinateTransformation transformation = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(9988, 4000));
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(11285, transformation.AuthorityCode);
+
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
+        Assert.Collection(
+            concatenated.CoordinateTransformationList,
+            step => AssertConcatenatedStep(step, 10586, 9988, 7930),
+            step => AssertConcatenatedStep(step, 11228, 7930, 7928),
+            step => AssertConcatenatedStep(step, 11205, 7928, 4000));
+    }
+
+    /// <summary>
     /// Verifies that a transformation between fitted coordinate systems is correctly composed by routing through the base coordinate systems.
     /// </summary>
     [Fact]
@@ -573,6 +614,22 @@ public class OperationResolutionEngineTests
         }
 
         return transformation is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsMathTransform<TMathTransform>);
+    }
+
+    private static void AssertConcatenatedStep(
+        ICoordinateTransformationCore step,
+        int expectedOperationCode,
+        int expectedSourceSrid,
+        int expectedTargetSrid)
+    {
+        CoordinateTransformation coordinateTransformation = Assert.IsType<CoordinateTransformation>(step);
+
+        Assert.Equal("EPSG", coordinateTransformation.Authority);
+        Assert.Equal(expectedOperationCode, coordinateTransformation.AuthorityCode);
+        Assert.Equal("EPSG", coordinateTransformation.SourceCS.Authority);
+        Assert.Equal(expectedSourceSrid, coordinateTransformation.SourceCS.AuthorityCode);
+        Assert.Equal("EPSG", coordinateTransformation.TargetCS.Authority);
+        Assert.Equal(expectedTargetSrid, coordinateTransformation.TargetCS.AuthorityCode);
     }
 
     private static bool ContainsDatumTransform(MathTransform mathTransform)

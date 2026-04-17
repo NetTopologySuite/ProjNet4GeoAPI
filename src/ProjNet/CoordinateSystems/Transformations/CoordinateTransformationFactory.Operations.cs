@@ -30,12 +30,21 @@ public partial class CoordinateTransformationFactory
         CoordinateOperationDefinition operation,
         string? resolvedGridPath,
         [NotNullWhen(true)] out ICoordinateTransformation? transformation)
+        => TryCreateExplicitOperationTransformation(source, target, operation, resolvedGridPath, null, out transformation);
+
+    private static bool TryCreateExplicitOperationTransformation(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        CoordinateOperationDefinition operation,
+        string? resolvedGridPath,
+        HashSet<int>? visitedOperationCodes,
+        [NotNullWhen(true)] out ICoordinateTransformation? transformation)
     {
         transformation = null;
 
         if (source is GeographicCoordinateSystem sourceGeographic && target is GeographicCoordinateSystem targetGeographic)
         {
-            if (!TryCreateExplicitGeographicTransformation(sourceGeographic, targetGeographic, operation, out CoordinateTransformation? geographicTransformation))
+            if (!TryCreateExplicitGeographicTransformation(sourceGeographic, targetGeographic, operation, visitedOperationCodes, out CoordinateTransformation? geographicTransformation))
             {
                 return false;
             }
@@ -46,7 +55,7 @@ public partial class CoordinateTransformationFactory
 
         if (source is ProjectedCoordinateSystem sourceProjected && target is ProjectedCoordinateSystem targetProjected)
         {
-            if (!TryCreateExplicitProjectedTransformation(sourceProjected, targetProjected, operation, out CoordinateTransformation? projectedTransformation))
+            if (!TryCreateExplicitProjectedTransformation(sourceProjected, targetProjected, operation, visitedOperationCodes, out CoordinateTransformation? projectedTransformation))
             {
                 return false;
             }
@@ -57,12 +66,19 @@ public partial class CoordinateTransformationFactory
 
         if (source is GeocentricCoordinateSystem sourceGeocentric && target is GeocentricCoordinateSystem targetGeocentric)
         {
-            if (!TryCreateExplicitGeocentricTransformation(sourceGeocentric, targetGeocentric, operation, out CoordinateTransformation? geocentricTransformation))
+            if (!TryCreateExplicitGeocentricTransformation(sourceGeocentric, targetGeocentric, operation, visitedOperationCodes, out CoordinateTransformation? geocentricTransformation))
             {
                 return false;
             }
 
             transformation = CreateMetadataBackedTransformation(source, target, geocentricTransformation, operation, resolvedGridPath);
+            return true;
+        }
+
+        if (operation.OperationKind == CoordinateOperationKind.ConcatenatedOperation
+            && TryCreateConcatenatedOperationTransformation(source, target, operation, visitedOperationCodes, out CoordinateTransformation? concatenatedTransformation))
+        {
+            transformation = CreateMetadataBackedTransformation(source, target, concatenatedTransformation, operation, resolvedGridPath);
             return true;
         }
 
@@ -93,8 +109,21 @@ public partial class CoordinateTransformationFactory
         GeographicCoordinateSystem target,
         CoordinateOperationDefinition operation,
         [NotNullWhen(true)] out CoordinateTransformation? transformation)
+        => TryCreateExplicitGeographicTransformation(source, target, operation, null, out transformation);
+
+    private static bool TryCreateExplicitGeographicTransformation(
+        GeographicCoordinateSystem source,
+        GeographicCoordinateSystem target,
+        CoordinateOperationDefinition operation,
+        HashSet<int>? visitedOperationCodes,
+        [NotNullWhen(true)] out CoordinateTransformation? transformation)
     {
         transformation = null;
+
+        if (operation.OperationKind == CoordinateOperationKind.ConcatenatedOperation)
+        {
+            return TryCreateConcatenatedOperationTransformation(source, target, operation, visitedOperationCodes, out transformation);
+        }
 
         if (operation.OperationKind != CoordinateOperationKind.Transformation)
         {
@@ -145,13 +174,31 @@ public partial class CoordinateTransformationFactory
         ProjectedCoordinateSystem target,
         CoordinateOperationDefinition operation,
         [NotNullWhen(true)] out CoordinateTransformation? transformation)
+        => TryCreateExplicitProjectedTransformation(source, target, operation, null, out transformation);
+
+    private static bool TryCreateExplicitProjectedTransformation(
+        ProjectedCoordinateSystem source,
+        ProjectedCoordinateSystem target,
+        CoordinateOperationDefinition operation,
+        HashSet<int>? visitedOperationCodes,
+        [NotNullWhen(true)] out CoordinateTransformation? transformation)
     {
         transformation = null;
+
+        if (operation.OperationKind == CoordinateOperationKind.ConcatenatedOperation
+            && TryGetEpsgCode(source, out int sourceSrid)
+            && TryGetEpsgCode(target, out int targetSrid)
+            && sourceSrid == operation.SourceSrid
+            && targetSrid == operation.TargetSrid)
+        {
+            return TryCreateConcatenatedOperationTransformation(source, target, operation, visitedOperationCodes, out transformation);
+        }
 
         if (!TryCreateExplicitGeographicTransformation(
                 source.GeographicCoordinateSystem,
                 target.GeographicCoordinateSystem,
                 operation,
+                visitedOperationCodes,
                 out CoordinateTransformation? geographicTransformation))
         {
             return false;
@@ -171,8 +218,21 @@ public partial class CoordinateTransformationFactory
         GeocentricCoordinateSystem target,
         CoordinateOperationDefinition operation,
         [NotNullWhen(true)] out CoordinateTransformation? transformation)
+        => TryCreateExplicitGeocentricTransformation(source, target, operation, null, out transformation);
+
+    private static bool TryCreateExplicitGeocentricTransformation(
+        GeocentricCoordinateSystem source,
+        GeocentricCoordinateSystem target,
+        CoordinateOperationDefinition operation,
+        HashSet<int>? visitedOperationCodes,
+        [NotNullWhen(true)] out CoordinateTransformation? transformation)
     {
         transformation = null;
+
+        if (operation.OperationKind == CoordinateOperationKind.ConcatenatedOperation)
+        {
+            return TryCreateConcatenatedOperationTransformation(source, target, operation, visitedOperationCodes, out transformation);
+        }
 
         if (operation.OperationKind != CoordinateOperationKind.Transformation)
         {
@@ -191,6 +251,212 @@ public partial class CoordinateTransformationFactory
 
         transformation = CreateTransform(source, target, TransformType.Transformation, mathTransform);
         return true;
+    }
+
+    private static bool TryCreateConcatenatedOperationTransformation(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        CoordinateOperationDefinition operation,
+        HashSet<int>? visitedOperationCodes,
+        [NotNullWhen(true)] out CoordinateTransformation? transformation)
+    {
+        transformation = null;
+
+        if (operation.OperationKind != CoordinateOperationKind.ConcatenatedOperation)
+        {
+            return false;
+        }
+
+        visitedOperationCodes ??= [];
+        if (!visitedOperationCodes.Add(operation.OperationCode))
+        {
+            return false;
+        }
+
+        try
+        {
+            if (!EpsgGeneratedCatalog.TryGetConcatenatedOperationStepCount(operation.OperationCode, out int stepCount)
+                || stepCount <= 0
+                || !TryResolveCatalogCoordinateSystem(operation.SourceSrid, out CoordinateSystem? currentCoordinateSystem))
+            {
+                return false;
+            }
+
+            int currentSrid = operation.SourceSrid;
+            var concatenatedTransform = new ConcatenatedTransform();
+            for (int stepIndex = 0; stepIndex < stepCount; stepIndex++)
+            {
+                if (!EpsgGeneratedCatalog.TryGetConcatenatedOperationStep(operation.OperationCode, stepIndex, out int stepOperationCode)
+                    || !TryGetDirectOperationDefinition(stepOperationCode, out CoordinateOperationDefinition? stepOperation)
+                    || !TryResolveCatalogCoordinateSystem(stepOperation.SourceSrid, out CoordinateSystem? stepSource)
+                    || !TryResolveCatalogCoordinateSystem(stepOperation.TargetSrid, out CoordinateSystem? stepTarget)
+                    || !TryCreateOperationTransformationFromDefinition(stepSource, stepTarget, stepOperation, visitedOperationCodes, out ICoordinateTransformation? stepTransformation))
+                {
+                    return false;
+                }
+
+                bool useForwardDirection;
+                CoordinateSystem nextCoordinateSystem;
+                if (stepOperation.SourceSrid == currentSrid)
+                {
+                    useForwardDirection = true;
+                    nextCoordinateSystem = stepTarget;
+                }
+                else if (stepOperation.TargetSrid == currentSrid)
+                {
+                    useForwardDirection = false;
+                    nextCoordinateSystem = stepSource;
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (!TryOrientOperationTransformation(
+                        currentCoordinateSystem,
+                        nextCoordinateSystem,
+                        stepTransformation,
+                        useForwardDirection,
+                        out ICoordinateTransformation? orientedStep))
+                {
+                    return false;
+                }
+
+                AddIfNotNull(concatenatedTransform, orientedStep);
+                currentCoordinateSystem = nextCoordinateSystem;
+                currentSrid = TryGetEpsgCode(currentCoordinateSystem, out int nextSrid) ? nextSrid : 0;
+            }
+
+            if (concatenatedTransform.CoordinateTransformationList.Count != stepCount
+                || currentSrid != operation.TargetSrid)
+            {
+                return false;
+            }
+
+            transformation = CreateTransform(source, target, TransformType.Transformation, concatenatedTransform);
+            return true;
+        }
+        finally
+        {
+            visitedOperationCodes.Remove(operation.OperationCode);
+        }
+    }
+
+    private static bool TryOrientOperationTransformation(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        ICoordinateTransformation transformation,
+        bool useForwardDirection,
+        [NotNullWhen(true)] out ICoordinateTransformation? orientedTransformation)
+    {
+        orientedTransformation = null;
+
+        if (useForwardDirection)
+        {
+            orientedTransformation = transformation;
+            return true;
+        }
+
+        if (!transformation.MathTransform.IsInvertible)
+        {
+            return false;
+        }
+
+        orientedTransformation = new CoordinateTransformation(
+            source,
+            target,
+            transformation.TransformType,
+            transformation.MathTransform.Inverse(),
+            transformation.Name,
+            transformation.Authority,
+            transformation.AuthorityCode,
+            transformation.AreaOfUse,
+            transformation.Remarks);
+        return true;
+    }
+
+    private static bool TryCreateOperationTransformationFromDefinition(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        CoordinateOperationDefinition operation,
+        HashSet<int> visitedOperationCodes,
+        [NotNullWhen(true)] out ICoordinateTransformation? transformation)
+    {
+        transformation = null;
+
+        if (!TryResolveExactOperationGridPath(operation, out string? resolvedGridPath))
+        {
+            return false;
+        }
+
+        if (TryCreateExplicitOperationTransformation(source, target, operation, resolvedGridPath, visitedOperationCodes, out transformation))
+        {
+            return true;
+        }
+
+        if (TryCreateDirectProjectedTransformation(source, target, operation, resolvedGridPath, out transformation))
+        {
+            return true;
+        }
+
+        if (TryCreateVerticalBoundCompoundTransformation(source, target, out ICoordinateTransformation? verticalBoundTransformation))
+        {
+            transformation = CreateMetadataBackedTransformation(source, target, verticalBoundTransformation, operation, resolvedGridPath);
+            return true;
+        }
+
+        if (!CanUseOperationCoreFallback(source, target))
+        {
+            return false;
+        }
+
+        var factory = new CoordinateTransformationFactory();
+        ICoordinateTransformation fallback = factory.CreateFromCoordinateSystemsCore(source, target);
+        transformation = CreateMetadataBackedTransformation(source, target, fallback, operation, resolvedGridPath);
+        return true;
+    }
+
+    private static bool TryResolveCatalogCoordinateSystem(int srid, [NotNullWhen(true)] out CoordinateSystem? coordinateSystem)
+    {
+        coordinateSystem = null;
+        return srid > 0 && EpsgCoordinateSystemFactory.TryResolveCoordinateSystem(srid, out coordinateSystem);
+    }
+
+    private static bool TryResolveExactOperationGridPath(CoordinateOperationDefinition operation, out string? resolvedGridPath)
+    {
+        resolvedGridPath = null;
+
+        if (string.IsNullOrWhiteSpace(operation.ParameterFileName))
+        {
+            return true;
+        }
+
+        if (GetGridResolver().TryResolve(operation.ParameterFileName, out resolvedGridPath))
+        {
+            return true;
+        }
+
+        return IsGridRequiredModeEnabled()
+            ? throw new InvalidOperationException($"DataUnavailable: Required grid resource '{operation.ParameterFileName}' was not found.")
+            : false;
+    }
+
+    private static bool CanUseOperationCoreFallback(CoordinateSystem source, CoordinateSystem target)
+    {
+        CoordinateSystemRuntimeKind sourceKind = GetCoordinateSystemRuntimeKind(source);
+        CoordinateSystemRuntimeKind targetKind = GetCoordinateSystemRuntimeKind(target);
+        if (sourceKind == CoordinateSystemRuntimeKind.Unknown || targetKind == CoordinateSystemRuntimeKind.Unknown)
+        {
+            return false;
+        }
+
+        if (sourceKind == CoordinateSystemRuntimeKind.Fitted || targetKind == CoordinateSystemRuntimeKind.Fitted)
+        {
+            return true;
+        }
+
+        int route = ((int)sourceKind * 10) + (int)targetKind;
+        return route is 11 or 12 or 21 or 22 or 23 or 32 or 33;
     }
 
     private static bool TryCreateDirectGeographicMathTransform(
@@ -547,6 +813,24 @@ public partial class CoordinateTransformationFactory
         return result;
     }
 
+    private static Dictionary<int, CoordinateOperationDefinition> LoadDirectOperationDefinitionsByCode()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var result = new Dictionary<int, CoordinateOperationDefinition>();
+
+        foreach (CoordinateOperationDefinition definition in provider.GetDefinitions())
+        {
+            if (definition.OperationCode <= 0 || definition.SourceSrid <= 0 || definition.TargetSrid <= 0)
+            {
+                continue;
+            }
+
+            result[definition.OperationCode] = definition;
+        }
+
+        return result;
+    }
+
     private static Dictionary<int, IReadOnlyDictionary<string, double>> LoadDirectOperationParameters()
     {
         var parametersByOperation = new Dictionary<int, Dictionary<string, double>>();
@@ -578,6 +862,14 @@ public partial class CoordinateTransformationFactory
         parameters = null;
         return operation is not null
             && DirectOperationParameters.Value.TryGetValue(operation.OperationCode, out parameters);
+    }
+
+    private static bool TryGetDirectOperationDefinition(
+        int operationCode,
+        [NotNullWhen(true)] out CoordinateOperationDefinition? operation)
+    {
+        operation = null;
+        return operationCode > 0 && DirectOperationDefinitionsByCode.Value.TryGetValue(operationCode, out operation);
     }
 
     private static bool TryGetRequiredOperationParameter(
