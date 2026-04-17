@@ -12,21 +12,21 @@ namespace ProjNet.Data.Generated
         internal static readonly EpsgOperationRecord[] Operations = new EpsgOperationRecord[]
         {
             new EpsgOperationRecord((EpsgOperationType)0, 1024, 4312, 4258, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 46.64d, 47.84d, 13.58d, 16.17d, 0, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1026, 4903, 4230, 10.0d, "Madrid to ED50 polynomial", "", double.NaN, double.NaN, double.NaN, double.NaN, 7, 9),
-            new EpsgOperationRecord((EpsgOperationType)0, 1027, 4903, 4230, 5.0d, "Madrid to ED50 polynomial", "", double.NaN, double.NaN, double.NaN, double.NaN, 16, 9),
-            new EpsgOperationRecord((EpsgOperationType)0, 1028, 4903, 4230, 5.0d, "Madrid to ED50 polynomial", "", double.NaN, double.NaN, double.NaN, double.NaN, 25, 9),
-            new EpsgOperationRecord((EpsgOperationType)0, 1035, 5800, 22192, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 34, 9),
-            new EpsgOperationRecord((EpsgOperationType)0, 1041, 4300, 4258, 0.4d, "General polynomial of degree 6", "", double.NaN, double.NaN, double.NaN, double.NaN, 43, 38),
-            new EpsgOperationRecord((EpsgOperationType)0, 1042, 4300, 4326, 1.0d, "General polynomial of degree 6", "", double.NaN, double.NaN, double.NaN, double.NaN, 81, 38),
-            new EpsgOperationRecord((EpsgOperationType)0, 1044, 28992, 23031, 1.0d, "Oblique Stereographic", "", double.NaN, double.NaN, double.NaN, double.NaN, 119, 24),
-            new EpsgOperationRecord((EpsgOperationType)0, 1046, 28992, 23031, 1.0d, "Oblique Stereographic", "", double.NaN, double.NaN, double.NaN, double.NaN, 143, 24),
-            new EpsgOperationRecord((EpsgOperationType)0, 1048, 31300, 23031, 1.0d, "Lambert Conic Conformal (2SP Belgium)", "", double.NaN, double.NaN, double.NaN, double.NaN, 167, 23),
-            new EpsgOperationRecord((EpsgOperationType)0, 1050, 28992, 23095, 1.0d, "Oblique Stereographic", "", double.NaN, double.NaN, double.NaN, double.NaN, 190, 24),
-            new EpsgOperationRecord((EpsgOperationType)0, 1052, 4230, 4326, 5.0d, "Reversible polynomial of degree 13", "", double.NaN, double.NaN, double.NaN, double.NaN, 214, 48),
+            new EpsgOperationRecord((EpsgOperationType)0, 1026, 4903, 4230, 10.0d, "Madrid to ED50 polynomial", "", 35.95d, 43.82d, -9.37d, 3.39d, 7, 9),
+            new EpsgOperationRecord((EpsgOperationType)0, 1027, 4903, 4230, 5.0d, "Madrid to ED50 polynomial", "", 39.96d, 43.82d, -9.37d, 3.39d, 16, 9),
+            new EpsgOperationRecord((EpsgOperationType)0, 1028, 4903, 4230, 5.0d, "Madrid to ED50 polynomial", "", 35.95d, 41.98d, -7.54d, 0.28d, 25, 9),
+            new EpsgOperationRecord((EpsgOperationType)0, 1035, 5800, 22192, 5.0d, "Transverse Mercator", "", -46.7d, -45.19d, -69.5d, -67.5d, 34, 9),
+            new EpsgOperationRecord((EpsgOperationType)0, 1041, 4300, 4258, 0.4d, "General polynomial of degree 6", "", 51.39d, 55.43d, -10.56d, -5.34d, 43, 38),
+            new EpsgOperationRecord((EpsgOperationType)0, 1042, 4300, 4326, 1.0d, "General polynomial of degree 6", "", 51.39d, 55.43d, -10.56d, -5.34d, 81, 38),
+            new EpsgOperationRecord((EpsgOperationType)0, 1044, 28992, 23031, 1.0d, "Oblique Stereographic", "", 50.75d, 53.7d, 3.2d, 7.22d, 119, 24),
+            new EpsgOperationRecord((EpsgOperationType)0, 1046, 28992, 23031, 1.0d, "Oblique Stereographic", "", 50.75d, 53.7d, 3.2d, 7.22d, 143, 24),
+            new EpsgOperationRecord((EpsgOperationType)0, 1048, 31300, 23031, 1.0d, "Lambert Conic Conformal (2SP Belgium)", "", 49.5d, 51.51d, 2.5d, 6.4d, 167, 23),
+            new EpsgOperationRecord((EpsgOperationType)0, 1050, 28992, 23095, 1.0d, "Oblique Stereographic", "", 50.75d, 53.7d, 3.2d, 7.22d, 190, 24),
+            new EpsgOperationRecord((EpsgOperationType)0, 1052, 4230, 4326, 5.0d, "Reversible polynomial of degree 13", "", 53.58d, 55.92d, 3.34d, 8.88d, 214, 48),
             new EpsgOperationRecord((EpsgOperationType)0, 1055, 4204, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 28.53d, 30.09d, 46.54d, 48.48d, 262, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1056, 4204, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 28.53d, 30.09d, 46.54d, 48.48d, 265, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1057, 4204, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 272, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1058, 4204, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 279, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1057, 4204, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 29.1d, 30.09d, 46.54d, 48.42d, 272, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1058, 4204, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 28.53d, 29.45d, 46.54d, 48.48d, 279, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1059, 4246, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 28.53d, 30.09d, 46.54d, 48.48d, 286, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1060, 4318, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 28.53d, 30.09d, 46.54d, 48.48d, 289, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1061, 4319, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 29.17d, 29.45d, 47.78d, 48.16d, 292, 3),
@@ -92,7 +92,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1129, 4222, 4326, 15.0d, "Geocentric translations (geog2D domain)", "", -34.88d, -22.13d, 16.45d, 32.95d, 529, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1130, 4223, 4326, 14.0d, "Geocentric translations (geog2D domain)", "", 30.23d, 38.41d, 7.49d, 13.67d, 532, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1131, 4224, 4326, 12.0d, "Geocentric translations (geog2D domain)", "", -22.0d, -19.29d, -62.57d, -57.81d, 535, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1132, 4225, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 538, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1132, 4225, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", -32.75d, -2.68d, -58.16d, -34.74d, 538, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1133, 4230, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", 34.88d, 71.24d, -9.56d, 31.59d, 541, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1134, 4230, 4326, 6.0d, "Geocentric translations (geog2D domain)", "", 42.33d, 57.8d, -4.87d, 17.17d, 544, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1135, 4230, 4326, 999.0d, "Geocentric translations (geog2D domain)", "", 16.37d, 37.39d, 34.17d, 55.67d, 547, 3),
@@ -137,7 +137,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1174, 4267, 4326, 11.0d, "Geocentric translations (geog2D domain)", "", 24.41d, 49.38d, -97.22d, -66.91d, 672, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1175, 4267, 4326, 7.0d, "Geocentric translations (geog2D domain)", "", 25.83d, 49.05d, -124.79d, -89.64d, 675, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1176, 4267, 4326, 12.0d, "Geocentric translations (geog2D domain)", "", 54.34d, 71.4d, -168.26d, -129.99d, 678, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1177, 4267, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 681, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1177, 4267, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", 20.86d, 27.29d, -79.04d, -72.68d, 681, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1178, 4267, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", 23.9d, 24.19d, -74.6d, -74.37d, 684, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1179, 4267, 4326, 13.0d, "Geocentric translations (geog2D domain)", "", 48.25d, 60.01d, -139.04d, -109.98d, 687, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1180, 4267, 4326, 12.0d, "Geocentric translations (geog2D domain)", "", 41.67d, 60.01d, -102.0d, -74.35d, 690, 3),
@@ -161,10 +161,10 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1198, 4277, 4326, 18.0d, "Geocentric translations (geog2D domain)", "", 54.57d, 60.9d, -8.74d, -0.65d, 748, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1199, 4277, 4326, 35.0d, "Geocentric translations (geog2D domain)", "", 51.28d, 53.48d, -5.34d, -2.65d, 751, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1200, 4282, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", -6.91d, 3.72d, 8.84d, 18.65d, 754, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1201, 4248, 4326, 42.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 757, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1201, 4248, 4326, 42.0d, "Geocentric translations (geog2D domain)", "", -43.5d, 12.25d, -81.41d, -56.47d, 757, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1202, 4248, 4326, 19.0d, "Geocentric translations (geog2D domain)", "", -22.91d, -9.67d, -69.66d, -57.52d, 760, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1203, 4248, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 763, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1204, 4248, 4326, 35.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 766, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1203, 4248, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", -21.51d, -17.5d, -70.49d, -68.18d, 763, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1204, 4248, 4326, 35.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -38.99d, -74.48d, -71.38d, 766, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1205, 4248, 4326, 26.0d, "Geocentric translations (geog2D domain)", "", -4.23d, 12.52d, -79.1d, -66.87d, 769, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1206, 4248, 4326, 7.0d, "Geocentric translations (geog2D domain)", "", -5.01d, 1.45d, -81.03d, -75.21d, 772, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1207, 4248, 4326, 17.0d, "Geocentric translations (geog2D domain)", "", 1.18d, 10.7d, -61.39d, -55.77d, 775, 3),
@@ -272,7 +272,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1447, 4600, 4326, 10.0d, "Geographic2D offsets", "", 18.11d, 18.33d, -63.22d, -62.92d, 1176, 2),
             new EpsgOperationRecord((EpsgOperationType)0, 1448, 4237, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 45.74d, 48.58d, 16.11d, 22.9d, 1178, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1449, 4237, 4258, 0.4d, "Coordinate Frame rotation (geog2D domain)", "", 45.74d, 48.58d, 16.11d, 22.9d, 1185, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1450, 4230, 4326, 0.5d, "Norway Offshore Interpolation", "ED50 to WGS 84 (15)", double.NaN, double.NaN, double.NaN, double.NaN, 1192, 2),
+            new EpsgOperationRecord((EpsgOperationType)0, 1450, 4230, 4326, 0.5d, "Norway Offshore Interpolation", "ED50 to WGS 84 (15)", 62.0d, 65.01d, -0.49d, 5.01d, 1192, 2),
             new EpsgOperationRecord((EpsgOperationType)0, 1451, 4609, 4269, 1.0d, "NTv1", "PQV4.DAC", 44.99d, 62.62d, -79.85d, -57.1d, 1194, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1454, 4135, 4269, 0.2d, "NADCON", "hawaii.las", 18.87d, 22.29d, -160.3d, -154.74d, 1194, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1455, 4136, 4269, 0.5d, "NADCON", "stlrnc.las", 62.89d, 63.84d, -171.97d, -168.59d, 1194, 0),
@@ -285,8 +285,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1462, 4267, 4269, 1.0d, "NTv1", "GS2783v1.QUE", 44.99d, 62.62d, -79.85d, -57.1d, 1215, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1463, 4608, 4269, 1.0d, "NTv2", "May76v20.gsb", 41.67d, 56.9d, -95.16d, -74.35d, 1215, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1464, 4202, 4283, 0.1d, "NTv2", "vic_0799.gsb", -39.2d, -33.98d, 140.96d, 150.04d, 1215, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1469, 4142, 4326, 15.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1215, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1470, 4143, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1218, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1469, 4142, 4326, 15.0d, "Geocentric translations (geog2D domain)", "", 5.15d, 5.54d, -4.22d, -3.85d, 1215, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1470, 4143, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", 1.02d, 10.74d, -8.61d, -2.48d, 1218, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1474, 4269, 4152, 0.05d, "NADCON", "alhpgn.las", 30.14d, 35.02d, -88.48d, -84.89d, 1221, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1475, 4269, 4152, 0.05d, "NADCON", "azhpgn.las", 31.33d, 37.01d, -114.81d, -109.04d, 1221, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1476, 4269, 4152, 0.05d, "NADCON", "cnhpgn.las", 36.5d, 42.01d, -124.45d, -116.54d, 1221, 0),
@@ -375,28 +375,28 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1570, 4168, 4324, 25.0d, "Geocentric translations (geog2D domain)", "", 1.4d, 6.06d, -3.79d, 2.1d, 1362, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1573, 4267, 4269, 1.5d, "NTv2", "NA27NA83.GSB", 44.99d, 62.62d, -79.85d, -57.1d, 1365, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1575, 4609, 4269, 1.5d, "NTv2", "CQ77NA83.GSB", 44.99d, 62.62d, -79.85d, -57.1d, 1365, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1577, 4169, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1365, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1577, 4169, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", -14.43d, -14.11d, -170.88d, -169.38d, 1365, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1578, 4169, 4152, 5.0d, "NADCON", "wshpgn.las", -14.43d, -14.2d, -170.88d, -170.51d, 1368, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1579, 4169, 4152, 5.0d, "NADCON", "eshpgn.las", double.NaN, double.NaN, double.NaN, double.NaN, 1368, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1580, 4152, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1368, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1579, 4169, 4152, 5.0d, "NADCON", "eshpgn.las", -14.31d, -14.11d, -169.73d, -169.38d, 1368, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1580, 4152, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", -14.59d, 71.4d, 144.58d, -64.51d, 1368, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1581, 4170, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", -59.87d, 16.75d, -113.21d, -26.0d, 1371, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1582, 4248, 4326, 3.0d, "Geocentric translations (geog2D domain)", "", -14.43d, -13.56d, -68.96d, -67.79d, 1374, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1583, 4248, 4326, 0.5d, "Geocentric translations (geog2D domain)", "", -21.71d, -21.09d, -63.44d, -62.95d, 1377, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1584, 4227, 4324, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1380, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1584, 4227, 4324, 5.0d, "Geocentric translations (geog2D domain)", "", 34.49d, 35.9d, 39.3d, 40.81d, 1380, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1586, 4227, 4326, 999.0d, "Position Vector transformation (geog2D domain)", "", 35.33d, 35.9d, 39.15d, 40.41d, 1383, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1587, 4227, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 35.79d, 36.5d, 40.5d, 41.39d, 1390, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1588, 4230, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", 65.0d, 84.73d, -3.35d, 38.01d, 1393, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1589, 4230, 4258, 2.0d, "Norway Offshore Interpolation", "ED50 to ETRS89 (1)", double.NaN, double.NaN, double.NaN, double.NaN, 1400, 2),
-            new EpsgOperationRecord((EpsgOperationType)0, 1590, 4230, 4326, 0.5d, "Norway Offshore Interpolation", "ED50 to WGS 84 (21)", double.NaN, double.NaN, double.NaN, double.NaN, 1402, 2),
+            new EpsgOperationRecord((EpsgOperationType)0, 1589, 4230, 4258, 2.0d, "Norway Offshore Interpolation", "ED50 to ETRS89 (1)", 62.0d, 65.01d, -0.49d, 5.01d, 1400, 2),
+            new EpsgOperationRecord((EpsgOperationType)0, 1590, 4230, 4326, 0.5d, "Norway Offshore Interpolation", "ED50 to WGS 84 (21)", 62.0d, 65.01d, -0.49d, 5.01d, 1402, 2),
             new EpsgOperationRecord((EpsgOperationType)0, 1592, 4298, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 4.01d, 6.31d, 112.37d, 115.37d, 1404, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1593, 4203, 4283, 0.1d, "NTv2", "wa_0700.gsb", -35.19d, -13.67d, 112.85d, 129.01d, 1407, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1594, 4202, 4283, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", -43.7d, -39.52d, 143.77d, 148.55d, 1407, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1595, 4202, 4283, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", -26.01d, -10.86d, 128.99d, 138.0d, 1414, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1596, 4202, 4283, 0.1d, "NTv2", "SEAust_21_06_00.gsb", -39.2d, -28.15d, 140.96d, 153.69d, 1421, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1597, 4218, 4326, 0.2d, "Geocentric translations (geog2D domain)", "", 4.75d, 5.68d, -73.0d, -72.25d, 1421, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1603, 4267, 4122, 1.5d, "Maritime Provinces polynomial interpolation", "TRNB2777.DAT", double.NaN, double.NaN, double.NaN, double.NaN, 1424, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1604, 4267, 4122, 1.5d, "Maritime Provinces polynomial interpolation", "TRNS2777.DAT", double.NaN, double.NaN, double.NaN, double.NaN, 1424, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1605, 4267, 4122, 1.5d, "Maritime Provinces polynomial interpolation", "TRPE2777.DAT", double.NaN, double.NaN, double.NaN, double.NaN, 1424, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1603, 4267, 4122, 1.5d, "Maritime Provinces polynomial interpolation", "TRNB2777.DAT", 44.56d, 48.07d, -69.05d, -63.7d, 1424, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1604, 4267, 4122, 1.5d, "Maritime Provinces polynomial interpolation", "TRNS2777.DAT", 43.41d, 47.08d, -66.28d, -59.73d, 1424, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1605, 4267, 4122, 1.5d, "Maritime Provinces polynomial interpolation", "TRPE2777.DAT", 45.9d, 47.09d, -64.49d, -61.9d, 1424, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1609, 4313, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 49.5d, 51.51d, 2.5d, 6.4d, 1424, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1610, 4313, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 49.5d, 51.51d, 2.5d, 6.4d, 1431, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1612, 4230, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", 62.0d, 84.73d, -3.35d, 38.01d, 1434, 7),
@@ -415,10 +415,10 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1629, 4230, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 36.0d, 36.16d, -5.42d, -4.89d, 1513, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1630, 4230, 4258, 1.5d, "Position Vector transformation (geog2D domain)", "", 38.59d, 40.15d, 1.12d, 4.39d, 1516, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1631, 4230, 4326, 1.5d, "Position Vector transformation (geog2D domain)", "", 38.59d, 40.15d, 1.12d, 4.39d, 1523, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1632, 4230, 4258, 1.5d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1530, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1633, 4230, 4326, 1.5d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1537, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1634, 4230, 4258, 1.5d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1544, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1635, 4230, 4326, 1.5d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1551, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1632, 4230, 4258, 1.5d, "Position Vector transformation (geog2D domain)", "", 35.95d, 43.56d, -7.54d, 3.39d, 1530, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1633, 4230, 4326, 1.5d, "Position Vector transformation (geog2D domain)", "", 35.95d, 43.56d, -7.54d, 3.39d, 1537, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1634, 4230, 4258, 1.5d, "Position Vector transformation (geog2D domain)", "", 41.5d, 43.82d, -9.37d, -4.5d, 1544, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1635, 4230, 4326, 1.5d, "Position Vector transformation (geog2D domain)", "", 41.5d, 43.82d, -9.37d, -4.5d, 1551, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1638, 4123, 4258, 1.5d, "Position Vector transformation (geog2D domain)", "", 59.75d, 70.09d, 19.24d, 31.59d, 1558, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1639, 4123, 4326, 1.5d, "Position Vector transformation (geog2D domain)", "", 59.75d, 70.09d, 19.24d, 31.59d, 1565, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1641, 4299, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", 51.39d, 55.43d, -10.56d, -5.34d, 1572, 7),
@@ -472,7 +472,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1692, 4267, 4326, 1.5d, "NTv2", "NA27SCRS.GSB", 44.99d, 62.62d, -79.85d, -57.1d, 1837, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1693, 4267, 4326, 2.0d, "NTv2", "NTv2_0.gsb", 40.0d, 83.17d, -141.01d, -44.0d, 1837, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1694, 4169, 4326, 5.0d, "NADCON", "wshpgn.las", -14.43d, -14.2d, -170.88d, -170.51d, 1837, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1695, 4169, 4326, 5.0d, "NADCON", "eshpgn.las", double.NaN, double.NaN, double.NaN, double.NaN, 1837, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1695, 4169, 4326, 5.0d, "NADCON", "eshpgn.las", -14.31d, -14.11d, -169.73d, -169.38d, 1837, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1696, 4269, 4326, 1.5d, "NTv2", "NA83SCRS.GSB", 44.99d, 62.62d, -79.85d, -57.1d, 1837, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1697, 4269, 4326, 1.5d, "NTv2", "SK83-98.gsb", 49.0d, 60.01d, -110.0d, -101.34d, 1837, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1698, 4138, 4326, 1.5d, "NADCON", "stgeorge.las", 56.49d, 56.67d, -169.88d, -169.38d, 1837, 0),
@@ -550,9 +550,9 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1775, 4178, 4258, 0.1d, "Position Vector transformation (geog2D domain)", "", 50.2d, 54.74d, 9.92d, 15.04d, 1909, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1776, 4314, 4258, 3.0d, "Position Vector transformation (geog2D domain)", "", 47.27d, 55.09d, 5.86d, 13.84d, 1916, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1777, 4314, 4326, 3.0d, "Position Vector transformation (geog2D domain)", "", 47.27d, 55.09d, 5.86d, 13.84d, 1923, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1778, 4314, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1930, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1779, 4314, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1937, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1780, 4314, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 1944, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1778, 4314, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", 47.27d, 50.34d, 6.11d, 13.84d, 1930, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1779, 4314, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", 50.33d, 52.34d, 5.86d, 12.03d, 1937, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 1780, 4314, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", 52.33d, 55.09d, 6.56d, 11.59d, 1944, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1783, 4230, 4258, 2.0d, "Position Vector transformation (geog2D domain)", "", 34.42d, 43.45d, 25.62d, 44.83d, 1951, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1784, 4230, 4326, 2.0d, "Position Vector transformation (geog2D domain)", "", 34.42d, 43.45d, 25.62d, 44.83d, 1958, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1796, 4193, 4326, 0.5d, "Geocentric translations (geog2D domain)", "", 2.16d, 4.99d, 8.45d, 10.4d, 1965, 3),
@@ -565,7 +565,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1803, 4202, 4283, 0.5d, "NTv2", "A66 National (13.09.01).gsb", -43.7d, -9.86d, 112.85d, 153.69d, 2002, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1804, 4203, 4283, 0.1d, "NTv2", "National 84 (02.07.01).gsb", -38.53d, -9.37d, 109.23d, 153.61d, 2002, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1805, 4197, 4324, 5.0d, "Geocentric translations (geog2D domain)", "", 8.92d, 9.87d, 12.9d, 14.19d, 2002, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 1806, 4198, 4324, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 2005, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1806, 4198, 4324, 5.0d, "Geocentric translations (geog2D domain)", "", 11.7d, 12.77d, 14.17d, 15.09d, 2005, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1807, 4284, 4326, 10.0d, "Position Vector transformation (geog2D domain)", "", 37.89d, 42.59d, 44.77d, 51.73d, 2008, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1808, 4284, 4326, 5.0d, "Position Vector transformation (geog2D domain)", "", 37.89d, 43.59d, 39.99d, 51.73d, 2015, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1809, 4284, 4326, 2.0d, "Position Vector transformation (geog2D domain)", "", 38.31d, 40.33d, 48.93d, 50.4d, 2022, 7),
@@ -584,7 +584,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1823, 4263, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", 3.24d, 3.86d, 5.58d, 8.0d, 2081, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1824, 4263, 4326, 25.0d, "Geocentric translations (geog2D domain)", "", 8.78d, 11.63d, 9.41d, 12.13d, 2084, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1825, 4611, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 22.13d, 22.58d, 113.76d, 114.51d, 2087, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1826, 4612, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 2094, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 1826, 4612, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 17.09d, 46.05d, 122.38d, 157.65d, 2094, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1828, 4310, 4322, 25.0d, "Geocentric translations (geog2D domain)", "", 10.64d, 16.7d, -20.22d, -11.36d, 2097, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1829, 4237, 4258, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", 45.74d, 48.58d, 16.11d, 22.9d, 2100, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1830, 4237, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 45.74d, 48.58d, 16.11d, 22.9d, 2107, 7),
@@ -665,9 +665,9 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 1928, 4641, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", -21.71d, -21.32d, 167.75d, 168.19d, 2386, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1931, 4643, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", -19.85d, -19.5d, 163.54d, 163.75d, 2393, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 1946, 4617, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 38.21d, 86.46d, -141.01d, -40.73d, 2400, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 1947, 4122, 4267, 1.5d, "Maritime Provinces polynomial interpolation", "TRNB7727.DAT", double.NaN, double.NaN, double.NaN, double.NaN, 2407, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1948, 4122, 4267, 1.5d, "Maritime Provinces polynomial interpolation", "TRNS7727.DAT", double.NaN, double.NaN, double.NaN, double.NaN, 2407, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 1949, 4122, 4267, 1.5d, "Maritime Provinces polynomial interpolation", "TRPE7727.DAT", double.NaN, double.NaN, double.NaN, double.NaN, 2407, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1947, 4122, 4267, 1.5d, "Maritime Provinces polynomial interpolation", "TRNB7727.DAT", 44.56d, 48.07d, -69.05d, -63.7d, 2407, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1948, 4122, 4267, 1.5d, "Maritime Provinces polynomial interpolation", "TRNS7727.DAT", 43.41d, 47.08d, -66.28d, -59.73d, 2407, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 1949, 4122, 4267, 1.5d, "Maritime Provinces polynomial interpolation", "TRPE7727.DAT", 45.9d, 47.09d, -64.49d, -61.9d, 2407, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 1950, 4269, 4617, 2.0d, "Geocentric translations (geog2D domain)", "", 40.0d, 64.21d, -67.75d, -43.99d, 2407, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1951, 4658, 4326, 7.0d, "Geocentric translations (geog2D domain)", "", 63.34d, 66.59d, -24.63d, -13.38d, 2410, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 1952, 4659, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 59.96d, 69.59d, -30.87d, -5.55d, 2413, 3),
@@ -727,9 +727,9 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 3915, 3906, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", 45.42d, 46.88d, 13.38d, 16.61d, 2663, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 3916, 3906, 4765, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 45.42d, 46.88d, 13.38d, 16.61d, 2670, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 3917, 3906, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 45.42d, 46.88d, 13.38d, 16.61d, 2677, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 3918, 3906, 4765, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 2684, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 3919, 3906, 4765, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 2691, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 3921, 3906, 4765, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 2698, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 3918, 3906, 4765, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", 45.44d, 46.53d, 13.38d, 14.58d, 2684, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 3919, 3906, 4765, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", 46.14d, 46.88d, 14.54d, 16.61d, 2691, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 3921, 3906, 4765, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", 45.42d, 46.22d, 14.55d, 15.73d, 2698, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 3922, 3906, 4765, 0.3d, "Coordinate Frame rotation (geog2D domain)", "", 45.42d, 45.77d, 14.53d, 15.36d, 2705, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 3923, 3906, 4765, 0.3d, "Coordinate Frame rotation (geog2D domain)", "", 45.7d, 46.12d, 14.47d, 15.73d, 2712, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 3924, 3906, 4765, 0.3d, "Coordinate Frame rotation (geog2D domain)", "", 46.1d, 46.76d, 14.74d, 16.27d, 2719, 7),
@@ -783,12 +783,12 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 4441, 4440, 5767, 0.03d, "Vertical Offset", "", -36.41d, -34.36d, 172.61d, 174.83d, 3190, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4442, 4440, 5759, 0.05d, "Vertical Offset", "", -37.67d, -36.12d, 174.0d, 176.17d, 3191, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4443, 4440, 5764, 0.06d, "Vertical Offset", "", -40.59d, -37.52d, 174.57d, 177.26d, 3192, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 4444, 4440, 5766, 0.07d, "Vertical Offset", "", double.NaN, double.NaN, double.NaN, double.NaN, 3193, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 4444, 4440, 5766, 0.07d, "Vertical Offset", "", -42.44d, -40.44d, 171.82d, 174.46d, 3193, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4445, 4440, 5762, 0.02d, "Vertical Offset", "", -39.04d, -37.49d, 176.41d, 178.63d, 3194, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4446, 4440, 5765, 0.05d, "Vertical Offset", "", -40.57d, -38.87d, 175.8d, 178.07d, 3195, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4447, 4440, 5769, 0.05d, "Vertical Offset", "", -39.92d, -38.41d, 173.68d, 174.95d, 3196, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4448, 4440, 5770, 0.04d, "Vertical Offset", "", -41.67d, -40.12d, 174.52d, 176.55d, 3197, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 4449, 4440, 5763, 0.09d, "Vertical Offset", "", double.NaN, double.NaN, double.NaN, double.NaN, 3198, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 4449, 4440, 5763, 0.09d, "Vertical Offset", "", -44.92d, -41.6d, 168.95d, 173.77d, 3198, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4450, 4440, 5761, 0.07d, "Vertical Offset", "", -46.4d, -43.82d, 167.73d, 171.28d, 3199, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4451, 4440, 5760, 0.05d, "Vertical Offset", "", -46.71d, -46.26d, 168.01d, 168.86d, 3200, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 4452, 4440, 5772, 0.15d, "Vertical Offset", "", -47.33d, -46.63d, 167.29d, 168.34d, 3201, 1),
@@ -806,8 +806,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 4565, 4557, 5616, 0.2d, "Geographic3D to GravityRelatedHeight (IGN1997)", "ggg00_ls.txt", 15.8d, 15.94d, -61.68d, -61.52d, 3218, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 4566, 4557, 5618, 0.5d, "Geographic3D to GravityRelatedHeight (IGN1997)", "ggg00_ld.txt", 16.26d, 16.38d, -61.13d, -60.97d, 3218, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 4567, 4557, 5619, 0.2d, "Geographic3D to GravityRelatedHeight (IGN1997)", "ggg00_sb.txt", 17.82d, 17.98d, -62.92d, -62.73d, 3218, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 4649, 31467, 4647, 0.05d, "Transverse Mercator", "shTransCom.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3218, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 4650, 31468, 4647, 0.05d, "Transverse Mercator", "shTransCom.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3228, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 4649, 31467, 4647, 0.05d, "Transverse Mercator", "shTransCom.dll", 53.37d, 55.09d, 7.8d, 10.5d, 3218, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 4650, 31468, 4647, 0.05d, "Transverse Mercator", "shTransCom.dll", 53.36d, 54.59d, 10.49d, 11.4d, 3228, 10),
             new EpsgOperationRecord((EpsgOperationType)0, 4651, 5701, 5730, 0.1d, "Vertical Offset and Slope", "", 49.93d, 58.71d, -7.06d, 1.8d, 3238, 6),
             new EpsgOperationRecord((EpsgOperationType)0, 4827, 4156, 4258, 1.0d, "Position Vector transformation (geog2D domain)", "", 47.73d, 49.61d, 16.84d, 22.56d, 3244, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 4829, 4156, 4258, 0.5d, "Molodensky-Badekas (CF geog2D domain)", "", 47.73d, 49.61d, 16.84d, 22.56d, 3251, 10),
@@ -859,12 +859,12 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 5065, 4208, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", -10.17d, -4.6d, -35.1d, -29.13d, 3431, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 5066, 4208, 4674, 0.5d, "Geocentric translations (geog2D domain)", "", -6.5d, 4.26d, -44.79d, -26.0d, 3434, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 5067, 4208, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", -6.5d, 4.26d, -44.79d, -26.0d, 3437, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 5073, 31468, 25832, 0.02d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3440, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5074, 31467, 25832, 0.02d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3450, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5075, 31466, 25832, 0.02d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3460, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5073, 31468, 25832, 0.02d, "Transverse Mercator", "gntrans.dll", 51.55d, 53.38d, 10.5d, 11.59d, 3440, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5074, 31467, 25832, 0.02d, "Transverse Mercator", "gntrans.dll", 51.28d, 53.95d, 7.5d, 10.51d, 3450, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5075, 31466, 25832, 0.02d, "Transverse Mercator", "gntrans.dll", 52.23d, 53.81d, 6.56d, 7.51d, 3460, 10),
             new EpsgOperationRecord((EpsgOperationType)0, 5077, 4743, 3889, 0.3d, "Geocentric translations (geog2D domain)", "", 29.06d, 37.39d, 38.79d, 48.61d, 3470, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 5078, 4743, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 29.06d, 37.39d, 38.79d, 48.61d, 3473, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 5133, 5132, 4301, 0.0d, "Longitude rotation", "", double.NaN, double.NaN, double.NaN, double.NaN, 3476, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 5133, 5132, 4301, 0.0d, "Longitude rotation", "", 20.37d, 45.54d, 122.83d, 154.05d, 3476, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 5134, 5132, 4162, 0.0d, "Longitude rotation", "", 33.14d, 38.64d, 124.53d, 131.01d, 3477, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 5166, 23031, 25831, 0.05d, "Transverse Mercator", "", 40.49d, 42.86d, 0.16d, 3.39d, 3478, 14),
             new EpsgOperationRecord((EpsgOperationType)0, 5189, 4162, 4737, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", 33.14d, 38.64d, 124.53d, 131.01d, 3492, 10),
@@ -964,15 +964,15 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 5507, 5488, 5618, 0.5d, "Geographic3D to GravityRelatedHeight (IGN1997)", "gg10_ld.txt", 16.26d, 16.38d, -61.13d, -60.97d, 3924, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 5508, 5488, 5619, 0.2d, "Geographic3D to GravityRelatedHeight (IGN1997)", "gg10_sb.txt", 17.82d, 17.98d, -62.92d, -62.73d, 3924, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 5521, 4646, 4326, 999.0d, "Geocentric translations (geog2D domain)", "", -11.99d, -11.31d, 43.16d, 43.55d, 3924, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 5525, 5524, 4674, 2.0d, "NTv2", "CA61_003.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 3927, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 5526, 4225, 4674, 2.0d, "NTv2", "CA7072_003.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 3927, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 5525, 5524, 4674, 2.0d, "NTv2", "CA61_003.gsb", -27.5d, -14.99d, -58.16d, -38.82d, 3927, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 5526, 4225, 4674, 2.0d, "NTv2", "CA7072_003.gsb", -32.75d, -2.68d, -58.16d, -34.74d, 3927, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 5528, 4618, 4674, 1.0d, "NTv2", "SAD69_003.gsb", -33.78d, 4.44d, -60.58d, -34.74d, 3927, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 5529, 5527, 4674, 0.5d, "NTv2", "SAD96_003.gsb", -33.78d, 4.44d, -60.58d, -34.74d, 3927, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 5540, 5524, 4326, 2.0d, "NTv2", "CA61_003.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 3927, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 5541, 4225, 4326, 2.0d, "NTv2", "CA7072_003.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 3927, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 5540, 5524, 4326, 2.0d, "NTv2", "CA61_003.gsb", -27.5d, -14.99d, -58.16d, -38.82d, 3927, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 5541, 4225, 4326, 2.0d, "NTv2", "CA7072_003.gsb", -32.75d, -2.68d, -58.16d, -34.74d, 3927, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 5542, 4618, 4326, 2.0d, "NTv2", "SAD69_003.gsb", -33.78d, 4.44d, -60.58d, -34.74d, 3927, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 5543, 5527, 4326, 1.0d, "NTv2", "SAD96_003.gsb", -33.78d, 4.44d, -60.58d, -34.74d, 3927, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 5553, 5546, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 3927, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 5553, 5546, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", -14.75d, 2.58d, 139.2d, 162.81d, 3927, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 5557, 5778, 5621, 0.1d, "Vertical Offset and Slope", "", 46.4d, 49.02d, 9.53d, 17.17d, 3930, 6),
             new EpsgOperationRecord((EpsgOperationType)0, 5585, 4023, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 45.44d, 48.47d, 26.63d, 30.13d, 3936, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 5586, 4284, 5561, 3.5d, "Geocentric translations (geog2D domain)", "", 43.18d, 52.38d, 22.15d, 40.18d, 3939, 3),
@@ -986,18 +986,18 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 5660, 4307, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", 18.97d, 38.8d, -8.67d, 11.99d, 3958, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 5661, 4230, 11134, 0.05d, "NTv2", "100800401.gsb", 40.49d, 42.86d, 0.16d, 3.39d, 3965, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 5662, 4202, 5546, 2.0d, "Geocentric translations (geog2D domain)", "", -8.28d, -5.59d, 142.24d, 144.75d, 3965, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 5686, 5682, 25832, 0.05d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3968, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5687, 5683, 25832, 0.05d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3978, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5688, 5684, 25832, 0.1d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3988, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5689, 5684, 25833, 0.1d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 3998, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5690, 5685, 25833, 0.1d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4008, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5691, 5682, 5676, 0.05d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4018, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5692, 5683, 5676, 0.05d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4028, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5693, 5684, 5678, 0.05d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4038, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5694, 5685, 5679, 0.05d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4048, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5695, 5683, 5673, 0.1d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4058, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5696, 5684, 5674, 0.1d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4068, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 5697, 5685, 5675, 0.1d, "Transverse Mercator", "gntrans.dll", double.NaN, double.NaN, double.NaN, double.NaN, 4078, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5686, 5682, 25832, 0.05d, "Transverse Mercator", "gntrans.dll", 49.11d, 53.81d, 5.86d, 7.51d, 3968, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5687, 5683, 25832, 0.05d, "Transverse Mercator", "gntrans.dll", 47.27d, 55.09d, 7.5d, 10.51d, 3978, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5688, 5684, 25832, 0.1d, "Transverse Mercator", "gntrans.dll", 47.39d, 54.59d, 10.5d, 12.0d, 3988, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5689, 5684, 25833, 0.1d, "Transverse Mercator", "gntrans.dll", 47.46d, 54.74d, 12.0d, 13.51d, 3998, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5690, 5685, 25833, 0.1d, "Transverse Mercator", "gntrans.dll", 48.51d, 54.72d, 13.5d, 15.04d, 4008, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5691, 5682, 5676, 0.05d, "Transverse Mercator", "gntrans.dll", 49.11d, 53.81d, 5.86d, 7.51d, 4018, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5692, 5683, 5676, 0.05d, "Transverse Mercator", "gntrans.dll", 47.27d, 55.09d, 7.5d, 10.51d, 4028, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5693, 5684, 5678, 0.05d, "Transverse Mercator", "gntrans.dll", 47.39d, 54.59d, 10.5d, 13.51d, 4038, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5694, 5685, 5679, 0.05d, "Transverse Mercator", "gntrans.dll", 48.51d, 48.98d, 13.5d, 13.84d, 4048, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5695, 5683, 5673, 0.1d, "Transverse Mercator", "gntrans.dll", 50.35d, 51.56d, 9.92d, 10.5d, 4058, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5696, 5684, 5674, 0.1d, "Transverse Mercator", "gntrans.dll", 50.2d, 54.74d, 10.5d, 13.51d, 4068, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 5697, 5685, 5675, 0.1d, "Transverse Mercator", "gntrans.dll", 50.62d, 54.72d, 13.5d, 15.04d, 4078, 10),
             new EpsgOperationRecord((EpsgOperationType)0, 5826, 5681, 4258, 0.0d, "Coordinate Frame rotation (geog2D domain)", "", 47.27d, 55.09d, 5.86d, 15.04d, 4088, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 5827, 4202, 4283, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", -35.93d, -35.12d, 148.76d, 149.4d, 4095, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 5840, 5561, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 43.18d, 52.38d, 22.15d, 40.18d, 4102, 3),
@@ -1018,10 +1018,10 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 6177, 6135, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 17.58d, 20.68d, -83.6d, -78.72d, 4171, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6188, 4207, 11108, 0.1d, "NTv2", "DLx_ETRS89_geo.gsb", 36.95d, 42.16d, -9.56d, -6.19d, 4174, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 6189, 4274, 11108, 0.1d, "NTv2", "D73_ETRS89_geo.gsb", 36.95d, 42.16d, -9.56d, -6.19d, 4174, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 6191, 4225, 4618, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4174, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6192, 4225, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4177, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6193, 4225, 4674, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4180, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6194, 4225, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4183, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6191, 4225, 4618, 5.0d, "Geocentric translations (geog2D domain)", "", -32.75d, -2.68d, -58.16d, -34.74d, 4174, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6192, 4225, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", -32.75d, -2.68d, -58.16d, -34.74d, 4177, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6193, 4225, 4674, 5.0d, "Geocentric translations (geog2D domain)", "", -32.75d, -2.68d, -58.16d, -34.74d, 4180, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6194, 4225, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", -32.75d, -2.68d, -58.16d, -34.74d, 4183, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6195, 5527, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", -35.71d, 7.04d, -74.01d, -25.28d, 4186, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6196, 4263, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 5.56d, 5.74d, 6.72d, 6.97d, 4189, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6205, 3906, 11099, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 40.85d, 42.36d, 20.45d, 23.04d, 4192, 7),
@@ -1051,10 +1051,10 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 6299, 4918, 5332, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 4524, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6300, 4919, 5332, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 4539, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6302, 4919, 4896, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 4554, 15),
-            new EpsgOperationRecord((EpsgOperationType)0, 6303, 23031, 28992, 1.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 4569, 24),
-            new EpsgOperationRecord((EpsgOperationType)0, 6304, 23031, 28992, 1.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 4593, 24),
-            new EpsgOperationRecord((EpsgOperationType)0, 6305, 23031, 31300, 1.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 4617, 23),
-            new EpsgOperationRecord((EpsgOperationType)0, 6306, 23095, 28992, 1.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 4640, 24),
+            new EpsgOperationRecord((EpsgOperationType)0, 6303, 23031, 28992, 1.0d, "Transverse Mercator", "", 50.75d, 53.7d, 3.2d, 7.22d, 4569, 24),
+            new EpsgOperationRecord((EpsgOperationType)0, 6304, 23031, 28992, 1.0d, "Transverse Mercator", "", 50.75d, 53.7d, 3.2d, 7.22d, 4593, 24),
+            new EpsgOperationRecord((EpsgOperationType)0, 6305, 23031, 31300, 1.0d, "Transverse Mercator", "", 49.5d, 51.51d, 2.5d, 6.4d, 4617, 23),
+            new EpsgOperationRecord((EpsgOperationType)0, 6306, 23095, 28992, 1.0d, "Transverse Mercator", "", 50.75d, 53.7d, 3.2d, 7.22d, 4640, 24),
             new EpsgOperationRecord((EpsgOperationType)0, 6313, 4917, 4938, 0.1d, "Time-dependent Coordinate Frame rotation (geocen)", "", -47.2d, -8.88d, 109.23d, 163.2d, 4664, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6315, 4919, 4938, 0.1d, "Time-dependent Coordinate Frame rotation (geocen)", "", -47.2d, -8.88d, 109.23d, 163.2d, 4679, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6326, 6319, 5703, 0.02d, "Geographic3D to GravityRelatedHeight (NGS bin)", "g2012bu0.bin", 24.41d, 49.38d, -124.79d, -66.91d, 4694, 0),
@@ -1062,18 +1062,18 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 6373, 6365, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 12.1d, 32.72d, -122.19d, -84.64d, 4694, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6389, 4896, 5332, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 4697, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6392, 4918, 4938, 0.1d, "Time-dependent Coordinate Frame rotation (geocen)", "", -47.2d, -8.88d, 109.23d, 163.2d, 4712, 15),
-            new EpsgOperationRecord((EpsgOperationType)0, 6698, 4612, 6668, 1.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4727, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6698, 4612, 6668, 1.0d, "Geocentric translations (geog2D domain)", "", 17.09d, 46.05d, 122.38d, 157.65d, 4727, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6699, 6694, 6695, 0.01d, "Vertical Offset", "", 30.94d, 45.54d, 129.3d, 145.87d, 4730, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 6701, 5246, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 4.01d, 6.31d, 112.37d, 115.37d, 4731, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6711, 6706, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 34.76d, 47.1d, 5.93d, 18.99d, 4734, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6712, 4301, 4612, 0.2d, "NTv2", "tky2jgd.gsb", 20.37d, 45.54d, 122.83d, 154.05d, 4737, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 6713, 4612, 6668, 0.2d, "NTv2", "touhokutaiheiyouoki2011.gsb", 34.84d, 41.58d, 135.42d, 142.14d, 4737, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 6724, 6715, 28348, 5.0d, "Transverse Mercator", "", -10.63d, -10.36d, 105.48d, 105.77d, 4737, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 6740, 4301, 6668, 0.2d, "NTv2", "tky2jgd.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 4744, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 6740, 4301, 6668, 0.2d, "NTv2", "tky2jgd.gsb", 20.37d, 45.54d, 122.83d, 154.05d, 4744, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 6864, 4917, 6781, 0.0d, "Time-dependent Coordinate Frame rotation (geocen)", "", 14.92d, 74.71d, 167.65d, -63.88d, 4744, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6865, 4918, 6781, 0.0d, "Time-dependent Coordinate Frame rotation (geocen)", "", 14.92d, 74.71d, 167.65d, -63.88d, 4759, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6866, 4919, 6781, 0.0d, "Time-dependent Coordinate Frame rotation (geocen)", "", 14.92d, 74.71d, 167.65d, -63.88d, 4774, 15),
-            new EpsgOperationRecord((EpsgOperationType)0, 6872, 4143, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4789, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6872, 4143, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", 1.02d, 5.19d, -7.55d, -3.11d, 4789, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6873, 4297, 4326, 3.0d, "Geocentric translations (geog2D domain)", "", -26.59d, -11.69d, 42.53d, 51.03d, 4792, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6888, 5451, 4267, 9.0d, "Geocentric translations (geog2D domain)", "", 7.98d, 17.83d, -92.29d, -82.53d, 4795, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6889, 5451, 4326, 5.0d, "Molodensky-Badekas (PV geog2D domain)", "", 7.98d, 11.22d, -85.97d, -82.53d, 4798, 10),
@@ -1099,8 +1099,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 6912, 6883, 4326, 42.0d, "Geocentric translations (geog2D domain)", "", 3.14d, 3.82d, 8.37d, 9.02d, 4865, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6913, 6894, 4326, 43.0d, "Geocentric translations (geog2D domain)", "", 13.05d, 13.83d, -16.88d, -13.79d, 4868, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6914, 6892, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", -4.86d, -3.66d, 55.15d, 56.01d, 4871, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6918, 32631, 32764, 0.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 4874, 15),
-            new EpsgOperationRecord((EpsgOperationType)0, 6919, 32066, 32765, 0.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 4889, 15),
+            new EpsgOperationRecord((EpsgOperationType)0, 6918, 32631, 32764, 0.0d, "Transverse Mercator", "", 89.99d, 90.0d, 179.99d, 180.0d, 4874, 15),
+            new EpsgOperationRecord((EpsgOperationType)0, 6919, 32066, 32765, 0.0d, "Transverse Mercator", "", 89.99d, 90.0d, 179.99d, 180.0d, 4889, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 6926, 6892, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", -4.86d, -3.66d, 55.15d, 56.01d, 4904, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 6935, 6934, 3887, 0.05d, "Molodensky-Badekas (PV geocentric domain)", "", 29.06d, 37.39d, 38.79d, 48.75d, 4911, 10),
             new EpsgOperationRecord((EpsgOperationType)0, 6936, 6934, 3887, 0.05d, "Position Vector transformation (geocentric domain)", "", 29.06d, 37.39d, 38.79d, 48.75d, 4921, 7),
@@ -1108,26 +1108,26 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 6938, 4202, 5546, 4.0d, "Geocentric translations (geog2D domain)", "", -10.76d, -2.53d, 140.85d, 150.96d, 4935, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6939, 4202, 5546, 1.0d, "Position Vector transformation (geog2D domain)", "", -8.28d, -5.59d, 142.24d, 144.75d, 4938, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 6940, 4202, 5546, 2.0d, "Geocentric translations (geog2D domain)", "", -8.28d, -5.59d, 142.24d, 144.75d, 4945, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6941, 4202, 5546, 0.5d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4948, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 6942, 4202, 5546, 2.5d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4955, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6941, 4202, 5546, 0.5d, "Position Vector transformation (geog2D domain)", "", -6.6d, -5.05d, 140.89d, 141.54d, 4948, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 6942, 4202, 5546, 2.5d, "Geocentric translations (geog2D domain)", "", -6.6d, -5.05d, 140.89d, 141.54d, 4955, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6943, 4202, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", -10.76d, -2.53d, 140.85d, 150.96d, 4958, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6944, 4202, 4326, 4.0d, "Geocentric translations (geog2D domain)", "", -8.28d, -5.59d, 142.24d, 144.75d, 4961, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6945, 4202, 4326, 4.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4964, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6945, 4202, 4326, 4.0d, "Geocentric translations (geog2D domain)", "", -6.6d, -5.05d, 140.89d, 141.54d, 4964, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6946, 4300, 4258, 0.41d, "NTv2", "tm75_etrs89.gsb", 51.39d, 55.43d, -10.56d, -5.34d, 4967, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 6947, 4300, 4326, 1.0d, "NTv2", "tm75_etrs89.gsb", 51.39d, 55.43d, -10.56d, -5.34d, 4967, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 6948, 4745, 4258, 0.03d, "NTv2", "NTv2_SN.gsb", 50.2d, 51.66d, 11.89d, 15.04d, 4967, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 6949, 4248, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", -26.0d, -17.5d, -70.79d, -67.0d, 4967, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6950, 4248, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", -36.0d, -26.0d, -72.87d, -68.28d, 4970, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6951, 4248, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4973, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6951, 4248, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -35.99d, -74.48d, -70.39d, 4973, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6960, 4756, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 8.33d, 23.4d, 102.14d, 109.53d, 4976, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 6968, 4618, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", -36.0d, -31.99d, -72.87d, -69.77d, 4983, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6970, 4618, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", -55.96d, -51.99d, -74.83d, -66.33d, 4986, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6971, 4248, 4326, 17.0d, "Geocentric translations (geog2D domain)", "", -26.0d, -17.5d, -70.79d, -67.0d, 4989, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6972, 4248, 4326, 17.0d, "Geocentric translations (geog2D domain)", "", -36.0d, -26.0d, -72.87d, -68.28d, 4992, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6973, 4248, 4326, 17.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 4995, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6973, 4248, 4326, 17.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -35.99d, -74.48d, -70.39d, 4995, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6974, 4618, 4326, 4.0d, "Geocentric translations (geog2D domain)", "", -32.0d, -17.5d, -71.77d, -67.0d, 4998, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6975, 4618, 4326, 4.0d, "Geocentric translations (geog2D domain)", "", -36.0d, -31.99d, -72.87d, -69.77d, 5001, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 6976, 4618, 4326, 7.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 5004, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 6976, 4618, 4326, 7.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -35.99d, -74.48d, -70.39d, 5004, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6977, 4618, 4326, 6.0d, "Geocentric translations (geog2D domain)", "", -55.96d, -51.99d, -74.83d, -66.33d, 5007, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 6992, 7136, 7139, 0.05d, "Coordinate Frame rotation (geog2D domain)", "", 29.45d, 33.53d, 32.99d, 35.69d, 5010, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 6993, 7139, 6990, 0.0d, "Coordinate Frame rotation (geog2D domain)", "", 29.45d, 33.28d, 34.17d, 35.69d, 5017, 7),
@@ -1137,31 +1137,31 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 7002, 4270, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 24.24d, 24.64d, 54.2d, 54.71d, 5038, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 7003, 4270, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 22.76d, 24.32d, 51.56d, 54.01d, 5045, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 7004, 4270, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 22.63d, 24.95d, 53.99d, 56.03d, 5052, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 7008, 7005, 3391, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5059, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7009, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5071, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7010, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5083, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7011, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5095, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7012, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5107, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7013, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5119, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7014, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5131, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7015, 7005, 3391, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5143, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7016, 7005, 3391, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5155, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7017, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5167, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7018, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5179, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7019, 7005, 3391, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5191, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7020, 7005, 3391, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5203, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7021, 7005, 3391, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5215, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7022, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5227, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7023, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5239, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7024, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5251, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7025, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5263, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7026, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5275, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7027, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5287, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7028, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5299, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7029, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5311, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7030, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5323, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7031, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5335, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 7032, 7006, 3392, 5.0d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 5347, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7008, 7005, 3391, 5.0d, "Transverse Mercator", "", 36.19d, 36.75d, 41.27d, 42.0d, 5059, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7009, 7006, 3392, 5.0d, "Transverse Mercator", "", 36.19d, 37.39d, 42.0d, 43.89d, 5071, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7010, 7006, 3392, 5.0d, "Transverse Mercator", "", 36.22d, 37.33d, 43.87d, 45.33d, 5083, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7011, 7006, 3392, 5.0d, "Transverse Mercator", "", 36.22d, 37.33d, 43.87d, 45.33d, 5095, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7012, 7006, 3392, 5.0d, "Transverse Mercator", "", 34.57d, 36.22d, 41.09d, 42.82d, 5107, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7013, 7006, 3392, 5.0d, "Transverse Mercator", "", 34.59d, 36.24d, 42.77d, 45.0d, 5119, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7014, 7006, 3392, 5.0d, "Transverse Mercator", "", 34.6d, 36.24d, 45.0d, 46.35d, 5131, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7015, 7005, 3391, 5.0d, "Transverse Mercator", "", 32.98d, 33.99d, 38.79d, 40.09d, 5143, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7016, 7005, 3391, 5.0d, "Transverse Mercator", "", 32.95d, 34.6d, 40.07d, 42.0d, 5155, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7017, 7006, 3392, 5.0d, "Transverse Mercator", "", 32.95d, 34.61d, 42.0d, 43.93d, 5167, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7018, 7006, 3392, 5.0d, "Transverse Mercator", "", 32.98d, 34.62d, 43.9d, 46.2d, 5179, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7019, 7005, 3391, 5.0d, "Transverse Mercator", "", 31.32d, 32.99d, 40.05d, 42.0d, 5191, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7020, 7005, 3391, 5.0d, "Transverse Mercator", "", 32.0d, 32.99d, 38.92d, 40.08d, 5203, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7021, 7005, 3391, 5.0d, "Transverse Mercator", "", 31.32d, 32.99d, 40.05d, 42.0d, 5215, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7022, 7006, 3392, 5.0d, "Transverse Mercator", "", 31.32d, 32.99d, 42.0d, 43.95d, 5227, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7023, 7006, 3392, 5.0d, "Transverse Mercator", "", 31.36d, 32.99d, 43.92d, 46.08d, 5239, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7024, 7006, 3392, 5.0d, "Transverse Mercator", "", 31.33d, 32.99d, 46.05d, 47.87d, 5251, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7025, 7006, 3392, 5.0d, "Transverse Mercator", "", 31.33d, 32.99d, 46.05d, 47.87d, 5263, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7026, 7006, 3392, 5.0d, "Transverse Mercator", "", 29.75d, 31.37d, 42.0d, 43.97d, 5275, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7027, 7006, 3392, 5.0d, "Transverse Mercator", "", 29.73d, 31.37d, 43.94d, 46.06d, 5287, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7028, 7006, 3392, 5.0d, "Transverse Mercator", "", 29.72d, 31.37d, 46.03d, 48.0d, 5299, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7029, 7006, 3392, 5.0d, "Transverse Mercator", "", 29.75d, 31.37d, 42.0d, 43.97d, 5311, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7030, 7006, 3392, 5.0d, "Transverse Mercator", "", 29.73d, 31.37d, 43.94d, 46.06d, 5323, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7031, 7006, 3392, 5.0d, "Transverse Mercator", "", 29.09d, 29.75d, 43.99d, 46.04d, 5335, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 7032, 7006, 3392, 5.0d, "Transverse Mercator", "", 29.06d, 29.74d, 46.02d, 47.02d, 5347, 12),
             new EpsgOperationRecord((EpsgOperationType)0, 7033, 4744, 4326, 30.0d, "Geocentric translations (geog2D domain)", "", 29.06d, 37.39d, 38.79d, 48.61d, 5359, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7083, 4637, 7073, 0.5d, "Geocentric translations (geog2D domain)", "", -66.78d, -66.1d, 139.44d, 141.5d, 5362, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7140, 7136, 6983, 0.0d, "Coordinate Frame rotation (geog2D domain)", "", 29.45d, 33.28d, 34.17d, 35.69d, 5365, 7),
@@ -1169,7 +1169,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 7442, 4307, 4326, 100.0d, "Geocentric translations (geog2D domain)", "", 27.4d, 28.1d, 7.66d, 8.27d, 5379, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7443, 7373, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", 14.33d, 26.74d, 51.99d, 63.38d, 5382, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7448, 4618, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", -32.0d, -17.5d, -71.77d, -67.0d, 5385, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 7449, 4618, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 5388, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 7449, 4618, 5360, 5.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -35.99d, -74.48d, -70.39d, 5388, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7646, 6319, 6641, 0.02d, "Geographic3D to GravityRelatedHeight (NGS bin)", "g2012bp0.bin", 17.87d, 18.57d, -67.97d, -65.19d, 5391, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7647, 6319, 6642, 0.02d, "Geographic3D to GravityRelatedHeight (NGS bin)", "g2012bp0.bin", 17.62d, 18.44d, -65.09d, -64.51d, 5391, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7648, 6324, 6644, 0.02d, "Geographic3D to GravityRelatedHeight (NGS bin)", "g2012bg0.bin", 13.18d, 13.7d, 144.58d, 145.01d, 5391, 0),
@@ -1195,11 +1195,11 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 7703, 7677, 7679, 0.07d, "Time-specific Coordinate Frame rotation (geocen)", "", -90.0d, 90.0d, -180.0d, 180.0d, 5480, 8),
             new EpsgOperationRecord((EpsgOperationType)0, 7704, 4922, 7679, 0.2d, "Coordinate Frame rotation (geocentric domain)", "", -90.0d, 90.0d, -180.0d, 180.0d, 5488, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 7705, 7681, 7679, 0.03d, "Time-specific Coordinate Frame rotation (geocen)", "", 39.87d, 85.19d, 18.92d, -168.97d, 5495, 8),
-            new EpsgOperationRecord((EpsgOperationType)0, 7709, 4277, 11009, 0.03d, "NTv2", "OSTN15_NTv2_OSGBtoETRS.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 5503, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 7710, 4277, 4326, 1.0d, "NTv2", "OSTN15_NTv2_OSGBtoETRS.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 5503, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 7709, 4277, 11009, 0.03d, "NTv2", "OSTN15_NTv2_OSGBtoETRS.gsb", 49.75d, 61.01d, -9.01d, 2.01d, 5503, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 7710, 4277, 4326, 1.0d, "NTv2", "OSTN15_NTv2_OSGBtoETRS.gsb", 49.75d, 61.01d, -9.01d, 2.01d, 5503, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7711, 11008, 5701, 0.008d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.93d, 58.71d, -7.06d, 1.8d, 5503, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7712, 11008, 5740, 0.017d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 58.72d, 59.41d, -3.48d, -2.34d, 5503, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 7713, 4937, 7707, 0.02d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", double.NaN, double.NaN, double.NaN, double.NaN, 5503, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 7713, 4937, 7707, 0.02d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.75d, 61.01d, -9.01d, 2.01d, 5503, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7714, 11008, 5742, 0.018d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 59.83d, 60.87d, -1.78d, -0.67d, 5503, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7715, 11008, 5746, 0.011d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 56.76d, 58.54d, -7.72d, -6.1d, 5503, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7716, 11008, 5749, 0.01d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.86d, 49.99d, -6.41d, -6.23d, 5503, 0),
@@ -1216,7 +1216,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 7817, 5558, 4919, 0.0d, "Geocentric translations (geocentric domain)", "", 43.18d, 52.38d, 22.15d, 40.18d, 5602, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7833, 4191, 11047, 0.2d, "Coordinate Frame rotation (geog2D domain)", "", 39.64d, 42.67d, 19.22d, 21.06d, 5605, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 7834, 4191, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 39.64d, 42.67d, 19.22d, 21.06d, 5612, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 7835, 4179, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 5619, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 7835, 4179, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", 41.3d, 42.67d, 19.14d, 20.63d, 5619, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7836, 4179, 4191, 1.0d, "Geocentric translations (geog2D domain)", "", 39.64d, 42.67d, 19.22d, 21.06d, 5622, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7838, 7837, 5621, 0.1d, "Vertical Offset and Slope", "", 47.27d, 55.09d, 5.86d, 15.04d, 5625, 6),
             new EpsgOperationRecord((EpsgOperationType)0, 7840, 4959, 7839, 0.1d, "Geographic3D to GravityRelatedHeight (NZgeoid)", "New_Zealand_Quasigeoid_2016.csv", -55.95d, -25.88d, 160.6d, -171.2d, 5631, 0),
@@ -1225,16 +1225,16 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 7862, 7839, 5761, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "dunedin-1958-to-nzvd2016-conversion.csv", -46.4d, -43.82d, 167.73d, 171.28d, 5633, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7863, 7839, 4458, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "dunedin-bluff-1960-to-nzvd2016-conversion.csv", -46.73d, -44.52d, 166.37d, 169.95d, 5634, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7864, 7839, 5762, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "gisborne-1926-to-nzvd2016-conversion.csv", -39.04d, -37.49d, 176.41d, 178.63d, 5635, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 7865, 7839, 5763, 0.01d, "Vertical Offset by Grid Interpolation (NZLVD)", "lyttelton-1937-to-nzvd2016-conversion.csv", double.NaN, double.NaN, double.NaN, double.NaN, 5636, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 7865, 7839, 5763, 0.01d, "Vertical Offset by Grid Interpolation (NZLVD)", "lyttelton-1937-to-nzvd2016-conversion.csv", -44.92d, -41.6d, 168.95d, 173.77d, 5636, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7866, 7839, 5764, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "moturiki-1953-to-nzvd2016-conversion.csv", -40.59d, -37.52d, 174.57d, 177.26d, 5637, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7867, 7839, 5765, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "napier-1962-to-nzvd2016-conversion.csv", -40.57d, -38.87d, 175.8d, 178.07d, 5638, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 7868, 7839, 5766, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "nelson-1955-to-nzvd2016-conversion.csv", double.NaN, double.NaN, double.NaN, double.NaN, 5639, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 7868, 7839, 5766, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "nelson-1955-to-nzvd2016-conversion.csv", -42.44d, -40.44d, 171.82d, 174.46d, 5639, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7869, 7839, 5767, 0.01d, "Vertical Offset by Grid Interpolation (NZLVD)", "onetreepoint-1964-to-nzvd2016-conversion.csv", -36.41d, -34.36d, 172.61d, 174.83d, 5640, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7870, 7839, 5772, 0.18d, "Vertical Offset by Grid Interpolation (NZLVD)", "stewartisland-1977-to-nzvd2016-conversion.csv", -47.33d, -46.63d, 167.29d, 168.34d, 5641, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7871, 7839, 5769, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "taranaki-1970-to-nzvd2016-conversion.csv", -39.92d, -38.41d, 173.68d, 174.95d, 5642, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7872, 7839, 5770, 0.02d, "Vertical Offset by Grid Interpolation (NZLVD)", "wellington-1953-to-nzvd2016-conversion.csv", -41.67d, -40.12d, 174.52d, 176.55d, 5643, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 7873, 5773, 7832, 0.0d, "Vertical Offset", "", double.NaN, double.NaN, double.NaN, double.NaN, 5644, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 7874, 3855, 7841, 0.0d, "Vertical Offset", "", double.NaN, double.NaN, double.NaN, double.NaN, 5645, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 7873, 5773, 7832, 0.0d, "Vertical Offset", "", -10.42d, -6.67d, 144.4d, 149.67d, 5644, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 7874, 3855, 7841, 0.0d, "Vertical Offset", "", -10.42d, -6.67d, 144.4d, 149.67d, 5645, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 7891, 7885, 7890, 0.0d, "Geographic3D to GravityRelatedHeight (EGM2008)", "Und_min2.5x2.5_egm2008_isw=82_WGS84_TideFree.gz", -16.08d, -15.85d, -5.85d, -5.59d, 5646, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7892, 7886, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", -16.08d, -15.85d, -5.85d, -5.59d, 5646, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7893, 4710, 7886, 0.15d, "Geocentric translations (geog2D domain)", "", -16.08d, -15.85d, -5.85d, -5.59d, 5649, 3),
@@ -1242,7 +1242,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 7895, 4710, 7886, 0.1d, "Position Vector transformation (geog2D domain)", "", -16.08d, -15.85d, -5.85d, -5.59d, 5655, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 7897, 7881, 7886, 0.05d, "Geocentric translations (geog2D domain)", "", -16.08d, -15.85d, -5.85d, -5.59d, 5662, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 7898, 7881, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", -16.08d, -15.85d, -5.85d, -5.59d, 5665, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 7913, 4258, 27700, 0.2d, "Transverse Mercator", "ostn97.txt", double.NaN, double.NaN, double.NaN, double.NaN, 5668, 5),
+            new EpsgOperationRecord((EpsgOperationType)0, 7913, 4258, 27700, 0.2d, "Transverse Mercator", "ostn97.txt", 49.81d, 60.93d, -8.69d, 1.91d, 5668, 5),
             new EpsgOperationRecord((EpsgOperationType)0, 7932, 4911, 7914, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "", 33.26d, 84.73d, -16.1d, 38.01d, 5673, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 7933, 4912, 7916, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "", 33.26d, 84.73d, -16.1d, 38.01d, 5688, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 7934, 4913, 7918, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "", 33.26d, 84.73d, -16.1d, 38.01d, 5703, 15),
@@ -1263,8 +1263,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 7949, 4918, 7930, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 33.26d, 84.73d, -16.1d, 38.01d, 5928, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 7950, 4896, 7930, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 33.26d, 84.73d, -16.1d, 38.01d, 5943, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 7951, 5332, 7930, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 33.26d, 84.73d, -16.1d, 38.01d, 5958, 15),
-            new EpsgOperationRecord((EpsgOperationType)0, 7952, 4258, 27700, 0.0d, "Transverse Mercator", "OSTN02_OSGM02_GB.txt", double.NaN, double.NaN, double.NaN, double.NaN, 5973, 5),
-            new EpsgOperationRecord((EpsgOperationType)0, 7953, 11009, 27700, 0.0d, "Transverse Mercator", "OSTN15_OSGM15_GB.txt", double.NaN, double.NaN, double.NaN, double.NaN, 5978, 5),
+            new EpsgOperationRecord((EpsgOperationType)0, 7952, 4258, 27700, 0.0d, "Transverse Mercator", "OSTN02_OSGM02_GB.txt", 49.81d, 60.93d, -8.69d, 1.91d, 5973, 5),
+            new EpsgOperationRecord((EpsgOperationType)0, 7953, 11009, 27700, 0.0d, "Transverse Mercator", "OSTN15_OSGM15_GB.txt", 49.75d, 61.01d, -9.01d, 2.01d, 5978, 5),
             new EpsgOperationRecord((EpsgOperationType)0, 7958, 4943, 5732, 0.014d, "Geographic3D to GravityRelatedHeight (OSGM15-Ire)", "OSGM15_Belfast.gri", 53.96d, 55.36d, -8.18d, -5.34d, 5983, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7959, 4943, 5731, 0.023d, "Geographic3D to GravityRelatedHeight (OSGM15-Ire)", "OSGM15_Malin.gri", 51.39d, 55.43d, -10.56d, -5.34d, 5983, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 7960, 7679, 5332, 0.004d, "Time-specific Coordinate Frame rotation (geocen)", "", -90.0d, 90.0d, -180.0d, 180.0d, 5983, 8),
@@ -1338,7 +1338,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 8561, 4135, 4269, 0.2d, "NADCON5 (2D)", "nadcon5.ohd.nad83_1986.hawaii.lat.trn.20160901.b", 18.87d, 22.29d, -160.3d, -154.74d, 6414, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8660, 4269, 4152, 0.05d, "NADCON5 (2D)", "nadcon5.nad83_1986.nad83_1993.hawaii.lat.trn.20160901.b", 18.87d, 22.29d, -160.3d, -154.74d, 6414, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8661, 4152, 6322, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_1993.nad83_pa11.hawaii.lat.trn.20160901.b", 18.87d, 22.29d, -160.3d, -154.74d, 6414, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 8662, 4169, 4152, 5.0d, "NADCON5 (2D)", "nadcon5.as62.nad83_1993.as.lat.trn.20160901.b", double.NaN, double.NaN, double.NaN, double.NaN, 6414, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 8662, 4169, 4152, 5.0d, "NADCON5 (2D)", "nadcon5.as62.nad83_1993.as.lat.trn.20160901.b", -14.43d, -14.11d, -170.88d, -169.38d, 6414, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8665, 4675, 4152, 5.0d, "NADCON5 (2D)", "nadcon5.gu63.nad83_1993.guamcnmi.lat.trn.20160901.b", 13.18d, 20.61d, 144.58d, 146.12d, 6414, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8668, 4139, 4269, 0.15d, "NADCON5 (2D)", "nadcon5.pr40.nad83_1986.prvi.lat.trn.20160901.b", 17.62d, 18.57d, -67.97d, -64.51d, 6414, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8669, 4269, 4152, 0.15d, "NADCON5 (2D)", "nadcon5.nad83_1986.nad83_1993.prvi.lat.trn.20160901.b", 17.62d, 18.57d, -67.97d, -64.51d, 6414, 0),
@@ -1376,8 +1376,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 8853, 4692, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", -16.57d, -16.34d, -152.39d, -152.14d, 6612, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 8861, 4152, 8860, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_harn.nad83_fbn.conus.lat.trn.20160901.b", 23.82d, 49.38d, -124.79d, -66.91d, 6619, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8862, 8860, 4759, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_fbn.nad83_2007.conus.lat.trn.20160901.b", 23.82d, 49.38d, -124.79d, -66.91d, 6619, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 8863, 4152, 8860, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_1993.nad83_2002.as.lat.trn.20160901.b", double.NaN, double.NaN, double.NaN, double.NaN, 6619, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 8864, 8860, 6322, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_2002.nad83_pa11.as.lat.trn.20160901.b", double.NaN, double.NaN, double.NaN, double.NaN, 6619, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 8863, 4152, 8860, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_1993.nad83_2002.as.lat.trn.20160901.b", -14.59d, -14.11d, -170.88d, -168.09d, 6619, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 8864, 8860, 6322, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_2002.nad83_pa11.as.lat.trn.20160901.b", -14.59d, -14.11d, -170.88d, -168.09d, 6619, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8865, 4152, 8860, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_1993.nad83_2002.guamcnmi.lat.trn.20160901.b", 13.18d, 20.61d, 144.58d, 146.12d, 6619, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8866, 8860, 6325, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_2002.nad83_ma11.guamcnmi.lat.trn.20160901.b", 13.18d, 20.61d, 144.58d, 146.12d, 6619, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 8867, 8545, 8860, 0.05d, "NADCON5 (3D)", "nadcon5.nad83_1997.nad83_2002.prvi.lat.trn.20160901.b", 17.62d, 18.57d, -67.97d, -64.51d, 6619, 0),
@@ -1476,11 +1476,11 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9112, 4267, 8237, 1.5d, "NTv2", "BC_27_98.GSB", 48.25d, 60.01d, -139.04d, -114.08d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9113, 4267, 8240, 1.5d, "NTv2", "CRD27_00.GSB", 48.25d, 49.06d, -124.52d, -123.0d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9114, 4267, 8240, 1.5d, "NTv2", "NVI27_05.GSB", 48.48d, 50.93d, -128.5d, -123.49d, 7408, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9115, 4267, 8246, 1.5d, "NTv2", "BC_27_05.GSB", double.NaN, double.NaN, double.NaN, double.NaN, 7408, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9115, 4267, 8246, 1.5d, "NTv2", "BC_27_05.GSB", 48.99d, 60.01d, -138.07d, -114.33d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9116, 4269, 8237, 0.1d, "NTv2", "BC_93_98.GSB", 48.25d, 60.01d, -139.04d, -114.08d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9117, 4269, 8240, 0.1d, "NTv2", "CRD93_00.GSB", 48.25d, 49.06d, -124.52d, -123.0d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9118, 4269, 8240, 0.1d, "NTv2", "NVI93_05.GSB", 48.48d, 50.93d, -128.5d, -123.49d, 7408, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9119, 4269, 8246, 0.1d, "NTv2", "BC_93_05.GSB", double.NaN, double.NaN, double.NaN, double.NaN, 7408, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9119, 4269, 8246, 0.1d, "NTv2", "BC_93_05.GSB", 48.99d, 60.01d, -138.07d, -114.33d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9120, 8237, 8240, 0.1d, "NTv2", "CRD98_00.GSB", 48.25d, 49.06d, -124.52d, -123.0d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9121, 8237, 8240, 0.1d, "NTv2", "NVI98_05.GSB", 48.48d, 50.93d, -128.5d, -123.49d, 7408, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9124, 7911, 6647, 0.03d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "CGG2013i08.byn", 38.21d, 86.46d, -141.01d, -40.73d, 7408, 0),
@@ -1550,8 +1550,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9256, 5342, 9255, 0.05d, "Geographic3D to GravityRelatedHeight (Gravsoft)", "GEOIDE-Ar16.gri", -55.11d, -21.78d, -73.59d, -53.65d, 7549, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9257, 4160, 4326, 2.5d, "Geocentric translations (geog2D domain)", "", -36.37d, -31.96d, -69.4d, -66.42d, 7549, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9258, 4160, 4326, 2.5d, "Geocentric translations (geog2D domain)", "", -40.17d, -34.26d, -71.19d, -66.52d, 7552, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 9259, 4161, 4326, 2.5d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 7555, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 9260, 9248, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 7558, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 9259, 4161, 4326, 2.5d, "Geocentric translations (geog2D domain)", "", -50.34d, -42.49d, -73.59d, -65.47d, 7555, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 9260, 9248, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", -52.43d, -50.33d, -73.28d, -68.3d, 7558, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9261, 9251, 4326, 2.5d, "Geocentric translations (geog2D domain)", "", -55.11d, -52.59d, -68.64d, -63.73d, 7561, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9262, 9253, 4326, 2.5d, "Geocentric translations (geog2D domain)", "", -55.11d, -52.59d, -68.64d, -63.73d, 7564, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9263, 4254, 4326, 2.5d, "Geocentric translations (geog2D domain)", "", -55.11d, -52.59d, -68.64d, -63.73d, 7567, 3),
@@ -1574,10 +1574,10 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9314, 7839, 5761, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "duneht1958-nzvd2016.gtx", -46.4d, -43.82d, 167.73d, 171.28d, 7595, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9315, 7839, 4458, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "dublht1960-nzvd2016.gtx", -46.73d, -44.52d, 166.37d, 169.95d, 7596, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9316, 7839, 5762, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "gisbht1926-nzvd2016.gtx", -39.04d, -37.49d, 176.41d, 178.63d, 7597, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 9317, 7839, 5763, 0.01d, "Vertical Offset by Grid Interpolation (gtx)", "lyttht1937-nzvd2016.gtx", double.NaN, double.NaN, double.NaN, double.NaN, 7598, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 9317, 7839, 5763, 0.01d, "Vertical Offset by Grid Interpolation (gtx)", "lyttht1937-nzvd2016.gtx", -44.92d, -41.6d, 168.95d, 173.77d, 7598, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9318, 7839, 5764, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "motuht1953-nzvd2016.gtx", -40.59d, -37.52d, 174.57d, 177.26d, 7599, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9319, 7839, 5765, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "napiht1962-nzvd2016.gtx", -40.57d, -38.87d, 175.8d, 178.07d, 7600, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 9320, 7839, 5766, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "nelsht1955-nzvd2016.gtx", double.NaN, double.NaN, double.NaN, double.NaN, 7601, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 9320, 7839, 5766, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "nelsht1955-nzvd2016.gtx", -42.44d, -40.44d, 171.82d, 174.46d, 7601, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9321, 7839, 5767, 0.01d, "Vertical Offset by Grid Interpolation (gtx)", "ontpht1964-nzvd2016.gtx", -36.41d, -34.36d, 172.61d, 174.83d, 7602, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9322, 7839, 5772, 0.18d, "Vertical Offset by Grid Interpolation (gtx)", "stisht1977-nzvd2016.gtx", -47.33d, -46.63d, 167.29d, 168.34d, 7603, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9323, 7839, 5769, 0.02d, "Vertical Offset by Grid Interpolation (gtx)", "taraht1970-nzvd2016.gtx", -39.92d, -38.41d, 173.68d, 174.95d, 7604, 1),
@@ -1592,10 +1592,10 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9338, 4314, 4258, 0.1d, "NTv2", "BWTA2017.gsb", 47.54d, 49.8d, 7.51d, 10.5d, 7629, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9342, 4248, 9148, 5.0d, "Geocentric translations (geog2D domain)", "", -26.0d, -17.5d, -70.79d, -67.0d, 7629, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9343, 4248, 9148, 5.0d, "Geocentric translations (geog2D domain)", "", -36.0d, -26.0d, -72.87d, -68.28d, 7632, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 9344, 4248, 9148, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 7635, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 9344, 4248, 9148, 5.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -35.99d, -74.48d, -70.39d, 7635, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9345, 4248, 9153, 5.0d, "Geocentric translations (geog2D domain)", "", -26.0d, -17.5d, -70.79d, -67.0d, 7638, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9346, 4248, 9153, 5.0d, "Geocentric translations (geog2D domain)", "", -36.0d, -26.0d, -72.87d, -68.28d, 7641, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 9347, 4248, 9153, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 7644, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 9347, 4248, 9153, 5.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -35.99d, -74.48d, -70.39d, 7644, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9349, 4618, 9148, 5.0d, "Geocentric translations (geog2D domain)", "", -55.96d, -51.99d, -74.83d, -66.33d, 7647, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9350, 4618, 9153, 5.0d, "Geocentric translations (geog2D domain)", "", -55.96d, -51.99d, -74.83d, -66.33d, 7650, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9352, 4907, 9351, 0.03d, "Geographic3D to GravityRelatedHeight (IGN2009)", "Ranc08_Circe.mnt", -22.73d, -19.5d, 163.54d, 168.19d, 7653, 0),
@@ -1671,7 +1671,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9585, 11008, 9430, 0.01d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.86d, 49.99d, -6.41d, -6.23d, 7766, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9586, 11008, 9426, 0.017d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 58.72d, 59.41d, -3.48d, -2.34d, 7767, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9587, 11008, 9424, 0.008d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.93d, 58.71d, -7.06d, 1.8d, 7768, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 9588, 4937, 9425, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", double.NaN, double.NaN, double.NaN, double.NaN, 7769, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 9588, 4937, 9425, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.75d, 61.01d, -9.01d, 2.01d, 7769, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9589, 11008, 9427, 0.018d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 59.83d, 60.87d, -1.78d, -0.67d, 7770, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9590, 4937, 9429, 0.03d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 54.02d, 54.44d, -4.87d, -4.27d, 7771, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9591, 4943, 9449, 0.023d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM15-Ire)", "OSGM15_Malin.gri", 51.39d, 55.43d, -10.56d, -5.34d, 7772, 1),
@@ -1757,7 +1757,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9704, 4979, 9518, 0.113d, "Geog3D to Geog2D+GravityRelatedHeight (EGM2008)", "Und_min2.5x2.5_egm2008_isw=82_WGS84_TideFree", -90.0d, 90.0d, -180.0d, 180.0d, 7911, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9706, 4979, 9705, 0.5d, "Geog3D to Geog2D+GravityRelatedHeight (EGM2008)", "Und_min1x1_egm2008_isw=82_WGS84_TideFree.gz", -90.0d, 90.0d, -180.0d, 180.0d, 7912, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9708, 4979, 9707, 1.0d, "Geog3D to Geog2D+GravityRelatedHeight (EGM)", "WW15MGH.GRD", -90.0d, 90.0d, -180.0d, 180.0d, 7913, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 9710, 9389, 9390, 0.0d, "zero-tide height to mean-tide height (EVRF2019)", "", double.NaN, double.NaN, double.NaN, double.NaN, 7914, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9710, 9389, 9390, 0.0d, "zero-tide height to mean-tide height (EVRF2019)", "", 35.95d, 77.07d, -9.56d, 69.15d, 7914, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9717, 9701, 9650, 0.03d, "Geographic3D to GravityRelatedHeight (PL txt)", "gugik-geoid2011-PL-KRON86-NH.txt", 49.0d, 54.89d, 14.14d, 24.15d, 7914, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9718, 9701, 9656, 0.03d, "Geog3D to Geog2D+GravityRelatedHeight (PL txt)", "gugik-geoid2011-PL-KRON86-NH.txt", 49.0d, 54.89d, 14.14d, 24.15d, 7914, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9719, 9701, 9651, 0.03d, "Geographic3D to GravityRelatedHeight (PL txt)", "gugik-geoid2011-PL-EVRF2007-NH.txt", 49.0d, 54.89d, 14.14d, 24.15d, 7915, 0),
@@ -1767,12 +1767,12 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9728, 6705, 9722, 0.035d, "Geographic3D to GravityRelatedHeight (ITAL2005)", "geo_igm_mar06.grd", 38.82d, 41.31d, 8.08d, 9.89d, 7917, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9729, 6705, 9723, 0.035d, "Geog3D to Geog2D+GravityRelatedHeight (ITAL2005)", "geo_igm_mar06.grd", 36.59d, 47.1d, 6.62d, 18.58d, 7917, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9730, 6705, 9725, 0.035d, "Geog3D to Geog2D+GravityRelatedHeight (ITAL2005)", "geo_igm_mar06.grd", 38.82d, 41.31d, 8.08d, 9.89d, 7918, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 9732, 4265, 4230, 0.1d, "NTv2", "35160622_47161840_R40_E50.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 7919, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9733, 4265, 4670, 0.1d, "NTv2", "35160622_47161840_R40_F89.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 7919, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9734, 4265, 6706, 0.1d, "NTv2", "35160622_47161840_R40_F00.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 7919, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9735, 4230, 4670, 0.2d, "NTv2", "35160622_47161840_E50_F89.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 7919, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9736, 4230, 6706, 0.2d, "NTv2", "35160622_47161840_E50_F00.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 7919, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9737, 4670, 6706, 0.01d, "NTv2", "35160622_47161840_F89_F00.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 7919, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9732, 4265, 4230, 0.1d, "NTv2", "35160622_47161840_R40_E50.gsb", 35.26d, 47.1d, 6.36d, 18.67d, 7919, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9733, 4265, 4670, 0.1d, "NTv2", "35160622_47161840_R40_F89.gsb", 35.26d, 47.1d, 6.36d, 18.67d, 7919, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9734, 4265, 6706, 0.1d, "NTv2", "35160622_47161840_R40_F00.gsb", 35.26d, 47.1d, 6.36d, 18.67d, 7919, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9735, 4230, 4670, 0.2d, "NTv2", "35160622_47161840_E50_F89.gsb", 35.26d, 47.1d, 6.36d, 18.67d, 7919, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9736, 4230, 6706, 0.2d, "NTv2", "35160622_47161840_E50_F00.gsb", 35.26d, 47.1d, 6.36d, 18.67d, 7919, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9737, 4670, 6706, 0.01d, "NTv2", "35160622_47161840_F89_F00.gsb", 35.26d, 47.1d, 6.36d, 18.67d, 7919, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9740, 11009, 9739, 0.0d, "NTv2", "TN15-ETRS89-to-EOS21-IRF.gsb", 55.55d, 57.21d, -3.56d, -1.94d, 7919, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9743, 9403, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", 27.58d, 29.47d, -18.22d, -13.37d, 7919, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 9744, 8357, 9390, 0.01d, "Vertical Offset and Slope", "", 48.58d, 51.06d, 12.09d, 18.86d, 7922, 6),
@@ -1822,8 +1822,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9909, 11214, 9907, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (txt)", "hBG18.dat", 49.5d, 51.51d, 2.5d, 6.4d, 8039, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9910, 4312, 11057, 0.14d, "NTv2", "AT_GIS_GRID_2021_09_28.gsb", 46.4d, 49.02d, 9.53d, 17.17d, 8040, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9913, 4611, 8427, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 22.13d, 22.58d, 113.76d, 114.51d, 8040, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 9914, 4937, 9451, 0.02d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", double.NaN, double.NaN, double.NaN, double.NaN, 8047, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9915, 4937, 9452, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", double.NaN, double.NaN, double.NaN, double.NaN, 8047, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 9914, 4937, 9451, 0.02d, "Geographic3D to GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.75d, 61.01d, -9.01d, 2.01d, 8047, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9915, 4937, 9452, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM-GB)", "OSTN15_OSGM15_GB.txt", 49.75d, 61.01d, -9.01d, 2.01d, 8047, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9916, 4937, 9451, 0.014d, "Geographic3D to GravityRelatedHeight (OSGM15-Ire)", "OSGM15_Belfast.gri", 53.96d, 55.36d, -8.18d, -5.34d, 8048, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9917, 4937, 9452, 0.014d, "Geog3D to Geog2D+GravityRelatedHeight (OSGM15-Ire)", "OSGM15_Belfast.gri", 53.96d, 55.36d, -8.18d, -5.34d, 8048, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 9918, 4937, 9451, 0.023d, "Geographic3D to GravityRelatedHeight (OSGM15-Ire)", "OSGM15_Malin.gri", 51.39d, 55.43d, -10.56d, -5.34d, 8049, 0),
@@ -1851,11 +1851,11 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 9975, 11009, 9974, 0.0d, "NTv2", "TN15-ETRS89-to-FNL22-IRF.gsb", 57.4d, 58.64d, -4.6d, -3.0d, 8119, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9979, 4170, 4674, 0.006d, "NTv2", "SIRGAS1995-to-SIRGAS2000.gsb", -59.87d, 16.75d, -113.21d, -26.0d, 8119, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9980, 4674, 8987, 0.02d, "NTv2", "SIRGAS2000-to-SIRGAS-CONSIR17P01.gsb", -59.87d, 32.72d, -122.19d, -25.28d, 8119, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9983, 8239, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_1997.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8119, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9984, 8235, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_1997.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8119, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9985, 8244, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2002v70.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8119, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9986, 8251, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2010v70.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8119, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 9987, 8254, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2010v70.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8119, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9983, 8239, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_1997.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8119, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9984, 8235, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_1997.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8119, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9985, 8244, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2002v70.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8119, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9986, 8251, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2010v70.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8119, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 9987, 8254, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2010v70.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8119, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 9991, 7789, 9988, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8119, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 9992, 5332, 9988, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8134, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 9993, 4896, 9988, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8149, 15),
@@ -1946,8 +1946,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 10103, 4912, 9988, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8320, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 10104, 4911, 9988, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8335, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 10105, 4910, 9988, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8350, 15),
-            new EpsgOperationRecord((EpsgOperationType)0, 10106, 10874, 20000, 1.0d, "Geographic3D to GravityRelatedHeight (Gravsoft)", "arcgp-2006-sk.bin", double.NaN, double.NaN, double.NaN, double.NaN, 8365, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 10107, 10874, 20001, 1.0d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "arcgp-2006-sk.bin", double.NaN, double.NaN, double.NaN, double.NaN, 8365, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 10106, 10874, 20000, 1.0d, "Geographic3D to GravityRelatedHeight (Gravsoft)", "arcgp-2006-sk.bin", 76.16d, 81.17d, -3.35d, 38.01d, 8365, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 10107, 10874, 20001, 1.0d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "arcgp-2006-sk.bin", 76.16d, 81.17d, -3.35d, 38.01d, 8365, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10108, 11009, 20033, 0.0d, "NTv2", "TN15-ETRS89-to-MWC18-IRF.gsb", 53.09d, 53.65d, -3.15d, -2.1d, 8366, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10109, 8254, 9245, 0.03d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "CGG2013an83.byn", 38.21d, 86.46d, -141.01d, -40.73d, 8366, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10110, 8244, 20034, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "CGG2013an83.byn", 38.21d, 86.46d, -141.01d, -40.73d, 8366, 0),
@@ -1960,7 +1960,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 10134, 20039, 7789, 0.1d, "Time-specific Position Vector transform (geocen)", "", -59.87d, -17.5d, -113.21d, -65.72d, 8369, 8),
             new EpsgOperationRecord((EpsgOperationType)0, 10135, 4248, 20041, 5.0d, "Geocentric translations (geog2D domain)", "", -26.0d, -17.5d, -70.79d, -67.0d, 8377, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 10136, 4248, 20041, 5.0d, "Geocentric translations (geog2D domain)", "", -36.0d, -26.0d, -72.87d, -68.28d, 8380, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 10137, 4248, 20041, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 8383, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 10137, 4248, 20041, 5.0d, "Geocentric translations (geog2D domain)", "", -43.5d, -35.99d, -74.48d, -70.39d, 8383, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 10138, 4618, 20041, 5.0d, "Geocentric translations (geog2D domain)", "", -55.96d, -51.99d, -74.83d, -66.33d, 8386, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 10139, 4910, 4911, 0.01d, "Position Vector transformation (geocentric domain)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8389, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 10140, 4911, 4912, 0.01d, "Position Vector transformation (geocentric domain)", "", -90.0d, 90.0d, -180.0d, 180.0d, 8396, 7),
@@ -1984,15 +1984,15 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 10205, 11009, 10204, 0.0d, "NTv2", "TN15-ETRS89-to-DIBA15-IRF.gsb", 51.57d, 52.11d, -1.46d, -1.15d, 8461, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10210, 11009, 10209, 0.0d, "NTv2", "TN15-ETRS89-to-GWPBS22-IRF.gsb", 51.25d, 52.06d, -4.26d, -0.1d, 8461, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10215, 11009, 10214, 0.0d, "NTv2", "TN15-ETRS89-to-GWWAB22-IRF.gsb", 51.35d, 51.81d, -3.6d, -3.12d, 8461, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 10216, 3114, 11114, 0.3d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 8461, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 10216, 3114, 11114, 0.3d, "Transverse Mercator", "", 1.23d, 2.48d, -79.1d, -78.58d, 8461, 12),
             new EpsgOperationRecord((EpsgOperationType)0, 10220, 11009, 10219, 0.0d, "NTv2", "TN15-ETRS89-to-GWWWA22-IRF.gsb", 51.55d, 52.06d, -5.16d, -3.6d, 8473, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 10221, 3115, 11115, 0.3d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 8473, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 10221, 3115, 11115, 0.3d, "Transverse Mercator", "", 0.03d, 10.21d, -78.59d, -75.58d, 8473, 12),
             new EpsgOperationRecord((EpsgOperationType)0, 10225, 11009, 10224, 0.0d, "NTv2", "TN15-ETRS89-to-MALS09-IRF.gsb", 51.45d, 52.91d, -2.26d, -0.05d, 8485, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10230, 11009, 10229, 0.0d, "NTv2", "TN15-ETRS89-to-OxWo08-IRF.gsb", 51.65d, 52.26d, -2.31d, -1.15d, 8485, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10238, 11009, 10237, 0.0d, "NTv2", "TN15-ETRS89-to-SYC20-IRF.gsb", 52.65d, 53.16d, -2.91d, -2.3d, 8485, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 10242, 3116, 11116, 0.3d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 8485, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 10243, 3117, 11117, 0.3d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 8497, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 10244, 3118, 11118, 0.3d, "Transverse Mercator", "", double.NaN, double.NaN, double.NaN, double.NaN, 8509, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 10242, 3116, 11116, 0.3d, "Transverse Mercator", "", -2.51d, 11.82d, -75.59d, -72.58d, 8485, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 10243, 3117, 11117, 0.3d, "Transverse Mercator", "", -4.23d, 12.52d, -72.59d, -69.58d, 8497, 12),
+            new EpsgOperationRecord((EpsgOperationType)0, 10244, 3118, 11118, 0.3d, "Transverse Mercator", "", -2.25d, 6.31d, -69.59d, -66.87d, 8509, 12),
             new EpsgOperationRecord((EpsgOperationType)0, 10247, 4883, 8690, 0.1d, "Geographic3D to GravityRelatedHeight (ISG)", "https://isgeoid.polimi.it/Geoid/Europe/Slovenia/public/Slovenia_2016_SLO_VRP2016_Koper_hybrQ_20221122.isg", 45.42d, 46.88d, 13.38d, 16.61d, 8521, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10248, 4883, 10245, 0.1d, "Geog3D to Geog2D+GravityRelatedHeight (ISG)", "https://isgeoid.polimi.it/Geoid/Europe/Slovenia/public/Slovenia_2016_SLO_VRP2016_Koper_hybrQ_20221122.isg", 45.42d, 46.88d, 13.38d, 16.61d, 8521, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10251, 4258, 10249, 0.03d, "NTv2", "s34s_2022.gsb", 54.51d, 56.79d, 10.79d, 12.87d, 8522, 0),
@@ -2054,7 +2054,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 10415, 9988, 10412, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "", 38.21d, 86.46d, -141.01d, -40.73d, 8668, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 10416, 8253, 6317, 0.0d, "Position Vector transformation (geocentric domain)", "", 14.92d, 86.46d, 167.65d, -47.74d, 8683, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 10417, 10413, 9245, 0.03d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "CGG2013an83.byn", 38.21d, 86.46d, -141.01d, -40.73d, 8690, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 10418, 10413, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2010v70.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8690, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 10418, 10413, 5713, 0.05d, "Geographic3D to GravityRelatedHeight (NRCan byn)", "HT2_2010v70.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8690, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10419, 10412, 6317, 0.0d, "Position Vector transformation (geocentric domain)", "", 14.92d, 86.46d, 167.65d, -47.74d, 8690, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 10466, 11036, 9288, 0.3d, "Geographic3D to Depth (gtx)", "nlgeo2018.gtx", 51.32d, 55.77d, 2.53d, 7.21d, 8697, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10467, 11036, 9290, 0.3d, "Geog3D to Geog2D+Depth (gtx)", "nlgeo2018.gtx", 51.32d, 55.77d, 2.53d, 7.21d, 8697, 1),
@@ -2077,9 +2077,9 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 10513, 8250, 10412, 0.01d, "Position Vector transformation (geocentric domain)", "", 38.21d, 86.46d, -141.01d, -40.73d, 8721, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 10514, 8253, 10412, 0.01d, "Position Vector transformation (geocentric domain)", "", 38.21d, 86.46d, -141.01d, -40.73d, 8728, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 10517, 10516, 8162, 0.1d, "Transverse Mercator", "", 44.07d, 44.6d, -91.17d, -90.31d, 8735, 12),
-            new EpsgOperationRecord((EpsgOperationType)0, 10518, 5713, 20035, 0.05d, "Vertical change by geoid grid difference (NRCan)", "HT2_1997_CGG2013a.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8747, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 10519, 5713, 20034, 0.05d, "Vertical change by geoid grid difference (NRCan)", "HT2_2002v70_CGG2013a.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8748, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 10520, 5713, 9245, 0.05d, "Vertical change by geoid grid difference (NRCan)", "HT2_2010v70_CGG2013a.byn", double.NaN, double.NaN, double.NaN, double.NaN, 8749, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 10518, 5713, 20035, 0.05d, "Vertical change by geoid grid difference (NRCan)", "HT2_1997_CGG2013a.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8747, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 10519, 5713, 20034, 0.05d, "Vertical change by geoid grid difference (NRCan)", "HT2_2002v70_CGG2013a.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8748, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 10520, 5713, 9245, 0.05d, "Vertical change by geoid grid difference (NRCan)", "HT2_2010v70_CGG2013a.byn", 41.67d, 69.81d, -141.01d, -52.54d, 8749, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10521, 8235, 8244, 0.02d, "Geographic3D Offset using NEU velocity grid (NTv2_Vel)", "NAD83v6VG.gvb", 41.67d, 83.17d, -141.01d, -52.54d, 8750, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10522, 8235, 8244, 0.015d, "Geographic3D Offset using NEU velocity grid (NTv2_Vel)", "NAD83v70VG.gvb", 41.67d, 83.17d, -141.01d, -52.54d, 8751, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10523, 8235, 8251, 0.03d, "Geographic3D Offset using NEU velocity grid (NTv2_Vel)", "NAD83v6VG.gvb", 41.67d, 83.17d, -141.01d, -52.54d, 8752, 1),
@@ -2142,7 +2142,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 10617, 10588, 20035, 0.03d, "Vertical change by geoid grid difference (NRCan)", "HT2_1997_CGG2013a.byn", 41.0d, 84.0d, -141.01d, -48.0d, 9041, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10618, 10588, 20034, 0.02d, "Vertical change by geoid grid difference (NRCan)", "HT2_2002v70_CGG2013a.byn", 41.0d, 84.0d, -141.01d, -48.0d, 9042, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10619, 10588, 9245, 0.0d, "Vertical change by geoid grid difference (NRCan)", "HT2_2010v70_CGG2013a.byn", 41.0d, 84.0d, -141.01d, -48.0d, 9043, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 10620, 5713, 10588, 0.05d, "Vertical Offset", "", double.NaN, double.NaN, double.NaN, double.NaN, 9044, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 10620, 5713, 10588, 0.05d, "Vertical Offset", "", 41.67d, 69.81d, -141.01d, -52.54d, 9044, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10624, 11009, 10623, 0.0d, "NTv2", "TN15-ETRS89-to-ECML14-IRF.gsb", 51.45d, 56.1d, -3.45d, 0.05d, 9045, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10629, 11009, 10628, 0.0d, "NTv2", "TN15-ETRS89-to-WC05-IRF.gsb", 51.4d, 55.92d, -4.33d, -0.04d, 9045, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10646, 10635, 10638, 0.05d, "Coordinate Frame rotation full matrix (geog3D)", "", 17.56d, 17.71d, -63.31d, -63.16d, 9045, 7),
@@ -2162,8 +2162,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 10668, 4237, 11163, 0.015d, "NTv2", "hu_bme_hd72corr.gsb", 45.74d, 48.58d, 16.11d, 22.9d, 9076, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 10676, 10636, 4326, 1.0d, "Coordinate Frame rotation full matrix (geog2D)", "", 17.56d, 17.71d, -63.31d, -63.16d, 9076, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 10677, 4746, 4258, 0.3d, "NTv2", "de_tlbg_thuringen_NTv2gridTH.gsb", 50.2d, 51.65d, 9.87d, 12.66d, 9083, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 10680, 4937, 10678, 0.05d, "Geographic3D to Depth (txt)", "BSCD2000.txt", double.NaN, double.NaN, double.NaN, double.NaN, 9083, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 10681, 4937, 10679, 0.05d, "Geog3D to Geog2D+Depth (txt)", "BSCD2000.txt", double.NaN, double.NaN, double.NaN, double.NaN, 9083, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 10680, 4937, 10678, 0.05d, "Geographic3D to Depth (txt)", "BSCD2000.txt", 53.88d, 65.92d, 8.5d, 30.23d, 9083, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 10681, 4937, 10679, 0.05d, "Geog3D to Geog2D+Depth (txt)", "BSCD2000.txt", 53.88d, 65.92d, 8.5d, 30.23d, 9083, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 10682, 4470, 10671, 0.1d, "Geocentric translations (geog2D domain)", "", -14.49d, -11.33d, 43.68d, 46.7d, 9084, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 10683, 4470, 10671, 0.05d, "Geocentric translations (geog2D domain) by grid (IGN)", "RGM04versRGM23.txt", -14.49d, -11.33d, 43.68d, 46.7d, 9087, 2),
             new EpsgOperationRecord((EpsgOperationType)0, 10684, 10671, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", -14.49d, -11.33d, 43.68d, 46.7d, 9089, 3),
@@ -2263,7 +2263,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 11010, 11007, 7928, 0.1d, "Geocentric translations (geocentric domain)", "", 49.79d, 60.94d, -8.82d, 1.92d, 9478, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 11011, 11009, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 49.79d, 60.94d, -8.82d, 1.92d, 9481, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 11028, 10875, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 56.08d, 84.73d, -3.35d, 38.01d, 9484, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 11034, 9468, 11029, 0.1d, "Time-dep Coordinate Frame (geocen) & Geocen translations by XYZ vel (INADEFORM)", "v3_dm_grd01_xyz.dat", double.NaN, double.NaN, double.NaN, double.NaN, 9487, 18),
+            new EpsgOperationRecord((EpsgOperationType)0, 11034, 9468, 11029, 0.1d, "Time-dep Coordinate Frame (geocen) & Geocen translations by XYZ vel (INADEFORM)", "v3_dm_grd01_xyz.dat", -13.95d, 7.79d, 92.01d, 141.46d, 9487, 18),
             new EpsgOperationRecord((EpsgOperationType)0, 11038, 11035, 7930, 0.03d, "Geocentric translations (geocentric domain)", "", 50.75d, 55.77d, 2.53d, 7.22d, 9505, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 11039, 9988, 11035, 0.04d, "Time-dependent Position Vector tfm (geocentric)", "", 50.75d, 55.77d, 2.53d, 7.22d, 9508, 15),
             new EpsgOperationRecord((EpsgOperationType)0, 11040, 11037, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 50.75d, 55.77d, 2.53d, 7.22d, 9523, 3),
@@ -2362,12 +2362,12 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 11386, 6364, 5703, 1.0d, "Geographic3D to GravityRelatedHeight (txt)", "GGM10.txt", 14.51d, 32.72d, -118.47d, -86.68d, 10124, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 11387, 6364, 11385, 1.0d, "Geog3D to Geog2D+GravityRelatedHeight (txt)", "GGM10.txt", 14.51d, 32.72d, -118.47d, -86.68d, 10124, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 11388, 27700, 11378, 0.0d, "Transverse Mercator", "", 51.42d, 51.52d, -0.56d, -0.37d, 10125, 9),
-            new EpsgOperationRecord((EpsgOperationType)0, 11395, 10874, 11394, 0.02d, "Geographic3D to GravityRelatedHeight (Gravsoft)", "HREF2025A_NN2000_EUREF89.bin", double.NaN, double.NaN, double.NaN, double.NaN, 10134, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 11396, 10874, 11399, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "HREF2025A_NN2000_EUREF89.bin", double.NaN, double.NaN, double.NaN, double.NaN, 10134, 1),
-            new EpsgOperationRecord((EpsgOperationType)0, 11397, 4289, 11037, 0.0d, "NTv2 & Coordinate Frame rotation (geocentric domain)", "rdcorr2018.gsb", double.NaN, double.NaN, double.NaN, double.NaN, 10135, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 11395, 10874, 11394, 0.02d, "Geographic3D to GravityRelatedHeight (Gravsoft)", "HREF2025A_NN2000_EUREF89.bin", 57.9d, 71.24d, 4.39d, 31.32d, 10134, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 11396, 10874, 11399, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "HREF2025A_NN2000_EUREF89.bin", 57.9d, 71.24d, 4.39d, 31.32d, 10134, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 11397, 4289, 11037, 0.0d, "NTv2 & Coordinate Frame rotation (geocentric domain)", "rdcorr2018.gsb", 50.75d, 55.77d, 2.53d, 7.22d, 10135, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 11433, 4690, 4687, 0.1d, "NTv2", "gr3dpf25.gsb", -17.93d, -17.44d, -149.7d, -149.09d, 10142, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 11448, 8899, 11446, 0.05d, "Geographic3D to GravityRelatedHeight (IGN2009)", "ggfutuna2022v2.tac", double.NaN, double.NaN, double.NaN, double.NaN, 10142, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 11449, 8899, 11447, 0.05d, "Geog3D to Geog2D+GravityRelatedHeight (IGN2009)", "ggfutuna2022v2.tac", double.NaN, double.NaN, double.NaN, double.NaN, 10142, 1),
+            new EpsgOperationRecord((EpsgOperationType)0, 11448, 8899, 11446, 0.05d, "Geographic3D to GravityRelatedHeight (IGN2009)", "ggfutuna2022v2.tac", -14.42d, -14.18d, -178.24d, -177.94d, 10142, 0),
+            new EpsgOperationRecord((EpsgOperationType)0, 11449, 8899, 11447, 0.05d, "Geog3D to Geog2D+GravityRelatedHeight (IGN2009)", "ggfutuna2022v2.tac", -14.42d, -14.18d, -178.24d, -177.94d, 10142, 1),
             new EpsgOperationRecord((EpsgOperationType)0, 15483, 4301, 4612, 9.0d, "Geocentric translations (geog2D domain)", "", 20.37d, 45.54d, 122.83d, 154.05d, 10143, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15484, 4301, 4326, 9.0d, "Geocentric translations (geog2D domain)", "", 20.37d, 45.54d, 122.83d, 154.05d, 10146, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15485, 4618, 4674, 5.0d, "Geocentric translations (geog2D domain)", "", -35.71d, 7.04d, -74.01d, -25.28d, 10149, 3),
@@ -2378,108 +2378,108 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 15495, 4168, 4326, 25.0d, "Position Vector transformation (geog2D domain)", "", 1.4d, 6.06d, -3.79d, 2.1d, 10170, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15496, 4179, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", 43.44d, 48.27d, 20.26d, 31.41d, 10177, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15497, 4179, 4326, 7.0d, "Geocentric translations (geog2D domain)", "", 43.44d, 48.27d, 20.26d, 31.41d, 10180, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15596, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10183, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15597, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10186, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15598, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10189, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15599, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10192, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15600, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10195, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15601, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10198, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15602, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10201, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15603, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10204, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15604, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10207, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15605, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10210, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15606, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10213, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15607, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10216, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15608, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10219, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15609, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10222, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15610, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10225, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15611, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10228, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15612, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10231, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15613, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10234, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15596, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 45.33d, 45.54d, 142.0d, 142.27d, 10183, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15597, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 44.66d, 45.34d, 141.5d, 142.0d, 10186, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15598, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 44.66d, 45.34d, 142.0d, 142.97d, 10189, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15599, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.99d, 44.67d, 141.58d, 142.0d, 10192, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15600, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.99d, 44.67d, 142.0d, 143.0d, 10195, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15601, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.99d, 44.65d, 143.0d, 144.0d, 10198, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15602, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.99d, 44.19d, 144.0d, 145.0d, 10201, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15603, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.33d, 44.0d, 141.26d, 142.0d, 10204, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15604, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.33d, 44.0d, 142.0d, 143.0d, 10207, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15605, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.33d, 44.0d, 143.0d, 144.0d, 10210, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15606, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.33d, 44.0d, 144.0d, 145.0d, 10213, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15607, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 43.33d, 44.4d, 145.0d, 145.87d, 10216, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15608, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.66d, 43.42d, 140.0d, 141.0d, 10219, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15609, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.66d, 43.34d, 141.0d, 142.0d, 10222, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15610, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.66d, 43.34d, 142.0d, 143.0d, 10225, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15611, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.66d, 43.34d, 143.0d, 144.0d, 10228, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15612, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.84d, 43.34d, 144.0d, 145.0d, 10231, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15613, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.93d, 43.34d, 145.0d, 145.87d, 10234, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15614, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.05d, 42.73d, 139.7d, 140.0d, 10237, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15615, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10240, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15616, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10243, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15617, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10246, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15618, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10249, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15619, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10252, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15620, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10255, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15621, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10258, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15622, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10261, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15623, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10264, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15624, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10267, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15625, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10270, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15626, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10273, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15627, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10276, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15628, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10279, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15629, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10282, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15630, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10285, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15631, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10288, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15632, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10291, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15633, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10294, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15634, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10297, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15635, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10300, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15636, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10303, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15637, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10306, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15638, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10309, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15639, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10312, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15640, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10315, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15641, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10318, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15642, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10321, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15643, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10324, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15644, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10327, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15645, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10330, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15646, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10333, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15647, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10336, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15648, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10339, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15649, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10342, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15650, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10345, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15651, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10348, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15652, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10351, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15653, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10354, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15654, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10357, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15655, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10360, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15656, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10363, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15657, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10366, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15658, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10369, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15659, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10372, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15660, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10375, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15661, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10378, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15662, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10381, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15663, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10384, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15664, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10387, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15665, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10390, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15666, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10393, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15667, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10396, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15668, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10399, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15669, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10402, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15615, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 41.99d, 42.67d, 140.0d, 141.0d, 10240, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15616, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.24d, 42.67d, 141.0d, 142.0d, 10243, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15617, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 42.02d, 42.67d, 142.0d, 143.0d, 10246, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15618, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 41.87d, 42.67d, 143.0d, 143.76d, 10249, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15619, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 41.33d, 42.0d, 139.91d, 141.0d, 10252, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15620, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 41.33d, 41.96d, 141.0d, 141.53d, 10255, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15621, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 40.66d, 41.34d, 140.0d, 141.0d, 10258, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15622, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 40.66d, 41.34d, 141.0d, 141.53d, 10261, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15623, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 39.99d, 40.8d, 139.63d, 140.0d, 10264, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15624, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 39.99d, 40.67d, 140.0d, 141.0d, 10267, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15625, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 39.99d, 40.67d, 141.0d, 142.0d, 10270, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15626, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 39.33d, 40.0d, 139.63d, 140.0d, 10273, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15627, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 39.33d, 40.0d, 140.0d, 141.0d, 10276, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15628, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 39.33d, 40.0d, 141.0d, 142.14d, 10279, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15629, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 38.66d, 39.34d, 139.55d, 140.0d, 10282, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15630, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 38.66d, 39.34d, 140.0d, 141.0d, 10285, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15631, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 38.66d, 39.34d, 141.0d, 141.99d, 10288, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15632, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.99d, 38.67d, 139.11d, 140.0d, 10291, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15633, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.99d, 38.67d, 140.0d, 141.0d, 10294, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15634, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 38.08d, 38.67d, 141.0d, 141.62d, 10297, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15635, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.33d, 37.47d, 136.67d, 137.0d, 10300, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15636, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.33d, 37.58d, 137.0d, 137.43d, 10303, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15637, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.33d, 37.97d, 138.39d, 139.0d, 10306, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15638, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.33d, 38.0d, 139.0d, 140.0d, 10309, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15639, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.33d, 38.0d, 140.0d, 141.0d, 10312, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15640, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 37.33d, 37.87d, 141.0d, 141.11d, 10315, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15641, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 36.66d, 37.34d, 136.58d, 137.0d, 10318, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15642, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 36.66d, 37.34d, 137.0d, 138.0d, 10321, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15643, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 36.66d, 37.34d, 138.0d, 139.0d, 10324, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15644, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 36.66d, 37.34d, 139.0d, 140.0d, 10327, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15645, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 36.66d, 37.34d, 140.0d, 141.1d, 10330, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15646, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.99d, 36.67d, 135.9d, 137.0d, 10333, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15647, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.99d, 36.67d, 137.0d, 138.0d, 10336, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15648, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.99d, 36.67d, 138.0d, 139.0d, 10339, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15649, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.99d, 36.67d, 139.0d, 140.0d, 10342, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15650, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.99d, 36.67d, 140.0d, 140.77d, 10345, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15651, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 35.58d, 132.56d, 133.0d, 10348, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15652, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 35.64d, 133.0d, 134.0d, 10351, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15653, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 35.73d, 134.0d, 135.0d, 10354, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15654, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 36.0d, 135.0d, 136.0d, 10357, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15655, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 36.0d, 136.0d, 137.0d, 10360, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15656, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 36.0d, 137.0d, 138.0d, 10363, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15657, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 36.0d, 138.0d, 139.0d, 10366, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15658, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 36.0d, 139.0d, 140.0d, 10369, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15659, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 35.33d, 36.0d, 140.0d, 140.9d, 10372, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15660, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 132.0d, 133.0d, 10375, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15661, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 133.0d, 134.0d, 10378, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15662, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 134.0d, 135.0d, 10381, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15663, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 135.0d, 136.0d, 10384, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15664, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 136.0d, 137.0d, 10387, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15665, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 137.0d, 138.0d, 10390, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15666, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 138.0d, 139.0d, 10393, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15667, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.66d, 35.34d, 139.0d, 140.0d, 10396, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15668, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.87d, 35.34d, 140.0d, 140.48d, 10399, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15669, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.99d, 34.48d, 130.81d, 131.0d, 10402, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15670, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.99d, 34.9d, 131.0d, 132.0d, 10405, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15671, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10408, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15672, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10411, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15673, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10414, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15674, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10417, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15675, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10420, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15676, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10423, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15677, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10426, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15678, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10429, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15679, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10432, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15680, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10435, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15681, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10438, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15682, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10441, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15683, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10444, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15684, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10447, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15685, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10450, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15686, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10453, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15687, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10456, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15688, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10459, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15689, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10462, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15690, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10465, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15691, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10468, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15692, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10471, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15693, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10474, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15694, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10477, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15695, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10480, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15696, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10483, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15697, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", double.NaN, double.NaN, double.NaN, double.NaN, 10486, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15671, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.99d, 34.67d, 132.0d, 133.0d, 10408, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15672, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.99d, 34.67d, 133.0d, 134.0d, 10411, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15673, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.99d, 34.67d, 134.0d, 135.0d, 10414, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15674, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.99d, 34.67d, 135.0d, 136.0d, 10417, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15675, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.99d, 34.67d, 136.0d, 137.0d, 10420, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15676, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.51d, 34.67d, 137.0d, 138.0d, 10423, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15677, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 34.54d, 34.67d, 138.0d, 139.0d, 10426, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15678, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.33d, 33.59d, 129.38d, 130.0d, 10429, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15679, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.33d, 34.0d, 130.0d, 131.0d, 10432, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15680, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.33d, 34.0d, 131.0d, 132.0d, 10435, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15681, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.33d, 34.0d, 132.0d, 133.0d, 10438, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15682, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.33d, 34.0d, 133.0d, 134.0d, 10441, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15683, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.33d, 34.0d, 134.0d, 134.81d, 10444, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15684, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.4d, 34.0d, 135.0d, 136.0d, 10447, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15685, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.54d, 34.0d, 136.0d, 136.34d, 10450, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15686, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 32.51d, 33.34d, 129.3d, 130.0d, 10453, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15687, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 32.66d, 33.34d, 130.0d, 131.0d, 10456, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15688, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 32.66d, 33.34d, 131.0d, 132.0d, 10459, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15689, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 32.69d, 33.34d, 132.0d, 133.0d, 10462, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15690, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 32.7d, 33.34d, 133.0d, 134.0d, 10465, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15691, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 33.19d, 33.34d, 134.0d, 134.27d, 10468, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15692, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 31.99d, 32.67d, 129.89d, 131.0d, 10471, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15693, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 31.99d, 32.67d, 131.0d, 131.91d, 10474, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15694, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 31.33d, 32.0d, 130.1d, 131.0d, 10477, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15695, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 31.33d, 32.0d, 131.0d, 131.55d, 10480, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15696, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 30.94d, 31.34d, 130.14d, 131.19d, 10483, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15697, 7414, 4979, 1.0d, "Geographic2D with Height Offsets", "", 45.33d, 45.54d, 141.56d, 142.0d, 10486, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15699, 4267, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 17.85d, 20.89d, -94.79d, -89.75d, 10489, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15701, 4145, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", 21.05d, 25.39d, 64.0d, 68.24d, 10492, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15702, 4145, 4326, 3.0d, "Geocentric translations (geog2D domain)", "", 24.0d, 25.64d, 67.74d, 69.87d, 10495, 3),
@@ -2493,43 +2493,43 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 15711, 4208, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", -28.41d, -22.66d, -48.8d, -40.2d, 10527, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15712, 4208, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", -22.04d, -17.59d, -40.37d, -35.18d, 10530, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15713, 4684, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", -0.69d, 7.08d, 72.81d, 73.69d, 10533, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15714, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10536, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15715, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10543, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15716, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10550, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15717, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10557, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15718, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10564, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15719, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10571, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15720, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10578, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15721, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10585, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15722, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10592, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15723, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10599, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15724, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10606, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15725, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10613, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15714, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 9.8d, 12.52d, -73.0d, -71.06d, 10536, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15715, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 9.8d, 12.52d, -73.0d, -71.06d, 10543, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15716, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 9.39d, 11.59d, -76.08d, -73.0d, 10550, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15717, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 9.39d, 11.59d, -76.08d, -73.0d, 10557, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15718, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 8.0d, 9.4d, -77.48d, -74.39d, 10564, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15719, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 8.0d, 9.4d, -77.48d, -74.39d, 10571, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15720, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 5.0d, 9.4d, -74.4d, -71.99d, 10578, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15721, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 5.0d, 9.4d, -74.4d, -71.99d, 10585, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15722, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 5.0d, 8.01d, -77.92d, -74.39d, 10592, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15723, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 5.0d, 8.01d, -77.92d, -74.39d, 10599, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15724, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 3.0d, 5.01d, -77.68d, -74.39d, 10606, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15725, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 3.0d, 5.01d, -77.68d, -74.39d, 10613, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15726, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", -1.13d, 3.01d, -79.1d, -74.0d, 10620, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15727, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", -1.13d, 3.01d, -79.1d, -74.0d, 10627, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15728, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10634, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15729, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10641, 7),
-            new EpsgOperationRecord((EpsgOperationType)0, 15730, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10648, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 15731, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10658, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 15732, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10668, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 15733, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10678, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 15734, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10688, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 15735, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10698, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 15728, 4218, 4686, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", -4.23d, 7.1d, -74.4d, -66.87d, 10634, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15729, 4218, 4326, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", -4.23d, 7.1d, -74.4d, -66.87d, 10641, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15730, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", 9.8d, 12.52d, -73.0d, -71.06d, 10648, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 15731, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", 9.39d, 11.59d, -76.08d, -73.0d, 10658, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 15732, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", 8.0d, 9.4d, -77.48d, -74.39d, 10668, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 15733, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", 5.0d, 9.4d, -74.4d, -71.99d, 10678, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 15734, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", 5.0d, 8.01d, -77.92d, -74.39d, 10688, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 15735, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", 3.0d, 5.01d, -77.68d, -74.39d, 10698, 10),
             new EpsgOperationRecord((EpsgOperationType)0, 15736, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", -1.13d, 3.01d, -79.1d, -74.0d, 10708, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 15737, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10718, 10),
+            new EpsgOperationRecord((EpsgOperationType)0, 15737, 4218, 4686, 1.0d, "Molodensky-Badekas (CF geog2D domain)", "", -4.23d, 7.1d, -74.4d, -66.87d, 10718, 10),
             new EpsgOperationRecord((EpsgOperationType)0, 15738, 4686, 4326, 1.0d, "Geocentric translations (geog2D domain)", "", -4.23d, 15.51d, -84.77d, -66.87d, 10728, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15739, 4289, 4258, 0.5d, "Coordinate Frame rotation (geog2D domain)", "", 50.75d, 53.7d, 3.2d, 7.22d, 10731, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15740, 4289, 4258, 0.5d, "Molodensky-Badekas (CF geog2D domain)", "", 50.75d, 53.7d, 3.2d, 7.22d, 10738, 10),
-            new EpsgOperationRecord((EpsgOperationType)0, 15741, 4227, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10748, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15741, 4227, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 34.49d, 35.9d, 39.3d, 40.81d, 10748, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15742, 4227, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 32.31d, 37.3d, 35.61d, 42.38d, 10751, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15743, 4227, 4326, 0.5d, "Position Vector transformation (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 10754, 7),
+            new EpsgOperationRecord((EpsgOperationType)0, 15743, 4227, 4326, 0.5d, "Position Vector transformation (geog2D domain)", "", 34.49d, 35.9d, 39.3d, 40.81d, 10754, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15745, 4154, 4326, 0.2d, "Geocentric translations (geog2D domain)", "", 26.46d, 26.64d, 52.22d, 52.41d, 10761, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15746, 4693, 4326, 0.2d, "Geocentric translations (geog2D domain)", "", 27.63d, 27.81d, 52.09d, 52.26d, 10764, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15747, 5817, 3307, 0.0d, "Transverse Mercator", "", 27.63d, 27.81d, 52.09d, 52.26d, 10767, 9),
             new EpsgOperationRecord((EpsgOperationType)0, 15750, 4605, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", 17.06d, 17.46d, -62.92d, -62.5d, 10776, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15751, 4626, 4326, 44.0d, "Geocentric translations (geog2D domain)", "", -21.42d, -20.81d, 55.16d, 55.91d, 10779, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15752, 4668, 4326, 6.0d, "Geocentric translations (geog2D domain)", "", 34.88d, 84.73d, -10.56d, 38.01d, 10782, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15753, 4230, 4231, 1.0d, "Reversible polynomial of degree 4", "", double.NaN, double.NaN, double.NaN, double.NaN, 10785, 33),
+            new EpsgOperationRecord((EpsgOperationType)0, 15753, 4230, 4231, 1.0d, "Reversible polynomial of degree 4", "", 51.03d, 62.0d, -5.05d, 10.86d, 10785, 33),
             new EpsgOperationRecord((EpsgOperationType)0, 15754, 4208, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -28.41d, -17.59d, -48.8d, -35.18d, 10818, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15755, 4263, 4326, 7.0d, "Geocentric translations (geog2D domain)", "", 5.05d, 5.36d, 6.53d, 6.84d, 10821, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15759, 4692, 4687, 0.5d, "Geocentric translations (geog2D domain)", "", -16.57d, -16.34d, -152.39d, -152.14d, 10824, 3),
@@ -2598,13 +2598,13 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 15843, 4740, 4326, 1.5d, "Coordinate Frame rotation (geog2D domain)", "", -90.0d, 90.0d, -180.0d, 180.0d, 10980, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15844, 4284, 4740, 4.0d, "Coordinate Frame rotation (geog2D domain)", "", 35.14d, 81.91d, 19.57d, -168.97d, 10987, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15846, 4706, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 27.19d, 30.01d, 32.34d, 34.27d, 10994, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15847, 4639, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -13.41d, -13.16d, -176.25d, -176.07d, 10997, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15847, 4639, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -13.42d, -13.17d, -176.29d, -176.11d, 10997, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15848, 4642, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -22.73d, -22.49d, 167.36d, 167.61d, 11000, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15849, 4213, 4326, 15.0d, "Geocentric translations (geog2D domain)", "", 12.8d, 16.7d, 7.81d, 14.9d, 11003, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15850, 4698, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -49.78d, -48.6d, 68.69d, 70.62d, 11006, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15851, 4267, 4326, 5.0d, "NADCON", "conus.las", 23.81d, 49.38d, -129.17d, -65.69d, 11009, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 15852, 4267, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 11009, 3),
-            new EpsgOperationRecord((EpsgOperationType)0, 15853, 4267, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 11012, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15852, 4267, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 23.82d, 30.25d, -87.25d, -81.17d, 11009, 3),
+            new EpsgOperationRecord((EpsgOperationType)0, 15853, 4267, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 25.61d, 30.23d, -95.0d, -87.25d, 11012, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15854, 4267, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 25.97d, 28.97d, -97.22d, -95.0d, 11015, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15855, 4267, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 21.51d, 22.75d, -98.1d, -96.89d, 11018, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15856, 4267, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", 23.82d, 30.25d, -97.22d, -81.17d, 11021, 3),
@@ -2680,8 +2680,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 15938, 4270, 4326, 5.0d, "Position Vector transformation (geog2D domain)", "", 24.0d, 25.64d, 51.5d, 54.85d, 11404, 7),
             new EpsgOperationRecord((EpsgOperationType)0, 15948, 4314, 4258, 0.9d, "NTv2", "BETA2007.gsb", 47.27d, 55.09d, 5.86d, 15.04d, 11411, 0),
             new EpsgOperationRecord((EpsgOperationType)0, 15949, 4314, 4326, 1.0d, "NTv2", "BETA2007.gsb", 47.27d, 55.09d, 5.86d, 15.04d, 11411, 0),
-            new EpsgOperationRecord((EpsgOperationType)0, 15950, 3140, 3460, 1.0d, "Cassini-Soldner", "", double.NaN, double.NaN, double.NaN, double.NaN, 11411, 27),
-            new EpsgOperationRecord((EpsgOperationType)0, 15951, 3139, 3460, 1.0d, "Hyperbolic Cassini-Soldner", "", double.NaN, double.NaN, double.NaN, double.NaN, 11438, 27),
+            new EpsgOperationRecord((EpsgOperationType)0, 15950, 3140, 3460, 1.0d, "Cassini-Soldner", "", -18.32d, -17.25d, 177.19d, 178.75d, 11411, 27),
+            new EpsgOperationRecord((EpsgOperationType)0, 15951, 3139, 3460, 1.0d, "Hyperbolic Cassini-Soldner", "", -17.07d, -16.1d, 178.42d, -179.77d, 11438, 27),
             new EpsgOperationRecord((EpsgOperationType)0, 15952, 4270, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 24.94d, 25.8d, 54.06d, 55.3d, 11465, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15953, 4270, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 24.85d, 25.34d, 54.84d, 55.55d, 11468, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15954, 4745, 4326, 1.0d, "NTv2", "BETA2007.gsb", 50.2d, 51.66d, 11.89d, 15.04d, 11471, 0),
@@ -2741,7 +2741,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)1, 8186, 4807, 4230, 0.0d, "Longitude rotation", "", 41.31d, 51.14d, -4.87d, 9.63d, 11693, 4),
             new EpsgOperationRecord((EpsgOperationType)1, 8188, 4807, 4322, 0.0d, "Longitude rotation", "", 41.31d, 51.14d, -4.87d, 9.63d, 11697, 4),
             new EpsgOperationRecord((EpsgOperationType)1, 8211, 4811, 4326, 0.0d, "Longitude rotation", "", 31.99d, 37.14d, -2.95d, 9.09d, 11701, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8241, 4903, 4326, 10.0d, "Madrid to ED50 polynomial", "", double.NaN, double.NaN, double.NaN, double.NaN, 11705, 12),
+            new EpsgOperationRecord((EpsgOperationType)1, 8241, 4903, 4326, 10.0d, "Madrid to ED50 polynomial", "", 35.95d, 43.82d, -9.37d, 3.39d, 11705, 12),
             new EpsgOperationRecord((EpsgOperationType)1, 8363, 11312, 11314, 0.03d, "Geog3D to Geog2D+GravityRelatedHeight (gtx)", "Slovakia_ETRS89h_to_Baltic1957.gtx", 47.73d, 49.61d, 16.84d, 22.56d, 11717, 2),
             new EpsgOperationRecord((EpsgOperationType)1, 8442, 11076, 4156, 0.001d, "Coordinate Frame rotation (geog2D domain)", "Slovakia_JTSK03_to_JTSK.LAS", 47.73d, 49.61d, 16.84d, 22.56d, 11719, 7),
             new EpsgOperationRecord((EpsgOperationType)1, 8443, 4156, 11076, 0.05d, "NADCON", "Slovakia_JTSK03_to_JTSK.LAS", 47.73d, 49.61d, 16.84d, 22.56d, 11726, 7),
@@ -2786,7 +2786,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)1, 8553, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.97d, 42.51d, -91.52d, -87.02d, 11759, 0),
             new EpsgOperationRecord((EpsgOperationType)1, 8554, 4267, 4152, 0.15d, "NADCON", "conus.las", 38.87d, 41.36d, -75.6d, -73.88d, 11759, 0),
             new EpsgOperationRecord((EpsgOperationType)1, 8562, 4307, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", 31.48d, 32.09d, 5.59d, 6.5d, 11759, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8568, 4227, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 11769, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8568, 4227, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 34.49d, 35.9d, 39.3d, 40.81d, 11769, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8569, 4230, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", 65.0d, 84.73d, -3.35d, 38.01d, 11779, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8571, 4168, 4326, 25.0d, "Geocentric translations (geog2D domain)", "", 1.4d, 6.06d, -3.79d, 2.1d, 11789, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8581, 4134, 4326, 1.2d, "Position Vector transformation (geog2D domain)", "", 16.59d, 26.58d, 51.99d, 59.91d, 11799, 14),
@@ -2839,7 +2839,7 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)1, 8629, 4267, 4326, 0.15d, "NADCON", "conus.las", 42.48d, 47.31d, -92.89d, -86.25d, 11813, 0),
             new EpsgOperationRecord((EpsgOperationType)1, 8630, 4267, 4326, 0.15d, "NADCON", "conus.las", 40.99d, 45.01d, -111.06d, -104.05d, 11813, 0),
             new EpsgOperationRecord((EpsgOperationType)1, 8631, 4197, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 8.92d, 9.87d, 12.9d, 14.19d, 11813, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8632, 4198, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", double.NaN, double.NaN, double.NaN, double.NaN, 11823, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8632, 4198, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 11.7d, 12.77d, 14.17d, 15.09d, 11823, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8633, 4310, 4326, 25.0d, "Geocentric translations (geog2D domain)", "", 10.64d, 16.7d, -20.22d, -11.36d, 11833, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8634, 4213, 4326, 15.0d, "Geocentric translations (geog2D domain)", "", 12.8d, 16.7d, 7.81d, 14.9d, 11843, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8636, 4816, 4326, 0.0d, "Longitude rotation", "", 30.23d, 37.4d, 7.49d, 11.59d, 11853, 4),
@@ -2855,8 +2855,8 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)1, 8650, 4281, 4326, 1.5d, "Geocentric translations (geog2D domain)", "", 29.45d, 33.28d, 34.17d, 35.69d, 11914, 6),
             new EpsgOperationRecord((EpsgOperationType)1, 8651, 4676, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", 13.92d, 22.5d, 100.09d, 107.64d, 11920, 6),
             new EpsgOperationRecord((EpsgOperationType)1, 8652, 4677, 4326, 0.15d, "Geocentric translations (geog2D domain)", "", 13.92d, 22.5d, 100.09d, 107.64d, 11926, 6),
-            new EpsgOperationRecord((EpsgOperationType)1, 8653, 4230, 4326, 1.0d, "Reversible polynomial of degree 4", "", double.NaN, double.NaN, double.NaN, double.NaN, 11932, 40),
-            new EpsgOperationRecord((EpsgOperationType)1, 8654, 4230, 4258, 1.0d, "Reversible polynomial of degree 4", "", double.NaN, double.NaN, double.NaN, double.NaN, 11972, 43),
+            new EpsgOperationRecord((EpsgOperationType)1, 8653, 4230, 4326, 1.0d, "Reversible polynomial of degree 4", "", 51.03d, 62.0d, -5.05d, 10.86d, 11932, 40),
+            new EpsgOperationRecord((EpsgOperationType)1, 8654, 4230, 4258, 1.0d, "Reversible polynomial of degree 4", "", 51.03d, 62.0d, -5.05d, 10.86d, 11972, 43),
             new EpsgOperationRecord((EpsgOperationType)1, 8655, 4193, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 2.16d, 4.99d, 8.45d, 10.4d, 12015, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8656, 4705, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -6.04d, -5.05d, 10.53d, 12.37d, 12025, 10),
             new EpsgOperationRecord((EpsgOperationType)1, 8657, 4706, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 27.19d, 30.01d, 32.34d, 34.27d, 12035, 10),
@@ -2921,11 +2921,11 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)1, 11140, 9988, 11129, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 35.26d, 46.26d, -13.86d, 6.3d, 12825, 33),
             new EpsgOperationRecord((EpsgOperationType)1, 11194, 9988, 4888, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 41.62d, 46.54d, 13.0d, 19.43d, 12858, 33),
             new EpsgOperationRecord((EpsgOperationType)1, 11196, 9988, 9138, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 41.85d, 43.25d, 19.97d, 21.8d, 12891, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11230, 4897, 11029, 0.2d, "Coordinate Frame rotation (geog2D domain)", "v3_dm_grd01_xyz.dat", double.NaN, double.NaN, double.NaN, double.NaN, 12924, 25),
+            new EpsgOperationRecord((EpsgOperationType)1, 11230, 4897, 11029, 0.2d, "Coordinate Frame rotation (geog2D domain)", "v3_dm_grd01_xyz.dat", -13.95d, 7.79d, 92.01d, 141.46d, 12924, 25),
             new EpsgOperationRecord((EpsgOperationType)1, 11285, 9988, 4000, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 45.44d, 48.47d, 26.63d, 30.13d, 12949, 33),
             new EpsgOperationRecord((EpsgOperationType)1, 11310, 9988, 11222, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 45.81d, 47.81d, 5.95d, 10.5d, 12982, 33),
             new EpsgOperationRecord((EpsgOperationType)1, 11315, 9988, 10303, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 55.67d, 58.09d, 19.06d, 28.24d, 13015, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 11398, 5941, 11394, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "HREF2018B_NN2000_EUREF89.bin", double.NaN, double.NaN, double.NaN, double.NaN, 13043, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 11398, 5941, 11394, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "HREF2018B_NN2000_EUREF89.bin", 57.9d, 71.24d, 4.39d, 31.32d, 13043, 2),
         };
 
         internal static readonly EpsgOperationParameterRecord[] OperationParameters = new EpsgOperationParameterRecord[]
@@ -15976,6 +15976,4906 @@ namespace ProjNet.Data.Generated
             new EpsgOperationParameterRecord(11398, "EPSG code for Interpolation CRS", 10875.0d),
             new EpsgOperationParameterRecord(11398, "EPSG code for Interpolation CRS", 10875.0d),
         };
+
+        internal static bool TryGetConcatenatedOperationStepCount(int operationCode, out int stepCount)
+        {
+            switch (operationCode / 1000)
+            {
+                case 3:
+                    return TryGetConcatenatedOperationStepCountBucket3(operationCode, out stepCount);
+                case 4:
+                    return TryGetConcatenatedOperationStepCountBucket4(operationCode, out stepCount);
+                case 5:
+                    return TryGetConcatenatedOperationStepCountBucket5(operationCode, out stepCount);
+                case 6:
+                    return TryGetConcatenatedOperationStepCountBucket6(operationCode, out stepCount);
+                case 7:
+                    return TryGetConcatenatedOperationStepCountBucket7(operationCode, out stepCount);
+                case 8:
+                    return TryGetConcatenatedOperationStepCountBucket8(operationCode, out stepCount);
+                case 9:
+                    return TryGetConcatenatedOperationStepCountBucket9(operationCode, out stepCount);
+                case 10:
+                    return TryGetConcatenatedOperationStepCountBucket10(operationCode, out stepCount);
+                case 11:
+                    return TryGetConcatenatedOperationStepCountBucket11(operationCode, out stepCount);
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket3(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 3896:
+                    stepCount = 2;
+                    return true;
+                case 3966:
+                    stepCount = 2;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket4(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 4435:
+                    stepCount = 2;
+                    return true;
+                case 4837:
+                    stepCount = 2;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket5(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 5190:
+                    stepCount = 2;
+                    return true;
+                case 5192:
+                    stepCount = 2;
+                    return true;
+                case 5230:
+                    stepCount = 2;
+                    return true;
+                case 5240:
+                    stepCount = 2;
+                    return true;
+                case 5242:
+                    stepCount = 2;
+                    return true;
+                case 5838:
+                    stepCount = 2;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket6(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 6714:
+                    stepCount = 2;
+                    return true;
+                case 6739:
+                    stepCount = 2;
+                    return true;
+                case 6874:
+                    stepCount = 2;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket7(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 7810:
+                    stepCount = 2;
+                    return true;
+                case 7811:
+                    stepCount = 2;
+                    return true;
+                case 7965:
+                    stepCount = 2;
+                    return true;
+                case 7967:
+                    stepCount = 2;
+                    return true;
+                case 7973:
+                    stepCount = 2;
+                    return true;
+                case 7974:
+                    stepCount = 2;
+                    return true;
+                case 7975:
+                    stepCount = 2;
+                    return true;
+                case 7983:
+                    stepCount = 2;
+                    return true;
+                case 7986:
+                    stepCount = 2;
+                    return true;
+                case 7987:
+                    stepCount = 3;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket8(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 8046:
+                    stepCount = 2;
+                    return true;
+                case 8047:
+                    stepCount = 2;
+                    return true;
+                case 8094:
+                    stepCount = 2;
+                    return true;
+                case 8174:
+                    stepCount = 2;
+                    return true;
+                case 8175:
+                    stepCount = 2;
+                    return true;
+                case 8176:
+                    stepCount = 2;
+                    return true;
+                case 8178:
+                    stepCount = 2;
+                    return true;
+                case 8183:
+                    stepCount = 2;
+                    return true;
+                case 8186:
+                    stepCount = 2;
+                    return true;
+                case 8188:
+                    stepCount = 2;
+                    return true;
+                case 8190:
+                    stepCount = 2;
+                    return true;
+                case 8192:
+                    stepCount = 2;
+                    return true;
+                case 8194:
+                    stepCount = 2;
+                    return true;
+                case 8195:
+                    stepCount = 2;
+                    return true;
+                case 8199:
+                    stepCount = 2;
+                    return true;
+                case 8211:
+                    stepCount = 2;
+                    return true;
+                case 8215:
+                    stepCount = 2;
+                    return true;
+                case 8217:
+                    stepCount = 2;
+                    return true;
+                case 8219:
+                    stepCount = 2;
+                    return true;
+                case 8221:
+                    stepCount = 2;
+                    return true;
+                case 8223:
+                    stepCount = 2;
+                    return true;
+                case 8234:
+                    stepCount = 2;
+                    return true;
+                case 8236:
+                    stepCount = 2;
+                    return true;
+                case 8241:
+                    stepCount = 2;
+                    return true;
+                case 8243:
+                    stepCount = 2;
+                    return true;
+                case 8245:
+                    stepCount = 2;
+                    return true;
+                case 8263:
+                    stepCount = 2;
+                    return true;
+                case 8363:
+                    stepCount = 2;
+                    return true;
+                case 8386:
+                    stepCount = 2;
+                    return true;
+                case 8388:
+                    stepCount = 2;
+                    return true;
+                case 8390:
+                    stepCount = 2;
+                    return true;
+                case 8392:
+                    stepCount = 2;
+                    return true;
+                case 8394:
+                    stepCount = 2;
+                    return true;
+                case 8396:
+                    stepCount = 2;
+                    return true;
+                case 8398:
+                    stepCount = 2;
+                    return true;
+                case 8400:
+                    stepCount = 2;
+                    return true;
+                case 8402:
+                    stepCount = 2;
+                    return true;
+                case 8404:
+                    stepCount = 2;
+                    return true;
+                case 8406:
+                    stepCount = 2;
+                    return true;
+                case 8408:
+                    stepCount = 2;
+                    return true;
+                case 8418:
+                    stepCount = 2;
+                    return true;
+                case 8419:
+                    stepCount = 2;
+                    return true;
+                case 8420:
+                    stepCount = 2;
+                    return true;
+                case 8421:
+                    stepCount = 2;
+                    return true;
+                case 8422:
+                    stepCount = 2;
+                    return true;
+                case 8442:
+                    stepCount = 2;
+                    return true;
+                case 8443:
+                    stepCount = 2;
+                    return true;
+                case 8453:
+                    stepCount = 2;
+                    return true;
+                case 8454:
+                    stepCount = 2;
+                    return true;
+                case 8457:
+                    stepCount = 2;
+                    return true;
+                case 8460:
+                    stepCount = 2;
+                    return true;
+                case 8461:
+                    stepCount = 2;
+                    return true;
+                case 8462:
+                    stepCount = 2;
+                    return true;
+                case 8463:
+                    stepCount = 2;
+                    return true;
+                case 8464:
+                    stepCount = 2;
+                    return true;
+                case 8465:
+                    stepCount = 2;
+                    return true;
+                case 8466:
+                    stepCount = 2;
+                    return true;
+                case 8467:
+                    stepCount = 2;
+                    return true;
+                case 8468:
+                    stepCount = 2;
+                    return true;
+                case 8469:
+                    stepCount = 2;
+                    return true;
+                case 8470:
+                    stepCount = 2;
+                    return true;
+                case 8471:
+                    stepCount = 2;
+                    return true;
+                case 8472:
+                    stepCount = 2;
+                    return true;
+                case 8473:
+                    stepCount = 2;
+                    return true;
+                case 8474:
+                    stepCount = 2;
+                    return true;
+                case 8475:
+                    stepCount = 2;
+                    return true;
+                case 8476:
+                    stepCount = 2;
+                    return true;
+                case 8477:
+                    stepCount = 2;
+                    return true;
+                case 8478:
+                    stepCount = 2;
+                    return true;
+                case 8479:
+                    stepCount = 2;
+                    return true;
+                case 8480:
+                    stepCount = 2;
+                    return true;
+                case 8481:
+                    stepCount = 2;
+                    return true;
+                case 8482:
+                    stepCount = 2;
+                    return true;
+                case 8483:
+                    stepCount = 2;
+                    return true;
+                case 8484:
+                    stepCount = 2;
+                    return true;
+                case 8485:
+                    stepCount = 2;
+                    return true;
+                case 8486:
+                    stepCount = 2;
+                    return true;
+                case 8487:
+                    stepCount = 2;
+                    return true;
+                case 8488:
+                    stepCount = 2;
+                    return true;
+                case 8489:
+                    stepCount = 2;
+                    return true;
+                case 8496:
+                    stepCount = 2;
+                    return true;
+                case 8497:
+                    stepCount = 2;
+                    return true;
+                case 8508:
+                    stepCount = 2;
+                    return true;
+                case 8509:
+                    stepCount = 2;
+                    return true;
+                case 8510:
+                    stepCount = 2;
+                    return true;
+                case 8511:
+                    stepCount = 2;
+                    return true;
+                case 8512:
+                    stepCount = 2;
+                    return true;
+                case 8513:
+                    stepCount = 2;
+                    return true;
+                case 8514:
+                    stepCount = 2;
+                    return true;
+                case 8517:
+                    stepCount = 2;
+                    return true;
+                case 8530:
+                    stepCount = 2;
+                    return true;
+                case 8532:
+                    stepCount = 2;
+                    return true;
+                case 8537:
+                    stepCount = 2;
+                    return true;
+                case 8553:
+                    stepCount = 2;
+                    return true;
+                case 8554:
+                    stepCount = 2;
+                    return true;
+                case 8560:
+                    stepCount = 2;
+                    return true;
+                case 8562:
+                    stepCount = 2;
+                    return true;
+                case 8563:
+                    stepCount = 2;
+                    return true;
+                case 8564:
+                    stepCount = 2;
+                    return true;
+                case 8565:
+                    stepCount = 2;
+                    return true;
+                case 8566:
+                    stepCount = 2;
+                    return true;
+                case 8567:
+                    stepCount = 2;
+                    return true;
+                case 8568:
+                    stepCount = 2;
+                    return true;
+                case 8569:
+                    stepCount = 2;
+                    return true;
+                case 8570:
+                    stepCount = 3;
+                    return true;
+                case 8571:
+                    stepCount = 2;
+                    return true;
+                case 8572:
+                    stepCount = 2;
+                    return true;
+                case 8573:
+                    stepCount = 2;
+                    return true;
+                case 8574:
+                    stepCount = 2;
+                    return true;
+                case 8575:
+                    stepCount = 2;
+                    return true;
+                case 8576:
+                    stepCount = 2;
+                    return true;
+                case 8577:
+                    stepCount = 2;
+                    return true;
+                case 8578:
+                    stepCount = 2;
+                    return true;
+                case 8579:
+                    stepCount = 2;
+                    return true;
+                case 8580:
+                    stepCount = 2;
+                    return true;
+                case 8581:
+                    stepCount = 2;
+                    return true;
+                case 8582:
+                    stepCount = 2;
+                    return true;
+                case 8583:
+                    stepCount = 2;
+                    return true;
+                case 8584:
+                    stepCount = 2;
+                    return true;
+                case 8585:
+                    stepCount = 2;
+                    return true;
+                case 8586:
+                    stepCount = 2;
+                    return true;
+                case 8587:
+                    stepCount = 2;
+                    return true;
+                case 8588:
+                    stepCount = 2;
+                    return true;
+                case 8589:
+                    stepCount = 2;
+                    return true;
+                case 8590:
+                    stepCount = 2;
+                    return true;
+                case 8591:
+                    stepCount = 2;
+                    return true;
+                case 8592:
+                    stepCount = 2;
+                    return true;
+                case 8593:
+                    stepCount = 2;
+                    return true;
+                case 8594:
+                    stepCount = 2;
+                    return true;
+                case 8595:
+                    stepCount = 2;
+                    return true;
+                case 8596:
+                    stepCount = 2;
+                    return true;
+                case 8597:
+                    stepCount = 2;
+                    return true;
+                case 8598:
+                    stepCount = 2;
+                    return true;
+                case 8599:
+                    stepCount = 2;
+                    return true;
+                case 8600:
+                    stepCount = 2;
+                    return true;
+                case 8601:
+                    stepCount = 2;
+                    return true;
+                case 8602:
+                    stepCount = 2;
+                    return true;
+                case 8603:
+                    stepCount = 2;
+                    return true;
+                case 8604:
+                    stepCount = 2;
+                    return true;
+                case 8605:
+                    stepCount = 2;
+                    return true;
+                case 8606:
+                    stepCount = 2;
+                    return true;
+                case 8607:
+                    stepCount = 2;
+                    return true;
+                case 8608:
+                    stepCount = 2;
+                    return true;
+                case 8609:
+                    stepCount = 2;
+                    return true;
+                case 8610:
+                    stepCount = 2;
+                    return true;
+                case 8611:
+                    stepCount = 2;
+                    return true;
+                case 8612:
+                    stepCount = 2;
+                    return true;
+                case 8613:
+                    stepCount = 2;
+                    return true;
+                case 8614:
+                    stepCount = 2;
+                    return true;
+                case 8615:
+                    stepCount = 2;
+                    return true;
+                case 8616:
+                    stepCount = 2;
+                    return true;
+                case 8617:
+                    stepCount = 2;
+                    return true;
+                case 8618:
+                    stepCount = 2;
+                    return true;
+                case 8619:
+                    stepCount = 2;
+                    return true;
+                case 8620:
+                    stepCount = 2;
+                    return true;
+                case 8621:
+                    stepCount = 2;
+                    return true;
+                case 8622:
+                    stepCount = 2;
+                    return true;
+                case 8623:
+                    stepCount = 2;
+                    return true;
+                case 8624:
+                    stepCount = 2;
+                    return true;
+                case 8625:
+                    stepCount = 2;
+                    return true;
+                case 8626:
+                    stepCount = 2;
+                    return true;
+                case 8627:
+                    stepCount = 2;
+                    return true;
+                case 8628:
+                    stepCount = 2;
+                    return true;
+                case 8629:
+                    stepCount = 2;
+                    return true;
+                case 8630:
+                    stepCount = 2;
+                    return true;
+                case 8631:
+                    stepCount = 2;
+                    return true;
+                case 8632:
+                    stepCount = 2;
+                    return true;
+                case 8633:
+                    stepCount = 2;
+                    return true;
+                case 8634:
+                    stepCount = 2;
+                    return true;
+                case 8635:
+                    stepCount = 2;
+                    return true;
+                case 8636:
+                    stepCount = 2;
+                    return true;
+                case 8637:
+                    stepCount = 2;
+                    return true;
+                case 8638:
+                    stepCount = 2;
+                    return true;
+                case 8639:
+                    stepCount = 2;
+                    return true;
+                case 8640:
+                    stepCount = 2;
+                    return true;
+                case 8641:
+                    stepCount = 2;
+                    return true;
+                case 8642:
+                    stepCount = 2;
+                    return true;
+                case 8643:
+                    stepCount = 2;
+                    return true;
+                case 8644:
+                    stepCount = 3;
+                    return true;
+                case 8645:
+                    stepCount = 2;
+                    return true;
+                case 8646:
+                    stepCount = 2;
+                    return true;
+                case 8647:
+                    stepCount = 3;
+                    return true;
+                case 8648:
+                    stepCount = 2;
+                    return true;
+                case 8649:
+                    stepCount = 2;
+                    return true;
+                case 8650:
+                    stepCount = 2;
+                    return true;
+                case 8651:
+                    stepCount = 2;
+                    return true;
+                case 8652:
+                    stepCount = 2;
+                    return true;
+                case 8653:
+                    stepCount = 2;
+                    return true;
+                case 8654:
+                    stepCount = 3;
+                    return true;
+                case 8655:
+                    stepCount = 2;
+                    return true;
+                case 8656:
+                    stepCount = 2;
+                    return true;
+                case 8657:
+                    stepCount = 2;
+                    return true;
+                case 8659:
+                    stepCount = 2;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket9(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 9091:
+                    stepCount = 2;
+                    return true;
+                case 9092:
+                    stepCount = 2;
+                    return true;
+                case 9093:
+                    stepCount = 2;
+                    return true;
+                case 9094:
+                    stepCount = 2;
+                    return true;
+                case 9095:
+                    stepCount = 2;
+                    return true;
+                case 9096:
+                    stepCount = 2;
+                    return true;
+                case 9097:
+                    stepCount = 2;
+                    return true;
+                case 9098:
+                    stepCount = 2;
+                    return true;
+                case 9099:
+                    stepCount = 2;
+                    return true;
+                case 9100:
+                    stepCount = 2;
+                    return true;
+                case 9101:
+                    stepCount = 2;
+                    return true;
+                case 9102:
+                    stepCount = 2;
+                    return true;
+                case 9103:
+                    stepCount = 4;
+                    return true;
+                case 9104:
+                    stepCount = 7;
+                    return true;
+                case 9336:
+                    stepCount = 2;
+                    return true;
+                case 9337:
+                    stepCount = 2;
+                    return true;
+                case 9499:
+                    stepCount = 2;
+                    return true;
+                case 9683:
+                    stepCount = 2;
+                    return true;
+                case 9685:
+                    stepCount = 2;
+                    return true;
+                case 9687:
+                    stepCount = 2;
+                    return true;
+                case 9731:
+                    stepCount = 2;
+                    return true;
+                case 9750:
+                    stepCount = 2;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket10(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 10146:
+                    stepCount = 2;
+                    return true;
+                case 10392:
+                    stepCount = 2;
+                    return true;
+                case 10393:
+                    stepCount = 2;
+                    return true;
+                case 10394:
+                    stepCount = 2;
+                    return true;
+                case 10395:
+                    stepCount = 2;
+                    return true;
+                case 10396:
+                    stepCount = 2;
+                    return true;
+                case 10397:
+                    stepCount = 2;
+                    return true;
+                case 10398:
+                    stepCount = 2;
+                    return true;
+                case 10399:
+                    stepCount = 2;
+                    return true;
+                case 10400:
+                    stepCount = 2;
+                    return true;
+                case 10409:
+                    stepCount = 2;
+                    return true;
+                case 10410:
+                    stepCount = 2;
+                    return true;
+                case 10411:
+                    stepCount = 2;
+                    return true;
+                case 10495:
+                    stepCount = 2;
+                    return true;
+                case 10496:
+                    stepCount = 2;
+                    return true;
+                case 10616:
+                    stepCount = 2;
+                    return true;
+                case 10675:
+                    stepCount = 2;
+                    return true;
+                case 10754:
+                    stepCount = 2;
+                    return true;
+                case 10755:
+                    stepCount = 2;
+                    return true;
+                case 10756:
+                    stepCount = 2;
+                    return true;
+                case 10778:
+                    stepCount = 3;
+                    return true;
+                case 10815:
+                    stepCount = 2;
+                    return true;
+                case 10816:
+                    stepCount = 3;
+                    return true;
+                case 10817:
+                    stepCount = 3;
+                    return true;
+                case 10818:
+                    stepCount = 3;
+                    return true;
+                case 10824:
+                    stepCount = 3;
+                    return true;
+                case 10825:
+                    stepCount = 3;
+                    return true;
+                case 10868:
+                    stepCount = 3;
+                    return true;
+                case 10869:
+                    stepCount = 3;
+                    return true;
+                case 10870:
+                    stepCount = 3;
+                    return true;
+                case 10871:
+                    stepCount = 3;
+                    return true;
+                case 10872:
+                    stepCount = 3;
+                    return true;
+                case 10894:
+                    stepCount = 3;
+                    return true;
+                case 10895:
+                    stepCount = 3;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepCountBucket11(int operationCode, out int stepCount)
+        {
+            switch (operationCode)
+            {
+                case 11005:
+                    stepCount = 2;
+                    return true;
+                case 11066:
+                    stepCount = 3;
+                    return true;
+                case 11110:
+                    stepCount = 3;
+                    return true;
+                case 11140:
+                    stepCount = 3;
+                    return true;
+                case 11194:
+                    stepCount = 3;
+                    return true;
+                case 11196:
+                    stepCount = 3;
+                    return true;
+                case 11206:
+                    stepCount = 3;
+                    return true;
+                case 11230:
+                    stepCount = 2;
+                    return true;
+                case 11285:
+                    stepCount = 3;
+                    return true;
+                case 11310:
+                    stepCount = 3;
+                    return true;
+                case 11315:
+                    stepCount = 3;
+                    return true;
+                case 11398:
+                    stepCount = 2;
+                    return true;
+                default:
+                    stepCount = 0;
+                    return false;
+            }
+        }
+
+        internal static bool TryGetConcatenatedOperationStep(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode / 1000)
+            {
+                case 3:
+                    return TryGetConcatenatedOperationStepBucket3(operationCode, stepIndex, out stepOperationCode);
+                case 4:
+                    return TryGetConcatenatedOperationStepBucket4(operationCode, stepIndex, out stepOperationCode);
+                case 5:
+                    return TryGetConcatenatedOperationStepBucket5(operationCode, stepIndex, out stepOperationCode);
+                case 6:
+                    return TryGetConcatenatedOperationStepBucket6(operationCode, stepIndex, out stepOperationCode);
+                case 7:
+                    return TryGetConcatenatedOperationStepBucket7(operationCode, stepIndex, out stepOperationCode);
+                case 8:
+                    return TryGetConcatenatedOperationStepBucket8(operationCode, stepIndex, out stepOperationCode);
+                case 9:
+                    return TryGetConcatenatedOperationStepBucket9(operationCode, stepIndex, out stepOperationCode);
+                case 10:
+                    return TryGetConcatenatedOperationStepBucket10(operationCode, stepIndex, out stepOperationCode);
+                case 11:
+                    return TryGetConcatenatedOperationStepBucket11(operationCode, stepIndex, out stepOperationCode);
+                default:
+                    stepOperationCode = 0;
+                    return false;
+            }
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket3(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 3896:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 3895;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1618;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 3966:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 3913;
+                            return true;
+                        case 1:
+                            stepOperationCode = 3962;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket4(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 4435:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1461;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1495;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 4837:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1672;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1311;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket5(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 5190:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 5134;
+                            return true;
+                        case 1:
+                            stepOperationCode = 5189;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 5192:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 5134;
+                            return true;
+                        case 1:
+                            stepOperationCode = 5191;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 5230:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1884;
+                            return true;
+                        case 1:
+                            stepOperationCode = 4836;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 5240:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 5238;
+                            return true;
+                        case 1:
+                            stepOperationCode = 5227;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 5242:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1884;
+                            return true;
+                        case 1:
+                            stepOperationCode = 5239;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 5838:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1756;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1988;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket6(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 6714:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 6712;
+                            return true;
+                        case 1:
+                            stepOperationCode = 6713;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 6739:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1496;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 6874:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1265;
+                            return true;
+                        case 1:
+                            stepOperationCode = 6873;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket7(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 7810:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1763;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1053;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7811:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1763;
+                            return true;
+                        case 1:
+                            stepOperationCode = 15958;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7965:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7813;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7964;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7967:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7813;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7966;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7973:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7813;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7969;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7974:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7813;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7970;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7975:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7813;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7971;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7983:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7977;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7986:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7980;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7812;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 7987:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7980;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 2:
+                            stepOperationCode = 7813;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket8(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 8046:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1043;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1146;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8047:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1147;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1146;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8094:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1763;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1193;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8174:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1755;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1125;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8175:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1262;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1169;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8176:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1265;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1227;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8178:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1759;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8452;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8183:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1273;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8186:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1763;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1276;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8188:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1763;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1277;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8190:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1278;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8192:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1279;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8194:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1280;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8195:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1437;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8199:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1274;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1283;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8211:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1266;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1294;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8215:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1297;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1302;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8217:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1298;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1302;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8219:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1299;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1302;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8221:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1300;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1302;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8223:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1301;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1302;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8234:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1309;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8236:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1310;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8241:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1026;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1145;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8243:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1312;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8245:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1313;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8263:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1757;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1306;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8363:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8361;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8362;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8386:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1454;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8388:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1455;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8390:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1456;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8392:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1457;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8394:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1451;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8396:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1458;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8398:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1459;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8400:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1460;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8402:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1461;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8404:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1462;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8406:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1463;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8408:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1464;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8418:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1472;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1473;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8419:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1599;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1473;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8420:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1600;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1473;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8421:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1601;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1473;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8422:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1602;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1473;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8442:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8365;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8364;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8443:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8364;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8367;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8453:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1506;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8454:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1507;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8457:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1509;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1511;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8460:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1474;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8461:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1475;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8462:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1476;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8463:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1477;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8464:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1478;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8465:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1479;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8466:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1480;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8467:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1481;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8468:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1482;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8469:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1483;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8470:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1484;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8471:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1485;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8472:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1486;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8473:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1487;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8474:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1488;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8475:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1489;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8476:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1490;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8477:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1491;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8478:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1492;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8479:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1493;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8480:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1494;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8481:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1495;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8482:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1747;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1496;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8483:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1497;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8484:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1498;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8485:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1499;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8486:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1500;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8487:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1501;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8488:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1502;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8489:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1503;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8496:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1515;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8497:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1243;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1515;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8508:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1454;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1520;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8509:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1521;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8510:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1522;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8511:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1523;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8512:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1524;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8513:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1525;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8514:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1526;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8517:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1528;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1527;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8530:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1539;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1540;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8532:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1541;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8537:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1545;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1237;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8553:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1553;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8554:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1554;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8560:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1559;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8562:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1560;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8563:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1568;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1565;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8564:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1576;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1473;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8565:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1574;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8566:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1572;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1188;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8567:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1036;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8568:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1584;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8569:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1588;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8570:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1043;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1146;
+                            return true;
+                        case 2:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8571:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1570;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8572:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1571;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8573:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1591;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8574:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1578;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1580;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8575:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1579;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1580;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8576:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1594;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8577:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1595;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8578:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1596;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8579:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1593;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1150;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8580:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1611;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8581:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1616;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1237;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8582:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1454;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1741;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8583:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1461;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1731;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8584:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1313;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1752;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8585:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1313;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1702;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8586:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1704;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8587:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1705;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8588:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1706;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8589:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1707;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8590:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1717;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8591:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1728;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8592:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1708;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8593:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1739;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8594:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1750;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8595:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1712;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8596:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1714;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8597:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1713;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8598:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1748;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8599:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1742;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8600:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1709;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8601:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1743;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8602:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1718;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8603:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1719;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8604:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1721;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8605:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1720;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8606:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1725;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8607:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1722;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8608:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1710;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8609:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1723;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8610:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1711;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8611:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1715;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8612:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1716;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8613:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1724;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8614:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1744;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8615:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1749;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8616:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1726;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8617:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1727;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8618:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1729;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8619:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1745;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8620:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1730;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8621:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1737;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8622:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1732;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8623:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1733;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8624:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1734;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8625:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1735;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8626:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1746;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8627:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1736;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8628:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1747;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8629:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1738;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8630:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1740;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8631:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1805;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8632:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1806;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8633:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1828;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1238;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8634:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1839;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8635:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1313;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1849;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8636:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1881;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1130;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8637:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1756;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1944;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8638:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1260;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1837;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8639:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1762;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1654;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8640:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1882;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1253;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8641:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1883;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1897;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8642:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1884;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1623;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8643:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1891;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1272;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8644:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1761;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1891;
+                            return true;
+                        case 2:
+                            stepOperationCode = 1272;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8645:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1757;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1618;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8646:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1902;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8647:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1313;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1950;
+                            return true;
+                        case 2:
+                            stepOperationCode = 1946;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8648:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1991;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1986;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8649:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1991;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1990;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8650:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1071;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1073;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8651:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1063;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1065;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8652:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1064;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1065;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8653:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 15753;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1146;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8654:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 15753;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1146;
+                            return true;
+                        case 2:
+                            stepOperationCode = 1149;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8655:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1902;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8656:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 15790;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8657:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 15792;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1240;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 8659:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 15896;
+                            return true;
+                        case 1:
+                            stepOperationCode = 1158;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket9(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 9091:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9079;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9084;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9092:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9080;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9084;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9093:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9081;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9084;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9094:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9082;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9084;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9095:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9082;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9085;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9096:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9082;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9086;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9097:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9082;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9087;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9098:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9082;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9088;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9099:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9082;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9089;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9100:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9083;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9088;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9101:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9083;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9089;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9102:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9083;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9090;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9103:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1241;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8971;
+                            return true;
+                        case 2:
+                            stepOperationCode = 7807;
+                            return true;
+                        case 3:
+                            stepOperationCode = 7790;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9104:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8555;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8556;
+                            return true;
+                        case 2:
+                            stepOperationCode = 8861;
+                            return true;
+                        case 3:
+                            stepOperationCode = 8862;
+                            return true;
+                        case 4:
+                            stepOperationCode = 8559;
+                            return true;
+                        case 5:
+                            stepOperationCode = 7807;
+                            return true;
+                        case 6:
+                            stepOperationCode = 7790;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9336:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1313;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9244;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9337:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 1763;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9327;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9499:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9276;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9275;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9683:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8049;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8447;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9685:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9459;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8447;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9687:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8447;
+                            return true;
+                        case 1:
+                            stepOperationCode = 8448;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9731:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9729;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9726;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 9750:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9727;
+                            return true;
+                        case 1:
+                            stepOperationCode = 9726;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket10(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 10146:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9629;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10145;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10392:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10380;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10393:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10381;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10394:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10382;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10395:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10383;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10396:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10384;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10397:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10385;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10398:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10386;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10399:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10387;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10400:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10388;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10409:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10389;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10410:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10390;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10411:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 7812;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10391;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10495:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10490;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10492;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10496:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10492;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10494;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10616:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9629;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10145;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10675:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10646;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10657;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10754:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10750;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10752;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10755:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10646;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10658;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10756:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10750;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10753;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10778:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 18193;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10703;
+                            return true;
+                        case 2:
+                            stepOperationCode = 16065;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10815:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8880;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10816:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8880;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10810;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10817:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8880;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10811;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10818:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8880;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10812;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10824:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8880;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10813;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10825:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8880;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10814;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10868:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10587;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10814;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10869:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10587;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10810;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10870:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10587;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10811;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10871:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10587;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10812;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10872:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10587;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10813;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10894:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 8880;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10893;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 10895:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10587;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 10893;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
+
+        private static bool TryGetConcatenatedOperationStepBucket11(int operationCode, int stepIndex, out int stepOperationCode)
+        {
+            switch (operationCode)
+            {
+                case 11005:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10107;
+                            return true;
+                        case 1:
+                            stepOperationCode = 11004;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11066:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9995;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7939;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11010;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11110:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9995;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7939;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11109;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11140:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9996;
+                            return true;
+                        case 1:
+                            stepOperationCode = 7938;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11135;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11194:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10586;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10988;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11192;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11196:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10586;
+                            return true;
+                        case 1:
+                            stepOperationCode = 11228;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11195;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11206:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10586;
+                            return true;
+                        case 1:
+                            stepOperationCode = 11228;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11205;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11230:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9472;
+                            return true;
+                        case 1:
+                            stepOperationCode = 11034;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11285:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10586;
+                            return true;
+                        case 1:
+                            stepOperationCode = 11228;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11205;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11310:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10586;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10988;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11308;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11315:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 10587;
+                            return true;
+                        case 1:
+                            stepOperationCode = 10809;
+                            return true;
+                        case 2:
+                            stepOperationCode = 11316;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                case 11398:
+                    switch (stepIndex)
+                    {
+                        case 0:
+                            stepOperationCode = 9593;
+                            return true;
+                        case 1:
+                            stepOperationCode = 11396;
+                            return true;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            stepOperationCode = 0;
+            return false;
+        }
 
         internal static bool TryGetExplicitOperationParameters(int operationCode, out EpsgExplicitOperationRecord parameters)
         {
