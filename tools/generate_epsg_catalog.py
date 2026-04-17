@@ -1030,7 +1030,7 @@ def extract_operation_data(zip_path: Path, pg_zip_path: Path):
             i += 1
         return None
 
-    extent_bounds, usage_extents_by_operation, _ = extract_postgresql_operation_support_data(pg_zip_path)
+    extent_bounds, usage_extents_by_operation, concat_paths = extract_postgresql_operation_support_data(pg_zip_path)
 
     def merge_operation_bounds(operation_code: int):
         extents = [
@@ -1185,7 +1185,7 @@ def extract_operation_data(zip_path: Path, pg_zip_path: Path):
         explicit_operations.append((record['operation_code'], dx, dy, dz, ex, ey, ez, ppm))
 
     explicit_operations.sort(key=lambda v: v[0])
-    return operations, operation_parameters, explicit_operations
+    return operations, operation_parameters, explicit_operations, concat_paths
 
 
 def build_catalog(data):
@@ -1373,7 +1373,7 @@ def build_catalog(data):
     }
 
 
-def emit(output_path: Path, zip_name: str, catalog, operations, operation_parameters, explicit_operations):
+def emit(output_path: Path, zip_name: str, catalog, operations, operation_parameters, explicit_operations, concat_paths):
     struct_defs = {
         'EpsgCoordinateReferenceRecord': 'int srid, EpsgCoordinateSystemKind kind, int recordIndex',
         'EpsgGeographicCrsRecord': 'int srid, string name, int datumCode, int coordinateSystemCode',
@@ -1565,6 +1565,82 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
             lines.append('        }')
             lines.append('')
 
+    def emit_concat_path_switch_factories(lines, values):
+        buckets = {}
+        for operation_code, step_codes in sorted(values.items()):
+            bucket = operation_code // 1000
+            buckets.setdefault(bucket, []).append((operation_code, step_codes))
+
+        lines.append('        internal static bool TryGetConcatenatedOperationStepCount(int operationCode, out int stepCount)')
+        lines.append('        {')
+        lines.append('            switch (operationCode / 1000)')
+        lines.append('            {')
+        for bucket in sorted(buckets):
+            lines.append(f'                case {bucket}:')
+            lines.append(f'                    return TryGetConcatenatedOperationStepCountBucket{bucket}(operationCode, out stepCount);')
+        lines.append('                default:')
+        lines.append('                    stepCount = 0;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+        for bucket in sorted(buckets):
+            lines.append(f'        private static bool TryGetConcatenatedOperationStepCountBucket{bucket}(int operationCode, out int stepCount)')
+            lines.append('        {')
+            lines.append('            switch (operationCode)')
+            lines.append('            {')
+            for operation_code, step_codes in buckets[bucket]:
+                lines.append(f'                case {operation_code}:')
+                lines.append(f'                    stepCount = {len(step_codes)};')
+                lines.append('                    return true;')
+            lines.append('                default:')
+            lines.append('                    stepCount = 0;')
+            lines.append('                    return false;')
+            lines.append('            }')
+            lines.append('        }')
+            lines.append('')
+
+        lines.append('        internal static bool TryGetConcatenatedOperationStep(int operationCode, int stepIndex, out int stepOperationCode)')
+        lines.append('        {')
+        lines.append('            switch (operationCode / 1000)')
+        lines.append('            {')
+        for bucket in sorted(buckets):
+            lines.append(f'                case {bucket}:')
+            lines.append(f'                    return TryGetConcatenatedOperationStepBucket{bucket}(operationCode, stepIndex, out stepOperationCode);')
+        lines.append('                default:')
+        lines.append('                    stepOperationCode = 0;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+        for bucket in sorted(buckets):
+            lines.append(f'        private static bool TryGetConcatenatedOperationStepBucket{bucket}(int operationCode, int stepIndex, out int stepOperationCode)')
+            lines.append('        {')
+            lines.append('            switch (operationCode)')
+            lines.append('            {')
+            for operation_code, step_codes in buckets[bucket]:
+                lines.append(f'                case {operation_code}:')
+                lines.append('                    switch (stepIndex)')
+                lines.append('                    {')
+                for step_index, step_code in enumerate(step_codes):
+                    lines.append(f'                        case {step_index}:')
+                    lines.append(f'                            stepOperationCode = {step_code};')
+                    lines.append('                            return true;')
+                lines.append('                        default:')
+                lines.append('                            break;')
+                lines.append('                    }')
+                lines.append('                    break;')
+            lines.append('                default:')
+            lines.append('                    break;')
+            lines.append('            }')
+            lines.append('')
+            lines.append('            stepOperationCode = 0;')
+            lines.append('            return false;')
+            lines.append('        }')
+            lines.append('')
+
     fmt_geographic_crs = lambda value: f"{value[0]}, \"{esc(value[1])}\", {value[2]}, {value[3]}"
     fmt_geocentric_crs = lambda value: f"{value[0]}, \"{esc(value[1])}\", {value[2]}, {value[3]}"
     fmt_projected_crs = lambda value: f"{value[0]}, \"{esc(value[1])}\", {value[2]}, {value[3]}, {value[4]}"
@@ -1673,6 +1749,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     begin_catalog_partial(operations_lines)
     emit_array(operations_lines, 'Operations', 'EpsgOperationRecord', operations, fmt_operation)
     emit_array(operations_lines, 'OperationParameters', 'EpsgOperationParameterRecord', operation_parameters, lambda value: f"{value[0]}, \"{esc(value[1])}\", {repr(value[2])}d")
+    emit_concat_path_switch_factories(operations_lines, concat_paths)
     operations_lines.append('        internal static bool TryGetExplicitOperationParameters(int operationCode, out EpsgExplicitOperationRecord parameters)')
     operations_lines.append('        {')
     operations_lines.append('            switch (operationCode)')
@@ -1704,9 +1781,9 @@ def main():
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     catalog = build_catalog(load_wkt_data(zip_path))
-    operations, operation_parameters, explicit_operations = extract_operation_data(zip_path, pg_zip_path)
+    operations, operation_parameters, explicit_operations, concat_paths = extract_operation_data(zip_path, pg_zip_path)
 
-    emit(output_path, zip_path.name, catalog, operations, operation_parameters, explicit_operations)
+    emit(output_path, zip_path.name, catalog, operations, operation_parameters, explicit_operations, concat_paths)
 
     print(f'Generated: {output_path}')
     print(f"CRS records: {len(catalog['ref_records'])}")
