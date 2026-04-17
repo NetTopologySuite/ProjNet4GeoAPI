@@ -980,7 +980,7 @@ def load_wkt_data(zip_path: Path):
     }
 
 
-def extract_operation_data(zip_path: Path):
+def extract_operation_data(zip_path: Path, pg_zip_path: Path):
     crs_pattern = re.compile(r'^EPSG-CRS-(\d+)\.wkt$')
     transform_pattern = re.compile(r'^EPSG-Transformation-(\d+)\.wkt$')
     concat_pattern = re.compile(r'^EPSG-ConcatenatedOperation-(\d+)\.wkt$')
@@ -1030,80 +1030,7 @@ def extract_operation_data(zip_path: Path):
             i += 1
         return None
 
-    extent_bounds = {}
-    usage_extents_by_operation = {}
-
-    extent_insert_pattern = re.compile(
-        r"INSERT INTO \"extent\" VALUES\('EPSG','([^']+)','[^']*','[^']*',([^,]+),([^,]+),([^,]+),([^,]+),")
-    usage_insert_pattern = re.compile(
-        r"INSERT INTO \"usage\" VALUES\('[^']*','[^']*','([^']+)','([^']+)','([^']+)','([^']+)','([^']+)','[^']+','[^']+'\)")
-    transform_sql_files = (
-        'helmert_transformation.sql',
-        'grid_transformation.sql',
-        'other_transformation.sql',
-        'concatenated_operation.sql',
-    )
-
-    proj_sql_root = zip_path.resolve().parent.parent / 'PROJ' / 'data' / 'sql'
-    extent_sql_path = proj_sql_root / 'extent.sql'
-    if extent_sql_path.exists():
-        for line in extent_sql_path.read_text(encoding='utf-8').splitlines():
-            extent_match = extent_insert_pattern.search(line)
-            if not extent_match:
-                continue
-
-            try:
-                extent_code = int(extent_match.group(1))
-            except ValueError:
-                continue
-
-            south_value = extent_match.group(2)
-            north_value = extent_match.group(3)
-            west_value = extent_match.group(4)
-            east_value = extent_match.group(5)
-            if south_value == 'NULL' or north_value == 'NULL' or west_value == 'NULL' or east_value == 'NULL':
-                continue
-
-            try:
-                south = float(south_value)
-                north = float(north_value)
-                west = float(west_value)
-                east = float(east_value)
-            except ValueError:
-                continue
-
-            extent_bounds[extent_code] = (south, north, west, east)
-
-    if proj_sql_root.exists():
-        for sql_name in transform_sql_files:
-            sql_path = proj_sql_root / sql_name
-            if not sql_path.exists():
-                continue
-
-            for line in sql_path.read_text(encoding='utf-8').splitlines():
-                usage_match = usage_insert_pattern.search(line)
-                if not usage_match:
-                    continue
-
-                object_table_name = usage_match.group(1)
-                operation_auth = usage_match.group(2)
-                try:
-                    operation_code = int(usage_match.group(3))
-                except ValueError:
-                    continue
-                extent_auth = usage_match.group(4)
-                try:
-                    extent_code = int(usage_match.group(5))
-                except ValueError:
-                    continue
-
-                if operation_auth != 'EPSG' or extent_auth != 'EPSG':
-                    continue
-
-                if object_table_name not in ('helmert_transformation', 'grid_transformation', 'other_transformation', 'concatenated_operation'):
-                    continue
-
-                usage_extents_by_operation.setdefault(operation_code, set()).add(extent_code)
+    extent_bounds, usage_extents_by_operation, _ = extract_postgresql_operation_support_data(pg_zip_path)
 
     def merge_operation_bounds(operation_code: int):
         extents = [
@@ -1766,16 +1693,18 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--zip', required=True)
+    parser.add_argument('--pg-zip', required=True)
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
 
     zip_path = Path(args.zip)
+    pg_zip_path = Path(args.pg_zip)
     output_path = Path(args.output)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     catalog = build_catalog(load_wkt_data(zip_path))
-    operations, operation_parameters, explicit_operations = extract_operation_data(zip_path)
+    operations, operation_parameters, explicit_operations = extract_operation_data(zip_path, pg_zip_path)
 
     emit(output_path, zip_path.name, catalog, operations, operation_parameters, explicit_operations)
 
