@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNet.Tests.WKT;
+namespace ProjNet.Tests.IO.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;

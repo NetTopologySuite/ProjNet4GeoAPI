@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNet.Tests.WKT;
+namespace ProjNet.Tests.IO.CoordinateSystems;
 
 using System;
 using System.Text;
