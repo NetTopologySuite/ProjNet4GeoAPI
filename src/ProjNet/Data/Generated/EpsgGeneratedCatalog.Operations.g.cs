@@ -7,7 +7,7 @@ using System;
 
 namespace ProjNet.Data.Generated
 {
-    internal static partial class EpsgGeneratedCatalog
+    internal static class EpsgGeneratedOperationsCatalog
     {
         internal static readonly EpsgOperationRecord[] Operations = new EpsgOperationRecord[]
         {
@@ -2711,221 +2711,221 @@ namespace ProjNet.Data.Generated
             new EpsgOperationRecord((EpsgOperationType)0, 15997, 4179, 4326, 6.0d, "Geocentric translations (geog2D domain)", "", 49.0d, 54.89d, 14.14d, 24.15d, 11561, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15998, 4178, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 47.73d, 51.06d, 12.09d, 22.56d, 11564, 3),
             new EpsgOperationRecord((EpsgOperationType)0, 15999, 4179, 4326, 6.0d, "Geocentric translations (geog2D domain)", "", 39.64d, 42.67d, 19.22d, 21.06d, 11567, 3),
-            new EpsgOperationRecord((EpsgOperationType)1, 3896, 4805, 4326, 0.0d, "Longitude rotation", "", 46.4d, 49.02d, 9.53d, 17.17d, 11570, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 3966, 4805, 4326, 1.0d, "Longitude rotation", "", 40.85d, 46.88d, 13.38d, 23.04d, 11578, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 4435, 4139, 4152, 0.05d, "NADCON", "prvi.las", 17.62d, 18.57d, -67.97d, -64.51d, 11582, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 4837, 4289, 4230, 1.0d, "Coordinate Frame rotation (geog2D domain)", "", 50.75d, 55.77d, 2.53d, 7.22d, 11582, 14),
-            new EpsgOperationRecord((EpsgOperationType)1, 5190, 5132, 4737, 0.0d, "Longitude rotation", "", 33.14d, 38.64d, 124.53d, 131.01d, 11596, 11),
-            new EpsgOperationRecord((EpsgOperationType)1, 5192, 5132, 4326, 0.0d, "Longitude rotation", "", 33.14d, 38.64d, 124.53d, 131.01d, 11607, 11),
-            new EpsgOperationRecord((EpsgOperationType)1, 5230, 4818, 4326, 0.0d, "Longitude rotation", "", 47.73d, 49.61d, 16.84d, 22.56d, 11618, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 5240, 5229, 4326, 0.0d, "Longitude rotation", "", 48.58d, 51.06d, 12.09d, 18.86d, 11626, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 5242, 4818, 4326, 0.0d, "Longitude rotation", "", 48.58d, 51.06d, 12.09d, 18.86d, 11634, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 5838, 4803, 4326, 0.0d, "Longitude rotation", "", 36.95d, 42.16d, -9.56d, -6.19d, 11642, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 6714, 4301, 6668, 0.2d, "NTv2", "tky2jgd.gsb", 34.84d, 41.58d, 135.42d, 142.14d, 11650, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 6739, 4267, 4152, 0.15d, "NADCON", "conus.las", 42.48d, 45.95d, -104.07d, -96.43d, 11650, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 6874, 4810, 4326, 0.0d, "Longitude rotation", "", -25.64d, -11.89d, 43.18d, 50.56d, 11650, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 7811, 4807, 4171, 0.0d, "Longitude rotation", "rgf93_ntf.gsb", 41.31d, 51.14d, -4.87d, 9.63d, 11654, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 7965, 5754, 5731, 0.1d, "Change of Vertical Unit", "", 51.39d, 55.43d, -10.56d, -5.34d, 11655, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 7967, 5754, 5732, 0.1d, "Change of Vertical Unit", "", 53.96d, 55.36d, -8.18d, -5.34d, 11656, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 7973, 5702, 5703, 0.02d, "Change of Vertical Unit", "vertconw.94", 31.33d, 49.05d, -124.79d, -107.0d, 11657, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 7974, 5702, 5703, 0.02d, "Change of Vertical Unit", "vertconc.94", 25.83d, 49.38d, -107.0d, -89.0d, 11657, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 7975, 5702, 5703, 0.02d, "Change of Vertical Unit", "vertcone.94", 24.41d, 48.32d, -89.0d, -66.91d, 11657, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 7983, 5738, 5739, 0.0d, "Height Depth Reversal", "", 22.13d, 22.58d, 113.76d, 114.51d, 11657, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 7986, 5790, 5789, 0.1d, "Height Depth Reversal", "", 28.53d, 30.09d, 46.54d, 48.48d, 11658, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 8047, 4230, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", 65.0d, 84.73d, -3.35d, 38.01d, 11659, 14),
-            new EpsgOperationRecord((EpsgOperationType)1, 8094, 4807, 4326, 0.0d, "Longitude rotation", "", 41.31d, 51.14d, -4.87d, 9.63d, 11673, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8174, 4802, 4326, 0.0d, "Longitude rotation", "", -4.23d, 12.52d, -79.1d, -66.87d, 11677, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8175, 4806, 4326, 0.0d, "Longitude rotation", "", 38.82d, 41.31d, 8.08d, 9.89d, 11681, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8176, 4810, 4326, 0.0d, "Longitude rotation", "", -25.64d, -11.89d, 43.18d, 50.56d, 11685, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8178, 4813, 4326, 0.0d, "Longitude rotation", "", -8.91d, 5.97d, 95.16d, 115.77d, 11689, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8186, 4807, 4230, 0.0d, "Longitude rotation", "", 41.31d, 51.14d, -4.87d, 9.63d, 11693, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8188, 4807, 4322, 0.0d, "Longitude rotation", "", 41.31d, 51.14d, -4.87d, 9.63d, 11697, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8211, 4811, 4326, 0.0d, "Longitude rotation", "", 31.99d, 37.14d, -2.95d, 9.09d, 11701, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8241, 4903, 4326, 10.0d, "Madrid to ED50 polynomial", "", 35.95d, 43.82d, -9.37d, 3.39d, 11705, 12),
-            new EpsgOperationRecord((EpsgOperationType)1, 8363, 11312, 11314, 0.03d, "Geog3D to Geog2D+GravityRelatedHeight (gtx)", "Slovakia_ETRS89h_to_Baltic1957.gtx", 47.73d, 49.61d, 16.84d, 22.56d, 11717, 2),
-            new EpsgOperationRecord((EpsgOperationType)1, 8442, 11076, 4156, 0.001d, "Coordinate Frame rotation (geog2D domain)", "Slovakia_JTSK03_to_JTSK.LAS", 47.73d, 49.61d, 16.84d, 22.56d, 11719, 7),
-            new EpsgOperationRecord((EpsgOperationType)1, 8443, 4156, 11076, 0.05d, "NADCON", "Slovakia_JTSK03_to_JTSK.LAS", 47.73d, 49.61d, 16.84d, 22.56d, 11726, 7),
-            new EpsgOperationRecord((EpsgOperationType)1, 8460, 4267, 4152, 0.15d, "NADCON", "conus.las", 30.14d, 35.02d, -88.48d, -84.89d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8461, 4267, 4152, 0.15d, "NADCON", "conus.las", 31.33d, 37.01d, -114.81d, -109.04d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8462, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.5d, 42.01d, -124.45d, -116.54d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8463, 4267, 4152, 0.15d, "NADCON", "conus.las", 32.53d, 36.5d, -121.98d, -114.12d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8464, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.98d, 41.01d, -109.06d, -102.04d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8465, 4267, 4152, 0.15d, "NADCON", "conus.las", 30.36d, 35.01d, -85.61d, -80.77d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8466, 4267, 4152, 0.15d, "NADCON", "conus.las", 24.41d, 31.01d, -87.63d, -79.97d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8467, 4267, 4152, 0.15d, "NADCON", "conus.las", 41.99d, 49.01d, -113.0d, -104.04d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8468, 4267, 4152, 0.15d, "NADCON", "conus.las", 41.99d, 49.01d, -117.24d, -113.0d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8469, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.49d, 39.15d, -89.57d, -81.95d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8470, 4267, 4152, 0.15d, "NADCON", "conus.las", 28.85d, 33.03d, -94.05d, -88.75d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8471, 4267, 4152, 0.15d, "NADCON", "conus.las", 37.97d, 39.85d, -79.49d, -74.97d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8472, 4267, 4152, 0.15d, "NADCON", "conus.las", 43.04d, 47.47d, -71.09d, -66.91d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8473, 4267, 4152, 0.15d, "NADCON", "conus.las", 41.69d, 48.32d, -90.42d, -82.13d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8474, 4267, 4152, 0.15d, "NADCON", "conus.las", 30.01d, 35.01d, -91.65d, -88.09d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8475, 4267, 4152, 0.15d, "NADCON", "conus.las", 39.99d, 43.01d, -104.06d, -95.3d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8476, 4267, 4152, 0.15d, "NADCON", "conus.las", 40.98d, 45.31d, -73.73d, -69.86d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8477, 4267, 4152, 0.15d, "NADCON", "conus.las", 31.33d, 37.0d, -109.06d, -102.99d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8478, 4267, 4152, 0.15d, "NADCON", "conus.las", 40.47d, 45.02d, -79.77d, -71.8d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8479, 4267, 4152, 0.15d, "NADCON", "conus.las", 45.93d, 49.01d, -104.07d, -96.55d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8480, 4267, 4152, 0.15d, "NADCON", "conus.las", 33.62d, 37.01d, -103.0d, -94.42d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8483, 4267, 4152, 0.15d, "NADCON", "conus.las", 34.98d, 36.68d, -90.31d, -81.65d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8484, 4267, 4152, 0.15d, "NADCON", "conus.las", 25.83d, 34.58d, -100.0d, -93.5d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8485, 4267, 4152, 0.15d, "NADCON", "conus.las", 28.04d, 36.5d, -106.66d, -100.0d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8486, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.54d, 39.46d, -83.68d, -75.31d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8487, 4267, 4152, 0.15d, "NADCON", "conus.las", 41.98d, 49.05d, -124.79d, -116.47d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8488, 4267, 4152, 0.15d, "NADCON", "conus.las", 42.48d, 47.31d, -92.89d, -86.25d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8489, 4267, 4152, 0.15d, "NADCON", "conus.las", 40.99d, 45.01d, -111.06d, -104.05d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8508, 4135, 4152, 0.2d, "NADCON", "hawaii.las", 18.87d, 22.29d, -160.3d, -154.74d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8509, 4267, 4152, 0.15d, "NADCON", "conus.las", 37.77d, 41.77d, -88.1d, -84.78d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8510, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.99d, 40.01d, -102.06d, -94.58d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8511, 4267, 4152, 0.15d, "NADCON", "conus.las", 34.99d, 42.0d, -120.0d, -114.03d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8512, 4267, 4152, 0.15d, "NADCON", "conus.las", 38.4d, 42.33d, -84.83d, -80.51d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8513, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.99d, 42.01d, -114.05d, -109.04d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8514, 4267, 4152, 0.15d, "NADCON", "conus.las", 37.2d, 40.64d, -82.65d, -77.72d, 11733, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8517, 4160, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -38.75d, -37.5d, -69.5d, -68.25d, 11733, 6),
-            new EpsgOperationRecord((EpsgOperationType)1, 8532, 4131, 4326, 25.0d, "Geocentric translations (geog2D domain)", "", 7.99d, 11.15d, 106.54d, 110.0d, 11739, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8537, 4229, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 21.89d, 33.82d, 24.7d, 37.91d, 11749, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8553, 4267, 4152, 0.15d, "NADCON", "conus.las", 36.97d, 42.51d, -91.52d, -87.02d, 11759, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8554, 4267, 4152, 0.15d, "NADCON", "conus.las", 38.87d, 41.36d, -75.6d, -73.88d, 11759, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8562, 4307, 4326, 8.0d, "Geocentric translations (geog2D domain)", "", 31.48d, 32.09d, 5.59d, 6.5d, 11759, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8568, 4227, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 34.49d, 35.9d, 39.3d, 40.81d, 11769, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8569, 4230, 4326, 1.0d, "Position Vector transformation (geog2D domain)", "", 65.0d, 84.73d, -3.35d, 38.01d, 11779, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8571, 4168, 4326, 25.0d, "Geocentric translations (geog2D domain)", "", 1.4d, 6.06d, -3.79d, 2.1d, 11789, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8581, 4134, 4326, 1.2d, "Position Vector transformation (geog2D domain)", "", 16.59d, 26.58d, 51.99d, 59.91d, 11799, 14),
-            new EpsgOperationRecord((EpsgOperationType)1, 8582, 4135, 4326, 0.2d, "NADCON", "hawaii.las", 18.87d, 22.29d, -160.3d, -154.74d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8583, 4139, 4326, 0.05d, "NADCON", "prvi.las", 17.62d, 18.57d, -67.97d, -64.51d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8585, 4267, 4326, 1.5d, "NTv2", "NTv2_0.gsb", 48.99d, 60.0d, -120.0d, -109.98d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8586, 4267, 4152, 0.15d, "NADCON", "conus.las", 33.01d, 36.5d, -94.62d, -89.64d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8587, 4267, 4152, 0.15d, "NADCON", "conus.las", 40.36d, 43.51d, -96.65d, -90.14d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8588, 4267, 4152, 0.15d, "NADCON", "conus.las", 43.49d, 49.38d, -97.22d, -89.49d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8589, 4267, 4152, 0.15d, "NADCON", "conus.las", 35.98d, 40.61d, -95.77d, -89.1d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8590, 4267, 4326, 0.15d, "NADCON", "conus.las", 30.14d, 35.02d, -88.48d, -84.89d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8591, 4267, 4326, 0.15d, "NADCON", "conus.las", 31.33d, 37.01d, -114.81d, -109.04d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8592, 4267, 4326, 0.15d, "NADCON", "conus.las", 33.01d, 36.5d, -94.62d, -89.64d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8593, 4267, 4326, 0.15d, "NADCON", "conus.las", 36.5d, 42.01d, -124.45d, -116.54d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8594, 4267, 4326, 0.15d, "NADCON", "conus.las", 32.53d, 36.5d, -121.98d, -114.12d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8595, 4267, 4326, 0.15d, "NADCON", "conus.las", 36.98d, 41.01d, -109.06d, -102.04d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8596, 4267, 4326, 0.15d, "NADCON", "conus.las", 24.41d, 31.01d, -87.63d, -79.97d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8597, 4267, 4326, 0.15d, "NADCON", "conus.las", 30.36d, 35.01d, -85.61d, -80.77d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8598, 4267, 4326, 0.15d, "NADCON", "conus.las", 36.97d, 42.51d, -91.52d, -87.02d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8599, 4267, 4326, 0.15d, "NADCON", "conus.las", 37.77d, 41.77d, -88.1d, -84.78d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8600, 4267, 4326, 0.15d, "NADCON", "conus.las", 40.36d, 43.51d, -96.65d, -90.14d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8601, 4267, 4326, 0.15d, "NADCON", "conus.las", 36.99d, 40.01d, -102.06d, -94.58d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8602, 4267, 4326, 0.15d, "NADCON", "conus.las", 36.49d, 39.15d, -89.57d, -81.95d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8603, 4267, 4326, 0.15d, "NADCON", "conus.las", 28.85d, 33.03d, -94.05d, -88.75d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8604, 4267, 4326, 0.15d, "NADCON", "conus.las", 43.04d, 47.47d, -71.09d, -66.91d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8605, 4267, 4326, 0.15d, "NADCON", "conus.las", 37.97d, 39.85d, -79.49d, -74.97d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8606, 4267, 4326, 0.15d, "NADCON", "conus.las", 40.98d, 45.31d, -73.73d, -69.86d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8607, 4267, 4326, 0.15d, "NADCON", "conus.las", 41.69d, 48.32d, -90.42d, -82.13d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8608, 4267, 4326, 0.15d, "NADCON", "conus.las", 43.49d, 49.38d, -97.22d, -89.49d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8609, 4267, 4326, 0.15d, "NADCON", "conus.las", 30.01d, 35.01d, -91.65d, -88.09d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8610, 4267, 4326, 0.15d, "NADCON", "conus.las", 35.98d, 40.61d, -95.77d, -89.1d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8611, 4267, 4326, 0.15d, "NADCON", "conus.las", 41.99d, 49.01d, -113.0d, -104.04d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8612, 4267, 4326, 0.15d, "NADCON", "conus.las", 41.99d, 49.01d, -117.24d, -113.0d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8613, 4267, 4326, 0.15d, "NADCON", "conus.las", 39.99d, 43.01d, -104.06d, -95.3d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8614, 4267, 4326, 0.15d, "NADCON", "conus.las", 34.99d, 42.0d, -120.0d, -114.03d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8615, 4267, 4326, 0.15d, "NADCON", "conus.las", 38.87d, 41.36d, -75.6d, -73.88d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8616, 4267, 4326, 0.15d, "NADCON", "conus.las", 31.33d, 37.0d, -109.06d, -102.99d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8617, 4267, 4326, 0.15d, "NADCON", "conus.las", 40.47d, 45.02d, -79.77d, -71.8d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8618, 4267, 4326, 0.15d, "NADCON", "conus.las", 45.93d, 49.01d, -104.07d, -96.55d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8619, 4267, 4326, 0.15d, "NADCON", "conus.las", 38.4d, 42.33d, -84.83d, -80.51d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8620, 4267, 4326, 0.15d, "NADCON", "conus.las", 33.62d, 37.01d, -103.0d, -94.42d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8621, 4267, 4326, 0.15d, "NADCON", "conus.las", 41.98d, 49.05d, -124.79d, -116.47d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8622, 4267, 4326, 0.15d, "NADCON", "conus.las", 42.48d, 45.95d, -104.07d, -96.43d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8623, 4267, 4326, 0.15d, "NADCON", "conus.las", 34.98d, 36.68d, -90.31d, -81.65d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8624, 4267, 4326, 0.15d, "NADCON", "conus.las", 25.83d, 34.58d, -100.0d, -93.5d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8625, 4267, 4326, 0.15d, "NADCON", "conus.las", 28.04d, 36.5d, -106.66d, -100.0d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8626, 4267, 4326, 0.15d, "NADCON", "conus.las", 36.99d, 42.01d, -114.05d, -109.04d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8627, 4267, 4326, 0.15d, "NADCON", "conus.las", 36.54d, 39.46d, -83.68d, -75.31d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8628, 4267, 4326, 0.15d, "NADCON", "conus.las", 37.2d, 40.64d, -82.65d, -77.72d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8629, 4267, 4326, 0.15d, "NADCON", "conus.las", 42.48d, 47.31d, -92.89d, -86.25d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8630, 4267, 4326, 0.15d, "NADCON", "conus.las", 40.99d, 45.01d, -111.06d, -104.05d, 11813, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 8631, 4197, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 8.92d, 9.87d, 12.9d, 14.19d, 11813, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8632, 4198, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 11.7d, 12.77d, 14.17d, 15.09d, 11823, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8633, 4310, 4326, 25.0d, "Geocentric translations (geog2D domain)", "", 10.64d, 16.7d, -20.22d, -11.36d, 11833, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8634, 4213, 4326, 15.0d, "Geocentric translations (geog2D domain)", "", 12.8d, 16.7d, 7.81d, 14.9d, 11843, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8636, 4816, 4326, 0.0d, "Longitude rotation", "", 30.23d, 37.4d, 7.49d, 11.59d, 11853, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8638, 4804, 4326, 0.0d, "Longitude rotation", "", -6.54d, -1.88d, 118.71d, 120.78d, 11857, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8639, 4817, 4326, 0.0d, "Longitude rotation", "", 57.9d, 71.24d, 4.39d, 31.32d, 11861, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 8641, 4820, 4326, 0.0d, "Longitude rotation", "", -4.24d, 4.29d, 114.55d, 119.06d, 11869, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8642, 4818, 4326, 0.0d, "Longitude rotation", "", 48.58d, 51.06d, 12.09d, 18.86d, 11873, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 8643, 4120, 4326, 5.0d, "Geographic2D offsets", "", 34.88d, 41.75d, 19.57d, 28.3d, 11881, 5),
-            new EpsgOperationRecord((EpsgOperationType)1, 8644, 4815, 4326, 0.0d, "Longitude rotation", "", 34.88d, 41.75d, 19.57d, 28.3d, 11886, 6),
-            new EpsgOperationRecord((EpsgOperationType)1, 8647, 4267, 4326, 1.5d, "NTv2", "NTv2_0.gsb", 40.0d, 64.21d, -67.75d, -43.99d, 11892, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8648, 4904, 4326, 0.0d, "Longitude rotation", "", 36.95d, 42.16d, -9.56d, -6.19d, 11902, 4),
-            new EpsgOperationRecord((EpsgOperationType)1, 8649, 4904, 4326, 0.0d, "Longitude rotation", "", 36.95d, 42.16d, -9.56d, -6.19d, 11906, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 8650, 4281, 4326, 1.5d, "Geocentric translations (geog2D domain)", "", 29.45d, 33.28d, 34.17d, 35.69d, 11914, 6),
-            new EpsgOperationRecord((EpsgOperationType)1, 8651, 4676, 4326, 2.0d, "Geocentric translations (geog2D domain)", "", 13.92d, 22.5d, 100.09d, 107.64d, 11920, 6),
-            new EpsgOperationRecord((EpsgOperationType)1, 8652, 4677, 4326, 0.15d, "Geocentric translations (geog2D domain)", "", 13.92d, 22.5d, 100.09d, 107.64d, 11926, 6),
-            new EpsgOperationRecord((EpsgOperationType)1, 8653, 4230, 4326, 1.0d, "Reversible polynomial of degree 4", "", 51.03d, 62.0d, -5.05d, 10.86d, 11932, 40),
-            new EpsgOperationRecord((EpsgOperationType)1, 8654, 4230, 4258, 1.0d, "Reversible polynomial of degree 4", "", 51.03d, 62.0d, -5.05d, 10.86d, 11972, 43),
-            new EpsgOperationRecord((EpsgOperationType)1, 8655, 4193, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 2.16d, 4.99d, 8.45d, 10.4d, 12015, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8656, 4705, 4326, 10.0d, "Geocentric translations (geog2D domain)", "", -6.04d, -5.05d, 10.53d, 12.37d, 12025, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8657, 4706, 4326, 5.0d, "Geocentric translations (geog2D domain)", "", 27.19d, 30.01d, 32.34d, 34.27d, 12035, 10),
-            new EpsgOperationRecord((EpsgOperationType)1, 8659, 4751, 4326, 0.0d, "Geocentric translations (geog2D domain)", "", 1.13d, 6.72d, 99.59d, 104.6d, 12045, 6),
-            new EpsgOperationRecord((EpsgOperationType)1, 9091, 4918, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12051, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9092, 4919, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12066, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9093, 4896, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12081, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9094, 5332, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12096, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9095, 5332, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20130801_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12111, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9096, 5332, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20140201_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12126, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9097, 5332, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20150101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12141, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9098, 5332, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20160701_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12156, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9099, 5332, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20171201_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12171, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9100, 7789, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20160701_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12186, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9101, 7789, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20171201_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12201, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9102, 7789, 4959, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "nzgd2000_deformation_20180701_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12216, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9103, 4267, 7789, 0.15d, "NADCON", "conus.las", 23.82d, 30.25d, -97.22d, -81.17d, 12231, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 9104, 4267, 7789, 0.15d, "NADCON5 (2D)", "nadcon5.nad27.nad83_1986.conus.lat.trn.20160901.b", 23.82d, 30.25d, -97.22d, -81.17d, 12264, 30),
-            new EpsgOperationRecord((EpsgOperationType)1, 9336, 4267, 8246, 1.5d, "NTv2", "NTv2_0.gsb", 48.99d, 60.0d, -120.0d, -109.98d, 12294, 0),
-            new EpsgOperationRecord((EpsgOperationType)1, 9337, 4807, 4171, 0.0d, "Longitude rotation", "gr3df97a.txt", 41.31d, 51.14d, -4.87d, 9.63d, 12294, 3),
-            new EpsgOperationRecord((EpsgOperationType)1, 9499, 11056, 5778, 0.05d, "Geographic3D to GravityRelatedHeight (BEV AT)", "GEOID_GRS80_Oesterreich.csv", 46.4d, 49.02d, 9.53d, 17.17d, 12297, 2),
-            new EpsgOperationRecord((EpsgOperationType)1, 9683, 9000, 4283, 0.03d, "Time-dependent Coordinate Frame rotation (geocen)", "GDA94_GDA2020_conformal_and_distortion.gsb", -43.7d, -9.86d, 112.85d, 153.69d, 12299, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9685, 9309, 4283, 0.03d, "Time-dependent Coordinate Frame rotation (geocen)", "GDA94_GDA2020_conformal_and_distortion.gsb", -43.7d, -9.86d, 112.85d, 153.69d, 12314, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9687, 4283, 9057, 0.05d, "NTv2", "GDA94_GDA2020_conformal_and_distortion.gsb", -43.7d, -9.86d, 112.85d, 153.69d, 12329, 15),
-            new EpsgOperationRecord((EpsgOperationType)1, 9750, 6705, 9721, 0.035d, "Geographic3D to GravityRelatedHeight (ITAL2005)", "geo_igm_mar06.grd", 36.59d, 38.35d, 12.36d, 15.71d, 12344, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10392, 5780, 10349, 0.0d, "Height Depth Reversal", "", 36.9d, 41.88d, -9.57d, -7.39d, 12345, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10393, 5780, 10349, 0.0d, "Height Depth Reversal", "", 38.58d, 38.96d, -9.46d, -8.92d, 12346, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10394, 6178, 10349, 0.0d, "Height Depth Reversal", "", 32.35d, 32.93d, -17.33d, -16.4d, 12347, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10395, 6179, 10349, 0.0d, "Height Depth Reversal", "", 32.97d, 33.16d, -16.46d, -16.23d, 12348, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10396, 6185, 10349, 0.0d, "Height Depth Reversal", "", 39.32d, 39.78d, -31.34d, -31.01d, 12349, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10397, 6181, 10349, 0.0d, "Height Depth Reversal", "", 38.46d, 38.7d, -28.91d, -28.53d, 12350, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10398, 6182, 10349, 0.0d, "Height Depth Reversal", "", 38.33d, 38.62d, -28.61d, -27.96d, 12351, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10399, 6180, 10349, 0.0d, "Height Depth Reversal", "", 38.48d, 38.81d, -28.39d, -27.68d, 12352, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10400, 6183, 10349, 0.0d, "Height Depth Reversal", "", 38.95d, 39.15d, -28.14d, -27.88d, 12353, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10409, 6184, 10349, 0.0d, "Height Depth Reversal", "", 38.58d, 38.86d, -27.45d, -26.97d, 12354, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10410, 6187, 10349, 0.0d, "Height Depth Reversal", "", 37.65d, 37.97d, -25.92d, -25.07d, 12355, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10411, 6186, 10349, 0.0d, "Height Depth Reversal", "", 36.87d, 37.33d, -25.25d, -24.71d, 12356, 1),
-            new EpsgOperationRecord((EpsgOperationType)1, 10495, 10486, 10487, 0.06d, "Geog3D to Geog2D+GravityRelatedHeight (gtg)", "dvr90_2002.tif", 54.5d, 57.81d, 7.98d, 15.28d, 12357, 2),
-            new EpsgOperationRecord((EpsgOperationType)1, 10496, 10487, 10488, 0.03d, "Geog3D to Geog2D+GravityRelatedHeight (gtg)", "dvr90_2013.tif", 54.36d, 58.27d, 3.24d, 16.51d, 12359, 2),
-            new EpsgOperationRecord((EpsgOperationType)1, 10616, 9529, 20043, 0.0d, "Geog3D to Geog2D+GravityRelatedHeight (gtx)", "INAGEOID2020v1.gtx", -13.95d, 7.79d, 92.01d, 141.46d, 12361, 2),
-            new EpsgOperationRecord((EpsgOperationType)1, 10675, 10638, 10642, 0.05d, "Coordinate Frame rotation full matrix (geog3D)", "", 17.56d, 17.71d, -63.31d, -63.16d, 12363, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 10754, 10738, 10740, 0.05d, "Coordinate Frame rotation full matrix (geog3D)", "", 17.41d, 17.58d, -63.05d, -62.88d, 12371, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 10755, 10638, 10643, 0.05d, "Coordinate Frame rotation full matrix (geog3D)", "", 17.56d, 17.71d, -63.31d, -63.16d, 12379, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 10756, 10738, 10741, 0.05d, "Coordinate Frame rotation full matrix (geog3D)", "", 17.41d, 17.58d, -63.05d, -62.88d, 12387, 8),
-            new EpsgOperationRecord((EpsgOperationType)1, 10778, 4123, 10690, 0.03d, "Transverse Mercator", "fi_nls_ykj_etrs35fin.json", 59.75d, 70.09d, 19.24d, 31.59d, 12395, 20),
-            new EpsgOperationRecord((EpsgOperationType)1, 10815, 7789, 10805, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 53.89d, 71.39d, 3.24d, 31.77d, 12415, 18),
-            new EpsgOperationRecord((EpsgOperationType)1, 10816, 7789, 10688, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 58.84d, 70.09d, 19.08d, 31.59d, 12433, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10817, 7789, 10873, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 57.9d, 71.24d, 4.39d, 31.32d, 12461, 22),
-            new EpsgOperationRecord((EpsgOperationType)1, 10818, 7789, 4950, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 53.89d, 56.45d, 19.02d, 26.82d, 12483, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10824, 7789, 4976, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 54.96d, 69.07d, 10.03d, 24.17d, 12511, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10825, 7789, 4934, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 57.52d, 60.0d, 20.37d, 28.2d, 12539, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10868, 9988, 4934, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 57.52d, 60.0d, 20.37d, 28.2d, 12567, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10869, 9988, 10688, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 58.84d, 70.09d, 19.08d, 31.59d, 12595, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10870, 9988, 10873, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 57.9d, 71.24d, 4.39d, 31.32d, 12623, 22),
-            new EpsgOperationRecord((EpsgOperationType)1, 10871, 9988, 4950, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 53.89d, 56.45d, 19.02d, 26.82d, 12645, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10872, 9988, 4976, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 54.96d, 69.07d, 10.03d, 24.17d, 12673, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10894, 7789, 10890, 0.0d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 54.36d, 58.27d, 3.24d, 16.51d, 12701, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 10895, 9988, 10890, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 54.36d, 58.27d, 3.24d, 16.51d, 12729, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 11005, 20000, 10999, 1.0d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "arcgp-2006-sk.bin", 74.3208d, 81.8504d, 6.49005d, 33.50985d, 12757, 2),
-            new EpsgOperationRecord((EpsgOperationType)1, 11066, 9988, 11007, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 49.79d, 60.94d, -8.82d, 1.92d, 12759, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11110, 9988, 11106, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 34.91d, 42.16d, -13.87d, -6.19d, 12792, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11140, 9988, 11129, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 35.26d, 46.26d, -13.86d, 6.3d, 12825, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11194, 9988, 4888, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 41.62d, 46.54d, 13.0d, 19.43d, 12858, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11196, 9988, 9138, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 41.85d, 43.25d, 19.97d, 21.8d, 12891, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11230, 4897, 11029, 0.2d, "Coordinate Frame rotation (geog2D domain)", "v3_dm_grd01_xyz.dat", -13.95d, 7.79d, 92.01d, 141.46d, 12924, 25),
-            new EpsgOperationRecord((EpsgOperationType)1, 11285, 9988, 4000, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 45.44d, 48.47d, 26.63d, 30.13d, 12949, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11310, 9988, 11222, 0.01d, "Time-dependent Position Vector tfm (geocentric)", "", 45.81d, 47.81d, 5.95d, 10.5d, 12982, 33),
-            new EpsgOperationRecord((EpsgOperationType)1, 11315, 9988, 10303, 0.001d, "Time-dependent Position Vector tfm (geocentric)", "NKG_RF17vel.tif", 55.67d, 58.09d, 19.06d, 28.24d, 13015, 28),
-            new EpsgOperationRecord((EpsgOperationType)1, 11398, 5941, 11394, 0.02d, "Geog3D to Geog2D+GravityRelatedHeight (Gravsoft)", "HREF2018B_NN2000_EUREF89.bin", 57.9d, 71.24d, 4.39d, 31.32d, 13043, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 3896, 4805, 4326, 0.0d, "", "", 46.4d, 49.02d, 9.53d, 17.17d, 11570, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 3966, 4805, 4326, 1.0d, "", "", 40.85d, 46.88d, 13.38d, 23.04d, 11578, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 4435, 4139, 4152, 0.05d, "", "prvi.las", 17.62d, 18.57d, -67.97d, -64.51d, 11582, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 4837, 4289, 4230, 1.0d, "", "", 50.75d, 55.77d, 2.53d, 7.22d, 11582, 14),
+            new EpsgOperationRecord((EpsgOperationType)1, 5190, 5132, 4737, 0.0d, "", "", 33.14d, 38.64d, 124.53d, 131.01d, 11596, 11),
+            new EpsgOperationRecord((EpsgOperationType)1, 5192, 5132, 4326, 0.0d, "", "", 33.14d, 38.64d, 124.53d, 131.01d, 11607, 11),
+            new EpsgOperationRecord((EpsgOperationType)1, 5230, 4818, 4326, 0.0d, "", "", 47.73d, 49.61d, 16.84d, 22.56d, 11618, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 5240, 5229, 4326, 0.0d, "", "", 48.58d, 51.06d, 12.09d, 18.86d, 11626, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 5242, 4818, 4326, 0.0d, "", "", 48.58d, 51.06d, 12.09d, 18.86d, 11634, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 5838, 4803, 4326, 0.0d, "", "", 36.95d, 42.16d, -9.56d, -6.19d, 11642, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 6714, 4301, 6668, 0.2d, "", "tky2jgd.gsb", 34.84d, 41.58d, 135.42d, 142.14d, 11650, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 6739, 4267, 4152, 0.15d, "", "conus.las", 42.48d, 45.95d, -104.07d, -96.43d, 11650, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 6874, 4810, 4326, 0.0d, "", "", -25.64d, -11.89d, 43.18d, 50.56d, 11650, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 7811, 4807, 4171, 0.0d, "", "rgf93_ntf.gsb", 41.31d, 51.14d, -4.87d, 9.63d, 11654, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 7965, 5754, 5731, 0.1d, "", "", 51.39d, 55.43d, -10.56d, -5.34d, 11655, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 7967, 5754, 5732, 0.1d, "", "", 53.96d, 55.36d, -8.18d, -5.34d, 11656, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 7973, 5702, 5703, 0.02d, "", "vertconw.94", 31.33d, 49.05d, -124.79d, -107.0d, 11657, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 7974, 5702, 5703, 0.02d, "", "vertconc.94", 25.83d, 49.38d, -107.0d, -89.0d, 11657, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 7975, 5702, 5703, 0.02d, "", "vertcone.94", 24.41d, 48.32d, -89.0d, -66.91d, 11657, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 7983, 5738, 5739, 0.0d, "", "", 22.13d, 22.58d, 113.76d, 114.51d, 11657, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 7986, 5790, 5789, 0.1d, "", "", 28.53d, 30.09d, 46.54d, 48.48d, 11658, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 8047, 4230, 4326, 1.0d, "", "", 65.0d, 84.73d, -3.35d, 38.01d, 11659, 14),
+            new EpsgOperationRecord((EpsgOperationType)1, 8094, 4807, 4326, 0.0d, "", "", 41.31d, 51.14d, -4.87d, 9.63d, 11673, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8174, 4802, 4326, 0.0d, "", "", -4.23d, 12.52d, -79.1d, -66.87d, 11677, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8175, 4806, 4326, 0.0d, "", "", 38.82d, 41.31d, 8.08d, 9.89d, 11681, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8176, 4810, 4326, 0.0d, "", "", -25.64d, -11.89d, 43.18d, 50.56d, 11685, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8178, 4813, 4326, 0.0d, "", "", -8.91d, 5.97d, 95.16d, 115.77d, 11689, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8186, 4807, 4230, 0.0d, "", "", 41.31d, 51.14d, -4.87d, 9.63d, 11693, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8188, 4807, 4322, 0.0d, "", "", 41.31d, 51.14d, -4.87d, 9.63d, 11697, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8211, 4811, 4326, 0.0d, "", "", 31.99d, 37.14d, -2.95d, 9.09d, 11701, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8241, 4903, 4326, 10.0d, "", "", 35.95d, 43.82d, -9.37d, 3.39d, 11705, 12),
+            new EpsgOperationRecord((EpsgOperationType)1, 8363, 11312, 11314, 0.03d, "", "Slovakia_ETRS89h_to_Baltic1957.gtx", 47.73d, 49.61d, 16.84d, 22.56d, 11717, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 8442, 11076, 4156, 0.001d, "", "Slovakia_JTSK03_to_JTSK.LAS", 47.73d, 49.61d, 16.84d, 22.56d, 11719, 7),
+            new EpsgOperationRecord((EpsgOperationType)1, 8443, 4156, 11076, 0.05d, "", "Slovakia_JTSK03_to_JTSK.LAS", 47.73d, 49.61d, 16.84d, 22.56d, 11726, 7),
+            new EpsgOperationRecord((EpsgOperationType)1, 8460, 4267, 4152, 0.15d, "", "conus.las", 30.14d, 35.02d, -88.48d, -84.89d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8461, 4267, 4152, 0.15d, "", "conus.las", 31.33d, 37.01d, -114.81d, -109.04d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8462, 4267, 4152, 0.15d, "", "conus.las", 36.5d, 42.01d, -124.45d, -116.54d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8463, 4267, 4152, 0.15d, "", "conus.las", 32.53d, 36.5d, -121.98d, -114.12d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8464, 4267, 4152, 0.15d, "", "conus.las", 36.98d, 41.01d, -109.06d, -102.04d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8465, 4267, 4152, 0.15d, "", "conus.las", 30.36d, 35.01d, -85.61d, -80.77d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8466, 4267, 4152, 0.15d, "", "conus.las", 24.41d, 31.01d, -87.63d, -79.97d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8467, 4267, 4152, 0.15d, "", "conus.las", 41.99d, 49.01d, -113.0d, -104.04d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8468, 4267, 4152, 0.15d, "", "conus.las", 41.99d, 49.01d, -117.24d, -113.0d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8469, 4267, 4152, 0.15d, "", "conus.las", 36.49d, 39.15d, -89.57d, -81.95d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8470, 4267, 4152, 0.15d, "", "conus.las", 28.85d, 33.03d, -94.05d, -88.75d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8471, 4267, 4152, 0.15d, "", "conus.las", 37.97d, 39.85d, -79.49d, -74.97d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8472, 4267, 4152, 0.15d, "", "conus.las", 43.04d, 47.47d, -71.09d, -66.91d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8473, 4267, 4152, 0.15d, "", "conus.las", 41.69d, 48.32d, -90.42d, -82.13d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8474, 4267, 4152, 0.15d, "", "conus.las", 30.01d, 35.01d, -91.65d, -88.09d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8475, 4267, 4152, 0.15d, "", "conus.las", 39.99d, 43.01d, -104.06d, -95.3d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8476, 4267, 4152, 0.15d, "", "conus.las", 40.98d, 45.31d, -73.73d, -69.86d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8477, 4267, 4152, 0.15d, "", "conus.las", 31.33d, 37.0d, -109.06d, -102.99d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8478, 4267, 4152, 0.15d, "", "conus.las", 40.47d, 45.02d, -79.77d, -71.8d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8479, 4267, 4152, 0.15d, "", "conus.las", 45.93d, 49.01d, -104.07d, -96.55d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8480, 4267, 4152, 0.15d, "", "conus.las", 33.62d, 37.01d, -103.0d, -94.42d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8483, 4267, 4152, 0.15d, "", "conus.las", 34.98d, 36.68d, -90.31d, -81.65d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8484, 4267, 4152, 0.15d, "", "conus.las", 25.83d, 34.58d, -100.0d, -93.5d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8485, 4267, 4152, 0.15d, "", "conus.las", 28.04d, 36.5d, -106.66d, -100.0d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8486, 4267, 4152, 0.15d, "", "conus.las", 36.54d, 39.46d, -83.68d, -75.31d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8487, 4267, 4152, 0.15d, "", "conus.las", 41.98d, 49.05d, -124.79d, -116.47d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8488, 4267, 4152, 0.15d, "", "conus.las", 42.48d, 47.31d, -92.89d, -86.25d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8489, 4267, 4152, 0.15d, "", "conus.las", 40.99d, 45.01d, -111.06d, -104.05d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8508, 4135, 4152, 0.2d, "", "hawaii.las", 18.87d, 22.29d, -160.3d, -154.74d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8509, 4267, 4152, 0.15d, "", "conus.las", 37.77d, 41.77d, -88.1d, -84.78d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8510, 4267, 4152, 0.15d, "", "conus.las", 36.99d, 40.01d, -102.06d, -94.58d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8511, 4267, 4152, 0.15d, "", "conus.las", 34.99d, 42.0d, -120.0d, -114.03d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8512, 4267, 4152, 0.15d, "", "conus.las", 38.4d, 42.33d, -84.83d, -80.51d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8513, 4267, 4152, 0.15d, "", "conus.las", 36.99d, 42.01d, -114.05d, -109.04d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8514, 4267, 4152, 0.15d, "", "conus.las", 37.2d, 40.64d, -82.65d, -77.72d, 11733, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8517, 4160, 4326, 10.0d, "", "", -38.75d, -37.5d, -69.5d, -68.25d, 11733, 6),
+            new EpsgOperationRecord((EpsgOperationType)1, 8532, 4131, 4326, 25.0d, "", "", 7.99d, 11.15d, 106.54d, 110.0d, 11739, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8537, 4229, 4326, 5.0d, "", "", 21.89d, 33.82d, 24.7d, 37.91d, 11749, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8553, 4267, 4152, 0.15d, "", "conus.las", 36.97d, 42.51d, -91.52d, -87.02d, 11759, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8554, 4267, 4152, 0.15d, "", "conus.las", 38.87d, 41.36d, -75.6d, -73.88d, 11759, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8562, 4307, 4326, 8.0d, "", "", 31.48d, 32.09d, 5.59d, 6.5d, 11759, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8568, 4227, 4326, 5.0d, "", "", 34.49d, 35.9d, 39.3d, 40.81d, 11769, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8569, 4230, 4326, 1.0d, "", "", 65.0d, 84.73d, -3.35d, 38.01d, 11779, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8571, 4168, 4326, 25.0d, "", "", 1.4d, 6.06d, -3.79d, 2.1d, 11789, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8581, 4134, 4326, 1.2d, "", "", 16.59d, 26.58d, 51.99d, 59.91d, 11799, 14),
+            new EpsgOperationRecord((EpsgOperationType)1, 8582, 4135, 4326, 0.2d, "", "hawaii.las", 18.87d, 22.29d, -160.3d, -154.74d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8583, 4139, 4326, 0.05d, "", "prvi.las", 17.62d, 18.57d, -67.97d, -64.51d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8585, 4267, 4326, 1.5d, "", "NTv2_0.gsb", 48.99d, 60.0d, -120.0d, -109.98d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8586, 4267, 4152, 0.15d, "", "conus.las", 33.01d, 36.5d, -94.62d, -89.64d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8587, 4267, 4152, 0.15d, "", "conus.las", 40.36d, 43.51d, -96.65d, -90.14d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8588, 4267, 4152, 0.15d, "", "conus.las", 43.49d, 49.38d, -97.22d, -89.49d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8589, 4267, 4152, 0.15d, "", "conus.las", 35.98d, 40.61d, -95.77d, -89.1d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8590, 4267, 4326, 0.15d, "", "conus.las", 30.14d, 35.02d, -88.48d, -84.89d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8591, 4267, 4326, 0.15d, "", "conus.las", 31.33d, 37.01d, -114.81d, -109.04d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8592, 4267, 4326, 0.15d, "", "conus.las", 33.01d, 36.5d, -94.62d, -89.64d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8593, 4267, 4326, 0.15d, "", "conus.las", 36.5d, 42.01d, -124.45d, -116.54d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8594, 4267, 4326, 0.15d, "", "conus.las", 32.53d, 36.5d, -121.98d, -114.12d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8595, 4267, 4326, 0.15d, "", "conus.las", 36.98d, 41.01d, -109.06d, -102.04d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8596, 4267, 4326, 0.15d, "", "conus.las", 24.41d, 31.01d, -87.63d, -79.97d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8597, 4267, 4326, 0.15d, "", "conus.las", 30.36d, 35.01d, -85.61d, -80.77d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8598, 4267, 4326, 0.15d, "", "conus.las", 36.97d, 42.51d, -91.52d, -87.02d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8599, 4267, 4326, 0.15d, "", "conus.las", 37.77d, 41.77d, -88.1d, -84.78d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8600, 4267, 4326, 0.15d, "", "conus.las", 40.36d, 43.51d, -96.65d, -90.14d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8601, 4267, 4326, 0.15d, "", "conus.las", 36.99d, 40.01d, -102.06d, -94.58d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8602, 4267, 4326, 0.15d, "", "conus.las", 36.49d, 39.15d, -89.57d, -81.95d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8603, 4267, 4326, 0.15d, "", "conus.las", 28.85d, 33.03d, -94.05d, -88.75d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8604, 4267, 4326, 0.15d, "", "conus.las", 43.04d, 47.47d, -71.09d, -66.91d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8605, 4267, 4326, 0.15d, "", "conus.las", 37.97d, 39.85d, -79.49d, -74.97d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8606, 4267, 4326, 0.15d, "", "conus.las", 40.98d, 45.31d, -73.73d, -69.86d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8607, 4267, 4326, 0.15d, "", "conus.las", 41.69d, 48.32d, -90.42d, -82.13d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8608, 4267, 4326, 0.15d, "", "conus.las", 43.49d, 49.38d, -97.22d, -89.49d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8609, 4267, 4326, 0.15d, "", "conus.las", 30.01d, 35.01d, -91.65d, -88.09d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8610, 4267, 4326, 0.15d, "", "conus.las", 35.98d, 40.61d, -95.77d, -89.1d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8611, 4267, 4326, 0.15d, "", "conus.las", 41.99d, 49.01d, -113.0d, -104.04d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8612, 4267, 4326, 0.15d, "", "conus.las", 41.99d, 49.01d, -117.24d, -113.0d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8613, 4267, 4326, 0.15d, "", "conus.las", 39.99d, 43.01d, -104.06d, -95.3d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8614, 4267, 4326, 0.15d, "", "conus.las", 34.99d, 42.0d, -120.0d, -114.03d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8615, 4267, 4326, 0.15d, "", "conus.las", 38.87d, 41.36d, -75.6d, -73.88d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8616, 4267, 4326, 0.15d, "", "conus.las", 31.33d, 37.0d, -109.06d, -102.99d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8617, 4267, 4326, 0.15d, "", "conus.las", 40.47d, 45.02d, -79.77d, -71.8d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8618, 4267, 4326, 0.15d, "", "conus.las", 45.93d, 49.01d, -104.07d, -96.55d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8619, 4267, 4326, 0.15d, "", "conus.las", 38.4d, 42.33d, -84.83d, -80.51d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8620, 4267, 4326, 0.15d, "", "conus.las", 33.62d, 37.01d, -103.0d, -94.42d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8621, 4267, 4326, 0.15d, "", "conus.las", 41.98d, 49.05d, -124.79d, -116.47d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8622, 4267, 4326, 0.15d, "", "conus.las", 42.48d, 45.95d, -104.07d, -96.43d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8623, 4267, 4326, 0.15d, "", "conus.las", 34.98d, 36.68d, -90.31d, -81.65d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8624, 4267, 4326, 0.15d, "", "conus.las", 25.83d, 34.58d, -100.0d, -93.5d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8625, 4267, 4326, 0.15d, "", "conus.las", 28.04d, 36.5d, -106.66d, -100.0d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8626, 4267, 4326, 0.15d, "", "conus.las", 36.99d, 42.01d, -114.05d, -109.04d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8627, 4267, 4326, 0.15d, "", "conus.las", 36.54d, 39.46d, -83.68d, -75.31d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8628, 4267, 4326, 0.15d, "", "conus.las", 37.2d, 40.64d, -82.65d, -77.72d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8629, 4267, 4326, 0.15d, "", "conus.las", 42.48d, 47.31d, -92.89d, -86.25d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8630, 4267, 4326, 0.15d, "", "conus.las", 40.99d, 45.01d, -111.06d, -104.05d, 11813, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 8631, 4197, 4326, 5.0d, "", "", 8.92d, 9.87d, 12.9d, 14.19d, 11813, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8632, 4198, 4326, 5.0d, "", "", 11.7d, 12.77d, 14.17d, 15.09d, 11823, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8633, 4310, 4326, 25.0d, "", "", 10.64d, 16.7d, -20.22d, -11.36d, 11833, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8634, 4213, 4326, 15.0d, "", "", 12.8d, 16.7d, 7.81d, 14.9d, 11843, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8636, 4816, 4326, 0.0d, "", "", 30.23d, 37.4d, 7.49d, 11.59d, 11853, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8638, 4804, 4326, 0.0d, "", "", -6.54d, -1.88d, 118.71d, 120.78d, 11857, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8639, 4817, 4326, 0.0d, "", "", 57.9d, 71.24d, 4.39d, 31.32d, 11861, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 8641, 4820, 4326, 0.0d, "", "", -4.24d, 4.29d, 114.55d, 119.06d, 11869, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8642, 4818, 4326, 0.0d, "", "", 48.58d, 51.06d, 12.09d, 18.86d, 11873, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 8643, 4120, 4326, 5.0d, "", "", 34.88d, 41.75d, 19.57d, 28.3d, 11881, 5),
+            new EpsgOperationRecord((EpsgOperationType)1, 8644, 4815, 4326, 0.0d, "", "", 34.88d, 41.75d, 19.57d, 28.3d, 11886, 6),
+            new EpsgOperationRecord((EpsgOperationType)1, 8647, 4267, 4326, 1.5d, "", "NTv2_0.gsb", 40.0d, 64.21d, -67.75d, -43.99d, 11892, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8648, 4904, 4326, 0.0d, "", "", 36.95d, 42.16d, -9.56d, -6.19d, 11902, 4),
+            new EpsgOperationRecord((EpsgOperationType)1, 8649, 4904, 4326, 0.0d, "", "", 36.95d, 42.16d, -9.56d, -6.19d, 11906, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 8650, 4281, 4326, 1.5d, "", "", 29.45d, 33.28d, 34.17d, 35.69d, 11914, 6),
+            new EpsgOperationRecord((EpsgOperationType)1, 8651, 4676, 4326, 2.0d, "", "", 13.92d, 22.5d, 100.09d, 107.64d, 11920, 6),
+            new EpsgOperationRecord((EpsgOperationType)1, 8652, 4677, 4326, 0.15d, "", "", 13.92d, 22.5d, 100.09d, 107.64d, 11926, 6),
+            new EpsgOperationRecord((EpsgOperationType)1, 8653, 4230, 4326, 1.0d, "", "", 51.03d, 62.0d, -5.05d, 10.86d, 11932, 40),
+            new EpsgOperationRecord((EpsgOperationType)1, 8654, 4230, 4258, 1.0d, "", "", 51.03d, 62.0d, -5.05d, 10.86d, 11972, 43),
+            new EpsgOperationRecord((EpsgOperationType)1, 8655, 4193, 4326, 5.0d, "", "", 2.16d, 4.99d, 8.45d, 10.4d, 12015, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8656, 4705, 4326, 10.0d, "", "", -6.04d, -5.05d, 10.53d, 12.37d, 12025, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8657, 4706, 4326, 5.0d, "", "", 27.19d, 30.01d, 32.34d, 34.27d, 12035, 10),
+            new EpsgOperationRecord((EpsgOperationType)1, 8659, 4751, 4326, 0.0d, "", "", 1.13d, 6.72d, 99.59d, 104.6d, 12045, 6),
+            new EpsgOperationRecord((EpsgOperationType)1, 9091, 4918, 4959, 0.01d, "", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12051, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9092, 4919, 4959, 0.01d, "", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12066, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9093, 4896, 4959, 0.01d, "", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12081, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9094, 5332, 4959, 0.01d, "", "nzgd2000_deformation_20000101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12096, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9095, 5332, 4959, 0.01d, "", "nzgd2000_deformation_20130801_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12111, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9096, 5332, 4959, 0.01d, "", "nzgd2000_deformation_20140201_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12126, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9097, 5332, 4959, 0.01d, "", "nzgd2000_deformation_20150101_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12141, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9098, 5332, 4959, 0.01d, "", "nzgd2000_deformation_20160701_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12156, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9099, 5332, 4959, 0.01d, "", "nzgd2000_deformation_20171201_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12171, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9100, 7789, 4959, 0.01d, "", "nzgd2000_deformation_20160701_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12186, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9101, 7789, 4959, 0.01d, "", "nzgd2000_deformation_20171201_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12201, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9102, 7789, 4959, 0.01d, "", "nzgd2000_deformation_20180701_full.zip", -47.65d, -33.89d, 165.87d, 179.27d, 12216, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9103, 4267, 7789, 0.15d, "", "conus.las", 23.82d, 30.25d, -97.22d, -81.17d, 12231, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 9104, 4267, 7789, 0.15d, "", "nadcon5.nad27.nad83_1986.conus.lat.trn.20160901.b", 23.82d, 30.25d, -97.22d, -81.17d, 12264, 30),
+            new EpsgOperationRecord((EpsgOperationType)1, 9336, 4267, 8246, 1.5d, "", "NTv2_0.gsb", 48.99d, 60.0d, -120.0d, -109.98d, 12294, 0),
+            new EpsgOperationRecord((EpsgOperationType)1, 9337, 4807, 4171, 0.0d, "", "gr3df97a.txt", 41.31d, 51.14d, -4.87d, 9.63d, 12294, 3),
+            new EpsgOperationRecord((EpsgOperationType)1, 9499, 11056, 5778, 0.05d, "", "GEOID_GRS80_Oesterreich.csv", 46.4d, 49.02d, 9.53d, 17.17d, 12297, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 9683, 9000, 4283, 0.03d, "", "GDA94_GDA2020_conformal_and_distortion.gsb", -43.7d, -9.86d, 112.85d, 153.69d, 12299, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9685, 9309, 4283, 0.03d, "", "GDA94_GDA2020_conformal_and_distortion.gsb", -43.7d, -9.86d, 112.85d, 153.69d, 12314, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9687, 4283, 9057, 0.05d, "", "GDA94_GDA2020_conformal_and_distortion.gsb", -43.7d, -9.86d, 112.85d, 153.69d, 12329, 15),
+            new EpsgOperationRecord((EpsgOperationType)1, 9750, 6705, 9721, 0.035d, "", "geo_igm_mar06.grd", 36.59d, 38.35d, 12.36d, 15.71d, 12344, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10392, 5780, 10349, 0.0d, "", "", 36.9d, 41.88d, -9.57d, -7.39d, 12345, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10393, 5780, 10349, 0.0d, "", "", 38.58d, 38.96d, -9.46d, -8.92d, 12346, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10394, 6178, 10349, 0.0d, "", "", 32.35d, 32.93d, -17.33d, -16.4d, 12347, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10395, 6179, 10349, 0.0d, "", "", 32.97d, 33.16d, -16.46d, -16.23d, 12348, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10396, 6185, 10349, 0.0d, "", "", 39.32d, 39.78d, -31.34d, -31.01d, 12349, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10397, 6181, 10349, 0.0d, "", "", 38.46d, 38.7d, -28.91d, -28.53d, 12350, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10398, 6182, 10349, 0.0d, "", "", 38.33d, 38.62d, -28.61d, -27.96d, 12351, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10399, 6180, 10349, 0.0d, "", "", 38.48d, 38.81d, -28.39d, -27.68d, 12352, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10400, 6183, 10349, 0.0d, "", "", 38.95d, 39.15d, -28.14d, -27.88d, 12353, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10409, 6184, 10349, 0.0d, "", "", 38.58d, 38.86d, -27.45d, -26.97d, 12354, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10410, 6187, 10349, 0.0d, "", "", 37.65d, 37.97d, -25.92d, -25.07d, 12355, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10411, 6186, 10349, 0.0d, "", "", 36.87d, 37.33d, -25.25d, -24.71d, 12356, 1),
+            new EpsgOperationRecord((EpsgOperationType)1, 10495, 10486, 10487, 0.06d, "", "dvr90_2002.tif", 54.5d, 57.81d, 7.98d, 15.28d, 12357, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 10496, 10487, 10488, 0.03d, "", "dvr90_2013.tif", 54.36d, 58.27d, 3.24d, 16.51d, 12359, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 10616, 9529, 20043, 0.0d, "", "INAGEOID2020v1.gtx", -13.95d, 7.79d, 92.01d, 141.46d, 12361, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 10675, 10638, 10642, 0.05d, "", "", 17.56d, 17.71d, -63.31d, -63.16d, 12363, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 10754, 10738, 10740, 0.05d, "", "", 17.41d, 17.58d, -63.05d, -62.88d, 12371, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 10755, 10638, 10643, 0.05d, "", "", 17.56d, 17.71d, -63.31d, -63.16d, 12379, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 10756, 10738, 10741, 0.05d, "", "", 17.41d, 17.58d, -63.05d, -62.88d, 12387, 8),
+            new EpsgOperationRecord((EpsgOperationType)1, 10778, 4123, 10690, 0.03d, "", "fi_nls_ykj_etrs35fin.json", 59.75d, 70.09d, 19.24d, 31.59d, 12395, 20),
+            new EpsgOperationRecord((EpsgOperationType)1, 10815, 7789, 10805, 0.0d, "", "NKG_RF17vel.tif", 53.89d, 71.39d, 3.24d, 31.77d, 12415, 18),
+            new EpsgOperationRecord((EpsgOperationType)1, 10816, 7789, 10688, 0.0d, "", "NKG_RF17vel.tif", 58.84d, 70.09d, 19.08d, 31.59d, 12433, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10817, 7789, 10873, 0.0d, "", "NKG_RF17vel.tif", 57.9d, 71.24d, 4.39d, 31.32d, 12461, 22),
+            new EpsgOperationRecord((EpsgOperationType)1, 10818, 7789, 4950, 0.0d, "", "NKG_RF17vel.tif", 53.89d, 56.45d, 19.02d, 26.82d, 12483, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10824, 7789, 4976, 0.0d, "", "NKG_RF17vel.tif", 54.96d, 69.07d, 10.03d, 24.17d, 12511, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10825, 7789, 4934, 0.0d, "", "NKG_RF17vel.tif", 57.52d, 60.0d, 20.37d, 28.2d, 12539, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10868, 9988, 4934, 0.001d, "", "NKG_RF17vel.tif", 57.52d, 60.0d, 20.37d, 28.2d, 12567, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10869, 9988, 10688, 0.001d, "", "NKG_RF17vel.tif", 58.84d, 70.09d, 19.08d, 31.59d, 12595, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10870, 9988, 10873, 0.001d, "", "NKG_RF17vel.tif", 57.9d, 71.24d, 4.39d, 31.32d, 12623, 22),
+            new EpsgOperationRecord((EpsgOperationType)1, 10871, 9988, 4950, 0.001d, "", "NKG_RF17vel.tif", 53.89d, 56.45d, 19.02d, 26.82d, 12645, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10872, 9988, 4976, 0.001d, "", "NKG_RF17vel.tif", 54.96d, 69.07d, 10.03d, 24.17d, 12673, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10894, 7789, 10890, 0.0d, "", "NKG_RF17vel.tif", 54.36d, 58.27d, 3.24d, 16.51d, 12701, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 10895, 9988, 10890, 0.001d, "", "NKG_RF17vel.tif", 54.36d, 58.27d, 3.24d, 16.51d, 12729, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 11005, 20000, 10999, 1.0d, "", "arcgp-2006-sk.bin", 74.3208d, 81.8504d, 6.49005d, 33.50985d, 12757, 2),
+            new EpsgOperationRecord((EpsgOperationType)1, 11066, 9988, 11007, 0.01d, "", "", 49.79d, 60.94d, -8.82d, 1.92d, 12759, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 11110, 9988, 11106, 0.01d, "", "", 34.91d, 42.16d, -13.87d, -6.19d, 12792, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 11140, 9988, 11129, 0.01d, "", "", 35.26d, 46.26d, -13.86d, 6.3d, 12825, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 11194, 9988, 4888, 0.01d, "", "", 41.62d, 46.54d, 13.0d, 19.43d, 12858, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 11196, 9988, 9138, 0.01d, "", "", 41.85d, 43.25d, 19.97d, 21.8d, 12891, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 11230, 4897, 11029, 0.2d, "", "v3_dm_grd01_xyz.dat", -13.95d, 7.79d, 92.01d, 141.46d, 12924, 25),
+            new EpsgOperationRecord((EpsgOperationType)1, 11285, 9988, 4000, 0.01d, "", "", 45.44d, 48.47d, 26.63d, 30.13d, 12949, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 11310, 9988, 11222, 0.01d, "", "", 45.81d, 47.81d, 5.95d, 10.5d, 12982, 33),
+            new EpsgOperationRecord((EpsgOperationType)1, 11315, 9988, 10303, 0.001d, "", "NKG_RF17vel.tif", 55.67d, 58.09d, 19.06d, 28.24d, 13015, 28),
+            new EpsgOperationRecord((EpsgOperationType)1, 11398, 5941, 11394, 0.02d, "", "HREF2018B_NN2000_EUREF89.bin", 57.9d, 71.24d, 4.39d, 31.32d, 13043, 2),
         };
 
         internal static readonly EpsgOperationParameterRecord[] OperationParameters = new EpsgOperationParameterRecord[]
@@ -20879,6 +20879,38 @@ namespace ProjNet.Data.Generated
 
         internal static bool TryGetExplicitOperationParameters(int operationCode, out EpsgExplicitOperationRecord parameters)
         {
+            switch (operationCode / 1000)
+            {
+                case 1:
+                    return TryGetExplicitOperationParametersBucket1(operationCode, out parameters);
+                case 3:
+                    return TryGetExplicitOperationParametersBucket3(operationCode, out parameters);
+                case 4:
+                    return TryGetExplicitOperationParametersBucket4(operationCode, out parameters);
+                case 5:
+                    return TryGetExplicitOperationParametersBucket5(operationCode, out parameters);
+                case 6:
+                    return TryGetExplicitOperationParametersBucket6(operationCode, out parameters);
+                case 7:
+                    return TryGetExplicitOperationParametersBucket7(operationCode, out parameters);
+                case 8:
+                    return TryGetExplicitOperationParametersBucket8(operationCode, out parameters);
+                case 9:
+                    return TryGetExplicitOperationParametersBucket9(operationCode, out parameters);
+                case 10:
+                    return TryGetExplicitOperationParametersBucket10(operationCode, out parameters);
+                case 11:
+                    return TryGetExplicitOperationParametersBucket11(operationCode, out parameters);
+                case 15:
+                    return TryGetExplicitOperationParametersBucket15(operationCode, out parameters);
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket1(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
             switch (operationCode)
             {
                 case 1024:
@@ -22477,6 +22509,16 @@ namespace ProjNet.Data.Generated
                 case 1998:
                     parameters = new EpsgExplicitOperationRecord(1998, -157.89d, -17.16d, -78.41d, 2.118d, 2.697d, -1.434d, -5.38d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket3(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 3817:
                     parameters = new EpsgExplicitOperationRecord(3817, 595.48d, 121.69d, 515.35d, 4.115d, -2.9383d, 0.853d, -3.408d);
                     return true;
@@ -22558,6 +22600,16 @@ namespace ProjNet.Data.Generated
                 case 3998:
                     parameters = new EpsgExplicitOperationRecord(3998, -153.0d, -5.0d, -292.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket4(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 4064:
                     parameters = new EpsgExplicitOperationRecord(4064, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
@@ -22627,15 +22679,22 @@ namespace ProjNet.Data.Generated
                 case 4836:
                     parameters = new EpsgExplicitOperationRecord(4836, 485.0d, 169.5d, 483.8d, 7.786d, 4.398d, 4.103d, 0.0d);
                     return true;
-                case 4837:
-                    parameters = new EpsgExplicitOperationRecord(4837, -89.5d, -93.8d, -123.1d, -0.0d, -0.0d, 0.156d, 1.2d);
-                    return true;
                 case 4840:
                     parameters = new EpsgExplicitOperationRecord(4840, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4905:
                     parameters = new EpsgExplicitOperationRecord(4905, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket5(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 5021:
                     parameters = new EpsgExplicitOperationRecord(5021, -503.229d, -247.375d, 312.582d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
@@ -22921,6 +22980,16 @@ namespace ProjNet.Data.Generated
                 case 5888:
                     parameters = new EpsgExplicitOperationRecord(5888, -599.928d, -275.552d, -195.665d, -0.0835d, -0.4715d, 0.0602d, 49.2814d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket6(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 6136:
                     parameters = new EpsgExplicitOperationRecord(6136, -179.483d, -69.379d, -27.584d, -7.862d, 8.163d, 6.042d, -13.925d);
                     return true;
@@ -23173,6 +23242,16 @@ namespace ProjNet.Data.Generated
                 case 6999:
                     parameters = new EpsgExplicitOperationRecord(6999, -253.4392d, -148.452d, 386.5267d, 0.15605d, 0.43d, -0.1013d, -0.0424d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket7(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 7002:
                     parameters = new EpsgExplicitOperationRecord(7002, -246.1633d, -152.9047d, 382.6047d, 0.0989d, 0.1382d, 0.0768d, 2.1e-06d);
                     return true;
@@ -23305,9 +23384,16 @@ namespace ProjNet.Data.Generated
                 case 7961:
                     parameters = new EpsgExplicitOperationRecord(7961, 0.36d, -0.08d, -0.18d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
-                case 8047:
-                    parameters = new EpsgExplicitOperationRecord(8047, -82.981d, -99.719d, -110.709d, -0.5076d, 0.1503d, 0.3898d, -0.3143d);
-                    return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket8(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 8048:
                     parameters = new EpsgExplicitOperationRecord(8048, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d);
                     return true;
@@ -23338,9 +23424,6 @@ namespace ProjNet.Data.Generated
                 case 8439:
                     parameters = new EpsgExplicitOperationRecord(8439, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
-                case 8442:
-                    parameters = new EpsgExplicitOperationRecord(8442, -485.014055d, -169.473618d, -483.842943d, -7.78625453d, -4.39770887d, -4.10248899d, 0.0d);
-                    return true;
                 case 8448:
                     parameters = new EpsgExplicitOperationRecord(8448, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
@@ -23349,63 +23432,6 @@ namespace ProjNet.Data.Generated
                     return true;
                 case 8452:
                     parameters = new EpsgExplicitOperationRecord(8452, -377.0d, 681.0d, -50.0d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8517:
-                    parameters = new EpsgExplicitOperationRecord(8517, -154.5d, 150.7d, 100.4d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8532:
-                    parameters = new EpsgExplicitOperationRecord(8532, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8537:
-                    parameters = new EpsgExplicitOperationRecord(8537, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8562:
-                    parameters = new EpsgExplicitOperationRecord(8562, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8568:
-                    parameters = new EpsgExplicitOperationRecord(8568, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8569:
-                    parameters = new EpsgExplicitOperationRecord(8569, 0.0d, 0.0d, 0.0d, 4.327d, 4.464d, -4.444d, -3.52d);
-                    return true;
-                case 8571:
-                    parameters = new EpsgExplicitOperationRecord(8571, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8581:
-                    parameters = new EpsgExplicitOperationRecord(8581, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.2263d);
-                    return true;
-                case 8631:
-                    parameters = new EpsgExplicitOperationRecord(8631, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8632:
-                    parameters = new EpsgExplicitOperationRecord(8632, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8633:
-                    parameters = new EpsgExplicitOperationRecord(8633, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8634:
-                    parameters = new EpsgExplicitOperationRecord(8634, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8650:
-                    parameters = new EpsgExplicitOperationRecord(8650, -48.0d, 55.0d, 52.0d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8651:
-                    parameters = new EpsgExplicitOperationRecord(8651, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8652:
-                    parameters = new EpsgExplicitOperationRecord(8652, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8655:
-                    parameters = new EpsgExplicitOperationRecord(8655, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8656:
-                    parameters = new EpsgExplicitOperationRecord(8656, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8657:
-                    parameters = new EpsgExplicitOperationRecord(8657, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
-                    return true;
-                case 8659:
-                    parameters = new EpsgExplicitOperationRecord(8659, -11.0d, 851.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8674:
                     parameters = new EpsgExplicitOperationRecord(8674, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
@@ -23527,6 +23553,16 @@ namespace ProjNet.Data.Generated
                 case 8971:
                     parameters = new EpsgExplicitOperationRecord(8971, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket9(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 9020:
                     parameters = new EpsgExplicitOperationRecord(9020, 0.5d, 3.6d, 2.4d, -0.1d, 0.0d, 0.0d, -3.0d);
                     return true;
@@ -23680,14 +23716,8 @@ namespace ProjNet.Data.Generated
                 case 9682:
                     parameters = new EpsgExplicitOperationRecord(9682, -61.55d, 10.87d, 40.19d, -39.4924d, -32.7221d, -32.8979d, 9.994d);
                     return true;
-                case 9683:
-                    parameters = new EpsgExplicitOperationRecord(9683, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
-                    return true;
                 case 9684:
                     parameters = new EpsgExplicitOperationRecord(9684, -61.55d, 10.87d, 40.19d, -39.4924d, -32.7221d, -32.8979d, 9.994d);
-                    return true;
-                case 9685:
-                    parameters = new EpsgExplicitOperationRecord(9685, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 9686:
                     parameters = new EpsgExplicitOperationRecord(9686, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d);
@@ -23785,6 +23815,16 @@ namespace ProjNet.Data.Generated
                 case 9963:
                     parameters = new EpsgExplicitOperationRecord(9963, -2.4d, 1.6d, 23.2d, 0.27d, -0.27d, 0.38d, 2.08d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket10(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 10085:
                     parameters = new EpsgExplicitOperationRecord(10085, -61.0d, 285.2d, 471.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
@@ -23932,9 +23972,6 @@ namespace ProjNet.Data.Generated
                 case 10648:
                     parameters = new EpsgExplicitOperationRecord(10648, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
-                case 10675:
-                    parameters = new EpsgExplicitOperationRecord(10675, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d);
-                    return true;
                 case 10676:
                     parameters = new EpsgExplicitOperationRecord(10676, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d);
                     return true;
@@ -23955,15 +23992,6 @@ namespace ProjNet.Data.Generated
                     return true;
                 case 10750:
                     parameters = new EpsgExplicitOperationRecord(10750, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d);
-                    return true;
-                case 10754:
-                    parameters = new EpsgExplicitOperationRecord(10754, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d);
-                    return true;
-                case 10755:
-                    parameters = new EpsgExplicitOperationRecord(10755, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d);
-                    return true;
-                case 10756:
-                    parameters = new EpsgExplicitOperationRecord(10756, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d);
                     return true;
                 case 10766:
                     parameters = new EpsgExplicitOperationRecord(10766, -366.1939d, -115.0688d, -776.7039d, -20.96308d, -16.462749d, 14.276379d, -12.809d);
@@ -24028,6 +24056,16 @@ namespace ProjNet.Data.Generated
                 case 10996:
                     parameters = new EpsgExplicitOperationRecord(10996, 19.019d, 115.122d, -97.287d, 3.577824d, -3.484437d, -2.767646d, 18.6084754d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket11(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 11010:
                     parameters = new EpsgExplicitOperationRecord(11010, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
@@ -24199,15 +24237,22 @@ namespace ProjNet.Data.Generated
                 case 11229:
                     parameters = new EpsgExplicitOperationRecord(11229, 197.8579d, 146.5947d, -108.8501d, 0.85735d, -0.36082d, -0.38626d, -8.356137d);
                     return true;
-                case 11230:
-                    parameters = new EpsgExplicitOperationRecord(11230, -1.6d, -1.9d, -2.4d, -0.0d, -0.0d, -0.0d, 0.02d);
-                    return true;
                 case 11308:
                     parameters = new EpsgExplicitOperationRecord(11308, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11397:
                     parameters = new EpsgExplicitOperationRecord(11397, 565.7381d, 50.4018d, 465.2904d, -1.91514d, 1.60363d, -9.09546d, 4.07244d);
                     return true;
+                default:
+                    parameters = default;
+                    return false;
+            }
+        }
+
+        private static bool TryGetExplicitOperationParametersBucket15(int operationCode, out EpsgExplicitOperationRecord parameters)
+        {
+            switch (operationCode)
+            {
                 case 15483:
                     parameters = new EpsgExplicitOperationRecord(15483, -146.414d, 507.337d, 680.507d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
@@ -24828,5 +24873,6 @@ namespace ProjNet.Data.Generated
                     return false;
             }
         }
+
     }
 }

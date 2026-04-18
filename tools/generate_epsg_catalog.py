@@ -53,6 +53,57 @@ def esc(value: str) -> str:
     return value.replace('\\', '\\\\').replace('"', '\\"').replace('\r', '\\r').replace('\n', '\\n').replace('\t', '\\t')
 
 
+def skip_wkt_quoted_string(text: str, start_index: int) -> int:
+    if start_index >= len(text) or text[start_index] != '"':
+        return start_index
+
+    index = start_index + 1
+    while index < len(text):
+        if text[index] != '"':
+            index += 1
+            continue
+
+        if index + 1 < len(text) and text[index + 1] == '"':
+            index += 2
+            continue
+
+        return index + 1
+
+    return len(text)
+
+
+def bracket_content(text: str, token: str):
+    idx = text.find(token)
+    if idx < 0:
+        return None
+    start = idx + len(token)
+    depth = 1
+    index = start
+    while index < len(text):
+        ch = text[index]
+        if ch == '"':
+            index = skip_wkt_quoted_string(text, index)
+            continue
+        if ch == '[':
+            depth += 1
+        elif ch == ']':
+            depth -= 1
+            if depth == 0:
+                return text[start:index]
+        index += 1
+    return None
+
+
+def emit_wrapped_int_array(lines, declaration: str, values, base_indent: str = '        ', values_per_line: int = 20):
+    lines.append(declaration)
+    lines.append(base_indent + '{')
+    for index in range(0, len(values), values_per_line):
+        chunk = ', '.join(str(value) for value in values[index:index + values_per_line])
+        lines.append(base_indent + '    ' + chunk + ',')
+    lines.append(base_indent + '};')
+    lines.append('')
+
+
 class WktIdentifier(str):
     pass
 
@@ -1012,24 +1063,6 @@ def extract_operation_data(zip_path: Path, pg_zip_path: Path):
 
         return ''.join(buffer)
 
-    def bracket_content(text: str, token: str):
-        idx = text.find(token)
-        if idx < 0:
-            return None
-        start = idx + len(token)
-        depth = 1
-        i = start
-        while i < len(text):
-            ch = text[i]
-            if ch == '[':
-                depth += 1
-            elif ch == ']':
-                depth -= 1
-                if depth == 0:
-                    return text[start:i]
-            i += 1
-        return None
-
     extent_bounds, usage_extents_by_operation, concat_paths = extract_postgresql_operation_support_data(pg_zip_path)
 
     def merge_operation_bounds(operation_code: int):
@@ -1083,8 +1116,10 @@ def extract_operation_data(zip_path: Path, pg_zip_path: Path):
             if not src_ids or not tgt_ids:
                 continue
 
-            method_match = method_pattern.search(text)
-            method_name = method_match.group(1) if method_match else ''
+            method_name = ''
+            if operation_type != 1:
+                method_match = method_pattern.search(text)
+                method_name = method_match.group(1) if method_match else ''
             acc_match = accuracy_pattern.search(text)
             accuracy = float(acc_match.group(1)) if acc_match else float('nan')
             pf_match = parameter_file_pattern.search(text)
@@ -1422,11 +1457,12 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
         lines.append('}')
         path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
 
-    def begin_catalog_partial(lines):
-        lines.append('    internal static partial class EpsgGeneratedCatalog')
+    def begin_static_class(lines, class_name: str, partial: bool = False):
+        partial_keyword = ' partial' if partial else ''
+        lines.append(f'    internal static{partial_keyword} class {class_name}')
         lines.append('    {')
 
-    def end_catalog_partial(lines):
+    def end_static_class(lines):
         lines.append('    }')
 
     def emit_array(lines, name, type_name, values, fmt):
@@ -1641,6 +1677,81 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
             lines.append('        }')
             lines.append('')
 
+    def emit_coordinate_reference_switch_factory(lines, values):
+        buckets = {}
+        for cache_index, value in enumerate(values):
+            bucket = value[0] // 1000
+            buckets.setdefault(bucket, []).append((cache_index, value))
+
+        lines.append('        internal static bool TryGetCoordinateReference(int srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex)')
+        lines.append('        {')
+        lines.append('            switch (srid / 1000)')
+        lines.append('            {')
+        for bucket in sorted(buckets):
+            lines.append(f'                case {bucket}:')
+            lines.append(f'                    return TryGetCoordinateReferenceBucket{bucket}(srid, out reference, out cacheIndex);')
+        lines.append('                default:')
+        lines.append('                    cacheIndex = -1;')
+        lines.append('                    reference = default;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+        for bucket in sorted(buckets):
+            lines.append(f'        private static bool TryGetCoordinateReferenceBucket{bucket}(int srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex)')
+            lines.append('        {')
+            lines.append('            switch (srid)')
+            lines.append('            {')
+            for cache_index, ref_record in buckets[bucket]:
+                lines.append(f'                case {ref_record[0]}:')
+                lines.append(f'                    cacheIndex = {cache_index};')
+                lines.append(f'                    reference = new EpsgCoordinateReferenceRecord({ref_record[0]}, (EpsgCoordinateSystemKind){ref_record[1]}, {ref_record[2]});')
+                lines.append('                    return true;')
+            lines.append('                default:')
+            lines.append('                    cacheIndex = -1;')
+            lines.append('                    reference = default;')
+            lines.append('                    return false;')
+            lines.append('            }')
+            lines.append('        }')
+            lines.append('')
+
+    def emit_explicit_operation_switch_factories(lines, values):
+        buckets = {}
+        for value in values:
+            bucket = value[0] // 1000
+            buckets.setdefault(bucket, []).append(value)
+
+        lines.append('        internal static bool TryGetExplicitOperationParameters(int operationCode, out EpsgExplicitOperationRecord parameters)')
+        lines.append('        {')
+        lines.append('            switch (operationCode / 1000)')
+        lines.append('            {')
+        for bucket in sorted(buckets):
+            lines.append(f'                case {bucket}:')
+            lines.append(f'                    return TryGetExplicitOperationParametersBucket{bucket}(operationCode, out parameters);')
+        lines.append('                default:')
+        lines.append('                    parameters = default;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+        for bucket in sorted(buckets):
+            lines.append(f'        private static bool TryGetExplicitOperationParametersBucket{bucket}(int operationCode, out EpsgExplicitOperationRecord parameters)')
+            lines.append('        {')
+            lines.append('            switch (operationCode)')
+            lines.append('            {')
+            for explicit_record in buckets[bucket]:
+                lines.append(f'                case {explicit_record[0]}:')
+                lines.append(f'                    parameters = new EpsgExplicitOperationRecord({explicit_record[0]}, {repr(explicit_record[1])}d, {repr(explicit_record[2])}d, {repr(explicit_record[3])}d, {repr(explicit_record[4])}d, {repr(explicit_record[5])}d, {repr(explicit_record[6])}d, {repr(explicit_record[7])}d);')
+                lines.append('                    return true;')
+            lines.append('                default:')
+            lines.append('                    parameters = default;')
+            lines.append('                    return false;')
+            lines.append('            }')
+            lines.append('        }')
+            lines.append('')
+
     fmt_geographic_crs = lambda value: f"{value[0]}, \"{esc(value[1])}\", {value[2]}, {value[3]}"
     fmt_geocentric_crs = lambda value: f"{value[0]}, \"{esc(value[1])}\", {value[2]}, {value[3]}"
     fmt_projected_crs = lambda value: f"{value[0]}, \"{esc(value[1])}\", {value[2]}, {value[3]}, {value[4]}"
@@ -1685,11 +1796,13 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     write_generated_file(types_path, types_lines)
 
     core_lines = create_file_lines()
-    begin_catalog_partial(core_lines)
+    begin_static_class(core_lines, 'EpsgGeneratedCatalog', partial=True)
     core_lines.append(f'        internal const string SourceArchive = "{esc(zip_name)}";')
     core_lines.append(f'        internal const int CoordinateReferenceCount = {len(catalog["ref_records"])};')
-    core_lines.append(f'        private static readonly int[] CoordinateSridByCacheIndex = new int[] {{ {", ".join(str(ref_record[0]) for ref_record in catalog["ref_records"])} }};')
-    core_lines.append('')
+    emit_wrapped_int_array(
+        core_lines,
+        '        private static readonly int[] CoordinateSridByCacheIndex = new int[]',
+        [ref_record[0] for ref_record in catalog['ref_records']])
 
     emit_switch_factory(core_lines, 'TryGetGeographicCrs', 'EpsgGeographicCrsRecord', catalog['geographic_records'], fmt_geographic_crs)
     emit_switch_factory(core_lines, 'TryGetGeocentricCrs', 'EpsgGeocentricCrsRecord', catalog['geocentric_records'], fmt_geocentric_crs)
@@ -1702,23 +1815,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     emit_array(core_lines, 'PrimeMeridians', 'EpsgPrimeMeridianRecord', catalog['prime_meridian_records'], lambda value: f"{value[0]}, \"{esc(value[1])}\", {repr(value[2])}d, {value[3]}")
     emit_array(core_lines, 'GeodeticDatums', 'EpsgGeodeticDatumRecord', catalog['geodetic_datum_records'], lambda value: f"{value[0]}, \"{esc(value[1])}\", {value[2]}, {value[3]}")
     emit_array(core_lines, 'VerticalDatums', 'EpsgVerticalDatumRecord', catalog['vertical_datum_records'], lambda value: f"{value[0]}, \"{esc(value[1])}\"")
-
-    core_lines.append('        internal static bool TryGetCoordinateReference(int srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex)')
-    core_lines.append('        {')
-    core_lines.append('            switch (srid)')
-    core_lines.append('            {')
-    for index, ref_record in enumerate(catalog['ref_records']):
-        core_lines.append(f'                case {ref_record[0]}:')
-        core_lines.append(f'                    cacheIndex = {index};')
-        core_lines.append(f'                    reference = new EpsgCoordinateReferenceRecord({ref_record[0]}, (EpsgCoordinateSystemKind){ref_record[1]}, {ref_record[2]});')
-        core_lines.append('                    return true;')
-    core_lines.append('                default:')
-    core_lines.append('                    cacheIndex = -1;')
-    core_lines.append('                    reference = default;')
-    core_lines.append('                    return false;')
-    core_lines.append('            }')
-    core_lines.append('        }')
-    core_lines.append('')
+    emit_coordinate_reference_switch_factory(core_lines, catalog['ref_records'])
     core_lines.append('        internal static bool TryGetCoordinateSridByCacheIndex(int cacheIndex, out int srid)')
     core_lines.append('        {')
     core_lines.append('            if ((uint)cacheIndex < (uint)CoordinateSridByCacheIndex.Length)')
@@ -1730,40 +1827,28 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     core_lines.append('            srid = -1;')
     core_lines.append('            return false;')
     core_lines.append('        }')
-    end_catalog_partial(core_lines)
+    end_static_class(core_lines)
     write_generated_file(output_path, core_lines)
 
     projected_lines = create_file_lines()
-    begin_catalog_partial(projected_lines)
+    begin_static_class(projected_lines, 'EpsgGeneratedCatalog', partial=True)
     emit_projected_switch_factory(projected_lines, catalog['projected_records'], fmt_projected_crs)
-    end_catalog_partial(projected_lines)
+    end_static_class(projected_lines)
     write_generated_file(projected_path, projected_lines)
 
     conversions_lines = create_file_lines()
-    begin_catalog_partial(conversions_lines)
+    begin_static_class(conversions_lines, 'EpsgGeneratedCatalog', partial=True)
     emit_conversion_switch_factories(conversions_lines, catalog['conversion_records'])
-    end_catalog_partial(conversions_lines)
+    end_static_class(conversions_lines)
     write_generated_file(conversions_path, conversions_lines)
 
     operations_lines = create_file_lines()
-    begin_catalog_partial(operations_lines)
+    begin_static_class(operations_lines, 'EpsgGeneratedOperationsCatalog')
     emit_array(operations_lines, 'Operations', 'EpsgOperationRecord', operations, fmt_operation)
     emit_array(operations_lines, 'OperationParameters', 'EpsgOperationParameterRecord', operation_parameters, lambda value: f"{value[0]}, \"{esc(value[1])}\", {repr(value[2])}d")
     emit_concat_path_switch_factories(operations_lines, concat_paths)
-    operations_lines.append('        internal static bool TryGetExplicitOperationParameters(int operationCode, out EpsgExplicitOperationRecord parameters)')
-    operations_lines.append('        {')
-    operations_lines.append('            switch (operationCode)')
-    operations_lines.append('            {')
-    for explicit_record in explicit_operations:
-        operations_lines.append(f'                case {explicit_record[0]}:')
-        operations_lines.append(f'                    parameters = new EpsgExplicitOperationRecord({explicit_record[0]}, {repr(explicit_record[1])}d, {repr(explicit_record[2])}d, {repr(explicit_record[3])}d, {repr(explicit_record[4])}d, {repr(explicit_record[5])}d, {repr(explicit_record[6])}d, {repr(explicit_record[7])}d);')
-        operations_lines.append('                    return true;')
-    operations_lines.append('                default:')
-    operations_lines.append('                    parameters = default;')
-    operations_lines.append('                    return false;')
-    operations_lines.append('            }')
-    operations_lines.append('        }')
-    end_catalog_partial(operations_lines)
+    emit_explicit_operation_switch_factories(operations_lines, explicit_operations)
+    end_static_class(operations_lines)
     write_generated_file(operations_path, operations_lines)
 
 

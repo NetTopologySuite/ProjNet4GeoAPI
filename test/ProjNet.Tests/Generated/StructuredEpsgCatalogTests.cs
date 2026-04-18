@@ -97,6 +97,27 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
+    /// Verifies that operation arrays and explicit-operation lookup moved to <c>EpsgGeneratedOperationsCatalog</c> rather than living on <c>EpsgGeneratedCatalog</c>.
+    /// </summary>
+    [Fact]
+    public void GeneratedOperationArtifactsShouldLiveInDedicatedOperationsCatalog()
+    {
+        FieldInfo? catalogOperationsField = typeof(EpsgGeneratedCatalog).GetField("Operations", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? catalogOperationParametersField = typeof(EpsgGeneratedCatalog).GetField("OperationParameters", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        MethodInfo? catalogExplicitMethod = typeof(EpsgGeneratedCatalog).GetMethod("TryGetExplicitOperationParameters", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? dedicatedOperationsField = typeof(EpsgGeneratedOperationsCatalog).GetField("Operations", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? dedicatedOperationParametersField = typeof(EpsgGeneratedOperationsCatalog).GetField("OperationParameters", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        MethodInfo? dedicatedExplicitMethod = typeof(EpsgGeneratedOperationsCatalog).GetMethod("TryGetExplicitOperationParameters", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+        Assert.Null(catalogOperationsField);
+        Assert.Null(catalogOperationParametersField);
+        Assert.Null(catalogExplicitMethod);
+        Assert.NotNull(dedicatedOperationsField);
+        Assert.NotNull(dedicatedOperationParametersField);
+        Assert.NotNull(dedicatedExplicitMethod);
+    }
+
+    /// <summary>
     /// Verifies that <c>EpsgGeneratedCatalog</c> resolves the projected CRS for SRID 3857 through a switch-based conversion lookup and that all associated conversion parameters are present and named.
     /// </summary>
     [Fact]
@@ -159,12 +180,12 @@ public class StructuredEpsgCatalogTests
     [Fact]
     public void GeneratedCatalogShouldExposeExplicitOperationFastPath()
     {
-        EpsgOperationRecord explicitOperation = EpsgGeneratedCatalog.Operations.First(record =>
+        EpsgOperationRecord explicitOperation = EpsgGeneratedOperationsCatalog.Operations.First(record =>
             record.MethodName.Contains("Geocentric translations", StringComparison.OrdinalIgnoreCase)
             || record.MethodName.Contains("Position Vector transformation", StringComparison.OrdinalIgnoreCase)
             || record.MethodName.Contains("Coordinate Frame rotation", StringComparison.OrdinalIgnoreCase));
 
-        bool found = EpsgGeneratedCatalog.TryGetExplicitOperationParameters(explicitOperation.OperationCode, out EpsgExplicitOperationRecord parameters);
+        bool found = EpsgGeneratedOperationsCatalog.TryGetExplicitOperationParameters(explicitOperation.OperationCode, out EpsgExplicitOperationRecord parameters);
 
         Assert.True(found);
         Assert.Equal(explicitOperation.OperationCode, parameters.OperationCode);
@@ -174,12 +195,23 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
+    /// Verifies that concatenated operations do not carry a synthetic method name from their first sub-step.
+    /// </summary>
+    [Fact]
+    public void GeneratedOperationsCatalogShouldLeaveConcatenatedMethodNamesEmpty()
+    {
+        EpsgOperationRecord concatenatedOperation = EpsgGeneratedOperationsCatalog.Operations.First(record => record.OperationType == EpsgOperationType.ConcatenatedOperation);
+
+        Assert.True(string.IsNullOrEmpty(concatenatedOperation.MethodName));
+    }
+
+    /// <summary>
     /// Verifies that <c>TryGetExplicitOperationParameters</c> returns <see langword="false"/> for an unknown operation code.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldReturnFalseForUnknownExplicitOperationCode()
     {
-        bool found = EpsgGeneratedCatalog.TryGetExplicitOperationParameters(-1, out _);
+        bool found = EpsgGeneratedOperationsCatalog.TryGetExplicitOperationParameters(-1, out _);
         Assert.False(found);
     }
 }

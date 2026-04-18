@@ -275,7 +275,7 @@ public partial class CoordinateTransformationFactory
 
         try
         {
-            if (!EpsgGeneratedCatalog.TryGetConcatenatedOperationStepCount(operation.OperationCode, out int stepCount)
+            if (!EpsgGeneratedOperationsCatalog.TryGetConcatenatedOperationStepCount(operation.OperationCode, out int stepCount)
                 || stepCount <= 0
                 || !TryResolveCatalogCoordinateSystem(operation.SourceSrid, out CoordinateSystem? currentCoordinateSystem))
             {
@@ -286,7 +286,7 @@ public partial class CoordinateTransformationFactory
             var concatenatedTransform = new ConcatenatedTransform();
             for (int stepIndex = 0; stepIndex < stepCount; stepIndex++)
             {
-                if (!EpsgGeneratedCatalog.TryGetConcatenatedOperationStep(operation.OperationCode, stepIndex, out int stepOperationCode)
+                if (!EpsgGeneratedOperationsCatalog.TryGetConcatenatedOperationStep(operation.OperationCode, stepIndex, out int stepOperationCode)
                     || !TryGetDirectOperationDefinition(stepOperationCode, out CoordinateOperationDefinition? stepOperation)
                     || !TryResolveCatalogCoordinateSystem(stepOperation.SourceSrid, out CoordinateSystem? stepSource)
                     || !TryResolveCatalogCoordinateSystem(stepOperation.TargetSrid, out CoordinateSystem? stepTarget)
@@ -704,7 +704,7 @@ public partial class CoordinateTransformationFactory
             return false;
         }
 
-        if (!EpsgGeneratedCatalog.TryGetExplicitOperationParameters(operation.OperationCode, out EpsgExplicitOperationRecord operationParameters))
+        if (!EpsgGeneratedOperationsCatalog.TryGetExplicitOperationParameters(operation.OperationCode, out EpsgExplicitOperationRecord operationParameters))
         {
             return false;
         }
@@ -835,7 +835,7 @@ public partial class CoordinateTransformationFactory
     {
         var parametersByOperation = new Dictionary<int, Dictionary<string, double>>();
 
-        foreach (EpsgOperationParameterRecord parameter in EpsgGeneratedCatalog.OperationParameters)
+        foreach (EpsgOperationParameterRecord parameter in EpsgGeneratedOperationsCatalog.OperationParameters)
         {
             if (!parametersByOperation.TryGetValue(parameter.OperationCode, out Dictionary<string, double>? parameters))
             {

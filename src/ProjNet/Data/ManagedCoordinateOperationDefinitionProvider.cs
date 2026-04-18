@@ -17,7 +17,7 @@ internal sealed class ManagedCoordinateOperationDefinitionProvider : ICoordinate
     /// <returns>A sequence of <see cref="CoordinateOperationDefinition"/> instances from the EPSG catalog.</returns>
     public IEnumerable<CoordinateOperationDefinition> GetDefinitions()
     {
-        EpsgOperationRecord[] records = EpsgGeneratedCatalog.Operations;
+        EpsgOperationRecord[] records = EpsgGeneratedOperationsCatalog.Operations;
 
         for (int i = 0; i < records.Length; i++)
         {

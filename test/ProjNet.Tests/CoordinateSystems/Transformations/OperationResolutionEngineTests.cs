@@ -670,7 +670,7 @@ public class OperationResolutionEngineTests
 
     private static Dictionary<string, double> GetOperationParameters(int operationCode)
     {
-        return EpsgGeneratedCatalog.OperationParameters
+        return EpsgGeneratedOperationsCatalog.OperationParameters
             .Where(parameter => parameter.OperationCode == operationCode)
             .ToDictionary(parameter => parameter.Name, parameter => parameter.Value, StringComparer.Ordinal);
     }
