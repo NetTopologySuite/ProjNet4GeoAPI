@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNet.Tests;
+namespace ProjNet.Tests.CoordinateSystems.Transformations;
 
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNet.Tests;
+namespace ProjNet.Tests.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ public class OperationResolutionEngineTests
     public void CreateFromCoordinateSystemsWithEquivalentGeographicCoordinateSystemsUsesIdentityTransform()
     {
         GeographicCoordinateSystem source = GeographicCoordinateSystem.WGS84;
-        GeographicCoordinateSystem target = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, source.WKT);
+        GeographicCoordinateSystem target = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, source.WKT);
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform(GeographicSamplePoint);
 
@@ -302,14 +302,14 @@ public class OperationResolutionEngineTests
             ProjectedCoordinateSystem targetTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.TargetProjectedSrid));
             ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithBaseGeographicAuthority(
                 WithAuthority(
-                    ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT),
+                    CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT),
                     string.Empty,
                     -1),
                 "EPSG",
                 candidate.operation.SourceSrid);
             ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithBaseGeographicAuthority(
                 WithAuthority(
-                    ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT),
+                    CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT),
                     string.Empty,
                     -1),
                 "EPSG",

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNet.Tests;
+namespace ProjNet.Tests.CoordinateSystems.Transformations;
 
 using System;
 using System.Reflection;
