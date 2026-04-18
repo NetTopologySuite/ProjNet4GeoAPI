@@ -8,6 +8,7 @@ using System;
 using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Tests.IO.CoordinateSystems;
 using Xunit;
 
 /// <summary>
@@ -23,11 +24,6 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     private string wkt2236 =
         """
         PROJCS["NAD83 / Florida East (ftUS)", GEOGCS [ "NAD83", DATUM ["North American Datum 1983 (EPSG ID 6269)", SPHEROID ["GRS 1980 (EPSG ID 7019)", 6378137, 298.257222101]], PRIMEM [ "Greenwich", 0.000000 ], UNIT ["Decimal Degree", 0.01745329251994328]], PROJECTION ["SPCS83 Florida East zone (US Survey feet) (EPSG OP 15318)"], PARAMETER ["Latitude_Of_Origin", 24.33333333333333333333333333333333333333], PARAMETER ["Central_Meridian", -80.9999999999999999999999999999999999999], PARAMETER ["Scale_Factor", 0.999941177], PARAMETER ["False_Easting", 656166.6669999999999999999999999999999999], PARAMETER ["False_Northing", 0], UNIT ["U.S. Foot", 0.3048006096012192024384048768097536195072]]
-        """;
-
-    private string wkt8307 =
-        """
-        GEOGCS [ "WGS 84", DATUM ["World Geodetic System 1984 (EPSG ID 6326)", SPHEROID ["WGS 84 (EPSG ID 7030)", 6378137, 298.257223563]], PRIMEM [ "Greenwich", 0.000000 ], UNIT ["Decimal Degree", 0.01745329251994328]]
         """;
 
     /// <summary>
@@ -46,7 +42,7 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     public void TestNad83ToWGS84()
     {
         CoordinateSystem src = this.RequireCoordinateSystem(this.wkt2236);
-        CoordinateSystem tgt = this.RequireCoordinateSystem(this.wkt8307);
+        CoordinateSystem tgt = this.RequireCoordinateSystem(this.GetEpsgWkt(4326));
 
         ProjNet.CoordinateSystems.Projections.ProjectionsRegistry.Register(
             "SPCS83 Florida East zone (US Survey feet) (EPSG OP 15318)",
@@ -103,17 +99,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     [Fact]
     public void Test25832To3857()
     {
-        const string wkt1 =
-            """
-            PROJCS["ETRS89 / UTM zone 32N",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","25832"]]
-            """;
-
-        CoordinateSystem cs1 = this.RequireCoordinateSystem(wkt1), cs2 = null!;
-        const string wkt2 =
-            """
-            PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",                  SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["latitude_of_origin", 0],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs"],AUTHORITY["EPSG","3857"]]
-            """;
-        cs2 = this.RequireCoordinateSystem(wkt2);
+        CoordinateSystem cs1 = this.RequireCoordinateSystem(this.GetEpsgWkt(25832));
+        CoordinateSystem cs2 = this.RequireCoordinateSystem(this.GetEpsgWkt(3857));
 
         _ = this.AssertTransformationCreated(cs1, cs2);
         _ = this.AssertTransformationCreated(cs2, cs1);
@@ -128,13 +115,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     [Fact]
     public void TestLaea()
     {
-        const string Epsg3035 =
-            """
-            PROJCS["ETRS89 / ETRS-LAEA",GEOGCS["ETRS89",DATUM["European_Terrestrial_Reference_System_1989",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],AUTHORITY["EPSG","6258"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4258"]],PROJECTION["Lambert_Azimuthal_Equal_Area"],PARAMETER["latitude_of_center",52],PARAMETER["longitude_of_center",10],PARAMETER["false_easting",4321000],PARAMETER["false_northing",3210000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],AUTHORITY["EPSG","3035"]]
-            """;
-
         GeographicCoordinateSystem csSrc = GeographicCoordinateSystem.WGS84;
-        CoordinateSystem csTgt = this.RequireCoordinateSystem(Epsg3035);
+        CoordinateSystem csTgt = this.RequireCoordinateSystem(this.GetEpsgWkt(3035));
 
         ICoordinateTransformation ct = this.CreateTransformation(csSrc, csTgt);
 
@@ -153,4 +135,7 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
         Type? res = asm.GetType(typeName);
         return Assert.IsType<Type>(res, exactMatch: false);
     }
+
+    private string GetEpsgWkt(int srid)
+        => EpsgArchiveWktFixtureSource.GetFixture(srid).Wkt;
 }
