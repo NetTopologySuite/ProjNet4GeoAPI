@@ -7,25 +7,101 @@ namespace ProjNet.Tests;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using ProjNet.Data;
 using ProjNet.Data.Generated;
+using ProjNet.Tests.IO.CoordinateSystems;
 using Xunit;
 
 /// <summary>
-/// Verifies semantic equivalence between generated EPSG WKT and committed fixtures.
+/// Verifies semantic equivalence between generated EPSG WKT and representative fixtures sourced from the shared EPSG archive.
 /// </summary>
 public class EpsgWktEquivalenceTheoryTests
 {
-    private const string FixtureRelativePath = "Generated/epsg-wkt-equivalence-fixture.json";
+    private static readonly int[] Geographic2dSrids =
+    [
+        4121,
+        4230,
+        4258,
+        4267,
+        4269,
+        4277,
+        4283,
+        4314,
+        4326,
+        4807,
+    ];
+
+    private static readonly int[] ProjectedSrids =
+    [
+        2193,
+        27700,
+        3031,
+        3035,
+        3413,
+        3857,
+        5514,
+        32632,
+        32633,
+        32733,
+    ];
+
+    private static readonly int[] GeocentricSrids =
+    [
+        3822,
+        3887,
+        4039,
+        4079,
+        4479,
+        4481,
+        4896,
+        4915,
+        4936,
+        4978,
+    ];
+
+    private static readonly int[] VerticalSrids =
+    [
+        3855,
+        3900,
+        4440,
+        5608,
+        5701,
+        5714,
+        5739,
+        5861,
+        10150,
+        10190,
+    ];
+
+    private static readonly int[] CompoundSrids =
+    [
+        3902,
+        3903,
+        5318,
+        7405,
+        7415,
+        7956,
+        8801,
+        9289,
+        9518,
+        9527,
+    ];
+
+    private static readonly int[] RepresentativeSrids =
+    [
+        .. Geographic2dSrids,
+        .. ProjectedSrids,
+        .. GeocentricSrids,
+        .. VerticalSrids,
+        .. CompoundSrids,
+    ];
+
     private static readonly Regex SrsIdRegex = new("(?:AUTHORITY|ID)\\[\"EPSG\",\\s*\"?(?<id>\\d+)\"?\\]", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
     private static readonly Regex EllipsoidRegex = new("ELLIPSOID\\[\"[^\"]+\",\\s*(?<semiMajor>[-+0-9.Ee]+),\\s*(?<inverseFlattening>[-+0-9.Ee]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
     private static readonly Regex MethodRegex = new("(?:PROJECTION|METHOD)\\[\"(?<name>[^\"]+)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
     private static readonly Regex ParameterRegex = new("PARAMETER\\[\"(?<name>[^\"]+)\",\\s*(?<value>[-+0-9.Ee]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
-    private static readonly Lazy<IReadOnlyList<EpsgFixtureRow>> FixtureRows = new(LoadFixtureRows);
 
     private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
         new ManagedCoordinateSystemDefinitionProvider()
@@ -34,29 +110,24 @@ public class EpsgWktEquivalenceTheoryTests
             .ToDictionary(group => group.Key, group => group.Last().Wkt));
 
     /// <summary>
-    /// Enumerates fixture rows used by the WKT equivalence theory.
+    /// Enumerates representative EPSG archive fixture rows used by the WKT equivalence theory.
     /// </summary>
     /// <returns>SRID/WKT row pairs.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> EpsgFixtureRows()
-    {
-        foreach (EpsgFixtureRow row in FixtureRows.Value)
-        {
-            yield return new TheoryDataRow<int, string>(row.Srid, row.Wkt);
-        }
-    }
+        => EpsgArchiveWktFixtureSource.GetTheoryDataRows(RepresentativeSrids);
 
     /// <summary>
-    /// Verifies that the committed EPSG WKT fixture covers at least 50 representative SRIDs with 10 examples per supported CRS kind.
+    /// Verifies that the representative EPSG archive fixtures cover at least 50 representative SRIDs with 10 examples per supported CRS kind.
     /// </summary>
     [Fact]
     public void EpsgFixtureShouldCoverFiftyRepresentativeCoordinateSystemsAcrossAllKinds()
     {
-        IReadOnlyList<EpsgFixtureRow> rows = FixtureRows.Value;
-        Assert.True(rows.Count >= 50, $"Expected at least 50 EPSG WKT fixture rows, but found {rows.Count}.");
-        Assert.Equal(rows.Count, rows.Select(row => row.Srid).Distinct().Count());
+        int[] srids = RepresentativeSrids;
+        Assert.True(srids.Length >= 50, $"Expected at least 50 EPSG WKT fixture rows, but found {srids.Length}.");
+        Assert.Equal(srids.Length, srids.Distinct().Count());
 
-        var counts = rows
-            .GroupBy(row => GetCoordinateSystemKind(row.Srid))
+        var counts = srids
+            .GroupBy(GetCoordinateSystemKind)
             .ToDictionary(group => group.Key, group => group.Count());
 
         Assert.Equal(10, GetKindCount(counts, EpsgCoordinateSystemKind.Geographic2D));
@@ -67,13 +138,13 @@ public class EpsgWktEquivalenceTheoryTests
     }
 
     /// <summary>
-    /// Verifies that generated catalog WKT is equivalent to the committed fixture for a given SRID.
+    /// Verifies that generated catalog WKT is equivalent to the representative EPSG archive fixture for a given SRID.
     /// </summary>
     /// <param name="srid">EPSG SRID.</param>
     /// <param name="expectedWkt">Expected WKT from fixture.</param>
     [Theory]
     [MemberData(nameof(EpsgFixtureRows))]
-    public void GeneratedCatalogWktShouldBeEquivalentToCommittedEpsgFixture(int srid, string expectedWkt)
+    public void GeneratedCatalogWktShouldBeEquivalentToRepresentativeEpsgArchiveFixture(int srid, string expectedWkt)
     {
         Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out string? generatedWkt), $"SRID {srid} not found in managed EPSG catalog.");
         Assert.True(AreEquivalent(expectedWkt, generatedWkt, srid), $"WKT mismatch for SRID {srid}.");
@@ -290,18 +361,6 @@ public class EpsgWktEquivalenceTheoryTests
         return Math.Abs(left - right) <= 1e-9;
     }
 
-    private static IReadOnlyList<EpsgFixtureRow> LoadFixtureRows()
-    {
-        string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
-        using var document = JsonDocument.Parse(File.ReadAllText(fixturePath));
-
-        return [.. document.RootElement
-            .EnumerateArray()
-            .Select(item => new EpsgFixtureRow(
-                item.GetProperty("srid").GetInt32(),
-                item.GetProperty("wkt").GetString() ?? string.Empty))];
-    }
-
     private static EpsgCoordinateSystemKind GetCoordinateSystemKind(int srid)
     {
         Assert.True(EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out EpsgCoordinateReferenceRecord reference, out _), $"SRID {srid} not found in managed EPSG catalog.");
@@ -312,6 +371,4 @@ public class EpsgWktEquivalenceTheoryTests
     {
         return counts.TryGetValue(kind, out int count) ? count : 0;
     }
-
-    private readonly record struct EpsgFixtureRow(int Srid, string Wkt);
 }
