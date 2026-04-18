@@ -152,23 +152,19 @@ public class CoordinateSystemWktReaderWkt2Tests
             .ToDictionary(group => group.Key, group => group.Last().Wkt));
 
     /// <summary>
-    /// Provides WKT2 geodetic CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
+    /// Provides representative EPSG-backed WKT2 geodetic CRS examples.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2Rows()
-    {
-        return
-        [
-            new TheoryDataRow<int, string>(4230, """GEOGCRS["ED50",DATUM["European Datum 1950",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6230]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4230]]"""),
-            new TheoryDataRow<int, string>(4267, """GEOGCRS["NAD27",DATUM["North American Datum 1927",ELLIPSOID["Clarke 1866",6378206.4,294.978698213901,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7008]],ID["EPSG",6267]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4267]]"""),
-            new TheoryDataRow<int, string>(4277, """GEOGCRS["OSGB36",DATUM["Ordnance Survey of Great Britain 1936",ELLIPSOID["Airy 1830",6377563.396,299.3249646,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7001]],ID["EPSG",6277]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4277]]"""),
-            new TheoryDataRow<int, string>(4312, """GEOGCRS["MGI",DATUM["Militar-Geographische Institut",ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7004]],ID["EPSG",6312]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4312]]"""),
-            new TheoryDataRow<int, string>(4314, """GEOGCRS["DHDN",DATUM["Deutsches Hauptdreiecksnetz",ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7004]],ID["EPSG",6314]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4314]]"""),
-            new TheoryDataRow<int, string>(4322, """GEOGCRS["WGS 72",DYNAMIC[FRAMEEPOCH[1972.0]],DATUM["World Geodetic System 1972",ELLIPSOID["WGS 72",6378135,298.26,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7043]],ID["EPSG",6322]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4322]]"""),
-            new TheoryDataRow<int, string>(10176, """GEODCRS["IGS20",DYNAMIC[FRAMEEPOCH[2015.0]],DATUM["IGS20",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1333]],CS[Cartesian,3,ID["EPSG",6500]],AXIS["Geocentric X (X)",geocentricX,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Y (Y)",geocentricY,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Z (Z)",geocentricZ,LENGTHUNIT["metre",1,ID["EPSG",9001]]],ID["EPSG",10176]]"""),
-            new TheoryDataRow<int, string>(10412, """GEODCRS["NAD83(CSRS)v8",DATUM["North American Datum of 1983 (CSRS) version 8",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ANCHOREPOCH[2010],ID["EPSG",1365]],CS[Cartesian,3,ID["EPSG",6500]],AXIS["Geocentric X (X)",geocentricX,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Y (Y)",geocentricY,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Z (Z)",geocentricZ,LENGTHUNIT["metre",1,ID["EPSG",9001]]],DEFININGTRANSFORMATION["ITRF2020 to NAD83(CSRS)v8 (1)",ID["EPSG",10415]],ID["EPSG",10412]]"""),
-        ];
-    }
+        => EpsgArchiveWktFixtureSource.GetTheoryDataRows(
+            4230,
+            4267,
+            4277,
+            4312,
+            4314,
+            4322,
+            10176,
+            10412);
 
     /// <summary>
     /// Provides representative top-level ellipsoidal 3D WKT2 geographic CRS examples from the PostGIS failure set.
@@ -184,60 +180,37 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Provides datum-backed WKT2 projected CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
+    /// Provides representative EPSG-backed datum-backed WKT2 projected CRS examples.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2ProjectedRows()
-    {
-        return
-        [
-            new TheoryDataRow<int, string>(27700, """PROJCRS["OSGB36 / British National Grid",BASEGEOGCRS["OSGB36",DATUM["Ordnance Survey of Great Britain 1936",ELLIPSOID["Airy 1830",6377563.396,299.3249646,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7001]],ID["EPSG",6277]],ID["EPSG",4277]],CONVERSION["British National Grid",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",49,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",-2,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996012717,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",400000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",-100000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",19916]],CS[Cartesian,2,ID["EPSG",4499]],AXIS["Easting (E)",east],AXIS["Northing (N)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",27700]]"""),
-            new TheoryDataRow<int, string>(31370, """PROJCRS["BD72 / Belgian Lambert 72",BASEGEOGCRS["BD72",DATUM["Reseau National Belge 1972",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6313]],ID["EPSG",4313]],CONVERSION["Belgian Lambert 72",METHOD["Lambert Conic Conformal (2SP)",ID["EPSG",9802]],PARAMETER["Latitude of false origin",90,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8821]],PARAMETER["Longitude of false origin",4.36748666666694,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8822]],PARAMETER["Latitude of 1st standard parallel",51.1666672333336,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8823]],PARAMETER["Latitude of 2nd standard parallel",49.8333339000003,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8824]],PARAMETER["Easting at false origin",150000.013,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8826]],PARAMETER["Northing at false origin",5400088.438,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8827]],ID["EPSG",19961]],CS[Cartesian,2,ID["EPSG",4499]],AXIS["Easting (X)",east],AXIS["Northing (Y)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",31370]]"""),
-            new TheoryDataRow<int, string>(2169, """PROJCRS["LUREF / Luxembourg TM",BASEGEOGCRS["LUREF",DATUM["Luxembourg Reference Frame",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6181]],ID["EPSG",4181]],CONVERSION["Luxembourg TM",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",49.8333333333336,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",6.16666666666694,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",80000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",100000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",19966]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",2169]]"""),
-            new TheoryDataRow<int, string>(23032, """PROJCRS["ED50 / UTM zone 32N",BASEGEOGCRS["ED50",DATUM["European Datum 1950",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6230]],ID["EPSG",4230]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",16032]],CS[Cartesian,2,ID["EPSG",4400]],AXIS["Easting (E)",east],AXIS["Northing (N)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",23032]]"""),
-            new TheoryDataRow<int, string>(31467, """PROJCRS["DHDN / 3-degree Gauss-Kruger zone 3",BASEGEOGCRS["DHDN",DATUM["Deutsches Hauptdreiecksnetz",ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7004]],ID["EPSG",6314]],ID["EPSG",4314]],CONVERSION["3-degree Gauss-Kruger zone 3",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",3500000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",16263]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",31467]]"""),
-        ];
-    }
+        => EpsgArchiveWktFixtureSource.GetTheoryDataRows(
+            27700,
+            31370,
+            2169,
+            23032,
+            31467);
 
     /// <summary>
-    /// Provides representative top-level projected 3D WKT2 CRS examples from <c>EPSG-v12_054-WKT.Zip</c>.
+    /// Provides representative EPSG-backed top-level projected 3D WKT2 CRS examples.
     /// </summary>
     /// <returns>SRID/WKT pairs that should now parse successfully as operational compounds.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2Projected3dRows()
-    {
-        return
-        [
-            new TheoryDataRow<int, string>(9895, """PROJCRS["LUREF / Luxembourg TM (3D)",BASEGEOGCRS["LUREF",DATUM["Luxembourg Reference Frame",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6181]],ID["EPSG",9893]],CONVERSION["Luxembourg TM (3D)",METHOD["Transverse Mercator 3D",ID["EPSG",1111]],PARAMETER["Latitude of natural origin",49.8333333333336,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",6.16666666666694,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",80000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",100000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",9894]],CS[Cartesian,3,ID["EPSG",1046]],AXIS["Northing (X)",north,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Easting (Y)",east,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Ellipsoidal height (h)",up,LENGTHUNIT["metre",1,ID["EPSG",9001]]],ID["EPSG",9895]]"""),
-        ];
-    }
+        => EpsgArchiveWktFixtureSource.GetTheoryDataRows(9895);
 
     /// <summary>
-    /// Provides WKT2 vertical CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
+    /// Provides representative EPSG-backed WKT2 vertical CRS examples.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2VerticalRows()
-    {
-        return
-        [
-            new TheoryDataRow<int, string>(10150, """VERTCRS["MSL UK & Ireland VORF08 depth",VDATUM["Mean Sea Level UK & Ireland VORF08",ID["EPSG",1330]],CS[vertical,1,ID["EPSG",6498]],AXIS["Depth (D)",down],LENGTHUNIT["metre",1,ID["EPSG",9001]],GEOIDMODEL["ETRS89 to MSL UK & Ireland VORF08 depth (1)",ID["EPSG",10154]],ID["EPSG",10150]]"""),
-            new TheoryDataRow<int, string>(10190, """VERTCRS["NGA 2022 height",VDATUM["Nivellement General de l'Algerie 2022",ID["EPSG",1354]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",10190]]"""),
-            new TheoryDataRow<int, string>(10352, """VERTCRS["Formentera height",VDATUM["Formentera",ID["EPSG",1362]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],GEOIDMODEL["ETRS89-ESP [REGENTE] to Formentera height (1)",ID["EPSG",10358]],ID["EPSG",10352]]"""),
-        ];
-    }
+        => EpsgArchiveWktFixtureSource.GetTheoryDataRows(10150, 10190, 10352);
 
     /// <summary>
-    /// Provides datum-backed WKT2 compound CRS examples copied from <c>EPSG-v12_054-WKT.Zip</c>.
+    /// Provides representative EPSG-backed datum-backed WKT2 compound CRS examples.
     /// </summary>
     /// <returns>SRID/WKT pairs that should parse successfully.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2CompoundRows()
-    {
-        return
-        [
-            new TheoryDataRow<int, string>(10162, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS I + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS I",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone I",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",33,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",129.5,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17801]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6669]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10162]]"""),
-            new TheoryDataRow<int, string>(10163, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS II + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS II",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone II",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",33,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",131,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17802]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6670]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10163]]"""),
-            new TheoryDataRow<int, string>(10164, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS III + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS III",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone III",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",36,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",132.166666666667,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17803]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6671]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10164]]"""),
-        ];
-    }
+        => EpsgArchiveWktFixtureSource.GetTheoryDataRows(10162, 10163, 10164);
 
     /// <summary>
     /// Provides representative supported engineering CRS examples.
