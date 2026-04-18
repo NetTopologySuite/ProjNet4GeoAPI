@@ -542,7 +542,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     [Fact]
     public void CreateFromWkt_ParsesPrimeMeridianWithExplicitAngularUnit()
     {
-        const string wkt = """GEOGCRS["NTF (Paris)",DATUM["Nouvelle Triangulation Francaise (Paris)",ELLIPSOID["Clarke 1880 (IGN)",6378249.2,293.466021293627,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7011]],ID["EPSG",6807]],PRIMEM["Paris",0.040792344,ANGLEUNIT["radian",1,ID["EPSG",9101]],ID["EPSG",8903]],CS[ellipsoidal,2,ID["EPSG",6403]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["grad",0.015707963267949,ID["EPSG",9105]],ID["EPSG",4807]]""";
+        string wkt = GetArchiveWkt(4807);
 
         GeographicCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(CoordinateSystemFactory, wkt);
 
@@ -568,7 +568,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     [Fact]
     public void CreateFromWkt_ParsesProjectedCrsBasePrimeMeridianAndAngularUnit()
     {
-        const string wkt = """PROJCRS["NTF (Paris) / Lambert Nord France",BASEGEOGCRS["NTF (Paris)",DATUM["Nouvelle Triangulation Francaise (Paris)",ELLIPSOID["Clarke 1880 (IGN)",6378249.2,293.466021293627,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7011]],ID["EPSG",6807]],PRIMEM["Paris",0.040792344,ANGLEUNIT["radian",1,ID["EPSG",9101]],ID["EPSG",8903]],ID["EPSG",4807]],CONVERSION["Lambert Nord France",METHOD["Lambert Conic Conformal (1SP)",ID["EPSG",9801]],PARAMETER["Latitude of natural origin",55,ANGLEUNIT["grad",0.015707963267949,ID["EPSG",9105]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",0,ANGLEUNIT["grad",0.015707963267949,ID["EPSG",9105]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.999877341,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",600000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",200000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",18091]],CS[Cartesian,2,ID["EPSG",4499]],AXIS["Easting (X)",east],AXIS["Northing (Y)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",27561]]""";
+        string wkt = GetArchiveWkt(27561);
 
         ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
 
@@ -597,7 +597,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     [Fact]
     public void CreateFromWkt_WithDatumEnsemble_ParsesGeographicCrsAndRetainsEnsembleMetadata()
     {
-        const string wkt = """GEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)",ID["EPSG",1166]],MEMBER["World Geodetic System 1984 (G730)",ID["EPSG",1152]],MEMBER["World Geodetic System 1984 (G873)",ID["EPSG",1153]],MEMBER["World Geodetic System 1984 (G1150)",ID["EPSG",1154]],MEMBER["World Geodetic System 1984 (G1674)",ID["EPSG",1155]],MEMBER["World Geodetic System 1984 (G1762)",ID["EPSG",1156]],MEMBER["World Geodetic System 1984 (G2139)",ID["EPSG",1309]],MEMBER["World Geodetic System 1984 (G2296)",ID["EPSG",1383]],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7030]],ENSEMBLEACCURACY[2],ID["EPSG",6326]],CS[ellipsoidal,3,ID["EPSG",6423]],AXIS["Geodetic latitude (Lat)",north,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]]],AXIS["Geodetic longitude (Lon)",east,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]]],AXIS["Ellipsoidal height (h)",up,LENGTHUNIT["metre",1,ID["EPSG",9001]]],ID["EPSG",4979]]""";
+        string wkt = GetArchiveWkt(4979);
 
         CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, wkt);
         GeographicCoordinateSystem horizontal = Assert.IsType<GeographicCoordinateSystem>(parsed.HeadCoordinateSystem);
@@ -618,7 +618,7 @@ public class CoordinateSystemWktReaderWkt2Tests
     [Fact]
     public void CreateFromWkt_WithEnsembleBasedProjCrs_ParsesProjectedCoordinateSystemAndRetainsBaseEnsembleMetadata()
     {
-        const string wkt = """PROJCRS["WGS 84 / UTM zone 32N",BASEGEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)",ID["EPSG",1166]],MEMBER["World Geodetic System 1984 (G730)",ID["EPSG",1152]],MEMBER["World Geodetic System 1984 (G873)",ID["EPSG",1153]],MEMBER["World Geodetic System 1984 (G1150)",ID["EPSG",1154]],MEMBER["World Geodetic System 1984 (G1674)",ID["EPSG",1155]],MEMBER["World Geodetic System 1984 (G1762)",ID["EPSG",1156]],MEMBER["World Geodetic System 1984 (G2139)",ID["EPSG",1309]],MEMBER["World Geodetic System 1984 (G2296)",ID["EPSG",1383]],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7030]],ENSEMBLEACCURACY[2],ID["EPSG",6326]],ID["EPSG",4326]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",16032]],CS[Cartesian,2,ID["EPSG",4400]],AXIS["Easting (E)",east],AXIS["Northing (N)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",32632]]""";
+        string wkt = GetArchiveWkt(32632);
 
         ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
         DatumEnsemble ensemble = Assert.IsType<DatumEnsemble>(parsed.GeographicCoordinateSystem.HorizontalDatum.Ensemble);
@@ -1014,6 +1014,9 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out string? wkt), $"SRID {srid} not found in managed EPSG catalog.");
         return wkt ?? string.Empty;
     }
+
+    private static string GetArchiveWkt(int srid)
+        => EpsgArchiveWktFixtureSource.GetFixture(srid).Wkt;
 
     private static string CreateNestedVerticalBoundCrs(string innerParameterFileName, string outerParameterFileName)
     {
