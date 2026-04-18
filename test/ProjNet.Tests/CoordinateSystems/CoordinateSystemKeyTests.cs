@@ -135,9 +135,7 @@ public class CoordinateSystemKeyTests
 
     private static CoordinateSystemServices CreateServices()
     {
-        return new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        return CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
     }
 
     private static TestCoordinateSystemServices CreateMutableServices()
@@ -149,8 +147,8 @@ public class CoordinateSystemKeyTests
     {
         public TestCoordinateSystemServices()
             : base(
-                new CoordinateSystemFactory(),
-                new CoordinateTransformationFactory(),
+                CoordinateSystemTestHelpers.CreateCoordinateSystemFactory(),
+                CoordinateSystemTestHelpers.CreateCoordinateTransformationFactory(),
                 [])
         {
         }

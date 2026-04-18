@@ -67,7 +67,7 @@ public class GitHubIssueRegressionTests
         (double X, double Y) projectedAgain = ctFwd.Transform(source.X, source.Y);
 
         const double roundtripTolerance = 2d;
-        const double stabilityTolerance = 1e-12;
+        const double stabilityTolerance = TestTolerances.StableResult;
 
         Assert.Same(inverse1, inverse2);
 
@@ -321,9 +321,8 @@ public class GitHubIssueRegressionTests
             GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]
             """;
 
-        var coordinateSystemFactory = new CoordinateSystemFactory();
         var transformationFactory = new CoordinateTransformationFactory();
-        CoordinateSystem source = Assert.IsType<CoordinateSystem>(coordinateSystemFactory.CreateFromWkt(nad83Wkt), exactMatch: false);
+        CoordinateSystem source = CoordinateSystemTestHelpers.RequireCoordinateSystem(nad83Wkt);
 
         ICoordinateTransformation transformation = transformationFactory.CreateFromCoordinateSystems(source, GeographicCoordinateSystem.WGS84);
         (double longitude, double latitude) = transformation.MathTransform.Transform(-120.5757999d, 47.4073238d);

@@ -37,8 +37,6 @@ public class GitHubIssueWktRegressionTests
         PROJCS["Xian_1980_GK_CM_105E",GEOGCS["GCS_Xian_1980",DATUM["Xian_1980",SPHEROID["Xian_1980",6332140,398.257,AUTHORITY["EPSG","7049"]],AUTHORITY["EPSG","6610"]],PRIMEM["Greenwich",0],UNIT["degree",0.0171234925199433]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",105],PARAMETER["scale_factor",1],PARAMETER["false_easting",500000],PARAMETER["false_northing",0]]
         """;
 
-    private readonly CoordinateSystemFactory coordinateSystemFactory = new();
-
     /// <summary>
     /// Gets DATUM-level EXTENSION samples from upstream pull request #111.
     /// </summary>
@@ -61,7 +59,7 @@ public class GitHubIssueWktRegressionTests
     [MemberData(nameof(DatumExtensionCases))]
     public void DatumLevelExtensionsParseAsProjectedCoordinateSystems(string wkt, long expectedAuthorityCode)
     {
-        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, wkt);
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(wkt);
 
         Assert.Equal(expectedAuthorityCode, projected.AuthorityCode);
         Assert.Equal("Transverse_Mercator", projected.Projection.ClassName);
@@ -75,7 +73,7 @@ public class GitHubIssueWktRegressionTests
     [Fact(DisplayName = "Issue #106, PROJCS-level EXTENSION WKT parses successfully")]
     public void ProjcsLevelExtensionParsesAsProjectedCoordinateSystem()
     {
-        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, ExtensionWkt3);
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(ExtensionWkt3);
 
         Assert.Equal(3857, projected.AuthorityCode);
         Assert.Equal("Mercator_1SP", projected.Projection.ClassName);
@@ -89,7 +87,7 @@ public class GitHubIssueWktRegressionTests
     [Fact(DisplayName = "Issue #106, COMPD_CS with nested EXTENSION parses successfully")]
     public void CompoundCoordinateSystemWithExtensionParsesSuccessfully()
     {
-        CompoundCoordinateSystem compound = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(this.coordinateSystemFactory, ExtensionWkt4);
+        CompoundCoordinateSystem compound = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(ExtensionWkt4);
 
         Assert.Equal(6871, compound.AuthorityCode);
         Assert.IsType<ProjectedCoordinateSystem>(compound.HeadCoordinateSystem);
@@ -103,7 +101,7 @@ public class GitHubIssueWktRegressionTests
     [Fact(DisplayName = "Issue #65, Xian_1980 projected WKT parses successfully")]
     public void Xian1980ProjectedCoordinateSystemParsesSuccessfully()
     {
-        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, Xian1980Wkt);
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(Xian1980Wkt);
 
         Assert.Equal("Transverse_Mercator", projected.Projection.ClassName);
         Assert.Equal(6332140d, projected.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.SemiMajorAxis);

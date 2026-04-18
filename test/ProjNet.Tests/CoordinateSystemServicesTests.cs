@@ -29,9 +29,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void TestConstructor()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
 
         Assert.NotNull(css.GetCoordinateSystem(4326));
         Assert.NotNull(css.GetCoordinateSystem(3857));
@@ -43,9 +41,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void CreateTransformationBySrid_ReusesCachedTransformationInstance()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
 
         ICoordinateTransformation first = Assert.IsAssignableFrom<ICoordinateTransformation>(css.CreateTransformation(4326, 3857));
         ICoordinateTransformation second = Assert.IsAssignableFrom<ICoordinateTransformation>(css.CreateTransformation(4326, 3857));
@@ -60,9 +56,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public async Task CreateTransformationBySrid_ConcurrentCallsReturnSameCachedTransformation()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
 
         Task<ICoordinateTransformation?>[] tasks = Enumerable.Range(0, 8)
             .Select(_ => Task.Run(() => css.CreateTransformation(4326, 3857), TestContext.Current.CancellationToken))
@@ -82,9 +76,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void TestTryGetCoordinateSystemBySrid()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
 
         bool found = css.TryGetCoordinateSystem(4326, out CoordinateSystem? coordinateSystem);
         bool missing = css.TryGetCoordinateSystem(999999, out CoordinateSystem? missingCoordinateSystem);
@@ -101,9 +93,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void TestTryGetCoordinateSystemByAuthorityCode()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
 
         bool found = css.TryGetCoordinateSystem("EPSG", 3857, out CoordinateSystem? coordinateSystem);
         bool missing = css.TryGetCoordinateSystem("EPSG", -1, out CoordinateSystem? missingCoordinateSystem);
@@ -120,9 +110,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void GetCoordinateSystemByAuthorityCodeReturnsNullWhenMissing()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
 
         CoordinateSystem? missing = css.GetCoordinateSystem("EPSG", -1);
 
@@ -135,11 +123,9 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void ResolveFromCatalogReturnsCanonicalCatalogInstance()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
         CoordinateSystem catalog = Assert.IsAssignableFrom<CoordinateSystem>(css.GetCoordinateSystem(4326));
-        CoordinateSystem parsed = Assert.IsAssignableFrom<CoordinateSystem>(new CoordinateSystemFactory().CreateFromWkt(catalog.WKT));
+        CoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem(catalog.WKT);
 
         CoordinateSystem resolved = css.ResolveFromCatalog(parsed);
 
@@ -153,11 +139,9 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void TryResolveFromCatalogReturnsCanonicalCatalogInstance()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
         CoordinateSystem catalog = Assert.IsAssignableFrom<CoordinateSystem>(css.GetCoordinateSystem(3857));
-        CoordinateSystem parsed = Assert.IsAssignableFrom<CoordinateSystem>(new CoordinateSystemFactory().CreateFromWkt(catalog.WKT));
+        CoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem(catalog.WKT);
 
         bool resolved = css.TryResolveFromCatalog(parsed, out CoordinateSystem? resolvedCoordinateSystem);
 
@@ -172,9 +156,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void ResolveFromCatalogReturnsInputWhenAuthorityMetadataIsMissing()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
         CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority(string.Empty, -1);
 
         CoordinateSystem resolved = css.ResolveFromCatalog(parsed);
@@ -188,9 +170,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void ResolveFromCatalogReturnsInputWhenAuthorityCodeIsUnknown()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
         CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority("EPSG", 999999);
 
         CoordinateSystem resolved = css.ResolveFromCatalog(parsed);
@@ -204,9 +184,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void TryResolveFromCatalogReturnsFalseWhenAuthorityMetadataIsMissing()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
         CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority(string.Empty, -1);
 
         bool resolved = css.TryResolveFromCatalog(parsed, out CoordinateSystem? resolvedCoordinateSystem);
@@ -221,9 +199,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void TryResolveFromCatalogReturnsFalseWhenAuthorityCodeIsUnknown()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
         CoordinateSystem parsed = GeographicCoordinateSystem.WGS84.WithAuthority("EPSG", 999999);
 
         bool resolved = css.TryResolveFromCatalog(parsed, out CoordinateSystem? resolvedCoordinateSystem);
@@ -238,9 +214,7 @@ public class CoordinateSystemServicesTests
     [Fact]
     public void TestGetAvailableSridValues()
     {
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory());
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices();
 
         int[] srids = css.GetAvailableSridValues();
         Assert.NotNull(srids);
@@ -335,10 +309,7 @@ public class CoordinateSystemServicesTests
             Assert.True(File.Exists(csvPath), FormattableString.Invariant($"Specified file not found: {csvPath}"));
         }
 
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory(),
-            LoadCsv(csvPath));
+        CoordinateSystemServices css = CoordinateSystemTestHelpers.CreateCoordinateSystemServices(LoadCsv(csvPath));
 
         Assert.NotNull(css.GetCoordinateSystem(4326));
         Assert.NotNull(css.GetCoordinateSystem("EPSG", 4326));

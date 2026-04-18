@@ -69,9 +69,7 @@ public class ParametricCoordinateSystemTests
         ParametricCoordinateSystem original = CreateParametricCoordinateSystem();
         string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
 
-        ParametricCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<ParametricCoordinateSystem>(
-            new CoordinateSystemFactory(),
-            wkt);
+        ParametricCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<ParametricCoordinateSystem>(wkt);
 
         Assert.True(original.EqualParams(roundTripped));
         ParametricUnit unit = Assert.IsType<ParametricUnit>(roundTripped.ParametricUnit);

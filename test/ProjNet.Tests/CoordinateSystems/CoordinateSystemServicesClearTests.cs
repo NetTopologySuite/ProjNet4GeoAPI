@@ -155,8 +155,8 @@ public class CoordinateSystemServicesClearTests
     {
         public TestCoordinateSystemServices()
             : base(
-                new CoordinateSystemFactory(),
-                new CoordinateTransformationFactory(),
+                CoordinateSystemTestHelpers.CreateCoordinateSystemFactory(),
+                CoordinateSystemTestHelpers.CreateCoordinateTransformationFactory(),
                 new List<CoordinateSystemDefinition>())
         {
         }

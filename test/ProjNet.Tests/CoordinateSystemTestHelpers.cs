@@ -5,14 +5,67 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
+using ProjNet;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Data;
 using Xunit;
 
 /// <summary>
-/// Provides nullable-safe WKT parsing helpers for projection and transform tests.
+/// Provides shared coordinate-system and WKT parsing helpers for tests.
 /// </summary>
 internal static class CoordinateSystemTestHelpers
 {
+    /// <summary>
+    /// Creates a fresh coordinate-system factory for tests that need an explicit instance.
+    /// </summary>
+    /// <returns>A new coordinate-system factory.</returns>
+    internal static CoordinateSystemFactory CreateCoordinateSystemFactory()
+        => new();
+
+    /// <summary>
+    /// Creates a fresh coordinate-transformation factory for tests that need an explicit instance.
+    /// </summary>
+    /// <returns>A new coordinate-transformation factory.</returns>
+    internal static CoordinateTransformationFactory CreateCoordinateTransformationFactory()
+        => new();
+
+    /// <summary>
+    /// Creates a coordinate-system service with the default test factories.
+    /// </summary>
+    /// <returns>A new coordinate-system service.</returns>
+    internal static CoordinateSystemServices CreateCoordinateSystemServices()
+        => new(CreateCoordinateSystemFactory(), CreateCoordinateTransformationFactory());
+
+    /// <summary>
+    /// Creates a coordinate-system service with the default test factories and the supplied definitions.
+    /// </summary>
+    /// <param name="definitions">Coordinate-system definitions to load.</param>
+    /// <returns>A new coordinate-system service.</returns>
+    internal static CoordinateSystemServices CreateCoordinateSystemServices(IEnumerable<CoordinateSystemDefinition> definitions)
+    {
+        ArgumentNullException.ThrowIfNull(definitions);
+        return new CoordinateSystemServices(CreateCoordinateSystemFactory(), CreateCoordinateTransformationFactory(), definitions);
+    }
+
+    /// <summary>
+    /// Parses a coordinate system from WKT with a fresh factory and asserts that parsing succeeded.
+    /// </summary>
+    /// <param name="wkt">Well-known text to parse.</param>
+    /// <returns>The parsed coordinate system.</returns>
+    internal static CoordinateSystem RequireCoordinateSystem(string wkt)
+        => RequireCoordinateSystem(CreateCoordinateSystemFactory(), wkt);
+
+    /// <summary>
+    /// Parses a coordinate system from WKT with a fresh factory and asserts that it matches the requested type.
+    /// </summary>
+    /// <typeparam name="TCoordinateSystem">Expected coordinate system type.</typeparam>
+    /// <param name="wkt">Well-known text to parse.</param>
+    /// <returns>The parsed coordinate system cast to <typeparamref name="TCoordinateSystem"/>.</returns>
+    internal static TCoordinateSystem RequireCoordinateSystem<TCoordinateSystem>(string wkt)
+        where TCoordinateSystem : CoordinateSystem
+        => RequireCoordinateSystem<TCoordinateSystem>(CreateCoordinateSystemFactory(), wkt);
+
     /// <summary>
     /// Parses a coordinate system from WKT and asserts that parsing succeeded.
     /// </summary>

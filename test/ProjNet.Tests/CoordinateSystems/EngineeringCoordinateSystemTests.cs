@@ -74,9 +74,7 @@ public class EngineeringCoordinateSystemTests
         EngineeringCoordinateSystem original = CreateEngineeringCoordinateSystem([LinearUnit.Metre, new ParametricUnit(1d, "unity", string.Empty, -1, string.Empty, string.Empty, string.Empty)]);
         string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
 
-        EngineeringCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<EngineeringCoordinateSystem>(
-            new CoordinateSystemFactory(),
-            wkt);
+        EngineeringCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<EngineeringCoordinateSystem>(wkt);
 
         Assert.True(original.EqualParams(roundTripped));
         Assert.IsType<LinearUnit>(roundTripped.AxisUnits[0]);

@@ -71,9 +71,7 @@ public class TemporalCoordinateSystemTests
         TemporalCoordinateSystem original = CreateTemporalCoordinateSystem();
         string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
 
-        TemporalCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<TemporalCoordinateSystem>(
-            new CoordinateSystemFactory(),
-            wkt);
+        TemporalCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<TemporalCoordinateSystem>(wkt);
 
         Assert.True(original.EqualParams(roundTripped));
         TimeUnit unit = Assert.IsType<TimeUnit>(roundTripped.TimeUnit);

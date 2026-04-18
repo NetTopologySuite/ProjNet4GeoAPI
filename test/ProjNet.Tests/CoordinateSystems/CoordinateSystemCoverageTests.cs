@@ -199,9 +199,7 @@ public class CoordinateSystemCoverageTests
             "WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
         string wkt = gcs.WKT;
 
-        var parsed = Factory.CreateFromWkt(wkt) as GeocentricCoordinateSystem;
-
-        Assert.NotNull(parsed);
+        GeocentricCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeocentricCoordinateSystem>(Factory, wkt);
         Assert.True(gcs.EqualParams(parsed));
     }
 
@@ -395,9 +393,7 @@ public class CoordinateSystemCoverageTests
             "WGS84 + ODN", GeographicCoordinateSystem.WGS84, VerticalCoordinateSystem.ODN);
         string wkt = compound.WKT;
 
-        var parsed = Factory.CreateFromWkt(wkt) as CompoundCoordinateSystem;
-
-        Assert.NotNull(parsed);
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(Factory, wkt);
         Assert.True(compound.EqualParams(parsed));
     }
 
@@ -1217,8 +1213,8 @@ public class CoordinateSystemCoverageTests
     [Fact]
     public void Services_ConstructorWithFactories_IsUsable()
     {
-        var csFactory = new CoordinateSystemFactory();
-        var ctFactory = new CoordinateTransformationFactory();
+        CoordinateSystemFactory csFactory = CoordinateSystemTestHelpers.CreateCoordinateSystemFactory();
+        CoordinateTransformationFactory ctFactory = CoordinateSystemTestHelpers.CreateCoordinateTransformationFactory();
 
         var services = new CoordinateSystemServices(csFactory, ctFactory);
 
