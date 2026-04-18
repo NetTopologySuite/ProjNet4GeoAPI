@@ -5,18 +5,17 @@
 namespace ProjNet.Tests;
 
 using System;
-using System.Globalization;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Base class providing shared factory instances and helper methods for coordinate transformation tests.
+/// Base class providing shared factories, stochastic input, and transformation assertions for transform-focused tests.
 /// </summary>
-public class CoordinateTransformTestsBase
+public abstract class CoordinateTransformTestsBase
 {
-    private readonly CoordinateSystemFactory coordinateSystemFactory = new();
-    private readonly CoordinateTransformationFactory coordinateTransformationFactory = new();
+    private readonly CoordinateSystemFactory coordinateSystemFactory = CoordinateSystemTestHelpers.CreateCoordinateSystemFactory();
+    private readonly CoordinateTransformationFactory coordinateTransformationFactory = CoordinateSystemTestHelpers.CreateCoordinateTransformationFactory();
     private readonly Random random = new();
 
     /// <summary>
@@ -38,6 +37,52 @@ public class CoordinateTransformTestsBase
     /// Gets or sets a value indicating whether verbose test diagnostics are enabled.
     /// </summary>
     protected bool Verbose { get; set; }
+
+    /// <summary>
+    /// Parses a coordinate system from WKT using the shared test factory.
+    /// </summary>
+    /// <param name="wkt">Well-known text representation of the coordinate system.</param>
+    /// <returns>The parsed coordinate system.</returns>
+    protected CoordinateSystem RequireCoordinateSystem(string wkt)
+        => CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, wkt);
+
+    /// <summary>
+    /// Parses a coordinate system from WKT using the shared test factory and asserts the requested type.
+    /// </summary>
+    /// <typeparam name="TCoordinateSystem">The expected coordinate-system type.</typeparam>
+    /// <param name="wkt">Well-known text representation of the coordinate system.</param>
+    /// <returns>The parsed coordinate system.</returns>
+    protected TCoordinateSystem RequireCoordinateSystem<TCoordinateSystem>(string wkt)
+        where TCoordinateSystem : CoordinateSystem
+        => CoordinateSystemTestHelpers.RequireCoordinateSystem<TCoordinateSystem>(this.CoordinateSystemFactory, wkt);
+
+    /// <summary>
+    /// Creates a transformation between two coordinate systems using the shared factory.
+    /// </summary>
+    /// <param name="source">Source coordinate system.</param>
+    /// <param name="target">Target coordinate system.</param>
+    /// <returns>The created transformation.</returns>
+    protected ICoordinateTransformation CreateTransformation(CoordinateSystem source, CoordinateSystem target)
+    {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(target);
+
+        return this.CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+    }
+
+    /// <summary>
+    /// Creates a transformation and asserts that the operation succeeds without throwing.
+    /// </summary>
+    /// <param name="source">Source coordinate system.</param>
+    /// <param name="target">Target coordinate system.</param>
+    /// <returns>The created transformation.</returns>
+    protected ICoordinateTransformation AssertTransformationCreated(CoordinateSystem source, CoordinateSystem target)
+    {
+        ICoordinateTransformation? transformation = null;
+        Exception? exception = Record.Exception(() => transformation = this.CreateTransformation(source, target));
+        Assert.Null(exception);
+        return Assert.IsType<ICoordinateTransformation>(transformation, exactMatch: false);
+    }
 
     /// <summary>
     /// Checks whether the coordinate deltas between two points are below the provided tolerance.
@@ -90,6 +135,19 @@ public class CoordinateTransformTestsBase
     }
 
     /// <summary>
+    /// Asserts that an actual transformed coordinate matches the expected coordinate within the provided tolerance.
+    /// </summary>
+    /// <param name="projection">Projection label used in assertion diagnostics.</param>
+    /// <param name="expected">Expected coordinate.</param>
+    /// <param name="actual">Actual coordinate.</param>
+    /// <param name="tolerance">Maximum allowed absolute delta per ordinate.</param>
+    /// <param name="reverse">Whether the asserted direction is reverse/inverse.</param>
+    protected void AssertCoordinateWithinTolerance(string projection, double[] expected, double[] actual, double tolerance, bool reverse = false)
+        => Assert.True(
+            this.ToleranceLessThan(actual, expected, tolerance),
+            this.TransformationError(projection, expected, actual, reverse));
+
+    /// <summary>
     /// Executes a forward (and optionally reverse) transformation assertion with tolerance checks.
     /// </summary>
     /// <param name="title">Display title for error diagnostics.</param>
@@ -99,7 +157,7 @@ public class CoordinateTransformTestsBase
     /// <param name="expectedPoint">Expected coordinate in target space.</param>
     /// <param name="tolerance">Forward transformation tolerance.</param>
     /// <param name="reverseTolerance">Optional inverse tolerance; NaN skips inverse assertion.</param>
-    public void Test(
+    protected void AssertTransformation(
         string title,
         CoordinateSystem source,
         CoordinateSystem target,
@@ -108,28 +166,16 @@ public class CoordinateTransformTestsBase
         double tolerance,
         double reverseTolerance = double.NaN)
     {
-        ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation transformation = this.CreateTransformation(source, target);
+        double[] forwardResult = transformation.MathTransform.Transform(testPoint);
+        this.AssertCoordinateWithinTolerance(title, expectedPoint, forwardResult, tolerance);
 
-        double[] forwardResult = ct.MathTransform.Transform(testPoint);
-        double[] reverseResult = double.IsNaN(reverseTolerance)
-                                ? testPoint
-                                : ct.MathTransform.Inverse().Transform(forwardResult);
-
-        bool forward = this.ToleranceLessThan(forwardResult, expectedPoint, tolerance);
-
-        bool reverse = double.IsNaN(reverseTolerance) ||
-                      this.ToleranceLessThan(reverseResult, testPoint, reverseTolerance);
-
-        if (!forward)
+        if (double.IsNaN(reverseTolerance))
         {
-            this.TransformationError(title, expectedPoint, forwardResult);
+            return;
         }
 
-        if (!reverse)
-        {
-            this.TransformationError(title, testPoint, reverseResult, true);
-        }
-
-        Assert.True(forward && reverse);
+        double[] reverseResult = transformation.MathTransform.Inverse().Transform(forwardResult);
+        this.AssertCoordinateWithinTolerance(title, testPoint, reverseResult, reverseTolerance, reverse: true);
     }
 }
