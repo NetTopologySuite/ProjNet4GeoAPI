@@ -34,3 +34,6 @@ if (-not (Test-Path $generatorScript)) {
 }
 
 python $generatorScript --zip $zipFilePath --pg-zip $pgZipFilePath --output $outputFilePath
+if ($LASTEXITCODE -ne 0) {
+    throw "Generator failed with exit code $LASTEXITCODE"
+}
