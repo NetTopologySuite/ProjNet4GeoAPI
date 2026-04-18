@@ -131,7 +131,7 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
 
     private Type ReflectType(string typeName)
     {
-        Assembly asm = Assert.IsType<Assembly>(Assembly.GetAssembly(typeof(CoordinateSystems.Projections.MapProjection)), exactMatch: false);
+        Assembly asm = Assert.IsType<Assembly>(Assembly.GetAssembly(typeof(ProjNet.CoordinateSystems.Projections.MapProjection)), exactMatch: false);
         Type? res = asm.GetType(typeName);
         return Assert.IsType<Type>(res, exactMatch: false);
     }

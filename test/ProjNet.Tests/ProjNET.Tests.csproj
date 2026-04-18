@@ -20,7 +20,7 @@
     <ProjectReference Include="..\..\src\ProjNet\ProjNET.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="SRID.csv" />
+    <EmbeddedResource Include="Support\SRID.csv" LogicalName="ProjNET.Tests.SRID.csv" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Generated\*.json" CopyToOutputDirectory="PreserveNewest" />
