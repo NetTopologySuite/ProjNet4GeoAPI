@@ -1,2 +1,27 @@
+# Auto-detect text files and normalize line endings
 * text=auto
-*.cs text=auto diff=csharp
+
+# Source code
+*.cs text diff=csharp
+*.csproj text diff=xml
+*.props text diff=xml
+*.targets text diff=xml
+*.sln text eol=crlf
+
+# Generated catalog — collapse in GitHub PRs
+*.g.cs linguist-generated=true
+
+# Scripts and config
+*.py text diff=python
+*.ps1 text
+*.json text
+*.xml text diff=xml
+*.md text diff=markdown
+*.txt text
+*.yml text
+*.yaml text
+*.editorconfig text
+
+# Archives
+*.zip binary
+*.nupkg binary
