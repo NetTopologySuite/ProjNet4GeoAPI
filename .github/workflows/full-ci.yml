@@ -53,6 +53,13 @@ jobs:
           --output-format cobertura \
           -- dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build
 
+    - name: Upload coverage artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: code-coverage
+        path: coverage-out/coverage.cobertura.xml
+        retention-days: 30
+
     - name: API compatibility gate
       run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter "FullyQualifiedName~PublicApiBaselineTests"
 
