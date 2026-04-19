@@ -45,6 +45,10 @@ jobs:
     - name: Build
       run: dotnet build ProjNet4GeoAPI.sln -c Release --tl:off -v minimal
 
+    - name: Dependency review
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: actions/dependency-review-action@v4
+
     - name: Test with coverage
       run: |
         mkdir -p coverage-out
