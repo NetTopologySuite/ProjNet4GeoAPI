@@ -18,6 +18,8 @@ using ProjNet.IO.Wkt;
 /// coordinate transformation infrastructure.
 /// </summary>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 1, pp. 7-38.</seealso>
+/// <seealso>Snyder, J. P. (1987), "Map Projections - A Working Manual", USGS Professional Paper 1395.</seealso>
+/// <seealso>OGC 01-009, "Coordinate Transformation Services".</seealso>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
 public abstract partial class MapProjection : MathTransform, IProjection
