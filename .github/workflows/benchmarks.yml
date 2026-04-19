@@ -36,14 +36,6 @@ jobs:
         restore-keys: |
           nuget-
 
-    - name: Restore benchmark history cache
-      uses: actions/cache/restore@v4
-      with:
-        path: .benchmark-cache
-        key: benchmark-history-${{ github.ref_name }}-${{ runner.os }}-${{ github.run_id }}
-        restore-keys: |
-          benchmark-history-${{ github.ref_name }}-${{ runner.os }}-
-
     - name: Register .NET problem matcher
       run: echo "::add-matcher::.github/problem-matchers/dotnet.json"
 
@@ -52,9 +44,7 @@ jobs:
 
     - name: Clean benchmark artifacts
       shell: bash
-      run: |
-        rm -rf BenchmarkDotNet.Artifacts
-        mkdir -p .benchmark-cache
+      run: rm -rf BenchmarkDotNet.Artifacts
 
     - name: Run catalog and parsing benchmarks
       run: >
@@ -80,15 +70,38 @@ jobs:
         -InputDirectory BenchmarkDotNet.Artifacts/results
         -OutputFile BenchmarkDotNet.Artifacts/benchmark-action-data.json
 
+    - name: Ensure benchmark data branch exists
+      shell: bash
+      run: |
+        if git ls-remote --exit-code --heads origin benchmark-data > /dev/null 2>&1; then
+          echo "benchmark-data branch already exists."
+          exit 0
+        fi
+
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+        worktree_dir="$(mktemp -d)"
+        git worktree add --detach "$worktree_dir"
+        pushd "$worktree_dir" > /dev/null
+        git checkout --orphan benchmark-data
+        git rm -rf . > /dev/null 2>&1 || true
+        echo "# Benchmark data" > README.md
+        git add README.md
+        git commit -m "Initialize benchmark data branch"
+        git push origin HEAD:benchmark-data
+        popd > /dev/null
+        git worktree remove "$worktree_dir" --force
+
     - name: Store benchmark result
       uses: benchmark-action/github-action-benchmark@v1
       with:
         name: ProjNET Curated Benchmarks
         tool: customSmallerIsBetter
         output-file-path: BenchmarkDotNet.Artifacts/benchmark-action-data.json
-        external-data-json-path: .benchmark-cache/benchmark-data.json
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        auto-push: false
+        auto-push: true
+        gh-pages-branch: benchmark-data
         alert-threshold: '150%'
         fail-on-alert: false
         comment-on-alert: true
@@ -100,10 +113,3 @@ jobs:
         name: benchmark-results
         path: BenchmarkDotNet.Artifacts
         retention-days: 90
-
-    - name: Save benchmark history cache
-      if: ${{ always() && hashFiles('.benchmark-cache/benchmark-data.json') != '' }}
-      uses: actions/cache/save@v4
-      with:
-        path: .benchmark-cache
-        key: benchmark-history-${{ github.ref_name }}-${{ runner.os }}-${{ github.run_id }}
