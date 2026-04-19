@@ -159,48 +159,8 @@ Implemented and validated transformation families include:
 
 ## Projection coverage summary
 
-Total registered projection classes: **152**  
-Projection aliases registered in `ProjectionsRegistry`: **321**
-
-### Cylindrical and Mercator family (20)
-
-`CalCoFiProjection`, `CentralCylindricalProjection`, `ColombiaUrbanProjection`, `CylindricalEqualAreaProjection`, `EquidistantCylindricalProjection`, `GaussSchreiberTransverseMercatorProjection`, `HotineObliqueMercatorProjection`, `LatLongProjection`, `Mercator`, `MercatorAuxiliarySphere`, `MillerCylindricalProjection`, `ObliqueCylindricalEqualAreaProjection`, `ObliqueMercatorProjection`, `PseudoMercator`, `SpaceObliqueMercatorProjection`, `SwissObliqueMercatorProjection`, `ToblerMercatorProjection`, `TransverseCentralCylindricalProjection`, `TransverseCylindricalEqualAreaProjection`, `TransverseMercator`.
-
-### Transverse and oblique family (2)
-
-`LabordeProjection`, `UpsProjection`.
-
-### Conic family (18)
-
-`BipolarConicProjection`, `BonneProjection`, `CentralConicProjection`, `EquidistantConicProjection`, `EulerProjection`, `InternationalMapWorldPolyconicProjection`, `KrovakProjection`, `LambertConformalConic2SP`, `LambertConformalConicAlternativeProjection`, `LambertEqualAreaConicProjection`, `Murdoch1Projection`, `Murdoch2Projection`, `Murdoch3Projection`, `PconicProjection`, `PolyconicProjection`, `RectangularPolyconicProjection`, `TissotProjection`, `Vitkovsky1Projection`.
-
-### Azimuthal and perspective family (16)
-
-`AiryProjection`, `AzimuthalEquidistantProjection`, `GeostationarySatelliteProjection`, `GnomonicProjection`, `LambertAzimuthalEqualAreaProjection`, `LeeOblatedStereographicProjection`, `MillerOblatedStereographicProjection`, `ModifiedStereographic48USProjection`, `ModifiedStereographic50USProjection`, `ModifiedStereographicAlaskaProjection`, `NearSidedPerspectiveProjection`, `OblatedEqualAreaProjection`, `ObliqueStereographicProjection`, `OrthographicProjection`, `PolarStereographicProjection`, `RoussilheStereographicProjection`.
-
-### Pseudocylindrical and world map family (68)
-
-`AitoffProjection`, `AlbersProjection`, `ApianProjection`, `AugustProjection`, `BaconProjection`, `BoggsProjection`, `CollignonProjection`, `CompactMillerProjection`, `CrasterProjection`, `DenoyerProjection`, `Eckert1Projection`, `Eckert2Projection`, `Eckert3Projection`, `Eckert4Projection`, `Eckert5Projection`, `Eckert6Projection`, `EqualEarthProjection`, `FaheyProjection`, `FoucautProjection`, `FoucautSinusoidalProjection`, `GallProjection`, `GeneralSinusoidalProjection`, `Ginsburg8Projection`, `HammerProjection`, `HatanoProjection`, `IghProjection`, `Kavrayskiy5Projection`, `Kavrayskiy7Projection`, `LagrangeProjection`, `LarriveeProjection`, `LaskowskiProjection`, `LoximuthalProjection`, `McBrydeThomasFlatPolarParabolicProjection`, `McBrydeThomasFlatPolarQuarticProjection`, `McBrydeThomasFlatPolarSineProjection`, `McBrydeThomasFlatPolarSinusoidalProjection`, `McBrydeThomasFlatPoleSineProjection`, `NaturalEarth2Projection`, `NaturalEarthProjection`, `NellHammerProjection`, `NellProjection`, `NicolosiProjection`, `OrteliusProjection`, `PattersonProjection`, `PutninsP1Projection`, `PutninsP2Projection`, `PutninsP3PrimeProjection`, `PutninsP3Projection`, `PutninsP4PProjection`, `PutninsP5PrimeProjection`, `PutninsP5Projection`, `PutninsP6PrimeProjection`, `PutninsP6Projection`, `QuarticAuthalicProjection`, `RobinsonProjection`, `SinusoidalProjection`, `TimesProjection`, `TwoPointEquidistantProjection`, `UrmaevFlatPolarSinusoidalProjection`, `Urmaev5Projection`, `Wagner1Projection`, `Wagner2Projection`, `Wagner3Projection`, `Wagner4Projection`, `Wagner5Projection`, `Wagner6Projection`, `Wagner7Projection`, `WerenskioldProjection`.
-
-### Polyconic and related family (1)
-
-`CassiniSoldnerProjection`.
-
-### Van der Grinten and Winkel family (7)
-
-`VanDerGrinten2Projection`, `VanDerGrinten3Projection`, `VanDerGrinten4Projection`, `VanDerGrintenProjection`, `Winkel1Projection`, `Winkel2Projection`, `WinkelTripelProjection`.
-
-### Interrupted and composite family (7)
-
-`Bertin1953Projection`, `GoodeProjection`, `InterruptedGoodeHomolosineOceanicProjection`, `InterruptedMollweideOceanicProjection`, `InterruptedMollweideProjection`, `MollweideProjection`, `SpilhausProjection`.
-
-### Polyhedral and specialty geometric family (12)
-
-`AdamsHemisphereInSquareProjection`, `AdamsWorldInSquare2Projection`, `AdamsWorldInSquare1Projection`, `AiroceanProjection`, `ChamberlinTrimetricProjection`, `GuyouProjection`, `HealpixProjection`, `IseaProjection`, `NewZealandMapGridProjection`, `PeirceQuincuncialProjection`, `QuadrilateralizedSphericalCubeProjection`, `S2Projection`.
-
-### Legacy runtime operation registration (1)
-
-`SchMathTransform`.
+ProjNET currently registers **152** projection classes in **9** families and **321** aliases in `ProjectionsRegistry`.
+For the audited family breakdown, PROJ alias coverage, and remaining parity notes, see [`docs/projection-coverage.md`](docs/projection-coverage.md).
 
 ## Documentation and governance
 
