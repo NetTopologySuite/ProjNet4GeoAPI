@@ -11,6 +11,20 @@ This repository contains the current ProjNET codebase, aligned with contemporary
 - Coordinate operation and transformation runtime (including affine, Helmert, Molodensky, deformation, grid-shift, topocentric, and pipeline-based paths).
 - WKT parsing/writing and coordinate-system serialization support.
 
+## Scope and non-goals
+
+In scope:
+
+- Coordinate reference system (CRS) modeling and EPSG-backed lookup.
+- Coordinate transformation pipelines, including grid-backed and metadata-backed paths.
+- WKT and PROJJSON parsing, writing, and serialization support.
+
+Not in scope:
+
+- Raster reprojection, image resampling, or map rendering.
+- General-purpose vector geometry I/O or GIS data source handling.
+- Runtime dependence on `proj.db`, GDAL, or NetTopologySuite.
+
 ## Target frameworks
 
 `ProjNET` currently targets:
