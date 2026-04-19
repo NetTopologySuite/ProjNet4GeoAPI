@@ -122,33 +122,8 @@ jobs:
           -InputDirectory BenchmarkDotNet.Artifacts/results `
           -OutputFile BenchmarkDotNet.Artifacts/benchmark-action-data.json
 
-        [object[]]$entries = Get-Content BenchmarkDotNet.Artifacts/benchmark-action-data.json -Raw | ConvertFrom-Json
-        $entryNames = $entries | ForEach-Object { $_.name }
-
-        if (-not ($entryNames | Where-Object { $_ -like '*CatalogFirstTransformationLookupBenchmarks*' }))
-        {
-          throw 'Benchmark smoke gate did not produce catalog-first benchmark data.'
-        }
-
-        if (-not ($entryNames | Where-Object { $_ -like '*WktParsingBenchmarks*' }))
-        {
-          throw 'Benchmark smoke gate did not produce WKT parsing benchmark data.'
-        }
-
-        if (-not ($entryNames | Where-Object { $_ -like '*ProjectionTransformBenchmarks*' }))
-        {
-          throw 'Benchmark smoke gate did not produce projection-transform benchmark data.'
-        }
-
-        if (-not ($entryNames | Where-Object { $_ -like '*ProjParityBenchmarks*' }))
-        {
-          throw 'Benchmark smoke gate did not produce PROJ parity benchmark data.'
-        }
-
-        if (-not ($entryNames | Where-Object { $_ -like '*TransformationFactoryBenchmarks*' }))
-        {
-          throw 'Benchmark smoke gate did not produce transformation-factory benchmark data.'
-        }
+        ./.github/scripts/Assert-CuratedBenchmarkDataset.ps1 `
+          -DatasetPath BenchmarkDotNet.Artifacts/benchmark-action-data.json
 
     - name: Pack
       run: dotnet pack ProjNet4GeoAPI.sln -c Release --no-build -o artifacts -p:NoWarn=NU5105

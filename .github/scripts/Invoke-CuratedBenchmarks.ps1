@@ -8,17 +8,10 @@ param(
     [switch]$NoBuild
 )
 
-$projectPath = 'src/ProjNet.Benchmark/ProjNet.Benchmark.csproj'
+. "$PSScriptRoot/Get-CuratedBenchmarkConfiguration.ps1"
 
-$catalogFirstFilter = '*CatalogFirstTransformationLookupBenchmarks*'
-$wktParsingFilter = '*WktParsingBenchmarks*'
-$projectionTransformFilters = @(
-    '*ProjectionTransformBenchmarks.TransformBatchMercator*',
-    '*ProjectionTransformBenchmarks.TransformBatchUtm32N*',
-    '*ProjectionTransformBenchmarks.TransformBatchLambert93*'
-)
-$projParityFilter = '*ProjParityBenchmarks*'
-$transformationFactoryFilter = '*TransformationFactoryBenchmarks*'
+$projectPath = 'src/ProjNet.Benchmark/ProjNet.Benchmark.csproj'
+$configuration = Get-CuratedBenchmarkConfiguration
 
 function Invoke-BenchmarkRun
 {
@@ -56,14 +49,17 @@ switch ($Mode)
 {
     'Full'
     {
-        Invoke-BenchmarkRun -Filters @($catalogFirstFilter, $wktParsingFilter) -Overrides @()
-        Invoke-BenchmarkRun -Filters ($projectionTransformFilters + @($projParityFilter, $transformationFactoryFilter)) -Overrides @('--launchCount', '1', '--warmupCount', '1', '--iterationCount', '3')
+        foreach ($run in $configuration.FullRuns)
+        {
+            Invoke-BenchmarkRun -Filters $run.Filters -Overrides $run.Overrides
+        }
     }
 
     'Smoke'
     {
-        Invoke-BenchmarkRun -Filters @($catalogFirstFilter) -Overrides @('--launchCount', '1', '--warmupCount', '0', '--iterationCount', '1')
-        Invoke-BenchmarkRun -Filters @($wktParsingFilter) -Overrides @('--launchCount', '1', '--warmupCount', '1', '--iterationCount', '1')
-        Invoke-BenchmarkRun -Filters ($projectionTransformFilters + @($projParityFilter, $transformationFactoryFilter)) -Overrides @('--launchCount', '1', '--warmupCount', '1', '--iterationCount', '1')
+        foreach ($run in $configuration.SmokeRuns)
+        {
+            Invoke-BenchmarkRun -Filters $run.Filters -Overrides $run.Overrides
+        }
     }
 }
