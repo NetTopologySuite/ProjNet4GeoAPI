@@ -11,6 +11,9 @@ on:
     - 'stryker-config.json'
     - '.github/workflows/mutation-tests.yml'
 
+permissions:
+  contents: read
+
 jobs:
   mutation:
     name: Run Stryker mutation tests
