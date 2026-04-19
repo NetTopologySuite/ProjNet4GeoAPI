@@ -74,7 +74,7 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v5
       with:
-        global-json-file: global.json
+        dotnet-version: 10.0.201
 
     - name: Download Package Files
       uses: actions/download-artifact@v4
@@ -99,7 +99,7 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v5
       with:
-        global-json-file: global.json
+        dotnet-version: 10.0.201
 
     - name: Download Package Files
       uses: actions/download-artifact@v4
