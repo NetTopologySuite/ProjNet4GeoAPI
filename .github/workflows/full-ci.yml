@@ -54,6 +54,7 @@ jobs:
           -- dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build
 
     - name: Upload coverage artifact
+      if: ${{ always() && hashFiles('coverage-out/coverage.cobertura.xml') != '' }}
       uses: actions/upload-artifact@v4
       with:
         name: code-coverage
@@ -90,7 +91,6 @@ jobs:
     steps:
     - name: Download coverage artifact
       uses: actions/download-artifact@v4
-      continue-on-error: true
       with:
         name: code-coverage
         path: coverage-out
@@ -110,7 +110,7 @@ jobs:
       run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
 
     - name: Add coverage PR comment
-      if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && hashFiles('coverage-out/coverage.cobertura.xml') != '' }}
+      if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && !endsWith(github.actor, '[bot]') && hashFiles('coverage-out/coverage.cobertura.xml') != '' }}
       uses: marocchino/sticky-pull-request-comment@v2
       with:
         header: code-coverage
