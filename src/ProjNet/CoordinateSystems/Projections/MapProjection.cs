@@ -20,8 +20,7 @@ using ProjNet.IO.Wkt;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 1, pp. 7-38.</seealso>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case", Justification = "Obsolete compatibility aliases intentionally preserve legacy all-caps names alongside PascalCase names.")]
-public abstract class MapProjection : MathTransform, IProjection
+public abstract partial class MapProjection : MathTransform, IProjection
 {
     /// <summary>
     /// Tolerance constant equal to 1e-10, used for near-zero comparisons in projection formulas.
@@ -78,51 +77,6 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </summary>
     protected const double DblLong = 4.61168601e18d;
 
-    // Backward-compatible aliases for legacy public API names.
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-#pragma warning disable CA1707 // Identifiers should not contain underscores
-#pragma warning disable SA1300 // Element should begin with upper-case letter
-#pragma warning disable SA1303 // Const field names should begin with upper-case letter
-#pragma warning disable SA1307 // Accessible fields should begin with upper-case letter
-#pragma warning disable SA1310 // Field names should not contain underscore
-#pragma warning disable IDE1006 // Naming Styles
-#pragma warning disable SA1600 // Elements should be documented
-    [Obsolete("Use FortPi instead.")]
-    protected const double FORTPI = FortPi;
-    [Obsolete("Use HalfPi instead.")]
-    protected const double HALFPI = HalfPi;
-    [Obsolete("Use HugeVal instead.")]
-    protected const double HUGEVAL = HugeVal;
-    [Obsolete("Use MaxVal instead.")]
-    protected const double MAXVAL = MaxVal;
-    [Obsolete("Use TwoPi instead.")]
-    protected const double TWOPI = TwoPi;
-    [Obsolete("Use Eps10 instead.")]
-    protected const double EPS10 = Eps10;
-    [Obsolete("Use Eps7 instead.")]
-    protected const double EPS7 = Eps7;
-    [Obsolete("Use Epsln instead.")]
-    protected const double EPSLN = Epsln;
-    [Obsolete("Use DblLong instead.")]
-    protected const double DBLLONG = DblLong;
-    [Obsolete("Use FortPi instead.")]
-    protected const double FORT_PI = FortPi;
-    [Obsolete("Use HalfPi instead.")]
-    protected const double HALF_PI = HalfPi;
-    [Obsolete("Use HugeVal instead.")]
-    protected const double HUGE_VAL = HugeVal;
-    [Obsolete("Use MaxVal instead.")]
-    protected const double MAX_VAL = MaxVal;
-    [Obsolete("Use TwoPi instead.")]
-    protected const double TWO_PI = TwoPi;
-#pragma warning restore SA1310
-#pragma warning restore SA1307
-#pragma warning restore SA1303
-#pragma warning restore SA1300
-#pragma warning restore IDE1006
-#pragma warning restore CA1707
-#pragma warning restore CS1591
-#pragma warning restore SA1600
 #pragma warning disable IDE1006 // Naming Styles
     /// <summary>
     /// Eccentricity.
@@ -840,36 +794,6 @@ public abstract class MapProjection : MathTransform, IProjection
         get => this.centralMeridian;
         set => this.centralMeridian = value;
     }
-
-    // Backward-compatible aliases for legacy field names.
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-#pragma warning disable CA1707 // Identifiers should not contain underscores
-#pragma warning disable SA1300 // Element should begin with upper-case letter
-#pragma warning disable IDE1006 // Naming Styles
-#pragma warning disable SA1600 // Elements should be documented
-    [Obsolete("Use centralMeridian instead.")]
-    protected double central_meridian
-    {
-        get => this.centralMeridian;
-        set => this.centralMeridian = value;
-    }
-
-    [Obsolete("Use falseEasting instead.")]
-    protected double false_easting => this.falseEasting;
-
-    [Obsolete("Use falseNorthing instead.")]
-    protected double false_northing => this.falseNorthing;
-
-    [Obsolete("Use latOrigin instead.")]
-    protected double lat_origin => this.latOrigin;
-
-    [Obsolete("Use scaleFactor instead.")]
-    protected double scale_factor => this.scaleFactor;
-#pragma warning restore SA1300
-#pragma warning restore IDE1006
-#pragma warning restore CA1707
-#pragma warning restore CS1591
-#pragma warning restore SA1600
 
     /// <summary>
     /// Gets the central parallel (projection centre latitude) in radians; an alias for <see cref="latOrigin"/>.
