@@ -42,6 +42,26 @@ Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFram
 - Default validation command:
   - `dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj`
 
+## CI/CD pipeline
+
+- `/.github/workflows/full-ci.yml` is the main validation pipeline for push, pull request, and manual runs. It builds the solution, runs pull-request dependency review, collects Cobertura coverage, executes the API/parity/benchmark smoke gates, packs artifacts, publishes to MyGet from `develop` and `master`, and publishes to NuGet from `master`.
+- `/.github/workflows/benchmarks.yml` runs the curated BenchmarkDotNet suite on a weekly schedule and on manual demand. The default branch persists benchmark history to the `benchmark-data` branch; non-default refs run compare-only checks against that stored baseline.
+- `/.github/workflows/codeql.yml` runs the dedicated C# CodeQL security analysis workflow on push, pull request, and weekly schedule.
+- `/.github/workflows/mutation-tests.yml` runs the Stryker mutation suite for manual runs and for `develop` pushes that touch the configured source, test, tooling, or workflow paths.
+- `/.github/dependabot.yml` manages weekly NuGet and GitHub Actions dependency updates.
+
+### Coverage policy
+
+- Coverage is collected in CI via `dotnet-coverage` and published as Cobertura output plus markdown summaries.
+- Same-repository non-bot pull requests receive the current coverage summary directly in the PR discussion.
+- There is no hard fail threshold at this stage; coverage is tracked for visibility and regression monitoring.
+
+### Benchmark policy
+
+- The benchmark pipeline uses a curated benchmark set defined in `/.github/scripts/Get-CuratedBenchmarkConfiguration.ps1`.
+- `full-ci.yml` runs the curated smoke path so benchmark execution, report conversion, and curated dataset completeness fail fast during normal CI.
+- `benchmarks.yml` runs the full curated suite, converts BenchmarkDotNet reports into the regression dataset consumed by `benchmark-action`, and raises alerts at a `150%` regression threshold without failing the workflow.
+
 ## Code style and analyzers
 
 - `.editorconfig` is the primary style source of truth.
