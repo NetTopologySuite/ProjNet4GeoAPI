@@ -18,14 +18,25 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
+        if (ContainsArgument(args, "--validate"))
+        {
+            ValidateBenchmarks();
+            return;
+        }
+
         if (!IsBenchmarkChildProcess(args))
         {
-            PerformanceTests.Validate();
-            ProjParityBenchmarks.Validate();
-            ProjectionSinglePointBenchmarks.Validate();
+            ValidateBenchmarks();
         }
 
         BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
+    }
+
+    private static void ValidateBenchmarks()
+    {
+        PerformanceTests.Validate();
+        ProjParityBenchmarks.Validate();
+        ProjectionSinglePointBenchmarks.Validate();
     }
 
     private static bool IsBenchmarkChildProcess(string[] args)
@@ -33,6 +44,19 @@ internal static class Program
         for (int i = 0; i < args.Length; i++)
         {
             if (string.Equals(args[i], "--benchmarkName", StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsArgument(string[] args, string argument)
+    {
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (string.Equals(args[i], argument, StringComparison.Ordinal))
             {
                 return true;
             }

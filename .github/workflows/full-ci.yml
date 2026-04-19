@@ -113,8 +113,8 @@ jobs:
     - name: GIE/GIGS parity smoke gate
       run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"
 
-    - name: Benchmark catalog gate
-      run: dotnet run -c Release --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- --list flat
+    - name: Benchmark validation gate
+      run: dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- --validate
 
     - name: Pack
       run: dotnet pack ProjNet4GeoAPI.sln -c Release --no-build -o artifacts -p:NoWarn=NU5105
