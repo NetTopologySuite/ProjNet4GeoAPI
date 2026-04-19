@@ -8,6 +8,10 @@ on:
     paths:
     - 'src/**'
     - 'test/**'
+    - 'Directory.Build.props'
+    - 'Directory.Packages.props'
+    - 'dotnet-tools.json'
+    - 'global.json'
     - 'stryker-config.json'
     - '.github/workflows/mutation-tests.yml'
 
