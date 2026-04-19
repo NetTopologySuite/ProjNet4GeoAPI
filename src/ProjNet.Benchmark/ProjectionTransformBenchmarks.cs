@@ -30,6 +30,36 @@ public class ProjectionTransformBenchmarks
     private double[] yBuffer = [];
 
     /// <summary>
+    /// Executes the curated projection transform benchmarks once and verifies that all outputs stay finite.
+    /// </summary>
+    public static void Validate()
+    {
+        static void EnsureFinite(double[] xs, double[] ys)
+        {
+            for (int i = 0; i < xs.Length; i++)
+            {
+                if (double.IsNaN(xs[i]) || double.IsInfinity(xs[i]) ||
+                    double.IsNaN(ys[i]) || double.IsInfinity(ys[i]))
+                {
+                    throw new InvalidOperationException("Projection transform benchmark validation failed: transform produced non-finite values.");
+                }
+            }
+        }
+
+        var benchmark = new ProjectionTransformBenchmarks();
+        benchmark.GlobalSetup();
+
+        benchmark.TransformBatchMercator();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.TransformBatchUtm32N();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.TransformBatchLambert93();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+    }
+
+    /// <summary>
     /// Creates coordinate system services, pre-builds transforms, and generates deterministic test coordinates.
     /// </summary>
     [GlobalSetup]

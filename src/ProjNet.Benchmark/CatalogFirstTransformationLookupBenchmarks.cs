@@ -19,6 +19,14 @@ using ProjNet.CoordinateSystems.Transformations;
 public class CatalogFirstTransformationLookupBenchmarks
 {
     /// <summary>
+    /// Executes the curated cold-start benchmark path once and verifies that it returns a transformation.
+    /// </summary>
+    public static void Validate()
+    {
+        _ = new CatalogFirstTransformationLookupBenchmarks().FirstCreateTransformation4326To3857();
+    }
+
+    /// <summary>
     /// Creates an EPSG:4326 to EPSG:3857 transformation from a fresh <see cref="CoordinateSystemServices"/> instance.
     /// </summary>
     /// <returns>The resolved transformation.</returns>

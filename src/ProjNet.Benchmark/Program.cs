@@ -35,7 +35,11 @@ internal static class Program
     private static void ValidateBenchmarks()
     {
         PerformanceTests.Validate();
+        CatalogFirstTransformationLookupBenchmarks.Validate();
+        WktParsingBenchmarks.Validate();
+        ProjectionTransformBenchmarks.Validate();
         ProjParityBenchmarks.Validate();
+        TransformationFactoryBenchmarks.Validate();
         ProjectionSinglePointBenchmarks.Validate();
     }
 

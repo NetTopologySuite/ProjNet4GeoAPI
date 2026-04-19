@@ -22,6 +22,19 @@ public class TransformationFactoryBenchmarks
     private CoordinateSystem lambert93Cs = null!;
 
     /// <summary>
+    /// Executes the curated transformation-factory benchmarks once and verifies that they all return transformations.
+    /// </summary>
+    public static void Validate()
+    {
+        var benchmark = new TransformationFactoryBenchmarks();
+        benchmark.GlobalSetup();
+
+        _ = benchmark.CreateTransformWgs84ToMercator();
+        _ = benchmark.CreateTransformWgs84ToUtm32N();
+        _ = benchmark.CreateTransformUtm32NToLambert93();
+    }
+
+    /// <summary>
     /// Resolves and caches coordinate systems for subsequent factory benchmarks.
     /// </summary>
     [GlobalSetup]

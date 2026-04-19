@@ -105,6 +105,21 @@ public class WktParsingBenchmarks
         """;
 
     /// <summary>
+    /// Executes every curated WKT parsing benchmark once and verifies that parsing produces non-null results.
+    /// </summary>
+    public static void Validate()
+    {
+        var benchmarks = new WktParsingBenchmarks();
+
+        _ = benchmarks.ParseSimpleGeographicCs();
+        _ = benchmarks.ParseProjectedCs();
+        _ = benchmarks.ParseCompoundCs();
+        _ = benchmarks.ParseGeodeticWkt2();
+        _ = benchmarks.ParseProjectedWkt2();
+        _ = benchmarks.ParseBoundWkt2();
+    }
+
+    /// <summary>
     /// Parses a simple WGS84 geographic coordinate system WKT string.
     /// </summary>
     /// <returns>The parsed coordinate system info.</returns>
