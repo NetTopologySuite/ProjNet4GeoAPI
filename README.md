@@ -100,7 +100,7 @@ The default catalog exposes `7,217` coordinate reference system (CRS) definition
 
 ProjNET supports WKT1, WKT2:2019, and PROJJSON parsing for the CRS types covered by the library.
 It can also serialize supported CRS definitions back to WKT and PROJJSON.
-The README and API XML docs cover the current format terminology until the expanded docs set lands under `docs/`.
+See [`docs/concepts.md`](docs/concepts.md) for format terminology and [`docs/README.md`](docs/README.md) for the user-documentation index.
 
 ### AOT and trimming
 
@@ -164,6 +164,7 @@ For the audited projection-family breakdown, PROJ alias coverage, and remaining 
 
 ## Documentation and governance
 
+- User documentation index: `docs/README.md`
 - Projection parity matrix: `docs/projection-coverage.md`
 - Engineering governance and API baseline policy: `src/ProjNet/ENGINEERING_GOVERNANCE.md`
 
