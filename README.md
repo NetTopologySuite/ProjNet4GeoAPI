@@ -159,8 +159,8 @@ Implemented and validated transformation families include:
 
 ## Projection coverage summary
 
-ProjNET currently registers **152** projection classes in **9** families and **321** aliases in `ProjectionsRegistry`.
-For the audited family breakdown, PROJ alias coverage, and remaining parity notes, see [`docs/projection-coverage.md`](docs/projection-coverage.md).
+ProjNET currently registers **152** projection classes and **321** aliases in `ProjectionsRegistry`.
+For the audited projection-family breakdown, PROJ alias coverage, and remaining parity notes, see [`docs/projection-coverage.md`](docs/projection-coverage.md).
 
 ## Documentation and governance
 
