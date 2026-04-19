@@ -95,5 +95,5 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ### Notes
 
-- Package version line is aligned to `3.0.0` via shared build props (`src/Directory.Build.props`).
+- Package version line is aligned to the Nerdbank.GitVersioning configuration in `version.json` (`3.0.0-alpha.{height}`).
 - `PackageValidationBaselineVersion` remains `2.1.0` until `3.0.0` is published.
