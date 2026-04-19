@@ -114,19 +114,44 @@ jobs:
       run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"
 
     - name: Benchmark smoke gate
-      shell: bash
+      shell: pwsh
       run: |
-        rm -rf BenchmarkDotNet.Artifacts
-        dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- \
-          --artifacts BenchmarkDotNet.Artifacts \
-          --exporters json \
-          --launchCount 1 \
-          --warmupCount 0 \
-          --iterationCount 1 \
+        Remove-Item -Recurse -Force BenchmarkDotNet.Artifacts -ErrorAction SilentlyContinue
+
+        dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- `
+          --artifacts BenchmarkDotNet.Artifacts `
+          --exporters json `
+          --launchCount 1 `
+          --warmupCount 0 `
+          --iterationCount 1 `
           --filter "*CatalogFirstTransformationLookupBenchmarks*"
-        pwsh ./.github/scripts/Convert-BenchmarkReports.ps1 \
-          -InputDirectory BenchmarkDotNet.Artifacts/results \
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+        dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- `
+          --artifacts BenchmarkDotNet.Artifacts `
+          --exporters json `
+          --launchCount 1 `
+          --warmupCount 1 `
+          --iterationCount 1 `
+          --filter "*TransformationFactoryBenchmarks.CreateTransformWgs84ToMercator*"
+        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+        ./.github/scripts/Convert-BenchmarkReports.ps1 `
+          -InputDirectory BenchmarkDotNet.Artifacts/results `
           -OutputFile BenchmarkDotNet.Artifacts/benchmark-action-data.json
+
+        [object[]]$entries = Get-Content BenchmarkDotNet.Artifacts/benchmark-action-data.json -Raw | ConvertFrom-Json
+        $entryNames = $entries | ForEach-Object { $_.name }
+
+        if (-not ($entryNames | Where-Object { $_ -like '*CatalogFirstTransformationLookupBenchmarks*' }))
+        {
+          throw 'Benchmark smoke gate did not produce catalog-first benchmark data.'
+        }
+
+        if (-not ($entryNames | Where-Object { $_ -like '*TransformationFactoryBenchmarks*' }))
+        {
+          throw 'Benchmark smoke gate did not produce transformation-factory benchmark data.'
+        }
 
     - name: Pack
       run: dotnet pack ProjNet4GeoAPI.sln -c Release --no-build -o artifacts -p:NoWarn=NU5105
