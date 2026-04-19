@@ -6,7 +6,7 @@ This document defines the active engineering and quality gates for `ProjNET`.
 
 `src/ProjNet/PublicAPI.Shipped.txt` is the canonical public API baseline for the main `ProjNET` library.
 
-- Verification runs in `test/ProjNet.Tests/PublicApiBaselineTests.cs`.
+- Verification runs in `test/ProjNet.Tests/CodeQuality/PublicApiBaselineTests.cs`.
 - The baseline gate must stay green in regular validation.
 - Intentional API surface changes must update the shipped baseline in a reviewed commit.
 
