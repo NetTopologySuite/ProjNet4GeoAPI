@@ -91,6 +91,27 @@ Expected reference point for `10°,10°` in EPSG:3857 is approximately:
 
 (Validated by `test/ProjNet.Tests/VerificationSuiteTests.cs`.)
 
+### Default EPSG catalog
+
+`new CoordinateSystemServices()` uses the built-in managed EPSG catalog.
+The default catalog exposes `7,217` coordinate reference system (CRS) definitions, so common SRID-based lookups such as `4326` and `3857` work out of the box.
+
+### Supported formats
+
+ProjNET supports WKT1, WKT2:2019, and PROJJSON parsing for the CRS types covered by the library.
+It can also serialize supported coordinate systems back to WKT and PROJJSON.
+See `docs/concepts.md` for terminology and format guidance.
+
+### AOT and trimming
+
+The `net8.0` target is marked trimmable and built with trim analysis enabled.
+ProjNET is intended to stay compatible with native AOT and trimmed deployments.
+
+### Thread safety
+
+`CoordinateSystemServices` synchronizes its one-time initialization and can be reused across threads after construction.
+Core immutable CRS model types can also be shared across threads; see the XML docs on the main public types for details.
+
 ## Build and test
 
 From repository root:
