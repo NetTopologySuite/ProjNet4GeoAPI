@@ -259,11 +259,13 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <summary>
     /// Creates a coordinate transformation between two spatial reference systems identified by their SRIDs.
     /// </summary>
-    /// <remarks>This is a convenience overload for <see cref="CreateTransformation(CoordinateSystem, CoordinateSystem)"/>.</remarks>
+    /// <remarks>
+    /// <para>This is a convenience overload for <see cref="CreateTransformation(CoordinateSystem, CoordinateSystem)"/>.</para>
+    /// <para>Transformation instances created through this overload are cached by SRID pair until the registry changes or is cleared.</para>
+    /// </remarks>
     /// <param name="sourceSrid">The SRID of the source spatial reference system.</param>
     /// <param name="targetSrid">The SRID of the target spatial reference system.</param>
     /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
-    /// <remarks>Transformation instances created through this overload are cached by SRID pair until the registry changes or is cleared.</remarks>
     public ICoordinateTransformation? CreateTransformation(int sourceSrid, int targetSrid)
     {
         this.WaitForInitialization();

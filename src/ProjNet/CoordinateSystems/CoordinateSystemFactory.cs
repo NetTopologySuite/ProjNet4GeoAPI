@@ -35,10 +35,11 @@ public class CoordinateSystemFactory
     }
 
     /// <summary>
-    /// Creates a coordinate system object from an XML string.
+    /// This method is not implemented and always throws.
     /// </summary>
     /// <param name="xml">XML representation for the spatial reference.</param>
     /// <returns>The resulting spatial reference object.</returns>
+    /// <exception cref="NotImplementedException">Always thrown because XML-based coordinate system creation is not supported.</exception>
     public CoordinateSystem CreateFromXml(string xml)
     {
         throw new NotImplementedException();
@@ -61,7 +62,7 @@ public class CoordinateSystemFactory
     }
 
     /// <summary>
-    /// Creates a <see cref="CompoundCoordinateSystem"/> [NOT IMPLEMENTED].
+    /// Creates a <see cref="CompoundCoordinateSystem"/> from the specified head and tail coordinate systems.
     /// </summary>
     /// <param name="name">Name of compound coordinate system.</param>
     /// <param name="head">Head coordinate system.</param>

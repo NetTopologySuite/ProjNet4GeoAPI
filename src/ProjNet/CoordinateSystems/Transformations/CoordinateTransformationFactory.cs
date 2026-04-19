@@ -64,6 +64,9 @@ public partial class CoordinateTransformationFactory
     /// <param name="sourceCS">Source coordinate system.</param>
     /// <param name="targetCS">Target coordinate system.</param>
     /// <returns>The coordinate transformation from <paramref name="sourceCS"/> to <paramref name="targetCS"/>.</returns>
+    /// <exception cref="NotSupportedException">
+    /// Thrown when no transformation path can be found between <paramref name="sourceCS"/> and <paramref name="targetCS"/>.
+    /// </exception>
     public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
         return CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata)

@@ -316,6 +316,10 @@ public abstract class MathTransform
     /// <summary>
     /// Transforms a single 2-dimensional point.
     /// </summary>
+    /// <remarks>
+    /// Input and output units depend on the source and target coordinate system, for example radians or degrees
+    /// for geographic systems and metres for projected systems.
+    /// </remarks>
     /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
     /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
     /// <returns>The transformed x- and y-ordinate values.</returns>
@@ -329,6 +333,10 @@ public abstract class MathTransform
     /// <summary>
     /// Transforms a single 3-dimensional point.
     /// </summary>
+    /// <remarks>
+    /// Input and output units depend on the source and target coordinate system, for example radians or degrees
+    /// for geographic systems and metres for projected systems.
+    /// </remarks>
     /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
     /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
     /// <param name="z">The ordinate value on the third axis, either z, height or altitude.</param>
