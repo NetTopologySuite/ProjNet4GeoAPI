@@ -89,7 +89,7 @@ Expected reference point for `10°,10°` in EPSG:3857 is approximately:
 - `X = 1113194.90793274`
 - `Y = 1118889.97485796`
 
-(Validated by `test/ProjNet.Tests/VerificationSuiteTests.cs`.)
+(Validated by `test/ProjNet.Tests/Integration/VerificationSuiteTests.cs`.)
 
 ### Default EPSG catalog
 
@@ -100,7 +100,7 @@ The default catalog exposes `7,217` coordinate reference system (CRS) definition
 
 ProjNET supports WKT1, WKT2:2019, and PROJJSON parsing for the CRS types covered by the library.
 It can also serialize supported CRS definitions back to WKT and PROJJSON.
-See `docs/concepts.md` for terminology and format guidance.
+The README and API XML docs cover the current format terminology until the expanded docs set lands under `docs/`.
 
 ### AOT and trimming
 
