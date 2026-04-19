@@ -16,7 +16,7 @@
 [Rr]eleases/
 artifacts/
 /coverage-out/
-/StrykerOutput/
+**/StrykerOutput/
 x64/
 x86/
 build/
