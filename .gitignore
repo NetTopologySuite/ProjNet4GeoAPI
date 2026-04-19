@@ -16,6 +16,7 @@
 [Rr]eleases/
 artifacts/
 /coverage-out/
+.benchmark-cache/
 **/StrykerOutput/
 x64/
 x86/
