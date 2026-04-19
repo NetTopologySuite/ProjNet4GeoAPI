@@ -266,6 +266,9 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="sourceSrid">The SRID of the source spatial reference system.</param>
     /// <param name="targetSrid">The SRID of the target spatial reference system.</param>
     /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
+    /// <exception cref="NotSupportedException">
+    /// Thrown when both SRIDs resolve to coordinate systems but no transformation path can be found between them.
+    /// </exception>
     public ICoordinateTransformation? CreateTransformation(int sourceSrid, int targetSrid)
     {
         this.WaitForInitialization();
@@ -292,6 +295,9 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="source">The source spatial reference system.</param>
     /// <param name="target">The target spatial reference system.</param>
     /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
+    /// <exception cref="NotSupportedException">
+    /// Thrown when both coordinate systems are provided but no transformation path can be found between them.
+    /// </exception>
     public ICoordinateTransformation? CreateTransformation(CoordinateSystem? source, CoordinateSystem? target)
     {
         return source is null || target is null ? null : this.ctFactory.CreateFromCoordinateSystems(source, target);
