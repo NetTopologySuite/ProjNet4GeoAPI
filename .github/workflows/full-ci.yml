@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   pack:
-    name: Build, test, and pack (.NET 8)
+    name: Build, test, and pack
     runs-on: ubuntu-latest
 
     steps:
@@ -26,7 +26,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        global-json-file: global.json
 
     - name: Cache NuGet packages
       uses: actions/cache@v4
@@ -71,10 +71,10 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master')
 
     steps:
-    - name: Setup .NET 8
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        global-json-file: global.json
 
     - name: Download Package Files
       uses: actions/download-artifact@v4
@@ -96,10 +96,10 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
-    - name: Setup .NET 8
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v5
       with:
-        dotnet-version: 8.0.x
+        global-json-file: global.json
 
     - name: Download Package Files
       uses: actions/download-artifact@v4
