@@ -1,0 +1,71 @@
+name: Benchmark Monitoring
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmarks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  benchmark:
+    name: Run curated benchmarks
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get source
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        global-json-file: global.json
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ hashFiles('Directory.Packages.props', 'dotnet-tools.json') }}
+        restore-keys: |
+          nuget-
+
+    - name: Register .NET problem matcher
+      run: echo "::add-matcher::.github/problem-matchers/dotnet.json"
+
+    - name: Build
+      run: dotnet build ProjNet4GeoAPI.sln -c Release --tl:off -v minimal
+
+    - name: Clean benchmark artifacts
+      shell: bash
+      run: rm -rf BenchmarkDotNet.Artifacts
+
+    - name: Run catalog and parsing benchmarks
+      run: >
+        dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj --
+        --artifacts BenchmarkDotNet.Artifacts
+        --exporters json
+        --filter "*CatalogFirstTransformationLookupBenchmarks*" "*WktParsingBenchmarks*"
+
+    - name: Run throughput benchmarks
+      run: >
+        dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj --
+        --artifacts BenchmarkDotNet.Artifacts
+        --exporters json
+        --launchCount 1
+        --warmupCount 1
+        --iterationCount 3
+        --filter "*ProjectionTransformBenchmarks*" "*ProjParityBenchmarks*" "*TransformationFactoryBenchmarks*"
+
+    - name: Upload benchmark artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: benchmark-results
+        path: BenchmarkDotNet.Artifacts
+        retention-days: 90
