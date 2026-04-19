@@ -5,6 +5,7 @@
 namespace ProjNet.Benchmark;
 
 using System;
+using System.Collections.Generic;
 using BenchmarkDotNet.Running;
 
 /// <summary>
@@ -18,18 +19,45 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
+        bool curatedValidation = ContainsArgument(args, "--curated");
+        string[] benchmarkArguments = RemoveArgument(args, "--curated");
+
         if (ContainsArgument(args, "--validate"))
         {
-            ValidateBenchmarks();
+            if (curatedValidation)
+            {
+                ValidateCuratedBenchmarks();
+            }
+            else
+            {
+                ValidateBenchmarks();
+            }
+
             return;
         }
 
         if (!IsBenchmarkChildProcess(args))
         {
-            ValidateBenchmarks();
+            if (curatedValidation)
+            {
+                ValidateCuratedBenchmarks();
+            }
+            else
+            {
+                ValidateBenchmarks();
+            }
         }
 
-        BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
+        BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(benchmarkArguments);
+    }
+
+    private static void ValidateCuratedBenchmarks()
+    {
+        CatalogFirstTransformationLookupBenchmarks.Validate();
+        WktParsingBenchmarks.Validate();
+        ProjectionTransformBenchmarks.Validate();
+        ProjParityBenchmarks.Validate();
+        TransformationFactoryBenchmarks.Validate();
     }
 
     private static void ValidateBenchmarks()
@@ -54,6 +82,20 @@ internal static class Program
         }
 
         return false;
+    }
+
+    private static string[] RemoveArgument(string[] args, string argument)
+    {
+        var filteredArguments = new List<string>(args.Length);
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (!string.Equals(args[i], argument, StringComparison.Ordinal))
+            {
+                filteredArguments.Add(args[i]);
+            }
+        }
+
+        return filteredArguments.ToArray();
     }
 
     private static bool ContainsArgument(string[] args, string argument)

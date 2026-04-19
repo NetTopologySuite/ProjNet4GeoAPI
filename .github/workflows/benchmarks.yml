@@ -15,7 +15,7 @@ concurrency:
 jobs:
   benchmark:
     name: Run curated benchmarks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Get source
@@ -85,12 +85,19 @@ jobs:
       if: ${{ github.ref_type != 'branch' || github.ref_name != github.event.repository.default_branch }}
       shell: bash
       run: |
-        if git ls-remote --exit-code --heads origin benchmark-data > /dev/null 2>&1; then
-          echo "benchmark-data branch is available for compare-only run."
+        if ! git ls-remote --exit-code --heads origin benchmark-data > /dev/null 2>&1; then
+          echo "benchmark-data branch does not exist yet. Run the workflow on the default branch first to establish the baseline." >&2
+          exit 1
+        fi
+
+        git fetch --depth=1 origin benchmark-data
+
+        if git cat-file -e FETCH_HEAD:dev/bench/data.js 2>/dev/null; then
+          echo "benchmark-data branch contains persisted benchmark history."
           exit 0
         fi
 
-        echo "benchmark-data branch does not exist yet. Run the workflow on the default branch first to establish the persisted baseline." >&2
+        echo "benchmark-data branch does not contain persisted benchmark history yet. Run the workflow on the default branch first to establish the baseline." >&2
         exit 1
 
     - name: Store benchmark result
@@ -119,6 +126,7 @@ jobs:
         gh-pages-branch: benchmark-data
         auto-push: false
         save-data-file: false
+        alert-threshold: '150%'
         fail-on-alert: false
         summary-always: true
 

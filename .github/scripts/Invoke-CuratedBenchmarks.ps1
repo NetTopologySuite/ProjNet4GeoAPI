@@ -27,6 +27,7 @@ function Invoke-BenchmarkRun
     }
 
     $arguments += '--project', $projectPath, '--', '--artifacts', $ArtifactsPath, '--exporters', 'json'
+    $arguments += '--curated'
 
     if ($Overrides.Count -gt 0)
     {
