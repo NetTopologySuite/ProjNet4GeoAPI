@@ -61,6 +61,10 @@ public class ProjParityBenchmarks
     private double[] yBuffer = [];
     private double[] noiseX = [];
     private double[] noiseY = [];
+    private double[] utm31ProjectedX = [];
+    private double[] utm31ProjectedY = [];
+    private double[] lambert93ProjectedX = [];
+    private double[] lambert93ProjectedY = [];
 
     /// <summary>
     /// Gets or sets the number of coordinates processed per benchmark invocation.
@@ -89,6 +93,9 @@ public class ProjParityBenchmarks
         benchmark.GlobalSetup();
 
         benchmark.Wgs84ToWebMercatorBatched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.Wgs84ToWebMercatorOneByOne();
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
         benchmark.Wgs84ToUtm32NBatched();
@@ -125,6 +132,10 @@ public class ProjParityBenchmarks
         this.yBuffer = new double[this.PointCount];
         this.noiseX = new double[this.PointCount];
         this.noiseY = new double[this.PointCount];
+        this.utm31ProjectedX = new double[this.PointCount];
+        this.utm31ProjectedY = new double[this.PointCount];
+        this.lambert93ProjectedX = new double[this.PointCount];
+        this.lambert93ProjectedY = new double[this.PointCount];
 
         var random = new Random(20260317);
         for (int i = 0; i < this.PointCount; i++)
@@ -134,6 +145,9 @@ public class ProjParityBenchmarks
             this.noiseX[i] = (2d * random.NextDouble()) - 1d;
             this.noiseY[i] = (2d * random.NextDouble()) - 1d;
         }
+
+        this.PrecomputeProjectedInput(this.utm31ProjectedX, this.utm31ProjectedY, Wgs84ToUtm31N);
+        this.PrecomputeProjectedInput(this.lambert93ProjectedX, this.lambert93ProjectedY, Wgs84ToLambert93);
     }
 
     /// <summary>
@@ -185,7 +199,7 @@ public class ProjParityBenchmarks
     [Benchmark]
     public void Utm31NToWgs84Batched()
     {
-        this.PrepareProjectedInput(Wgs84ToUtm31N);
+        this.PrepareProjectedInput(this.utm31ProjectedX, this.utm31ProjectedY);
         Utm31NToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
     }
 
@@ -205,7 +219,7 @@ public class ProjParityBenchmarks
     [Benchmark]
     public void Lambert93ToWgs84Batched()
     {
-        this.PrepareProjectedInput(Wgs84ToLambert93);
+        this.PrepareProjectedInput(this.lambert93ProjectedX, this.lambert93ProjectedY);
         Lambert93ToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
     }
 
@@ -241,10 +255,17 @@ public class ProjParityBenchmarks
         this.latitudes.CopyTo(this.yBuffer.AsSpan());
     }
 
-    private void PrepareProjectedInput(ICoordinateTransformation forwardTransform)
+    private void PrecomputeProjectedInput(double[] xs, double[] ys, ICoordinateTransformation forwardTransform)
     {
-        this.PrepareInput();
-        forwardTransform.MathTransform.Transform(this.xBuffer, this.yBuffer);
+        this.longitudes.CopyTo(xs.AsSpan());
+        this.latitudes.CopyTo(ys.AsSpan());
+        forwardTransform.MathTransform.Transform(xs, ys);
+    }
+
+    private void PrepareProjectedInput(double[] xs, double[] ys)
+    {
+        xs.CopyTo(this.xBuffer.AsSpan());
+        ys.CopyTo(this.yBuffer.AsSpan());
     }
 
     private void ApplyNoise(Span<double> xs, Span<double> ys, double noiseX, double noiseY)
