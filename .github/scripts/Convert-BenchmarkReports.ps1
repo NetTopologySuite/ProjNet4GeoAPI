@@ -17,6 +17,11 @@ $entries = foreach ($reportFile in $reportFiles)
     $report = Get-Content -Path $reportFile.FullName -Raw | ConvertFrom-Json
     foreach ($benchmark in @($report.Benchmarks))
     {
+        if ($null -eq $benchmark.Statistics)
+        {
+            throw "Benchmark '$($benchmark.FullName)' did not produce statistics."
+        }
+
         $allocatedMetric = @($benchmark.Metrics) |
             Where-Object { $_.Descriptor.Id -eq 'Allocated Memory' } |
             Select-Object -First 1

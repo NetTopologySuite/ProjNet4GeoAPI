@@ -116,25 +116,7 @@ jobs:
     - name: Benchmark smoke gate
       shell: pwsh
       run: |
-        Remove-Item -Recurse -Force BenchmarkDotNet.Artifacts -ErrorAction SilentlyContinue
-
-        dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- `
-          --artifacts BenchmarkDotNet.Artifacts `
-          --exporters json `
-          --launchCount 1 `
-          --warmupCount 0 `
-          --iterationCount 1 `
-          --filter "*CatalogFirstTransformationLookupBenchmarks*"
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-        dotnet run -c Release --no-build --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- `
-          --artifacts BenchmarkDotNet.Artifacts `
-          --exporters json `
-          --launchCount 1 `
-          --warmupCount 1 `
-          --iterationCount 1 `
-          --filter "*TransformationFactoryBenchmarks.CreateTransformWgs84ToMercator*"
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+        ./.github/scripts/Invoke-CuratedBenchmarks.ps1 -Mode Smoke -NoBuild
 
         ./.github/scripts/Convert-BenchmarkReports.ps1 `
           -InputDirectory BenchmarkDotNet.Artifacts/results `
@@ -146,6 +128,21 @@ jobs:
         if (-not ($entryNames | Where-Object { $_ -like '*CatalogFirstTransformationLookupBenchmarks*' }))
         {
           throw 'Benchmark smoke gate did not produce catalog-first benchmark data.'
+        }
+
+        if (-not ($entryNames | Where-Object { $_ -like '*WktParsingBenchmarks*' }))
+        {
+          throw 'Benchmark smoke gate did not produce WKT parsing benchmark data.'
+        }
+
+        if (-not ($entryNames | Where-Object { $_ -like '*ProjectionTransformBenchmarks*' }))
+        {
+          throw 'Benchmark smoke gate did not produce projection-transform benchmark data.'
+        }
+
+        if (-not ($entryNames | Where-Object { $_ -like '*ProjParityBenchmarks*' }))
+        {
+          throw 'Benchmark smoke gate did not produce PROJ parity benchmark data.'
         }
 
         if (-not ($entryNames | Where-Object { $_ -like '*TransformationFactoryBenchmarks*' }))
