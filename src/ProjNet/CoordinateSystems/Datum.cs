@@ -10,14 +10,13 @@ using System;
 /// A set of quantities from which other quantities are calculated.
 /// </summary>
 /// <remarks>
-/// For the OGC abstract model, it can be defined as a set of real points on the earth
-/// that have coordinates. EG. A datum can be thought of as a set of parameters
-/// defining completely the origin and orientation of a coordinate system with respect
-/// to the earth. A textual description and/or a set of parameters describing the
-/// relationship of a coordinate system to some predefined physical locations (such
-/// as center of mass) and physical directions (such as axis of spin). The definition
-/// of the datum may also include the temporal behavior (such as the rate of change of
-/// the orientation of the coordinate axes).
+/// In the OGC abstract model, a datum can be described as a set of real points on the
+/// earth that have coordinates. More practically, it is the set of parameters that
+/// defines the origin and orientation of a coordinate system with respect to the earth.
+/// The definition may include text and/or numeric parameters tied to physical locations
+/// (such as the center of mass) and physical directions (such as the axis of spin).
+/// It may also include temporal behavior, such as the rate of change of the coordinate
+/// axes orientation.
 /// </remarks>
 public abstract class Datum : Info
 {
