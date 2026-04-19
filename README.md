@@ -29,8 +29,29 @@ dotnet add package ProjNET
 
 ## Quick usage
 
+### Use the default EPSG catalog (recommended)
+
 ```csharp
+using System;
 using ProjNet;
+
+var services = new CoordinateSystemServices();
+var transformation = services.CreateTransformation(4326, 3857);
+
+if (transformation is null)
+{
+    throw new InvalidOperationException("EPSG:4326 to EPSG:3857 transformation is not available.");
+}
+
+double[] result = transformation.MathTransform.Transform(new[] { 10d, 10d });
+```
+
+### Use custom WKT definitions when you need to seed your own catalog
+
+```csharp
+using System;
+using ProjNet;
+using ProjNet.CoordinateSystems;
 using ProjNet.Data;
 
 var services = new CoordinateSystemServices(new[]
@@ -39,8 +60,14 @@ var services = new CoordinateSystemServices(new[]
     new CoordinateSystemDefinition(3857, ProjectedCoordinateSystem.WebMercator.WKT),
 });
 
-var transform = services.CreateTransformation(4326, 3857);
-double[] result = transform.MathTransform.Transform(new[] { 10d, 10d });
+var transformation = services.CreateTransformation(4326, 3857);
+
+if (transformation is null)
+{
+    throw new InvalidOperationException("The custom CRS transformation is not available.");
+}
+
+double[] result = transformation.MathTransform.Transform(new[] { 10d, 10d });
 ```
 
 Expected reference point for `10°,10°` in EPSG:3857 is approximately:
