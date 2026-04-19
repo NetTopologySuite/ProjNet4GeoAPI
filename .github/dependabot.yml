@@ -1,0 +1,26 @@
+version: 2
+
+updates:
+  - package-ecosystem: nuget
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - nuget
+    commit-message:
+      prefix: 'deps(nuget):'
+      include: scope
+    ignore:
+      - dependency-name: StyleCop.Analyzers
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: 'deps(actions):'
+      include: scope
