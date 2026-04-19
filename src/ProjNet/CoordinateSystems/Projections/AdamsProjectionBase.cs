@@ -20,7 +20,7 @@ using System.Collections.Generic;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 7, Sect. 7.4, pp. 206-208.</seealso>
 /// <seealso>Adams, O. S. (1925), "Elliptic Functions Applied to Conformal World Maps", US Coast and Geodetic Survey Special Publication No. 112.</seealso>
 /// <seealso>Peirce, C. S. (1879), "A Quincuncial Projection of the Sphere", American Journal of Mathematics, 2(4), 394-396.</seealso>
-/// <seealso>Guyou, E. (1887), "Sur une projection nouvelle de la sphere terrestre", Annales Hydrographiques.</seealso>
+/// <seealso>Guyou, E. (1887), "Sur une projection nouvelle de la sphere terrestre", Annales Hydrographiques, 54(29), 633-636.</seealso>
 /// <seealso>PROJ identifiers: <c>guyou</c>, <c>peirce_q</c>, <c>adams_hemi</c>, <c>adams_ws1</c>, <c>adams_ws2</c>.</seealso>
 internal abstract class AdamsProjectionBase : MapProjection
 {
