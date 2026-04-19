@@ -1,7 +1,7 @@
-# Projection Coverage Matrix (PROJ parity vs ProjNet)
+# Projection Coverage Matrix (PROJ parity vs ProjNET)
 
 This document summarizes the audited projection feature-parity status between upstream
-PROJ identifiers and the ProjNet implementation contained in this project.
+PROJ identifiers and the ProjNET implementation contained in this project.
 
 ## Scope
 
@@ -26,7 +26,7 @@ PROJ identifiers and the ProjNet implementation contained in this project.
   - implemented via non-dispatch runtime/factory paths: `affine`, `cart`, `geocent`
   - direct `+proj` dispatcher gaps: `push`, `pop`, `geogoffset`, `molobadekas`, `geoc`
 
-## Implemented projection families in ProjNet
+## Implemented projection families in ProjNET
 
 | Projection family | Registered PROJ/alias codes |
 | --- | --- |

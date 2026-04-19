@@ -1,12 +1,12 @@
 # ProjNET 3.0
 
-ProjNET is a managed .NET spatial reference and projection engine for geodetic coordinate system modeling and coordinate transformation workflows.
+ProjNET is a managed .NET library for coordinate reference system (CRS) modeling, projection methods, and coordinate transformation workflows.
 
 This repository contains the current ProjNET codebase, aligned with contemporary PROJ behavior and expanded runtime coverage while preserving compatibility-focused API surfaces.
 
 ## What is included
 
-- Managed coordinate system definitions and EPSG-backed lookup/catalog support.
+- Managed coordinate reference system (CRS) definitions and EPSG-backed lookup/catalog support.
 - Projection registration with broad alias coverage (`321` aliases).
 - Coordinate operation and transformation runtime (including affine, Helmert, Molodensky, deformation, grid-shift, topocentric, and pipeline-based paths).
 - WKT parsing/writing and coordinate-system serialization support.
@@ -99,7 +99,7 @@ The default catalog exposes `7,217` coordinate reference system (CRS) definition
 ### Supported formats
 
 ProjNET supports WKT1, WKT2:2019, and PROJJSON parsing for the CRS types covered by the library.
-It can also serialize supported coordinate systems back to WKT and PROJJSON.
+It can also serialize supported CRS definitions back to WKT and PROJJSON.
 See `docs/concepts.md` for terminology and format guidance.
 
 ### AOT and trimming
