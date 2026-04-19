@@ -340,7 +340,7 @@ public abstract class MathTransform
     /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
     /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
     /// <param name="z">The ordinate value on the third axis, either z, height or altitude.</param>
-    /// <returns>The transformed x-, y- and z-ordinate values.</returns>
+    /// <returns>The transformed first, second, and third ordinate values.</returns>
     public (double O1, double O2, double O3) Transform(double x, double y, double z)
     {
         this.Transform(ref x, ref y, ref z);
