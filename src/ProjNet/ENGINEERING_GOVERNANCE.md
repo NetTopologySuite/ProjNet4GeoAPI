@@ -9,6 +9,8 @@ This document defines the active engineering and quality gates for `ProjNET`.
 - Verification runs in `test/ProjNet.Tests/CodeQuality/PublicApiBaselineTests.cs`.
 - The baseline gate must stay green in regular validation.
 - Intentional API surface changes must update the shipped baseline in a reviewed commit.
+- `dotnet pack` also runs SDK package validation against `PackageValidationBaselineVersion`.
+- Intentional baseline deltas that remain accepted for the active prerelease line must be tracked in `src/ProjNet/CompatibilitySuppressions.xml` and reviewed together with the corresponding API change.
 
 ### Approved baseline update flow
 

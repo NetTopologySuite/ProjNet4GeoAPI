@@ -59,6 +59,272 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>F:ProjNet.CoordinateSystems.Projections.MapProjection.S2R</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.AngularUnit.set_RadiansPerUnit(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.AxisInfo.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.AxisInfo.set_Orientation(ProjNet.CoordinateSystems.AxisOrientationEnum)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.CompoundCoordinateSystem.set_HeadCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.CompoundCoordinateSystem.set_TailCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.CoordinateSystem.set_DefaultEnvelope(System.Double[])</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Datum.set_DatumType(ProjNet.CoordinateSystems.DatumType)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_AxisUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_InverseFlattening(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_IsIvfDefinitive(System.Boolean)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_SemiMajorAxis(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_SemiMinorAxis(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.FittedCoordinateSystem.#ctor(ProjNet.CoordinateSystems.CoordinateSystem,ProjNet.CoordinateSystems.Transformations.MathTransform,System.String,System.String,System.Int64,System.String,System.String,System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeocentricCoordinateSystem.set_HorizontalDatum(ProjNet.CoordinateSystems.HorizontalDatum)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeocentricCoordinateSystem.set_LinearUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeocentricCoordinateSystem.set_PrimeMeridian(ProjNet.CoordinateSystems.PrimeMeridian)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeographicCoordinateSystem.set_AngularUnit(ProjNet.CoordinateSystems.AngularUnit)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeographicCoordinateSystem.set_PrimeMeridian(ProjNet.CoordinateSystems.PrimeMeridian)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.HorizontalCoordinateSystem.set_HorizontalDatum(ProjNet.CoordinateSystems.HorizontalDatum)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.HorizontalDatum.set_Ellipsoid(ProjNet.CoordinateSystems.Ellipsoid)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.HorizontalDatum.set_Wgs84Parameters(ProjNet.CoordinateSystems.Wgs84ConversionInfo)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Abbreviation(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Alias(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Authority(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_AuthorityCode(System.Int64)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Remarks(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.LinearUnit.set_MetersPerUnit(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Parameter.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Parameter.set_Value(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.PrimeMeridian.set_AngularUnit(ProjNet.CoordinateSystems.AngularUnit)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.PrimeMeridian.set_Longitude(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectedCoordinateSystem.set_GeographicCoordinateSystem(ProjNet.CoordinateSystems.GeographicCoordinateSystem)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectedCoordinateSystem.set_LinearUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectedCoordinateSystem.set_Projection(ProjNet.CoordinateSystems.IProjection)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectionParameter.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectionParameter.set_Value(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.adjust_lon(System.Double)</Target>
     <Left>lib/netstandard2.0/ProjNET.dll</Left>
     <Right>lib/netstandard2.0/ProjNET.dll</Right>
@@ -81,6 +347,13 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.authset(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.CUBE(System.Double)</Target>
     <Left>lib/netstandard2.0/ProjNET.dll</Left>
     <Right>lib/netstandard2.0/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -143,7 +416,28 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.GMAX(System.Double@,System.Double@)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.GMIN(System.Double@,System.Double@)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.hypot(System.Double,System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.IMOD(System.Double,System.Double)</Target>
     <Left>lib/netstandard2.0/ProjNET.dll</Left>
     <Right>lib/netstandard2.0/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -206,7 +500,56 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.QUAD(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Abbreviation(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Alias(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Authority(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_AuthorityCode(System.Int64)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_lon_origin(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Remarks(System.String)</Target>
     <Left>lib/netstandard2.0/ProjNET.dll</Left>
     <Right>lib/netstandard2.0/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -241,6 +584,20 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Transformations.GeographicTransform.set_SourceGCS(ProjNet.CoordinateSystems.GeographicCoordinateSystem)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Transformations.GeographicTransform.set_TargetGCS(ProjNet.CoordinateSystems.GeographicCoordinateSystem)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Transformations.MathTransform.Transform(System.Double,System.Double,System.Double)</Target>
     <Left>lib/netstandard2.0/ProjNET.dll</Left>
     <Right>lib/netstandard2.0/ProjNET.dll</Right>
@@ -249,6 +606,27 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Transformations.MathTransform.Transform(System.Double,System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Unit.set_ConversionFactor(System.Double)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.VerticalCoordinateSystem.set_LinearUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.VerticalCoordinateSystem.set_VerticalDatum(ProjNet.CoordinateSystems.VerticalDatum)</Target>
     <Left>lib/netstandard2.0/ProjNET.dll</Left>
     <Right>lib/netstandard2.0/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -332,6 +710,272 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>F:ProjNet.CoordinateSystems.Projections.MapProjection.S2R</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.AngularUnit.set_RadiansPerUnit(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.AxisInfo.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.AxisInfo.set_Orientation(ProjNet.CoordinateSystems.AxisOrientationEnum)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.CompoundCoordinateSystem.set_HeadCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.CompoundCoordinateSystem.set_TailCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.CoordinateSystem.set_DefaultEnvelope(System.Double[])</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Datum.set_DatumType(ProjNet.CoordinateSystems.DatumType)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_AxisUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_InverseFlattening(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_IsIvfDefinitive(System.Boolean)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_SemiMajorAxis(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Ellipsoid.set_SemiMinorAxis(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.FittedCoordinateSystem.#ctor(ProjNet.CoordinateSystems.CoordinateSystem,ProjNet.CoordinateSystems.Transformations.MathTransform,System.String,System.String,System.Int64,System.String,System.String,System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeocentricCoordinateSystem.set_HorizontalDatum(ProjNet.CoordinateSystems.HorizontalDatum)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeocentricCoordinateSystem.set_LinearUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeocentricCoordinateSystem.set_PrimeMeridian(ProjNet.CoordinateSystems.PrimeMeridian)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeographicCoordinateSystem.set_AngularUnit(ProjNet.CoordinateSystems.AngularUnit)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.GeographicCoordinateSystem.set_PrimeMeridian(ProjNet.CoordinateSystems.PrimeMeridian)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.HorizontalCoordinateSystem.set_HorizontalDatum(ProjNet.CoordinateSystems.HorizontalDatum)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.HorizontalDatum.set_Ellipsoid(ProjNet.CoordinateSystems.Ellipsoid)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.HorizontalDatum.set_Wgs84Parameters(ProjNet.CoordinateSystems.Wgs84ConversionInfo)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Abbreviation(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Alias(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Authority(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_AuthorityCode(System.Int64)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Info.set_Remarks(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.LinearUnit.set_MetersPerUnit(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Parameter.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Parameter.set_Value(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.PrimeMeridian.set_AngularUnit(ProjNet.CoordinateSystems.AngularUnit)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.PrimeMeridian.set_Longitude(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectedCoordinateSystem.set_GeographicCoordinateSystem(ProjNet.CoordinateSystems.GeographicCoordinateSystem)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectedCoordinateSystem.set_LinearUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectedCoordinateSystem.set_Projection(ProjNet.CoordinateSystems.IProjection)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectionParameter.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.ProjectionParameter.set_Value(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.adjust_lon(System.Double)</Target>
     <Left>lib/netstandard2.1/ProjNET.dll</Left>
     <Right>lib/netstandard2.1/ProjNET.dll</Right>
@@ -354,6 +998,13 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.authset(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.CUBE(System.Double)</Target>
     <Left>lib/netstandard2.1/ProjNET.dll</Left>
     <Right>lib/netstandard2.1/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -416,7 +1067,28 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.GMAX(System.Double@,System.Double@)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.GMIN(System.Double@,System.Double@)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.hypot(System.Double,System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.IMOD(System.Double,System.Double)</Target>
     <Left>lib/netstandard2.1/ProjNET.dll</Left>
     <Right>lib/netstandard2.1/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -479,7 +1151,56 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.QUAD(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Abbreviation(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Alias(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Authority(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_AuthorityCode(System.Int64)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_lon_origin(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Name(System.String)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Projections.MapProjection.set_Remarks(System.String)</Target>
     <Left>lib/netstandard2.1/ProjNET.dll</Left>
     <Right>lib/netstandard2.1/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -514,6 +1235,20 @@
   </Suppression>
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Transformations.GeographicTransform.set_SourceGCS(ProjNet.CoordinateSystems.GeographicCoordinateSystem)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Transformations.GeographicTransform.set_TargetGCS(ProjNet.CoordinateSystems.GeographicCoordinateSystem)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Transformations.MathTransform.Transform(System.Double,System.Double,System.Double)</Target>
     <Left>lib/netstandard2.1/ProjNET.dll</Left>
     <Right>lib/netstandard2.1/ProjNET.dll</Right>
@@ -522,6 +1257,27 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystems.Transformations.MathTransform.Transform(System.Double,System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.Unit.set_ConversionFactor(System.Double)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.VerticalCoordinateSystem.set_LinearUnit(ProjNet.CoordinateSystems.LinearUnit)</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0002</DiagnosticId>
+    <Target>M:ProjNet.CoordinateSystems.VerticalCoordinateSystem.set_VerticalDatum(ProjNet.CoordinateSystems.VerticalDatum)</Target>
     <Left>lib/netstandard2.1/ProjNET.dll</Left>
     <Right>lib/netstandard2.1/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
@@ -543,6 +1299,104 @@
   <Suppression>
     <DiagnosticId>CP0002</DiagnosticId>
     <Target>M:ProjNet.CoordinateSystemServices.GetEnumerator</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.AxisInfo</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Parameter</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.ProjectionParameter</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Projections.LambertAzimuthalEqualAreaProjection</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Projections.ProjectionParameterSet</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Transformations.AffineTransform</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Wgs84ConversionInfo</Target>
+    <Left>lib/netstandard2.0/ProjNET.dll</Left>
+    <Right>lib/netstandard2.0/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.AxisInfo</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Parameter</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.ProjectionParameter</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Projections.LambertAzimuthalEqualAreaProjection</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Projections.ProjectionParameterSet</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Transformations.AffineTransform</Target>
+    <Left>lib/netstandard2.1/ProjNET.dll</Left>
+    <Right>lib/netstandard2.1/ProjNET.dll</Right>
+    <IsBaselineSuppression>true</IsBaselineSuppression>
+  </Suppression>
+  <Suppression>
+    <DiagnosticId>CP0009</DiagnosticId>
+    <Target>T:ProjNet.CoordinateSystems.Wgs84ConversionInfo</Target>
     <Left>lib/netstandard2.1/ProjNET.dll</Left>
     <Right>lib/netstandard2.1/ProjNET.dll</Right>
     <IsBaselineSuppression>true</IsBaselineSuppression>
