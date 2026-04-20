@@ -16,13 +16,13 @@ Use this only when a public API change is intentional and approved:
 
 1. Run baseline update:
    - PowerShell:  
-      `$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'; dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "FullyQualifiedName~PublicApiBaselineTests"`
+      `$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'; dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter-class ProjNet.Tests.PublicApiBaselineTests`
 2. Inspect and review changes in:
    - `src/ProjNet/PublicAPI.Shipped.txt`
    - ProjNET uses `PublicApiBaselineTests` with `PublicApiGenerator`; there is no `PublicAPI.Unshipped.txt` file in this repository.
 3. Re-run without update variable:
    - `Remove-Item Env:PROJNET_UPDATE_PUBLIC_API_BASELINE -ErrorAction Ignore`
-   - `dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "FullyQualifiedName~PublicApiBaselineTests"`
+   - `dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter-class ProjNet.Tests.PublicApiBaselineTests`
 
 ## Target framework policy
 

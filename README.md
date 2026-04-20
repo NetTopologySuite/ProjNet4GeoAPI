@@ -140,7 +140,7 @@ dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj
 
 ```powershell
 $env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'
-dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "FullyQualifiedName~PublicApiBaselineTests"
+dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter-class ProjNet.Tests.PublicApiBaselineTests
 ```
 
 ## Transformation coverage summary

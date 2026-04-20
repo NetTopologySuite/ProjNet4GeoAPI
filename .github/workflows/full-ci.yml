@@ -112,10 +112,10 @@ jobs:
         retention-days: 30
 
     - name: API compatibility gate
-      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter "FullyQualifiedName~PublicApiBaselineTests"
+      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter-class ProjNet.Tests.PublicApiBaselineTests
 
     - name: GIE/GIGS parity smoke gate
-      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"
+      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter-class ProjNet.Tests.GieBuiltinsTheoryTests --filter-class ProjNet.Tests.Gigs5101TheoryTests
 
     - name: Benchmark smoke gate
       shell: pwsh
