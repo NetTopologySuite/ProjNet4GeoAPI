@@ -19,17 +19,17 @@ jobs:
 
     steps:
     - name: Get source
-      uses: actions/checkout@v6
+      uses: actions/checkout@v6.0.2
       with:
         fetch-depth: 0
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v5.2.0
       with:
         global-json-file: global.json
 
     - name: Cache NuGet packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5.0.5
       with:
         path: ~/.nuget/packages
         key: nuget-${{ hashFiles('Directory.Packages.props', 'dotnet-tools.json') }}
@@ -47,7 +47,7 @@ jobs:
 
     - name: Dependency review
       if: ${{ github.event_name == 'pull_request' }}
-      uses: actions/dependency-review-action@v4
+      uses: actions/dependency-review-action@v4.9.0
 
     - name: Test with coverage
       run: |
@@ -71,7 +71,7 @@ jobs:
 
     - name: Upload coverage artifact
       if: ${{ always() && steps.coverage-status.outputs.present == 'true' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: code-coverage
         path: coverage-out/coverage.cobertura.xml
@@ -105,7 +105,7 @@ jobs:
 
     - name: Upload coverage summary artifact
       if: ${{ always() && steps.coverage-summary-status.outputs.present == 'true' }}
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: coverage-summary
         path: code-coverage-results.md
@@ -133,7 +133,7 @@ jobs:
       run: dotnet pack ProjNet4GeoAPI.sln -c Release --no-build -o artifacts -p:NoWarn=NU5105
 
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
         name: NuGet Package Files
         path: artifacts
@@ -149,7 +149,7 @@ jobs:
 
     steps:
     - name: Download coverage summary artifact
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8.0.1
       continue-on-error: true
       with:
         name: coverage-summary
@@ -157,7 +157,7 @@ jobs:
 
     - name: Update coverage PR comment with fallback
       if: ${{ hashFiles('code-coverage-results.md') == '' }}
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3.0.4
       with:
         header: code-coverage
         recreate: true
@@ -168,7 +168,7 @@ jobs:
 
     - name: Add coverage PR comment
       if: ${{ hashFiles('code-coverage-results.md') != '' }}
-      uses: marocchino/sticky-pull-request-comment@v2
+      uses: marocchino/sticky-pull-request-comment@v3.0.4
       with:
         header: code-coverage
         recreate: true
@@ -183,12 +183,12 @@ jobs:
 
     steps:
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v5.2.0
       with:
         dotnet-version: 10.0.201
 
     - name: Download Package Files
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8.0.1
       with:
         name: NuGet Package Files
         path: artifacts
@@ -208,12 +208,12 @@ jobs:
 
     steps:
     - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v5.2.0
       with:
         dotnet-version: 10.0.201
 
     - name: Download Package Files
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8.0.1
       with:
         name: NuGet Package Files
         path: artifacts
