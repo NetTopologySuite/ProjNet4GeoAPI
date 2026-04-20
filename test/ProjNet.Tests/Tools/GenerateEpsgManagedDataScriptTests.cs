@@ -22,6 +22,7 @@ public class GenerateEpsgManagedDataScriptTests
         string projectRoot = GetProjectRoot();
         string toolsRoot = Path.Combine(projectRoot, "tools");
         string scriptPath = Path.Combine(toolsRoot, "Generate-EpsgManagedData.ps1");
+        string shellExecutable = GetPowerShellExecutable();
         string tempDirectory = Path.Combine(Path.GetTempPath(), "ProjNet.Tests", nameof(GenerateEpsgManagedDataScriptTests), Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(tempDirectory);
 
@@ -40,7 +41,7 @@ public class GenerateEpsgManagedDataScriptTests
             using var process = new Process();
             process.StartInfo = new ProcessStartInfo
             {
-                FileName = "powershell.exe",
+                FileName = shellExecutable,
                 Arguments = FormattableString.Invariant($"-NoProfile -NonInteractive -ExecutionPolicy Bypass -File \"{scriptPath}\" -ZipPath \"{zipArgument}\" -PgZipPath \"{pgZipArgument}\" -OutputPath \"{outputArgument}\""),
                 WorkingDirectory = toolsRoot,
                 UseShellExecute = false,
@@ -64,6 +65,33 @@ public class GenerateEpsgManagedDataScriptTests
                 Directory.Delete(tempDirectory, recursive: true);
             }
         }
+    }
+
+    private static string GetPowerShellExecutable()
+    {
+        if (OperatingSystem.IsWindows())
+        {
+            return "powershell.exe";
+        }
+
+        const string shellExecutable = "pwsh";
+        string? path = Environment.GetEnvironmentVariable("PATH");
+        if (string.IsNullOrWhiteSpace(path))
+        {
+            Assert.Skip("PowerShell is not available on PATH.");
+        }
+
+        foreach (string entry in path.Split(Path.PathSeparator, StringSplitOptions.RemoveEmptyEntries))
+        {
+            string candidate = Path.Combine(entry, shellExecutable);
+            if (File.Exists(candidate))
+            {
+                return shellExecutable;
+            }
+        }
+
+        Assert.Skip("PowerShell is not available on PATH.");
+        return string.Empty;
     }
 
     private static string GetProjectRoot()

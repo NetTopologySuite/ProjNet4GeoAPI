@@ -1408,7 +1408,8 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        string fileName = Path.GetFileName(normalizedToken);
+        string platformNormalizedToken = normalizedToken.Replace('\\', Path.DirectorySeparatorChar);
+        string fileName = Path.GetFileName(platformNormalizedToken);
         if (string.IsNullOrWhiteSpace(fileName))
         {
             return false;

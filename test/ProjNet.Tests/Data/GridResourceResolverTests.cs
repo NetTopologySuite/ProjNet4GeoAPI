@@ -46,6 +46,35 @@ public class GridResourceResolverTests
     }
 
     /// <summary>
+    /// Verifies that nested Windows-style grid names still resolve to their leaf file name on non-Windows runners.
+    /// </summary>
+    [Fact]
+    public void TryResolveWithWindowsStyleNestedGridNameResolvesLocalLeafFile()
+    {
+        string localDirectory = CreateTemporaryDirectory();
+        try
+        {
+            string localGridPath = Path.Combine(localDirectory, "sample.gsb");
+            File.WriteAllText(localGridPath, "local-grid");
+
+            var fetchClient = new RecordingFetchClient();
+            var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
+            var resolver = new GridResourceResolver(options, fetchClient);
+
+            bool resolved = resolver.TryResolve(@"nested\sample.gsb", out string? resolvedPath);
+
+            Assert.True(resolved);
+            Assert.NotNull(resolvedPath);
+            Assert.Equal(localGridPath, resolvedPath);
+            Assert.Equal(0, fetchClient.Calls);
+        }
+        finally
+        {
+            Directory.Delete(localDirectory, true);
+        }
+    }
+
+    /// <summary>
     /// Verifies that <c>TryResolve</c> returns <see langword="false"/> and does not invoke the network fetcher when configured with <c>LocalOnly</c> mode and the grid file is absent locally.
     /// </summary>
     [Fact]

@@ -34,7 +34,7 @@ internal static class EpsgArchiveWktFixtureSource
         "VERTCRS",
     ];
 
-    private static readonly Lazy<FixtureIndex> Fixtures = new(CreateFixtureIndex, true);
+    private static readonly Lazy<FixtureState> Fixtures = new(CreateFixtureState, true);
     private static readonly Lazy<HashSet<int>> SupportedSrids = new(
         () => new ManagedCoordinateSystemDefinitionProvider()
             .GetCoordinateSystems()
@@ -54,7 +54,8 @@ internal static class EpsgArchiveWktFixtureSource
     /// <returns>The cached fixture for <paramref name="srid"/>.</returns>
     internal static EpsgArchiveWktFixture GetFixture(int srid)
     {
-        if (!Fixtures.Value.FixturesBySrid.TryGetValue(srid, out EpsgArchiveWktFixture? fixture))
+        FixtureIndex fixtureIndex = RequireFixtureIndex();
+        if (!fixtureIndex.FixturesBySrid.TryGetValue(srid, out EpsgArchiveWktFixture? fixture))
         {
             throw new InvalidOperationException(
                 FormattableString.Invariant(
@@ -69,7 +70,7 @@ internal static class EpsgArchiveWktFixtureSource
     /// </summary>
     /// <returns>The cached supported fixtures.</returns>
     internal static IReadOnlyList<EpsgArchiveWktFixture> GetAllSupportedFixtures()
-        => Fixtures.Value.OrderedFixtures;
+        => RequireFixtureIndex().OrderedFixtures;
 
     /// <summary>
     /// Gets xUnit theory rows for the requested EPSG SRIDs, or for all supported fixtures when none are specified.
@@ -80,9 +81,18 @@ internal static class EpsgArchiveWktFixtureSource
     {
         ArgumentNullException.ThrowIfNull(srids);
 
+        FixtureState fixtureState = Fixtures.Value;
+        if (fixtureState.Index is null)
+        {
+            yield return CreateSkippedTheoryDataRow(fixtureState.SkipReason);
+            yield break;
+        }
+
+        FixtureIndex fixtureIndex = Assert.IsType<FixtureIndex>(fixtureState.Index);
+
         if (srids.Length == 0)
         {
-            foreach (EpsgArchiveWktFixture fixture in GetAllSupportedFixtures())
+            foreach (EpsgArchiveWktFixture fixture in fixtureIndex.OrderedFixtures)
             {
                 yield return CreateTheoryDataRow(fixture);
             }
@@ -92,7 +102,14 @@ internal static class EpsgArchiveWktFixtureSource
 
         foreach (int srid in srids)
         {
-            yield return CreateTheoryDataRow(GetFixture(srid));
+            if (!fixtureIndex.FixturesBySrid.TryGetValue(srid, out EpsgArchiveWktFixture? fixture))
+            {
+                throw new InvalidOperationException(
+                    FormattableString.Invariant(
+                        $"Could not locate a supported EPSG:{srid} fixture in {Path.GetFileName(ArchivePath)}."));
+            }
+
+            yield return CreateTheoryDataRow(fixture);
         }
     }
 
@@ -102,12 +119,15 @@ internal static class EpsgArchiveWktFixtureSource
         return new TheoryDataRow<int, string>(fixture.Srid, fixture.Wkt);
     }
 
-    private static FixtureIndex CreateFixtureIndex()
+    private static FixtureState CreateFixtureState()
     {
         string archivePath = GetArchivePath();
         if (!File.Exists(archivePath))
         {
-            throw new InvalidOperationException($"Could not locate EPSG archive '{archivePath}'.");
+            return new FixtureState(
+                archivePath,
+                null,
+                FormattableString.Invariant($"EPSG archive fixture '{archivePath}' is unavailable in this checkout."));
         }
 
         var fixturesBySrid = new Dictionary<int, EpsgArchiveWktFixture>();
@@ -150,10 +170,32 @@ internal static class EpsgArchiveWktFixtureSource
             .OrderBy(fixture => fixture.Srid)
             .ToArray();
 
-        return new FixtureIndex(
+        return new FixtureState(
             archivePath,
-            Array.AsReadOnly(orderedFixtures),
-            fixturesBySrid);
+            new FixtureIndex(
+                archivePath,
+                Array.AsReadOnly(orderedFixtures),
+                fixturesBySrid),
+            null);
+    }
+
+    private static TheoryDataRow<int, string> CreateSkippedTheoryDataRow(string? skipReason)
+    {
+        return new TheoryDataRow<int, string>(0, string.Empty)
+        {
+            Skip = skipReason ?? "EPSG archive fixtures are unavailable in this checkout.",
+        };
+    }
+
+    private static FixtureIndex RequireFixtureIndex()
+    {
+        FixtureState fixtureState = Fixtures.Value;
+        if (fixtureState.Index is null)
+        {
+            Assert.Skip(fixtureState.SkipReason ?? "EPSG archive fixtures are unavailable in this checkout.");
+        }
+
+        return Assert.IsType<FixtureIndex>(fixtureState.Index);
     }
 
     private static void EnsureNoDuplicateFixtures(string archivePath, List<string> duplicates)
@@ -261,5 +303,21 @@ internal static class EpsgArchiveWktFixtureSource
         internal ReadOnlyCollection<EpsgArchiveWktFixture> OrderedFixtures { get; }
 
         internal Dictionary<int, EpsgArchiveWktFixture> FixturesBySrid { get; }
+    }
+
+    private sealed class FixtureState
+    {
+        internal FixtureState(string archivePath, FixtureIndex? index, string? skipReason)
+        {
+            this.ArchivePath = archivePath;
+            this.Index = index;
+            this.SkipReason = skipReason;
+        }
+
+        internal string ArchivePath { get; }
+
+        internal FixtureIndex? Index { get; }
+
+        internal string? SkipReason { get; }
     }
 }

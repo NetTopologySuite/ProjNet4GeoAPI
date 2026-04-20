@@ -116,6 +116,12 @@ internal sealed class GridResourceResolver
         return null;
     }
 
+    private static string GetGridFileName(string gridName)
+    {
+        string normalizedGridName = gridName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+        return Path.GetFileName(normalizedGridName);
+    }
+
     private void RememberResolvedPath(string gridName, string resolvedPath)
     {
         lock (this.sync)
@@ -151,7 +157,7 @@ internal sealed class GridResourceResolver
             return true;
         }
 
-        string fileName = Path.GetFileName(gridName);
+        string fileName = GetGridFileName(gridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
             resolvedPath = null;
@@ -183,7 +189,7 @@ internal sealed class GridResourceResolver
         }
 
         Directory.CreateDirectory(this.options.CacheDirectory);
-        string fileName = Path.GetFileName(gridName);
+        string fileName = GetGridFileName(gridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
             resolvedPath = null;
@@ -221,7 +227,7 @@ internal sealed class GridResourceResolver
         }
 
         Directory.CreateDirectory(this.options.CacheDirectory);
-        string fileName = Path.GetFileName(gridName);
+        string fileName = GetGridFileName(gridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
             return null;

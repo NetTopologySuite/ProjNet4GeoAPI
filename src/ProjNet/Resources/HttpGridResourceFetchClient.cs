@@ -116,7 +116,8 @@ public sealed class HttpGridResourceFetchClient : IGridResourceFetchClient
             ArgumentGuard.ThrowArgument("The grid name must not be empty.", nameof(gridName));
         }
 
-        string fileName = Path.GetFileName(gridName);
+        string normalizedGridName = gridName.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
+        string fileName = Path.GetFileName(normalizedGridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
             ArgumentGuard.ThrowArgument("The grid name must resolve to a file name.", nameof(gridName));
