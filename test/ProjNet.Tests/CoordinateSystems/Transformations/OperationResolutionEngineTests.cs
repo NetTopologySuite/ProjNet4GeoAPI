@@ -1,0 +1,677 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.Tests.CoordinateSystems.Transformations;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using ProjNet;
+using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Data;
+using ProjNet.Data.Generated;
+using Xunit;
+
+/// <summary>
+/// Tests for the coordinate operation resolution engine and transformation factory.
+/// </summary>
+[Collection(GlobalEnvironmentTestIsolation.Name)]
+public class OperationResolutionEngineTests
+{
+    private static readonly double[] GeographicSamplePoint = [13.1234d, 52.9876d];
+    private static readonly double[] GeographicOffsetSamplePoint = [10d, 20d];
+    private static readonly double[] TimeDependentGeocentricSamplePoint = [3657660.66d, 255768.55d, 5201382.11d, 2017d];
+    private static readonly double[] UtmSamplePoint = [500000d, 4649776.22482d];
+
+    private readonly CoordinateTransformationFactory coordinateTransformationFactory = new();
+    private readonly CoordinateSystemFactory coordinateSystemFactory = new();
+
+    /// <summary>
+    /// Verifies that creating a transformation between identical projected coordinate systems produces an identity transform.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithSameProjectedCoordinateSystemUsesIdentityTransform()
+    {
+        var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, source);
+        double[] output = transformation.MathTransform.Transform(UtmSamplePoint);
+
+        Assert.True(transformation.MathTransform.Identity());
+        Assert.Equal(500000d, output[0], 12);
+        Assert.Equal(4649776.22482d, output[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies that creating a transformation between equivalent geographic coordinate systems parsed from WKT produces an identity transform.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithEquivalentGeographicCoordinateSystemsUsesIdentityTransform()
+    {
+        GeographicCoordinateSystem source = GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem target = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, source.WKT);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        double[] output = transformation.MathTransform.Transform(GeographicSamplePoint);
+
+        Assert.True(transformation.MathTransform.Identity());
+        Assert.Equal(13.1234d, output[0], 12);
+        Assert.Equal(52.9876d, output[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies that creating a transformation rejects a null source coordinate system.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithNullSourceThrowsArgumentNullException()
+    {
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+            () => this.coordinateTransformationFactory.CreateFromCoordinateSystems(null!, GeographicCoordinateSystem.WGS84));
+
+        Assert.Equal("source", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that creating a transformation rejects a null target coordinate system.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithNullTargetThrowsArgumentNullException()
+    {
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+            () => this.coordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, null!));
+
+        Assert.Equal("target", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that when projected coordinate systems carry EPSG authority codes, the engine selects the highest-ranked catalogued operation over the fallback path.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithProjectedPairHavingDirectMetadataPrefersMetadataCandidate()
+    {
+        ProjectedCoordinateSystem source = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), "EPSG", 28992);
+        ProjectedCoordinateSystem target = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), "EPSG", 23031);
+
+        ICoordinateTransformation metadataTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        double[] metadataOutput = metadataTransformation.MathTransform.Transform(UtmSamplePoint);
+
+        ProjectedCoordinateSystem fallbackSource = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), string.Empty, -1);
+        ProjectedCoordinateSystem fallbackTarget = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), string.Empty, -1);
+        ICoordinateTransformation fallbackTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(fallbackSource, fallbackTarget);
+        double[] fallbackOutput = fallbackTransformation.MathTransform.Transform(UtmSamplePoint);
+
+        Assert.Equal("EPSG", metadataTransformation.Authority);
+        Assert.Equal(1044, metadataTransformation.AuthorityCode);
+        Assert.Equal(fallbackOutput[0], metadataOutput[0], 9);
+        Assert.Equal(fallbackOutput[1], metadataOutput[1], 9);
+
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(metadataTransformation.MathTransform);
+        Assert.Equal(2, concatenated.CoordinateTransformationList.Count);
+        Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
+    }
+
+    /// <summary>
+    /// Verifies that projected coordinate systems without EPSG authority codes produce a direct projected-to-projected transformation without intermediate geographic steps.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithProjectedFallbackPairUsesDirectProj2ProjCorePath()
+    {
+        ProjectedCoordinateSystem source = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), string.Empty, -1);
+        ProjectedCoordinateSystem target = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), string.Empty, -1);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
+        Assert.Equal(2, concatenated.CoordinateTransformationList.Count);
+        Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
+    }
+
+    /// <summary>
+    /// Verifies that projected coordinate systems without an EPSG authority fall back to a transformation with an empty authority and a code of -1.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithProjectedPairWithoutEpsgAuthorityUsesLegacyFallback()
+    {
+        ProjectedCoordinateSystem source = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), string.Empty, -1);
+        ProjectedCoordinateSystem target = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), string.Empty, -1);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        Assert.Equal(string.Empty, transformation.Authority);
+        Assert.Equal(-1, transformation.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies that operation ranking prefers the smaller area-of-use candidate when all other ranking inputs are equal.
+    /// </summary>
+    [Fact]
+    public void OperationDefinitionComparerWithSameAccuracyGridAndMethodPrefersSmallerAreaOfUse()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        CoordinateOperationDefinition largeAreaCandidate = provider.GetDefinitions().Single(definition => definition.OperationCode == 10392);
+        CoordinateOperationDefinition smallAreaCandidate = provider.GetDefinitions().Single(definition => definition.OperationCode == 10393);
+
+        Assert.Equal(largeAreaCandidate.SourceSrid, smallAreaCandidate.SourceSrid);
+        Assert.Equal(largeAreaCandidate.TargetSrid, smallAreaCandidate.TargetSrid);
+        Assert.Equal(string.IsNullOrWhiteSpace(largeAreaCandidate.ParameterFileName), string.IsNullOrWhiteSpace(smallAreaCandidate.ParameterFileName));
+        Assert.Equal(string.IsNullOrWhiteSpace(largeAreaCandidate.MethodName), string.IsNullOrWhiteSpace(smallAreaCandidate.MethodName));
+        Assert.Equal(
+            largeAreaCandidate.Accuracy > 0d ? largeAreaCandidate.Accuracy : double.MaxValue,
+            smallAreaCandidate.Accuracy > 0d ? smallAreaCandidate.Accuracy : double.MaxValue);
+
+        MethodInfo getCoverageMethod = typeof(CoordinateOperationDefinition).GetMethod("GetApproximateAreaOfUseCoverage", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("CoordinateOperationDefinition.GetApproximateAreaOfUseCoverage is required for area-aware ranking.");
+        double largeAreaCoverage = Assert.IsType<double>(getCoverageMethod.Invoke(largeAreaCandidate, []));
+        double smallAreaCoverage = Assert.IsType<double>(getCoverageMethod.Invoke(smallAreaCandidate, []));
+        Assert.True(largeAreaCoverage > smallAreaCoverage);
+
+        Type comparerType = typeof(CoordinateTransformationFactory).GetNestedType("OperationDefinitionComparer", BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer type was not found.");
+        FieldInfo instanceField = comparerType.GetField("Instance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer.Instance field was not found.");
+        object comparer = instanceField.GetValue(null)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer.Instance is null.");
+        MethodInfo compareMethod = comparerType.GetMethod("Compare", BindingFlags.Instance | BindingFlags.Public)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer.Compare method was not found.");
+        int comparison = Assert.IsType<int>(compareMethod.Invoke(comparer, [smallAreaCandidate, largeAreaCandidate]));
+
+        Assert.True(comparison < 0);
+    }
+
+    /// <summary>
+    /// Verifies that when only grid-based operations exist for a coordinate pair and PROJNET_GRID_REQUIRED is set, creating the transformation throws an <see cref="InvalidOperationException"/> with a DataUnavailable prefix.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithGridOnlyDirectOperationsThrowsDeterministicDataUnavailable()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        List<CoordinateOperationDefinition>? gridOnlyPair = provider.GetDefinitions()
+            .Where(definition => definition.SourceSrid > 0 && definition.TargetSrid > 0 && definition.SourceSrid != definition.TargetSrid)
+            .GroupBy(definition => new { definition.SourceSrid, definition.TargetSrid })
+            .Select(group => group.ToList())
+            .FirstOrDefault(group => group.All(definition => !string.IsNullOrWhiteSpace(definition.ParameterFileName)));
+
+        Assert.NotNull(gridOnlyPair);
+
+        ProjectedCoordinateSystem source = WithAuthority(
+            ProjectedCoordinateSystem.WGS84_UTM(32, true),
+            "EPSG",
+            Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].SourceSrid);
+        ProjectedCoordinateSystem target = WithAuthority(
+            ProjectedCoordinateSystem.WGS84_UTM(33, true),
+            "EPSG",
+            Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].TargetSrid);
+
+        string? originalRequiredMode = Environment.GetEnvironmentVariable("PROJNET_GRID_REQUIRED");
+        try
+        {
+            Environment.SetEnvironmentVariable("PROJNET_GRID_REQUIRED", "true");
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target));
+            Assert.StartsWith("DataUnavailable:", exception.Message, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("PROJNET_GRID_REQUIRED", originalRequiredMode);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that when a coordinate pair has both grid-based and parameter-based catalogued operations, the engine selects a non-grid operation.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithMixedGridAndNonGridDirectOperationsFallsBackToAvailableMetadataOperation()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        List<CoordinateOperationDefinition>? mixedPair = provider.GetDefinitions()
+            .Where(definition => definition.SourceSrid > 0 && definition.TargetSrid > 0 && definition.SourceSrid != definition.TargetSrid)
+            .GroupBy(definition => new { definition.SourceSrid, definition.TargetSrid })
+            .Select(group => group.ToList())
+            .FirstOrDefault(group =>
+                group.Any(definition => !string.IsNullOrWhiteSpace(definition.ParameterFileName))
+                && group.Any(definition => string.IsNullOrWhiteSpace(definition.ParameterFileName)));
+
+        Assert.NotNull(mixedPair);
+
+        ProjectedCoordinateSystem source = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), "EPSG", mixedPair[0].SourceSrid);
+        ProjectedCoordinateSystem target = WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), "EPSG", mixedPair[0].TargetSrid);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.DoesNotContain("Grid:", transformation.Remarks ?? string.Empty, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that a geographic-to-geographic transformation using a supported EPSG datum operation includes an explicit datum transform step.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithSupportedGeographicEpsgOperationUsesExplicitDatumTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = GetRankedOperations(provider)
+            .First(definition =>
+                IsExplicitMethodSupported(definition.MethodName)
+                && string.IsNullOrWhiteSpace(definition.ParameterFileName)
+                && services.GetCoordinateSystem(definition.SourceSrid) is GeographicCoordinateSystem
+                && services.GetCoordinateSystem(definition.TargetSrid) is GeographicCoordinateSystem);
+
+        GeographicCoordinateSystem source = WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeographicCoordinateSystem target = WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.True(IsExplicitMethodSupported(provider.GetDefinitions().First(definition => definition.OperationCode == transformation.AuthorityCode).MethodName));
+        Assert.True(ContainsDatumTransform(transformation.MathTransform));
+    }
+
+    /// <summary>
+    /// Verifies that a projected-to-projected transformation whose base geographic coordinate systems have a supported EPSG datum operation includes an explicit datum transform step.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithProjectedPairUsingSupportedBaseGeographicOperationUsesExplicitDatumTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        var projectedRecords = EnumerateProjectedCrsRecords().ToList();
+
+        var candidates = (
+            from operation in GetRankedOperations(provider)
+            where IsExplicitMethodSupported(operation.MethodName)
+                && string.IsNullOrWhiteSpace(operation.ParameterFileName)
+            from sourceProjected in projectedRecords.Where(record => record.BaseSrid == operation.SourceSrid).Take(1)
+            from targetProjected in projectedRecords.Where(record => record.BaseSrid == operation.TargetSrid).Take(1)
+            select new
+            {
+                operation,
+                SourceProjectedSrid = sourceProjected.Srid,
+                TargetProjectedSrid = targetProjected.Srid,
+            }).Take(200);
+
+        foreach (var candidate in candidates)
+        {
+            ProjectedCoordinateSystem sourceTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.SourceProjectedSrid));
+            ProjectedCoordinateSystem targetTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.TargetProjectedSrid));
+            ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithBaseGeographicAuthority(
+                WithAuthority(
+                    CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT),
+                    string.Empty,
+                    -1),
+                "EPSG",
+                candidate.operation.SourceSrid);
+            ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithBaseGeographicAuthority(
+                WithAuthority(
+                    CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT),
+                    string.Empty,
+                    -1),
+                "EPSG",
+                candidate.operation.TargetSrid);
+
+            ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+            if (!"EPSG".Equals(transformation.Authority, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (!ContainsDatumTransform(transformation.MathTransform))
+            {
+                continue;
+            }
+
+            Assert.True(IsExplicitMethodSupported(provider.GetDefinitions().First(definition => definition.OperationCode == transformation.AuthorityCode).MethodName));
+            return;
+        }
+
+        Assert.Fail("No projected candidate produced an explicit EPSG datum transformation from base geographic metadata.");
+    }
+
+    /// <summary>
+    /// Verifies that geocentric-domain EPSG translations route directly to a datum transform instead of legacy fallback composition.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithGeocentricTranslationOperationUsesExplicitGeocentricDatumTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 7817);
+
+        GeocentricCoordinateSystem source = WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeocentricCoordinateSystem target = WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.IsType<DatumTransform>(transformation.MathTransform);
+    }
+
+    /// <summary>
+    /// Verifies that EPSG Geographic2D offsets route directly to the managed geographic offset runtime.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithGeographicOffsetOperationUsesGeogOffsetMathTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 1447);
+
+        GeographicCoordinateSystem source = WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeographicCoordinateSystem target = WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        double[] output = transformation.MathTransform.Transform(GeographicOffsetSamplePoint);
+        Dictionary<string, double> parameters = GetOperationParameters(operation.OperationCode);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.True(ContainsMathTransform<GeogOffsetMathTransform>(transformation.MathTransform));
+        Assert.InRange(Math.Abs(output[0] - (10d + (parameters["Longitude offset"] / 3600d))), 0d, 1e-12d);
+        Assert.InRange(Math.Abs(output[1] - (20d + (parameters["Latitude offset"] / 3600d))), 0d, 1e-12d);
+    }
+
+    /// <summary>
+    /// Verifies that time-dependent geocentric EPSG operations route directly to the Helmert runtime and preserve the observation epoch ordinate.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithTimeDependentGeocentricOperationUsesHelmertMathTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 5900);
+
+        GeocentricCoordinateSystem source = WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeocentricCoordinateSystem target = WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        double[] output = transformation.MathTransform.Transform(TimeDependentGeocentricSamplePoint);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.IsType<HelmertMathTransform>(transformation.MathTransform);
+        Assert.Equal(4, output.Length);
+        Assert.InRange(Math.Abs(output[3] - 2017d), 0d, 1e-12d);
+    }
+
+    /// <summary>
+    /// Verifies that Molodensky-Badekas EPSG operations route directly to the managed Molodensky-Badekas runtime.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithMolodenskyBadekasOperationUsesMolobadekasMathTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 1066);
+
+        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.True(ContainsMathTransform<MolobadekasMathTransform>(transformation.MathTransform));
+    }
+
+    /// <summary>
+    /// Verifies that concatenated EPSG geographic operations preserve the catalog step order and reverse later steps when required by the intermediate CRS chain.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithConcatenatedGeographicOperationUsesExpectedStepDirections()
+    {
+        var services = new CoordinateSystemServices();
+
+        ICoordinateTransformation transformation = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4289, 4230));
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(4837, transformation.AuthorityCode);
+
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
+        Assert.Collection(
+            concatenated.CoordinateTransformationList,
+            step => AssertConcatenatedStep(step, 1672, 4289, 4326),
+            step => AssertConcatenatedStep(step, 1311, 4326, 4230));
+    }
+
+    /// <summary>
+    /// Verifies that concatenated EPSG geocentric operations preserve the catalog step order and reverse intermediate step directions when required.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithConcatenatedGeocentricOperationUsesExpectedStepDirections()
+    {
+        var services = new CoordinateSystemServices();
+
+        ICoordinateTransformation transformation = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(9988, 4000));
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(11285, transformation.AuthorityCode);
+
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
+        Assert.Collection(
+            concatenated.CoordinateTransformationList,
+            step => AssertConcatenatedStep(step, 10586, 9988, 7930),
+            step => AssertConcatenatedStep(step, 11228, 7930, 7928),
+            step => AssertConcatenatedStep(step, 11205, 7928, 4000));
+    }
+
+    /// <summary>
+    /// Verifies that a transformation between fitted coordinate systems is correctly composed by routing through the base coordinate systems.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithFittedSourceAndTargetComposesViaBaseCoordinateSystems()
+    {
+        var sourceBase = ProjectedCoordinateSystem.WGS84_UTM(32, true);
+        var targetBase = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+
+        var sourceToBase = new AffineTransform(new double[,]
+        {
+            { 1d, 0d, 1000d },
+            { 0d, 1d, -500d },
+            { 0d, 0d, 1d },
+        });
+
+        var targetToBase = new AffineTransform(new double[,]
+        {
+            { 1d, 0d, -2000d },
+            { 0d, 1d, 250d },
+            { 0d, 0d, 1d },
+        });
+
+        FittedCoordinateSystem sourceFitted = this.coordinateSystemFactory.CreateFittedCoordinateSystem(
+            "source-fitted",
+            sourceBase,
+            sourceToBase,
+            []);
+        FittedCoordinateSystem targetFitted = this.coordinateSystemFactory.CreateFittedCoordinateSystem(
+            "target-fitted",
+            targetBase,
+            targetToBase,
+            []);
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceFitted, targetFitted);
+        ICoordinateTransformation baseTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceBase, targetBase);
+
+        double[] input = [500000d, 4649776.22482d];
+        double[] transformed = transformation.MathTransform.Transform(input);
+
+        double[] baseInput = sourceToBase.Transform(input);
+        double[] baseOutput = baseTransformation.MathTransform.Transform(baseInput);
+        double[] expected = targetToBase.Inverse().Transform(baseOutput);
+
+        Assert.Equal(expected[0], transformed[0], 9);
+        Assert.Equal(expected[1], transformed[1], 9);
+    }
+
+    private static ProjectedCoordinateSystem WithAuthority(ProjectedCoordinateSystem coordinateSystem, string authority, long authorityCode)
+    {
+        return coordinateSystem.WithAuthority(authority, authorityCode);
+    }
+
+    private static GeographicCoordinateSystem WithAuthority(GeographicCoordinateSystem coordinateSystem, string authority, long authorityCode)
+    {
+        return coordinateSystem.WithAuthority(authority, authorityCode);
+    }
+
+    private static GeocentricCoordinateSystem WithAuthority(GeocentricCoordinateSystem coordinateSystem, string authority, long authorityCode)
+    {
+        return coordinateSystem.WithAuthority(authority, authorityCode);
+    }
+
+    private static IEnumerable<EpsgProjectedCrsRecord> EnumerateProjectedCrsRecords()
+    {
+        for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
+        {
+            if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid))
+            {
+                continue;
+            }
+
+            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out EpsgCoordinateReferenceRecord reference, out _))
+            {
+                continue;
+            }
+
+            if (reference.Kind != EpsgCoordinateSystemKind.Projected)
+            {
+                continue;
+            }
+
+            if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out EpsgProjectedCrsRecord projectedRecord))
+            {
+                yield return projectedRecord;
+            }
+        }
+    }
+
+    private static bool ContainsGeographicOrGeocentricCoordinateSystem(ICoordinateTransformationCore transformation)
+    {
+        if (transformation.SourceCS is GeographicCoordinateSystem || transformation.TargetCS is GeographicCoordinateSystem)
+        {
+            return true;
+        }
+
+        if (transformation.SourceCS is GeocentricCoordinateSystem || transformation.TargetCS is GeocentricCoordinateSystem)
+        {
+            return true;
+        }
+
+        if (transformation is ConcatenatedTransform nested)
+        {
+            foreach (ICoordinateTransformationCore item in nested.CoordinateTransformationList)
+            {
+                if (ContainsGeographicOrGeocentricCoordinateSystem(item))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool ContainsMathTransform<TMathTransform>(MathTransform mathTransform)
+        where TMathTransform : MathTransform
+    {
+        if (mathTransform is TMathTransform)
+        {
+            return true;
+        }
+
+        return mathTransform is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsMathTransform<TMathTransform>);
+    }
+
+    private static bool ContainsMathTransform<TMathTransform>(ICoordinateTransformationCore transformation)
+        where TMathTransform : MathTransform
+    {
+        if (transformation is CoordinateTransformation coordinateTransformation)
+        {
+            return ContainsMathTransform<TMathTransform>(coordinateTransformation.MathTransform);
+        }
+
+        return transformation is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsMathTransform<TMathTransform>);
+    }
+
+    private static void AssertConcatenatedStep(
+        ICoordinateTransformationCore step,
+        int expectedOperationCode,
+        int expectedSourceSrid,
+        int expectedTargetSrid)
+    {
+        CoordinateTransformation coordinateTransformation = Assert.IsType<CoordinateTransformation>(step);
+
+        Assert.Equal("EPSG", coordinateTransformation.Authority);
+        Assert.Equal(expectedOperationCode, coordinateTransformation.AuthorityCode);
+        Assert.Equal("EPSG", coordinateTransformation.SourceCS.Authority);
+        Assert.Equal(expectedSourceSrid, coordinateTransformation.SourceCS.AuthorityCode);
+        Assert.Equal("EPSG", coordinateTransformation.TargetCS.Authority);
+        Assert.Equal(expectedTargetSrid, coordinateTransformation.TargetCS.AuthorityCode);
+    }
+
+    private static bool ContainsDatumTransform(MathTransform mathTransform)
+    {
+        return ContainsMathTransform<DatumTransform>(mathTransform);
+    }
+
+    private static bool ContainsDatumTransform(ICoordinateTransformationCore transformation)
+    {
+        return ContainsMathTransform<DatumTransform>(transformation);
+    }
+
+    private static bool IsExplicitMethodSupported(string methodName)
+    {
+        string normalized = NormalizeMethodName(methodName);
+        return normalized.Contains("geocentrictranslations", StringComparison.Ordinal)
+            || normalized.Contains("positionvectortransformation", StringComparison.Ordinal)
+            || normalized.Contains("coordinateframerotation", StringComparison.Ordinal)
+            || normalized.Contains("molodensky", StringComparison.Ordinal);
+    }
+
+    private static string NormalizeMethodName(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : new string([.. value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
+    }
+
+    private static IOrderedEnumerable<CoordinateOperationDefinition> GetRankedOperations(ManagedCoordinateOperationDefinitionProvider provider)
+    {
+        return provider.GetDefinitions()
+            .Where(definition => definition.SourceSrid > 0 && definition.TargetSrid > 0 && definition.SourceSrid != definition.TargetSrid)
+            .OrderBy(definition => definition.Accuracy > 0d ? definition.Accuracy : double.MaxValue)
+            .ThenBy(definition => string.IsNullOrWhiteSpace(definition.ParameterFileName) ? 0 : 1)
+            .ThenBy(definition => string.IsNullOrWhiteSpace(definition.MethodName) ? 1 : 0)
+            .ThenBy(definition => definition.OperationCode);
+    }
+
+    private static Dictionary<string, double> GetOperationParameters(int operationCode)
+    {
+        return EpsgGeneratedOperationsCatalog.OperationParameters
+            .Where(parameter => parameter.OperationCode == operationCode)
+            .ToDictionary(parameter => parameter.Name, parameter => parameter.Value, StringComparer.Ordinal);
+    }
+}

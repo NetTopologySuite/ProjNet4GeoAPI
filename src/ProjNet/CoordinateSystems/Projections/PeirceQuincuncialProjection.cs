@@ -1,0 +1,48 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the Peirce quincuncial projection (<c>peirce_q</c>).
+/// </summary>
+/// <remarks>
+/// Peirce quincuncial is the quincuncial specialization of <see cref="AdamsProjectionBase"/>
+/// attributed to Charles Sanders Peirce. It reuses the shared conformal square machinery
+/// and exposes the Peirce-specific shape and scroll parameters. Inverse projection is
+/// supported for the square and diamond shapes, but not for the hemisphere, horizontal,
+/// or vertical shape variants.
+/// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 7, Sect. 7.4.1, pp. 206-208.</seealso>
+internal sealed class PeirceQuincuncialProjection : AdamsProjectionBase
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeirceQuincuncialProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public PeirceQuincuncialProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PeirceQuincuncialProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public PeirceQuincuncialProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse, "Peirce_Quincuncial", AdamsMode.PeirceQ)
+    {
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        return this.GetOrCreateInverse(() => new PeirceQuincuncialProjection(this.Parameters.ToProjectionParameter(), this));
+    }
+}

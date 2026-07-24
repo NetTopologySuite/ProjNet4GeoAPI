@@ -1,0 +1,63 @@
+name: Mutation Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - develop
+    paths:
+    - 'src/**'
+    - 'test/**'
+    - 'Directory.Build.props'
+    - 'Directory.Packages.props'
+    - 'dotnet-tools.json'
+    - 'global.json'
+    - 'stryker-config.json'
+    - '.github/workflows/mutation-tests.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mutation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  mutation:
+    name: Run Stryker mutation tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get source
+      uses: actions/checkout@v6.0.2
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.2.0
+      with:
+        global-json-file: global.json
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v5.0.5
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ hashFiles('Directory.Packages.props', 'dotnet-tools.json') }}
+        restore-keys: |
+          nuget-
+
+    - name: Restore tools
+      run: dotnet tool restore
+
+    - name: Restore dependencies
+      run: dotnet restore ProjNet4GeoAPI.sln
+
+    - name: Run mutation tests
+      run: dotnet dotnet-stryker --config-file stryker-config.json
+
+    - name: Upload mutation artifacts
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: mutation-artifacts
+        path: |
+          **/StrykerOutput/**

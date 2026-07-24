@@ -1,65 +1,177 @@
-# ProjNet (for GeoAPI)
-This library is an extended port of [ProjNet](http://projnet.codeplex.com)
+# ProjNET 3.0
 
-## Important notice
-The current team unfortunatly doesn't have the resources to dedicate to supporting this project at this moment.
-If you see yourself in the position to help out please [reach out](https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/99).
+ProjNET is a managed .NET library for coordinate reference system (CRS) modeling, projection methods, and coordinate transformation workflows.
 
-Alternatives:
-* [SharpProj](https://www.nuget.org/packages/SharpProj.NetTopologySuite/)
-* [DotSpatial.Projections](https://www.nuget.org/packages/DotSpatial.Projections/)
-* [DotSpatial.Projections (NetStandard)](https://www.nuget.org/packages/DotSpatial.Projections.NetStandard/)
-* [GDAL/OGR](https://www.nuget.org/packages/GDAL/)
+This repository contains the current ProjNET codebase, aligned with contemporary PROJ behavior and expanded runtime coverage while preserving compatibility-focused API surfaces.
 
-## .NET Spatial Reference and Projection Engine
-Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
-* Read the [Frequently Asked Questions](https://github.com/NetTopologySuite/ProjNet4GeoAPI/wiki/Frequently-Asked-Questions) for common questions.
-* Popular [Well-Known Text](https://github.com/NetTopologySuite/ProjNet4GeoAPI/wiki/Popular-Well-Known-Text-representations-of-Spatial-Reference-Systems) representations for Spatial Reference Systems
+## What is included
 
-### Build status
-| Branch | Status |
-| --- | --- |
-| develop | [![Build Status](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI.svg?branch=develop)](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI) |
-| master | [![Build Status](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI.svg?branch=master)](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI) |
+- Managed coordinate reference system (CRS) definitions and EPSG-backed lookup/catalog support.
+- Projection registration with broad alias coverage (`321` aliases).
+- Coordinate operation and transformation runtime (including affine, Helmert, Molodensky, deformation, grid-shift, topocentric, and pipeline-based paths).
+- WKT parsing/writing and coordinate-system serialization support.
 
+## Scope and non-goals
 
-### Get it from NuGet
-* For version 1.*
-  `PM> Install-Package ProjNet4GeoAPI`  
-  - More information on [NuGet](https://www.nuget.org/packages/ProjNet4GeoAPI)  
-* For version 2.*  
-  `PM> Install-Package ProjNet`
+In scope:
 
+- Coordinate reference system (CRS) modeling and EPSG-backed lookup.
+- Coordinate transformation pipelines, including grid-backed and metadata-backed paths.
+- WKT and PROJJSON parsing, writing, and serialization support.
 
-### Talk...
-Join the [![Gitter](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust.svg)](https://gitter.im/NetTopologySuite/ProjNet4GeoAPI) on ProjNet (for GeoAPI).
+Not in scope:
 
+- Raster reprojection, image resampling, or map rendering.
+- General-purpose vector geometry I/O or GIS data source handling.
+- Runtime dependence on `proj.db`, GDAL, or NetTopologySuite.
 
-### Projects using ProjNet(4GeoAPI)
-* [SharpMap](https://github.com/SharpMap/SharpMap)
+## Target frameworks
 
-(If your project is missing, there is an edit button up-right)
+`ProjNET` currently targets:
 
-### Supports:
-* Datum transformations
-* Geographic, Geocentric, and Projected coordinate systems
-* Compatible with Microsoft .NetStandard 2.0
-* Converts coordinate systems to/from Well-Known Text (WKT) and to XML
+- `netstandard2.0` (required shipping target)
+- `netstandard2.1`
+- `net8.0`
 
-### Projection types currently supported:
-* Albers
-* Cassini Soldner
-* Hotine Oblique Mercator
-* Krovak
-* Lambert Azimuthal Equal Area
-* Lambert Conformal
-* Lambert Tangential Conformal Conic
-* Mercator
-* Mercator Auxiliary Sphere
-* Oblique Mercator
-* Oblique Stereographic
-* Orthographic
-* Polar Stereographic
-* Polyconic
-* Pseudo Mercator
-* Transverse Mercator
+The project is built with C# 12 and includes .NET 8-specific runtime optimizations where applicable (for example conditional source-generated regex paths).
+
+## Installation
+
+```powershell
+dotnet add package ProjNET
+```
+
+## Quick usage
+
+### Use the default EPSG catalog (recommended)
+
+```csharp
+using System;
+using ProjNet;
+
+var services = new CoordinateSystemServices();
+var transformation = services.CreateTransformation(4326, 3857);
+
+if (transformation is null)
+{
+    throw new InvalidOperationException("EPSG:4326 to EPSG:3857 transformation is not available.");
+}
+
+double[] result = transformation.MathTransform.Transform(new[] { 10d, 10d });
+```
+
+### Use custom WKT definitions when you need to seed your own catalog
+
+```csharp
+using System;
+using ProjNet;
+using ProjNet.CoordinateSystems;
+using ProjNet.Data;
+
+var services = new CoordinateSystemServices(new[]
+{
+    new CoordinateSystemDefinition(4326, GeographicCoordinateSystem.WGS84.WKT),
+    new CoordinateSystemDefinition(3857, ProjectedCoordinateSystem.WebMercator.WKT),
+});
+
+var transformation = services.CreateTransformation(4326, 3857);
+
+if (transformation is null)
+{
+    throw new InvalidOperationException("The custom CRS transformation is not available.");
+}
+
+double[] result = transformation.MathTransform.Transform(new[] { 10d, 10d });
+```
+
+Expected reference point for `10°,10°` in EPSG:3857 is approximately:
+
+- `X = 1113194.90793274`
+- `Y = 1118889.97485796`
+
+(Validated by `test/ProjNet.Tests/Integration/VerificationSuiteTests.cs`.)
+
+### Default EPSG catalog
+
+`new CoordinateSystemServices()` uses the built-in managed EPSG catalog.
+The default catalog exposes `7,217` coordinate reference system (CRS) definitions, so common SRID-based lookups such as `4326` and `3857` work out of the box.
+
+### Supported formats
+
+ProjNET supports WKT1, WKT2:2019, and PROJJSON parsing for the CRS types covered by the library.
+It can also serialize supported CRS definitions back to WKT and PROJJSON.
+See [`docs/concepts.md`](docs/concepts.md) for format terminology and [`docs/README.md`](docs/README.md) for the user-documentation index.
+
+### AOT and trimming
+
+The `net8.0` target is marked trimmable and built with trim analysis enabled.
+ProjNET is intended to stay compatible with native AOT and trimmed deployments.
+
+### Thread safety
+
+`CoordinateSystemServices` synchronizes its one-time initialization and can be reused across threads after construction.
+Core immutable CRS model types can also be shared across threads; see the XML docs on the main public types for details.
+
+## Build and test
+
+From repository root:
+
+```powershell
+dotnet build .\ProjNet4GeoAPI.sln --tl:off -v minimal
+dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj
+```
+
+## What's new in v3
+
+- Added `net8.0` as a library target while preserving `netstandard` targets.
+- Generator now uses EPSG WKT ZIP as primary source (no runtime `proj.db` dependency).
+- Large generated eager arrays were replaced by on-demand switch-based lookup paths in the managed EPSG catalog.
+- Test infrastructure uses xUnit v3 and Microsoft.Testing.Platform.
+- Historical `SpecialtyProjectionBatch*` test naming was removed in favor of behavior-oriented class names.
+- SPDX-based file attribution and `LICENSES/` + `NOTICE.md` consolidation completed.
+- API XML documentation overhauled across projection, transformation, coordinate-system, and IO/service surfaces.
+- Build/versioning was unified with Nerdbank.GitVersioning (`version.json` + shared build props).
+
+## API compatibility and validation
+
+- Public API drift is guarded by `PublicApiBaselineTests` against `src/ProjNet/PublicAPI.Shipped.txt`.
+- Baseline regeneration (intentional API change only) is controlled by `PROJNET_UPDATE_PUBLIC_API_BASELINE=1`.
+- Intentional baseline updates can be performed with:
+
+```powershell
+$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'
+dotnet test --project .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter-class ProjNet.Tests.PublicApiBaselineTests
+```
+
+## Transformation coverage summary
+
+Implemented and validated transformation families include:
+
+- Affine transforms (`AffineTransform`)
+- Geocentric/geographic bridge transforms
+- Axis swap and unit conversion
+- Helmert and Molodensky families
+- Deformation and deformation model transforms
+- Horner and TIN shift transforms
+- Horizontal/vertical/XYZ grid shifts (NTv2, GTX, GeoTIFF)
+- Prime-meridian and topocentric transforms
+- Pipeline composition and concatenation paths
+
+## Projection coverage summary
+
+ProjNET currently registers **152** projection classes and **321** aliases in `ProjectionsRegistry`.
+For the audited projection-family breakdown, PROJ alias coverage, and remaining parity notes, see [`docs/projection-coverage.md`](docs/projection-coverage.md).
+
+## Documentation and governance
+
+- User documentation index: `docs/README.md`
+- Projection parity matrix: `docs/projection-coverage.md`
+- Engineering governance and API baseline policy: `src/ProjNet/ENGINEERING_GOVERNANCE.md`
+
+## License and attribution
+
+This project ships under **LGPL-2.1-or-later**.
+
+- License texts: `LICENSES/`
+- Attribution and provenance summary: `NOTICE.md`
+- Per-file SPDX attribution is used across source and tests.

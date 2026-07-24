@@ -1,0 +1,206 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the van der Grinten I projection (<c>vandg</c>).
+/// </summary>
+/// <remarks>
+/// Van der Grinten I maps the world into a circle by combining circular-arc construction
+/// steps with polynomial and radical terms away from the equator and central meridian.
+/// The formulation was independently verified against the Wikipedia article
+/// "Van der Grinten projection" and John P. Snyder, <i>Map Projections - A Working Manual</i>
+/// (USGS Professional Paper 1395, 1987), section 29. The branch structure for the equator,
+/// central meridian, and general case together with the published auxiliary terms
+/// <c>al</c>, <c>g</c>, and <c>p</c> matches the implementation here.
+/// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Van_der_Grinten_projection">Wikipedia: Van der Grinten projection.</seealso>
+internal sealed class VanDerGrintenProjection : MapProjection
+{
+    private const double TwoTwentySevenths = 2d / 27d;
+    private const double FourPiOverThree = 4.18879020478639098458d;
+    private const double PiSquared = PI * PI;
+    private const double TwoPiSquared = 2d * PiSquared;
+    private const double HalfPiSquared = 0.5d * PiSquared;
+    private const double InverseDomainEpsilon = 1e-16d;
+    private readonly bool over;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VanDerGrintenProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public VanDerGrintenProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VanDerGrintenProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public VanDerGrintenProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "VanDerGrinten";
+        this.over = this.Parameters.GetOptionalParameterValue("over", 0d) != 0d;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new VanDerGrintenProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = this.over ? lon - this.centralMeridian : Adjust_lon(lon - this.centralMeridian);
+        double p2 = Math.Abs(lat / HalfPi);
+        if ((p2 - Eps10) > 1d)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        if (p2 > 1d)
+        {
+            p2 = 1d;
+        }
+
+        double x = lambda;
+        double y = 0d;
+        if (Math.Abs(lat) > Eps10 && (Math.Abs(lambda) <= Eps10 || Math.Abs(p2 - 1d) < Eps10))
+        {
+            x = 0d;
+            y = PI * Math.Tan(0.5d * Math.Asin(p2));
+            if (lat < 0d)
+            {
+                y = -y;
+            }
+        }
+        else if (Math.Abs(lat) > Eps10)
+        {
+            int sign = this.over && Math.Abs(lambda) > PI ? -1 : 1;
+            double al = 0.5d * sign * Math.Abs((PI / lambda) - (lambda / PI));
+            double al2 = al * al;
+            double g = Math.Sqrt(1d - (p2 * p2));
+            g /= p2 + g - 1d;
+            double g2 = g * g;
+            double p = g * ((2d / p2) - 1d);
+            double pSquared = p * p;
+
+            double diff = g - pSquared;
+            double sum = pSquared + al2;
+            double radicand = (al2 * diff * diff) - (sum * (g2 - pSquared));
+            if (radicand < -Eps10)
+            {
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+            }
+
+            if (radicand < 0d)
+            {
+                radicand = 0d;
+            }
+
+            x = PI * Math.Abs((al * diff) + Math.Sqrt(radicand)) / sum;
+            if (lambda < 0d)
+            {
+                x = -x;
+            }
+
+            y = Math.Abs(x / PI);
+            y = 1d - (y * (y + (2d * al)));
+            if (y < -Eps10)
+            {
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+            }
+
+            if (y < 0d)
+            {
+                y = 0d;
+            }
+            else
+            {
+                y = Math.Sqrt(y) * (lat < 0d ? -PI : PI);
+            }
+        }
+
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
+        double x2 = xx * xx;
+
+        if (Math.Abs(yy) < Eps10)
+        {
+            y = 0d;
+            double t = (x2 * x2) + (TwoPiSquared * (x2 + HalfPiSquared));
+            double lambdaEquator = Math.Abs(xx) <= Eps10 ? 0d : (0.5d * ((x2 - PiSquared) + Math.Sqrt(t)) / xx);
+            x = this.over ? this.centralMeridian + lambdaEquator : Adjust_lon(this.centralMeridian + lambdaEquator);
+            return;
+        }
+
+        double ay = Math.Abs(yy);
+        double y2 = yy * yy;
+        double r = x2 + y2;
+        double r2 = r * r;
+        double c1 = -PI * ay * (r + PiSquared);
+        double ayr = ay * r;
+        double piTerm = PI * (y2 + (PI * (ay + HalfPi)));
+        double c3 = r2 + (TwoPi * (ayr + piTerm));
+        double c2 = c1 + (PiSquared * (r - (3d * y2)));
+        double c0 = PI * ay;
+
+        c2 /= c3;
+        double al = (c1 / c3) - (ProjectionConstants.OneThird * c2 * c2);
+        double m = 2d * Math.Sqrt(-ProjectionConstants.OneThird * al);
+        double c2Cubed = c2 * c2 * c2;
+        double d = (TwoTwentySevenths * c2Cubed) + (((c0 * c0) - (ProjectionConstants.OneThird * c2 * c1)) / c3);
+        double alMulM = al * m;
+        if (Math.Abs(alMulM) < InverseDomainEpsilon)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        d = 3d * d / alMulM;
+        double ad = Math.Abs(d);
+        if ((ad - Eps10) > 1d)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        d = ad > 1d ? (d > 0d ? 0d : PI) : Math.Acos(d);
+        if (r > PiSquared)
+        {
+            d = TwoPi - d;
+        }
+
+        double phi = PI * ((m * Math.Cos((d * ProjectionConstants.OneThird) + FourPiOverThree)) - (ProjectionConstants.OneThird * c2));
+        if (yy < 0d)
+        {
+            phi = -phi;
+        }
+
+        double t2 = r2 + (TwoPiSquared * (x2 - y2 + HalfPiSquared));
+        double lambdaDenominator = Math.Abs(xx) <= Eps10 ? 0d : xx;
+        double lambda = Math.Abs(lambdaDenominator) <= Eps10
+            ? 0d
+            : (0.5d * (r - PiSquared + (t2 <= 0d ? 0d : Math.Sqrt(t2))) / lambdaDenominator);
+
+        x = this.over ? this.centralMeridian + lambda : Adjust_lon(this.centralMeridian + lambda);
+        y = phi;
+    }
+}

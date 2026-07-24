@@ -1,61 +1,58 @@
-// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
-//
-// This file is part of ProjNet.
-// ProjNet is free software; you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// ProjNet is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-// You should have received a copy of the GNU Lesser General Public License
-// along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
 
-namespace ProjNet.CoordinateSystems
+/// <summary>
+/// A 2D coordinate system suitable for positions on the Earth's surface.
+/// </summary>
+public abstract class HorizontalCoordinateSystem : CoordinateSystem
 {
-	/// <summary>
-	/// A 2D coordinate system suitable for positions on the Earth's surface.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HorizontalCoordinateSystem"/> class.
+    /// Creates an instance of HorizontalCoordinateSystem.
     /// </summary>
-    [Serializable] 
-    public abstract class HorizontalCoordinateSystem : CoordinateSystem
-	{
-		/// <summary>
-		/// Creates an instance of HorizontalCoordinateSystem
-		/// </summary>
-		/// <param name="datum">Horizontal datum</param>
-		/// <param name="axisInfo">Axis information</param>
-		/// <param name="name">Name</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="code">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
-		internal HorizontalCoordinateSystem(HorizontalDatum datum, List<AxisInfo> axisInfo, 
-			string name, string authority, long code, string alias,
-			string remarks, string abbreviation)
-			: base(name, authority, code, alias, abbreviation, remarks)
-		{
-			HorizontalDatum = datum;
-			if (axisInfo.Count != 2)
-				throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
-			base.AxisInfo = axisInfo;
-		}
+    /// <param name="datum">Horizontal datum.</param>
+    /// <param name="axisInfo">Axis information.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="code">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
+    internal HorizontalCoordinateSystem(
+        HorizontalDatum datum,
+        List<AxisInfo> axisInfo,
+        string name,
+        string authority,
+        long code,
+        string alias,
+        string remarks,
+        string abbreviation,
+        double[]? defaultEnvelope = null)
+        : base(name, authority, code, alias, abbreviation, remarks, ValidateAxisInfo(axisInfo), defaultEnvelope)
+    {
+        this.HorizontalDatum = ArgumentGuard.ThrowIfNull(datum, nameof(datum));
+    }
 
-        #region IHorizontalCoordinateSystem Members
+    /// <summary>
+    /// Gets the horizontal datum.
+    /// </summary>
+    public HorizontalDatum HorizontalDatum { get; }
 
+    private static List<AxisInfo> ValidateAxisInfo(List<AxisInfo> axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        if (axisInfo.Count != 2)
+        {
+            ArgumentGuard.ThrowArgument("Axis info should contain two axes for horizontal coordinate systems", nameof(axisInfo));
+        }
 
-        /// <summary>
-        /// Gets or sets the HorizontalDatum.
-        /// </summary>
-        public HorizontalDatum HorizontalDatum { get; set; }
-
-        #endregion
+        return axisInfo;
     }
 }

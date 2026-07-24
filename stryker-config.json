@@ -1,0 +1,27 @@
+{
+  "stryker-config": {
+    "solution": "ProjNet4GeoAPI.sln",
+    "project": "src/ProjNet/ProjNET.csproj",
+    "test-projects": [
+      "test/ProjNet.Tests/ProjNET.Tests.csproj"
+    ],
+    "language-version": "Csharp12",
+    "configuration": "Debug",
+    "target-framework": "net8.0",
+    "mutation-level": "Basic",
+    "test-runner": "mtp",
+    "coverage-analysis": "off",
+    "reporters": [
+      "Progress",
+      "Html",
+      "Json"
+    ],
+    "thresholds": {
+      "high": 80,
+      "low": 70,
+      "break": 60
+    },
+    "concurrency": 1,
+    "verbosity": "info"
+  }
+}

@@ -1,229 +1,206 @@
-// Copyright 2015
-//
-// This file is part of ProjNet.
-// ProjNet is free software; you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// ProjNet is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from GeoTools.NET.
 
-// You should have received a copy of the GNU Lesser General Public License
-// along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-/*
- *  Copyright (C) 2002 Urban Science Applications, Inc.
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-namespace ProjNet.CoordinateSystems.Projections
+/// <summary>
+/// Implements the Polar Stereographic Projection.
+/// </summary>
+/// <remarks>
+/// <para>The formulation was independently verified against IOGP, "Geomatics Guidance Note 7, part 2:
+/// Coordinate Conversions and Transformations including Formulas" (publication
+/// 373-7-2, 2019), EPSG method 9810, Polar Stereographic (variant A). The
+/// ellipsoidal polar formulation keeps the natural-origin scale factor <c>k0</c>
+/// in the numerator of the <c>ρ</c> expression, matching the published method
+/// and the implementation here.</para>
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 21, pp. 154-163,
+/// eqs. (21-1) through (21-39), for the stereographic and polar stereographic
+/// development.</para>
+/// </remarks>
+/// <seealso href="https://epsg.io/9810-method">EPSG method 9810: Polar Stereographic (variant A).</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.2.2, pp. 102-104.</seealso>
+internal class PolarStereographicProjection : MapProjection
 {
+    private const int MaximumIterations = 15;
+    private const double IterationTolerance = 1E-14d;
+    private const double Eps15 = 1E-15d;
+
+    private readonly double globalScale;
+    private readonly double reciprocGlobalScale;
+    private readonly double phits;
+    private readonly double akm1;
+    private readonly bool npole;
+
     /// <summary>
-    /// Implements the Polar Stereographic Projection.
+    /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
     /// </summary>
-    [Serializable]
-    internal class PolarStereographicProjection : MapProjection
+    /// <param name="parameters">List of parameters to initialize the projection.</param>
+    /// <remarks>
+    /// <para>The parameters this projection expects are listed below.</para>
+    /// <list type="table">
+    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
+    /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
+    /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
+    /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
+    /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
+    /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
+    /// </list>
+    /// </remarks>
+    public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        private readonly double _globalScale;
-        private readonly double _reciprocGlobalScale;
+    }
 
-        private static int MAXIMUM_ITERATIONS = 15;
-        private static double ITERATION_TOLERANCE = 1E-14;
-        private static double EPS15 = 1E-15;
-        private static double M_HALFPI = 0.5 * Math.PI;
-        private double phits, akm1;
-        private bool N_POLE;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">List of parameters to initialize the projection.</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
+    public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters, PolarStereographicProjection? inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Polar_Stereographic";
 
+        // Keep k0 in akm1 (matching PROJ's stere setup) and only apply semi-major scale here.
+        this.globalScale = this.semiMajor;
+        this.reciprocGlobalScale = 1.0 / this.globalScale;
 
-        /// <summary>
-        /// Initializes the PolarStereographicProjection object with the specified parameters.
-        /// </summary>
-        /// <param name="parameters">List of parameters to initialize the projection.</param>
-        /// <remarks>
-        /// <para>The parameters this projection expects are listed below.</para>
-        /// <list type="table">
-        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-        /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-        /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-        /// </list>
-        /// </remarks>
-        public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+        if (this.e == 0.0)
         {
+            throw new NotSupportedException("Polar Stereographics: only ellipsoidal formulation");
         }
 
-        /// <summary>
-        /// Initializes the PolarStereographicProjection object with the specified parameters.
-        /// </summary>
-        /// <param name="parameters">List of parameters to initialize the projection.</param>
-        /// <param name="inverse">Inverse projection</param>
-        /// <remarks>
-        /// <para>The parameters this projection expects are listed below.</para>
-        /// <list type="table">
-        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-        /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-        /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-        /// </list>
-        /// </remarks>
-        public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters, PolarStereographicProjection inverse)
-            : base(parameters, inverse)
+        this.npole = this.latOrigin > 0.0; // N or S hemisphere
+        this.phits = Math.Abs(this.latOrigin);
+
+        if (Math.Abs(this.phits - HalfPi) < Eps10)
         {
-            Name = "Polar_Stereographic";
+            double one_p_e = 1.0 + this.e;
+            double one_m_e = 1.0 - this.e;
+            double pow_p = Math.Pow(one_p_e, one_p_e);
+            double pow_m = Math.Pow(one_m_e, one_m_e);
+            this.akm1 = (2.0 * this.scaleFactor) / Math.Sqrt(pow_p * pow_m);
+        }
+        else
+        {
+            double sinphits = Math.Sin(this.phits);
+            double cosphits = Math.Cos(this.phits);
+            this.akm1 = (this.scaleFactor * cosphits) / this.Tsfn(cosphits, sinphits, this.e);
 
-            _globalScale = scale_factor * _semiMajor;
-            _reciprocGlobalScale = 1.0 / _globalScale;
+            double t = this.e * sinphits;
+            this.akm1 /= Math.Sqrt(1.0 - (t * t));
+        }
+    }
 
-            if (_e == 0.0) throw new Exception("Polar Stereographics: only ellipsoidal formulation");
-            N_POLE = (lat_origin > 0.0); // N or S hemisphere
-            phits = Math.Abs(lat_origin);
+    /// <summary>
+    /// Converts coordinates in projected meters to radians.
+    /// </summary>
+    /// <param name="x">The x-ordinate in projected meters.</param>
+    /// <param name="y">The y-ordinate in projected meters.</param>
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        x *= this.reciprocGlobalScale;
+        y *= this.reciprocGlobalScale;
 
-            if (Math.Abs(phits - M_HALFPI) < EPS10)
-            {
-                double one_p_e = 1.0 + _e;
-                double one_m_e = 1.0 - _e;
-                double pow_p = Math.Pow(one_p_e, one_p_e);
-                double pow_m = Math.Pow(one_m_e, one_m_e);
-                akm1 = 2.0 / Math.Sqrt(pow_p * pow_m);
-            }
-            else
-            {
-                double sinphits = Math.Sin(phits);
-                double cosphits = Math.Cos(phits);
-                akm1 = cosphits / tsfn(cosphits, sinphits, _e);
-
-                double t = _e * sinphits;
-                akm1 /= Math.Sqrt(1.0 - t * t);
-            }
+        if (this.npole)
+        {
+            y = -y;
         }
 
-        /// <summary>
-        /// Converts coordinates in projected meters to radians.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        protected override void MetersToRadians(ref double x, ref double y)
+        double rho = Math.Sqrt((x * x) + (y * y));
+        double tp = -rho / this.akm1;
+        double phi_l = HalfPi - (2.0 * Math.Atan(tp));
+        double halfe = -0.5 * this.e;
+
+        double lp_phi = phi_l;
+        for (int iter = MaximumIterations; ;)
         {
-            x *= _reciprocGlobalScale;
-            y *= _reciprocGlobalScale;
-
-            if (N_POLE) y = -y;
-            double rho = Math.Sqrt(x * x + y * y);
-            double tp = -rho / akm1;
-            double phi_l = M_HALFPI - 2.0 * Math.Atan(tp);
-            double halfe = -0.5 * _e;
-
-            double lp_phi = 0.0;
-            for (int iter = MAXIMUM_ITERATIONS; ;)
+            double sinphi = this.e * Math.Sin(phi_l);
+            double one_p_sinphi = 1.0 + sinphi;
+            double one_m_sinphi = 1.0 - sinphi;
+            lp_phi = (2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))) + HalfPi;
+            if (Math.Abs(phi_l - lp_phi) < IterationTolerance)
             {
-                double sinphi = _e * Math.Sin(phi_l);
-                double one_p_sinphi = 1.0 + sinphi;
-                double one_m_sinphi = 1.0 - sinphi;
-                lp_phi = 2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))  + M_HALFPI;
-                if (Math.Abs(phi_l - lp_phi) < ITERATION_TOLERANCE)
-                {
-                    break;
-                }
-
-                phi_l = lp_phi;
-                if (--iter < 0)
-                {
-                    throw new Exception("Polar Stereographics doesn't converge");
-                }
-
+                break;
             }
 
-            if (!N_POLE) lp_phi = -lp_phi;
-            double lp_lam = (x == 0.0 && y == 0.0) ? 0.0 : Math.Atan2(x, y);
-
-            x = lp_lam + central_meridian;
-            y = lp_phi;
-        }
-
-        /// <summary>
-        /// Method to convert a point (lon, lat) in radians to (x, y) in meters
-        /// </summary>
-        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-        /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
-        protected override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            double lp_lam = lon - central_meridian;
-            double lp_phi = lat;
-
-            double coslam = Math.Cos(lp_lam);
-            double sinlam = Math.Sin(lp_lam);
-
-            if (!N_POLE)
+            phi_l = lp_phi;
+            if (--iter < 0)
             {
-                lp_phi = -lp_phi;
-                coslam = -coslam;
+                throw new InvalidOperationException("Polar Stereographics doesn't converge");
             }
-
-            double sinphi = Math.Sin(lp_phi);
-            double cosphi = Math.Cos(lp_phi);
-
-            double x = (Math.Abs(lp_phi - M_HALFPI) < EPS15) ? 0.0 : akm1 * tsfn(cosphi, sinphi, _e);
-            lon = x * sinlam * _globalScale;
-            lat = -x * coslam * _globalScale;
         }
 
-
-        /// <summary>
-        /// Returns the inverse of this projection.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override MathTransform Inverse()
+        if (!this.npole)
         {
-            if (_inverse == null)
-            {
-                _inverse = new PolarStereographicProjection(_Parameters.ToProjectionParameter(), this);
-            }
-
-            return _inverse;
+            lp_phi = -lp_phi;
         }
 
-        private double tsfn(double cosphi, double sinphi, double e)
+        double lp_lam = (x == 0.0 && y == 0.0) ? 0.0 : Math.Atan2(x, y);
+
+        x = lp_lam + this.centralMeridian;
+        y = lp_phi;
+    }
+
+    /// <summary>
+    /// Method to convert a point (lon, lat) in radians to (x, y) in meters.
+    /// </summary>
+    /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+    /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lp_lam = lon - this.centralMeridian;
+        double lp_phi = lat;
+
+        double coslam = Math.Cos(lp_lam);
+        double sinlam = Math.Sin(lp_lam);
+
+        if (!this.npole)
         {
-            double t = (sinphi > 0.0) ? cosphi / (1.0 + sinphi) : (1.0 - sinphi) / cosphi;
-            return Math.Exp(e * Atanh(e * sinphi)) * t;
+            lp_phi = -lp_phi;
+            coslam = -coslam;
         }
 
+        double sinphi = Math.Sin(lp_phi);
+        double cosphi = Math.Cos(lp_phi);
 
-        /// <summary>
-        /// Atanh - Inverse of Math.Tanh
-        /// </summary>
-        /// <remarks>The Math.Atanh is not available for netstandard2.0.</remarks>
-        /// <param name="x"></param>
-        private static double Atanh(double x)
-        {
-            return Math.Log((1 + x) / (1 - x)) * 0.5;
-        }
+        double x = (Math.Abs(lp_phi - HalfPi) < Eps15) ? 0.0 : this.akm1 * this.Tsfn(cosphi, sinphi, this.e);
+        lon = x * sinlam * this.globalScale;
+        lat = -x * coslam * this.globalScale;
+    }
+
+    /// <summary>
+    /// Returns the inverse of this projection.
+    /// </summary>
+    /// <returns>IMathTransform that is the reverse of the current projection.</returns>
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new PolarStereographicProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    private double Tsfn(double cosphi, double sinphi, double e)
+    {
+        double t = (sinphi > 0.0) ? cosphi / (1.0 + sinphi) : (1.0 - sinphi) / cosphi;
+        return Math.Exp(e * Atanh(e * sinphi)) * t;
+    }
+
+    /// <summary>
+    /// Atanh - Inverse of Math.Tanh.
+    /// </summary>
+    /// <remarks>The Math.Atanh is not available for netstandard2.0.</remarks>
+    /// <param name="x">The x parameter.</param>
+    private static double Atanh(double x)
+    {
+        return Math.Log((1 + x) / (1 - x)) * 0.5;
     }
 }

@@ -1,73 +1,175 @@
-﻿using System;
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.CoordinateSystems;
+
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using System.Xml.Linq;
+using ProjNet.IO.Wkt;
 
-namespace ProjNet.CoordinateSystems
+/// <summary>
+/// A vertical datum defining the standard datum information.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// The predefined datum accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
+public class VerticalDatum : Datum
 {
     /// <summary>
-    /// A vertical datum defining the standard datum information
+    /// Initializes a new instance of the <see cref="VerticalDatum"/> class.
     /// </summary>
-    public class VerticalDatum : Datum
+    /// <param name="type">Datum type.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="code">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation)
+        : this(type, name, authority, code, alias, remarks, abbreviation, null)
     {
-        /// <summary>
-		/// Initializes a new instance of a vertical datum
-		/// </summary>
-		/// <param name="type">Datum type</param>
-		/// <param name="name">Name</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="code">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
-        public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation) : base(type, name, authority, code, alias, remarks, abbreviation)
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VerticalDatum"/> class with retained ensemble metadata.
+    /// </summary>
+    /// <param name="type">Datum type.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="code">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="ensemble">Retained datum-ensemble metadata.</param>
+    internal VerticalDatum(
+        DatumType type,
+        string name,
+        string authority,
+        long code,
+        string alias,
+        string remarks,
+        string abbreviation,
+        DatumEnsemble? ensemble)
+        : base(type, name, authority, code, alias, remarks, abbreviation, ensemble)
+    {
+    }
+
+    /// <summary>
+    /// Gets the Ordnance Datum Newlyn (ODN) vertical datum.
+    /// </summary>
+    public static VerticalDatum ODN
+    {
+        get
         {
+            return new VerticalDatum(DatumType.VD_GeoidModelDerived, "Ordnance Datum Newlyn", "EPSG", 5101, string.Empty, string.Empty, string.Empty);
+        }
+    }
+
+    /// <inheritdoc/>
+    public override string WKT => this.ToWktNode().ToString();
+
+    /// <inheritdoc/>
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
+
+    /// <summary>
+    /// Creates a copy of this datum with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="VerticalDatum"/> with updated authority metadata.</returns>
+    public new VerticalDatum WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this datum with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="VerticalDatum"/> with the updated name.</returns>
+    public new VerticalDatum WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
+    /// Creates a copy of this datum with updated retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to clear it.</param>
+    /// <returns>A new <see cref="VerticalDatum"/> with updated ensemble metadata.</returns>
+    public new VerticalDatum WithEnsemble(DatumEnsemble? ensemble) => InfoAuthorityCloneHelper.CloneWithEnsemble(this, ensemble);
+
+    /// <summary>
+    /// Returns an XML representation of this vertical datum as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement(
+            "CS_VerticalDatum",
+            new XAttribute("DatumType", ((int)this.DatumType).ToString(CultureInfo.InvariantCulture)));
+        element.Add(this.InfoXmlElement);
+        return element;
+    }
+
+    /// <summary>
+    /// Converts this vertical datum to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this vertical datum.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktInteger((int)this.DatumType),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
         }
 
-        /// <summary>
-        /// ODN - VerticalDatum
-        /// </summary>
-        public static VerticalDatum ODN
+        return new WktKeywordNode("VERT_DATUM", children);
+    }
+
+    /// <summary>
+    /// Converts this vertical datum to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this vertical datum in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
         {
-            get
-            {
-                return new VerticalDatum(DatumType.VD_GeoidModelDerived, "Ordnance Datum Newlyn", "EPSG", 5101, string.Empty, string.Empty, string.Empty);
-            }
+            return this.ToWktNode();
         }
 
-        /// <inheritdoc/>
-        public override string WKT
+        if (this.Ensemble is not null)
         {
-            get
-            {
-                var sb = new StringBuilder();
-                sb.AppendFormat("DATUM[\"{0}\", {1}", Name, (int)DatumType);
-                if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
-                sb.Append("]");
-                return sb.ToString();
-            }
+            return this.Ensemble.ToWktNode(version);
         }
 
-        /// <inheritdoc/>
-        public override string XML
+        var children = new List<WktNode>
         {
-            get
-            {
-                return string.Format(CultureInfo.InvariantCulture.NumberFormat,
-                    "<CS_VerticalDatum DatumType=\"{0}\">{1}{2}</CS_VerticalDatum>",
-                    (int)DatumType, InfoXml);
-            }
+            new WktQuotedString(this.Name),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
         }
 
-        /// <inheritdoc/>
-        public override bool EqualParams(object obj)
-        {
-            if( obj is VerticalDatum vertDatum )
-            {
-                return base.EqualParams(vertDatum);
-            }
-            return false;
-        }
+        return new WktKeywordNode("VDATUM", children);
+    }
+
+    /// <inheritdoc/>
+    public override bool EqualParams(object obj)
+    {
+        return obj is VerticalDatum vertDatum && base.EqualParams(vertDatum);
     }
 }

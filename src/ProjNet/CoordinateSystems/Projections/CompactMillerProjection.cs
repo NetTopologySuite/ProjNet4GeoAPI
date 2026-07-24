@@ -1,0 +1,111 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the spherical Compact Miller projection (<c>comill</c>).
+/// </summary>
+/// <remarks>
+/// Compact Miller is a cylindrical compromise projection published by Tom Patterson in the
+/// course of refining the Miller family for atlas use. The implementation keeps longitude
+/// linear and evaluates latitude with the odd polynomial
+/// <c>y = φ * (K1 + K2 * φ² + K3 * φ⁴)</c>, using Newton iteration for the inverse.
+/// </remarks>
+internal sealed class CompactMillerProjection : MapProjection
+{
+    private const double K1 = 0.9902d;
+    private const double K2 = 0.1604d;
+    private const double K3 = -0.03054d;
+    private const double C1 = K1;
+    private const double C2 = 3d * K2;
+    private const double C3 = 5d * K3;
+    private const double Epsilon = 1e-11d;
+    private const double MaxYFactor = 0.6000207669862655d;
+    private const int MaxIterations = 100;
+
+    private readonly double maxY;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompactMillerProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public CompactMillerProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompactMillerProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public CompactMillerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Compact_Miller";
+        this.maxY = MaxYFactor * PI;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new CompactMillerProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double latSquared = lat * lat;
+        double y = lat * (K1 + (latSquared * (K2 + (K3 * latSquared))));
+        lon = this.SphericalRadius * lambda;
+        lat = this.SphericalRadius * y;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
+        if (yy > this.maxY)
+        {
+            yy = this.maxY;
+        }
+        else if (yy < -this.maxY)
+        {
+            yy = -this.maxY;
+        }
+
+        double yc = yy;
+        bool converged = false;
+        for (int i = MaxIterations; i > 0; i--)
+        {
+            double y2 = yc * yc;
+            double f = (yc * (K1 + (y2 * (K2 + (K3 * y2))))) - yy;
+            double fDerivative = C1 + (y2 * (C2 + (C3 * y2)));
+            double tolerance = f / fDerivative;
+            yc -= tolerance;
+            if (Math.Abs(tolerance) < Epsilon)
+            {
+                converged = true;
+                break;
+            }
+        }
+
+        if (!converged)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        x = Adjust_lon(this.centralMeridian + xx);
+        y = yc;
+    }
+}

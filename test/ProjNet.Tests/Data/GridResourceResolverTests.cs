@@ -1,0 +1,197 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.Tests;
+
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
+using ProjNet.Resources;
+using Xunit;
+
+/// <summary>
+/// Tests for the <see cref="GridResourceResolver"/> resolution and caching behavior.
+/// </summary>
+public class GridResourceResolverTests
+{
+    /// <summary>
+    /// Verifies that <c>TryResolve</c> returns the local file path and makes no network calls when the requested grid file exists in a local search directory.
+    /// </summary>
+    [Fact]
+    public void TryResolveWithLocalGridFileResolvesWithoutNetwork()
+    {
+        string localDirectory = CreateTemporaryDirectory();
+        try
+        {
+            string localGridPath = Path.Combine(localDirectory, "sample.gsb");
+            File.WriteAllText(localGridPath, "local-grid");
+
+            var fetchClient = new RecordingFetchClient();
+            var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
+            var resolver = new GridResourceResolver(options, fetchClient);
+
+            bool resolved = resolver.TryResolve("sample.gsb", out string? resolvedPath);
+
+            Assert.True(resolved);
+            Assert.NotNull(resolvedPath);
+            Assert.Equal(localGridPath, resolvedPath);
+            Assert.Equal(0, fetchClient.Calls);
+        }
+        finally
+        {
+            Directory.Delete(localDirectory, true);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that nested Windows-style grid names still resolve to their leaf file name on non-Windows runners.
+    /// </summary>
+    [Fact]
+    public void TryResolveWithWindowsStyleNestedGridNameResolvesLocalLeafFile()
+    {
+        string localDirectory = CreateTemporaryDirectory();
+        try
+        {
+            string localGridPath = Path.Combine(localDirectory, "sample.gsb");
+            File.WriteAllText(localGridPath, "local-grid");
+
+            var fetchClient = new RecordingFetchClient();
+            var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
+            var resolver = new GridResourceResolver(options, fetchClient);
+
+            bool resolved = resolver.TryResolve(@"nested\sample.gsb", out string? resolvedPath);
+
+            Assert.True(resolved);
+            Assert.NotNull(resolvedPath);
+            Assert.Equal(localGridPath, resolvedPath);
+            Assert.Equal(0, fetchClient.Calls);
+        }
+        finally
+        {
+            Directory.Delete(localDirectory, true);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that <c>TryResolve</c> returns <see langword="false"/> and does not invoke the network fetcher when configured with <c>LocalOnly</c> mode and the grid file is absent locally.
+    /// </summary>
+    [Fact]
+    public void TryResolveWithLocalOnlyModeDoesNotCallNetworkFetcher()
+    {
+        string localDirectory = CreateTemporaryDirectory();
+        try
+        {
+            var fetchClient = new RecordingFetchClient();
+            var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
+            var resolver = new GridResourceResolver(options, fetchClient);
+
+            bool resolved = resolver.TryResolve("missing.gsb", out string? _);
+
+            Assert.False(resolved);
+            Assert.Equal(0, fetchClient.Calls);
+        }
+        finally
+        {
+            Directory.Delete(localDirectory, true);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that <c>TryResolve</c> downloads the grid to the cache directory on the first call and reuses the cached file on subsequent calls without fetching again.
+    /// </summary>
+    [Fact]
+    public void TryResolveWithNetworkModeDownloadsToCacheAndReusesCachedFile()
+    {
+        string localDirectory = CreateTemporaryDirectory();
+        string cacheDirectory = CreateTemporaryDirectory();
+        try
+        {
+            var fetchClient = new RecordingFetchClient
+            {
+                OnFetch = path => File.WriteAllText(path, "downloaded-grid"),
+            };
+            var options = new GridResourceResolverOptions(new[] { localDirectory }, cacheDirectory, GridResourceResolutionMode.LocalThenNetwork);
+            var resolver = new GridResourceResolver(options, fetchClient);
+
+            bool firstResolved = resolver.TryResolve("network-grid.gsb", out string? firstPath);
+            bool secondResolved = resolver.TryResolve("network-grid.gsb", out string? secondPath);
+
+            Assert.True(firstResolved);
+            Assert.True(secondResolved);
+            Assert.NotNull(firstPath);
+            Assert.NotNull(secondPath);
+            Assert.Equal(firstPath, secondPath);
+            Assert.True(File.Exists(firstPath));
+            Assert.Equal(1, fetchClient.Calls);
+        }
+        finally
+        {
+            Directory.Delete(localDirectory, true);
+            Directory.Delete(cacheDirectory, true);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that an invalid cached manifest forces the resolver to discard the stale file and fetch a fresh copy.
+    /// </summary>
+    [Fact]
+    public void TryResolveWithInvalidCachedManifestRefetchesNetworkArtifact()
+    {
+        string localDirectory = CreateTemporaryDirectory();
+        string cacheDirectory = CreateTemporaryDirectory();
+        try
+        {
+            string cachedGridPath = Path.Combine(cacheDirectory, "network-grid.gsb");
+            File.WriteAllText(cachedGridPath, "stale-grid");
+            GridResourceCacheManifest.Write(cachedGridPath, "https://example.test/grids/network-grid.gsb");
+            File.WriteAllText(cachedGridPath, "tampered-grid");
+
+            var fetchClient = new RecordingFetchClient
+            {
+                OnFetch = path => File.WriteAllText(path, "fresh-grid"),
+            };
+            var options = new GridResourceResolverOptions(new[] { localDirectory }, cacheDirectory, GridResourceResolutionMode.LocalThenNetwork);
+            var resolver = new GridResourceResolver(options, fetchClient);
+
+            bool resolved = resolver.TryResolve("network-grid.gsb", out string? resolvedPath);
+
+            Assert.True(resolved);
+            Assert.NotNull(resolvedPath);
+            Assert.Equal("fresh-grid", File.ReadAllText(resolvedPath));
+            Assert.Equal(1, fetchClient.Calls);
+        }
+        finally
+        {
+            Directory.Delete(localDirectory, true);
+            Directory.Delete(cacheDirectory, true);
+        }
+    }
+
+    private static string CreateTemporaryDirectory()
+    {
+        string path = Path.Combine(Path.GetTempPath(), "projnet-grid-tests", Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(path);
+        return path;
+    }
+
+    private sealed class RecordingFetchClient : IGridResourceFetchClient
+    {
+        internal int Calls { get; private set; }
+
+        internal Action<string>? OnFetch { get; set; }
+
+        public bool TryFetch(string gridName, string targetFilePath)
+        {
+            this.Calls++;
+            this.OnFetch?.Invoke(targetFilePath);
+            return this.OnFetch is not null;
+        }
+
+        public Task<bool> TryFetchAsync(string gridName, string targetFilePath, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(this.TryFetch(gridName, targetFilePath));
+        }
+    }
+}

@@ -1,104 +1,113 @@
-// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
-//
-// This file is part of ProjNet.
-// ProjNet is free software; you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// ProjNet is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-// You should have received a copy of the GNU Lesser General Public License
-// along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using System.Xml.Linq;
+using ProjNet.IO.Wkt;
 
-namespace ProjNet.CoordinateSystems
+/// <summary>
+/// Class for defining units.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// Derived predefined unit accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
+public class Unit : Info, IUnit
 {
-	/// <summary>
-	/// Class for defining units
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Unit"/> class.
     /// </summary>
-    [Serializable] 
-    public class Unit : Info, IUnit
+    /// <param name="conversionFactor">Conversion factor to base unit.</param>
+    /// <param name="name">Name of unit.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="authorityCode">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    internal Unit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
+        : base(name, authority, authorityCode, alias, abbreviation, remarks)
     {
-		/// <summary>
-		/// Initializes a new unit
-		/// </summary>
-		/// <param name="conversionFactor">Conversion factor to base unit</param>
-		/// <param name="name">Name of unit</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="authorityCode">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
-		internal Unit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
-			:
-			base(name, authority, authorityCode, alias, abbreviation, remarks)
-		{
-			ConversionFactor = conversionFactor;
-		}
+        this.ConversionFactor = conversionFactor;
+    }
 
-		/// <summary>
-		/// Initializes a new unit
-		/// </summary>
-		/// <param name="name">Name of unit</param>
-		/// <param name="conversionFactor">Conversion factor to base unit</param>
-		internal Unit(string name, double conversionFactor)
-			: this(conversionFactor, name, string.Empty, -1, string.Empty, string.Empty, string.Empty)
-		{
-		}
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Unit"/> class.
+    /// </summary>
+    /// <param name="name">Name of unit.</param>
+    /// <param name="conversionFactor">Conversion factor to base unit.</param>
+    internal Unit(string name, double conversionFactor)
+        : this(conversionFactor, name, string.Empty, -1, string.Empty, string.Empty, string.Empty)
+    {
+    }
 
-        /// <summary>
-        /// Gets or sets the number of units per base-unit.
-        /// </summary>
-        public double ConversionFactor { get; set; }
+    /// <summary>
+    /// Gets the number of units per base-unit.
+    /// </summary>
+    public double ConversionFactor { get; }
 
-        /// <summary>
-        /// Returns the Well-known text for this object
-        /// as defined in the simple features specification.
-        /// </summary>
-        public override string WKT
-		{
-			get
-			{
-				var sb = new StringBuilder();
-				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", Name, ConversionFactor);
-				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
-				sb.Append("]");
-				return sb.ToString();
-			}
-		}
+    /// <summary>
+    /// Gets the Well-known text for this object
+    /// as defined in the simple features specification.
+    /// </summary>
+    public override string WKT => this.ToWktNode().ToString();
 
-		/// <summary>
-		/// Gets an XML representation of this object [NOT IMPLEMENTED].
-		/// </summary>
-		public override string XML
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+    /// <summary>
+    /// Gets an XML representation of this object.
+    /// </summary>
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
-		/// <summary>
-		/// Checks whether the values of this instance is equal to the values of another instance.
-		/// Only parameters used for coordinate system are used for comparison.
-		/// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns>True if equal</returns>
-		public override bool EqualParams(object obj)
-		{
-			if (!(obj is Unit))
-				return false;
-			return (obj as Unit).ConversionFactor == ConversionFactor;
-		}
+    /// <summary>
+    /// Returns an XML representation of this unit as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>This method does not return; it always throws.</returns>
+    /// <exception cref="NotSupportedException">Always thrown because XML serialization is not supported for generic units.</exception>
+    public XElement ToXml() => throw new NotSupportedException("XML serialization is not supported for generic units.");
+
+    /// <summary>
+    /// Converts this generic unit to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this unit.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.ConversionFactor),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("UNIT", children);
+    }
+
+    /// <inheritdoc />
+    public override bool EqualParams(object obj)
+    {
+        return obj is Unit unit && unit.ConversionFactor == this.ConversionFactor;
+    }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code)
+    {
+        return new Unit(this.ConversionFactor, this.Name, authority, code, this.Alias, this.Abbreviation, this.Remarks);
+    }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name)
+    {
+        return new Unit(this.ConversionFactor, name, this.Authority, this.AuthorityCode, this.Alias, this.Abbreviation, this.Remarks);
     }
 }

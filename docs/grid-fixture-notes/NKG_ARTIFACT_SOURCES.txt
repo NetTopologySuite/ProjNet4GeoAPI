@@ -1,0 +1,58 @@
+NKG builtins test artifacts
+===========================
+
+All repository paths in this note are relative to this repository root.
+
+These files are vendored locally so the NKG builtins regression coverage in
+this repository does not depend on live network access:
+
+1. `test\ProjNet.Tests\Fixtures\grids\NKG`
+2. `test\ProjNet.Tests\Fixtures\grids\eur_nkg_nkgrf03vel_realigned.tif`
+3. `test\ProjNet.Tests\Fixtures\grids\eur_nkg_nkgrf17vel.tif`
+4. `test\ProjNet.Tests\Fixtures\grids\no_kv_NKGETRF14_EPSG7922_2000.tif`
+
+Source and license
+------------------
+
+- `NKG`, `eur_nkg_nkgrf03vel_realigned.tif`, `eur_nkg_nkgrf17vel.tif`
+  - Distribution source: OSGeo PROJ data CDN, https://cdn.proj.org/
+  - Upstream data family: Nordic Geodetic Commission / NordicTransformations
+    `eur_nkg`
+  - Representative upstream files:
+    - https://cdn.proj.org/NKG
+    - https://cdn.proj.org/eur_nkg_nkgrf03vel_realigned.tif
+    - https://cdn.proj.org/eur_nkg_nkgrf17vel.tif
+  - Upstream metadata reference: `eur_nkg_README.txt` in the PROJ-data package
+  - License: CC BY 4.0
+
+- `no_kv_NKGETRF14_EPSG7922_2000.tif`
+  - Distribution source: OSGeo PROJ data CDN, https://cdn.proj.org/
+  - Upstream data family: Kartverket `no_kv`
+  - Representative upstream file:
+    - https://cdn.proj.org/no_kv_NKGETRF14_EPSG7922_2000.tif
+  - Upstream metadata reference: `no_kv_README.txt` in the PROJ-data package
+  - License: CC BY 4.0
+  - Repository artifact note: the vendored repository copy keeps the official
+    file name but is a lossless strip-based rewrite of the upstream tiled
+    GeoTIFF. It was generated locally from the official CDN file so the current
+    ProjNet xyz-grid test/runtime path can read the Norway grid. Sample values
+    and GeoTIFF/GDAL metadata were preserved during the rewrite.
+
+Repository use
+--------------
+
+These fixtures are used by the NKG builtins regression coverage under
+`test\ProjNet.Tests\Fixtures\gie\nkg.gie` together with the
+vendored grid definitions in
+`test\ProjNet.Tests\Fixtures\grids\NKG`.
+
+The Norway-specific GeoTIFF grid is required for the official pipeline behind
+`urn:ogc:def:coordinateOperation:NKG::ITRF2014_TO_NO`. The vendored Norway copy
+is stored in strip-based layout because the current ProjNet GeoTIFF xyz-grid
+loader does not accept tiled scanline reads for this path.
+
+Project-local attribution
+-------------------------
+
+Additional repository-local attribution for these vendored files is maintained
+in `NOTICE.md`.

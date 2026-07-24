@@ -1,243 +1,220 @@
-// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
-//
-// This file is part of ProjNet.
-// ProjNet is free software; you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// ProjNet is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from GeoTools.NET.
 
-// You should have received a copy of the GNU Lesser General Public License
-// along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
-
-// SOURCECODE IS MODIFIED FROM ANOTHER WORK AND IS ORIGINALLY BASED ON GeoTools.NET:
-/*
- *  Copyright (C) 2002 Urban Science Applications, Inc. 
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-namespace ProjNet.CoordinateSystems.Projections
+/// <summary>
+///     Implements the Albers projection.
+/// </summary>
+/// <remarks>
+///     <para>Implements the Albers projection. The Albers projection is most commonly
+///     used to project the United States of America. It gives the northern
+///     border with Canada a curved appearance.</para>
+///
+///     <para>The Albers Equal Area projection has the property that the area bounded
+///     by any pair of parallels and meridians is exactly reproduced between the
+///     image of those parallels and meridians in the projected domain, that is,
+///     the projection preserves the correct area of the earth though distorts
+///     direction, distance and shape somewhat.</para>
+///
+///     <para>The ellipsoidal formulation was independently verified against IOGP,
+///     "Geomatics Guidance Note 7, part 2: Coordinate Conversions and
+///     Transformations including Formulas" (publication 373-7-2, 2019), EPSG
+///     method 9822, Albers Equal Area. The authalic <c>q</c>-function and
+///     derived <c>ρ</c> relationships match the implementation here.</para>
+///     <para>See also John P. Snyder, "Map Projections - A Working Manual",
+///     U.S. Geological Survey Professional Paper 1395, 1987, Ch. 14,
+///     pp. 98-103, eqs. (14-1) through (14-12), for the classic Albers
+///     equal-area conic derivation.</para>
+/// </remarks>
+/// <seealso href="https://epsg.io/9822-method">EPSG method 9822: Albers Equal Area.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.1.3, pp. 93-95.</seealso>
+internal class AlbersProjection : MapProjection
 {
     /// <summary>
-    ///		Implements the Albers projection.
+    /// Albers projection constant <c>c</c>.
+    /// </summary>
+    private readonly double c;
+
+    /// <summary>
+    /// Radial distance at the latitude of origin.
+    /// </summary>
+    private readonly double ro0;
+
+    /// <summary>
+    /// Projection exponent <c>n</c>.
+    /// </summary>
+    private readonly double n;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AlbersProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">List of parameters to initialize the projection.</param>
+    /// <remarks>
+    /// <para>The parameters this projection expects are listed below.</para>
+    /// <list type="table">
+    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
+    /// <item><term>latitude_of_false_origin</term><description>The latitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
+    /// <item><term>longitude_of_false_origin</term><description>The longitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
+    /// <item><term>latitude_of_1st_standard_parallel</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is nearest the pole.  Scale is true along this parallel.</description></item>
+    /// <item><term>latitude_of_2nd_standard_parallel</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is furthest from the pole.  Scale is true along this parallel.</description></item>
+    /// <item><term>easting_at_false_origin</term><description>The easting value assigned to the false origin.</description></item>
+    /// <item><term>northing_at_false_origin</term><description>The northing value assigned to the false origin.</description></item>
+    /// </list>
+    /// </remarks>
+    public AlbersProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AlbersProjection"/> class.
     /// </summary>
     /// <remarks>
-    /// 	<para>Implements the Albers projection. The Albers projection is most commonly
-    /// 	used to project the United States of America. It gives the northern
-    /// 	border with Canada a curved appearance.</para>
-    /// 	
-    ///		<para>The <a href="http://www.geog.mcgill.ca/courses/geo201/mapproj/naaeana.gif">Albers Equal Area</a>
-    ///		projection has the property that the area bounded
-    ///		by any pair of parallels and meridians is exactly reproduced between the 
-    ///		image of those parallels and meridians in the projected domain, that is,
-    ///		the projection preserves the correct area of the earth though distorts
-    ///		direction, distance and shape somewhat.</para>
+    /// <para>The parameters this projection expects are listed below.</para>
+    /// <list type="table">
+    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
+    /// <item><term>latitude_of_center</term><description>The latitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
+    /// <item><term>longitude_of_center</term><description>The longitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
+    /// <item><term>standard_parallel_1</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is nearest the pole.  Scale is true along this parallel.</description></item>
+    /// <item><term>standard_parallel_2</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is furthest from the pole.  Scale is true along this parallel.</description></item>
+    /// <item><term>false_easting</term><description>The easting value assigned to the false origin.</description></item>
+    /// <item><term>false_northing</term><description>The northing value assigned to the false origin.</description></item>
+    /// </list>
     /// </remarks>
-    [Serializable]
-    internal class AlbersProjection : MapProjection
+    /// <param name="parameters">List of parameters to initialize the projection.</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
+    protected AlbersProjection(IEnumerable<ProjectionParameter> parameters, AlbersProjection? inverse)
+        : base(parameters, inverse)
     {
-        private readonly double _c;		//constant c 
-        private readonly double _ro0;
-        private readonly double _n;
+        this.Name = "Albers_Conic_Equal_Area";
 
-        #region Constructors
+        double lat0 = this.latOrigin;
+        double lat1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1"));
+        double lat2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2"));
 
-        /// <summary>
-        /// Creates an instance of an Albers projection object.
-        /// </summary>
-        /// <param name="parameters">List of parameters to initialize the projection.</param>
-        /// <remarks>
-        /// <para>The parameters this projection expects are listed below.</para>
-        /// <list type="table">
-        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        /// <item><term>latitude_of_false_origin</term><description>The latitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-        /// <item><term>longitude_of_false_origin</term><description>The longitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-        /// <item><term>latitude_of_1st_standard_parallel</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is nearest the pole.  Scale is true along this parallel.</description></item>
-        /// <item><term>latitude_of_2nd_standard_parallel</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is furthest from the pole.  Scale is true along this parallel.</description></item>
-        /// <item><term>easting_at_false_origin</term><description>The easting value assigned to the false origin.</description></item>
-        /// <item><term>northing_at_false_origin</term><description>The northing value assigned to the false origin.</description></item>
-        /// </list>
-        /// </remarks>
-        public AlbersProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+        if (Math.Abs(lat1 + lat2) < Eps10)
         {
+            ArgumentGuard.ThrowArgument("Equal latitudes for standard parallels on opposite sides of Equator.", nameof(parameters));
         }
 
-        /// <summary>
-        /// Creates an instance of an Albers projection object.
-        /// </summary>
-        /// <remarks>
-        /// <para>The parameters this projection expects are listed below.</para>
-        /// <list type="table">
-        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        /// <item><term>latitude_of_center</term><description>The latitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-        /// <item><term>longitude_of_center</term><description>The longitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-        /// <item><term>standard_parallel_1</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is nearest the pole.  Scale is true along this parallel.</description></item>
-        /// <item><term>standard_parallel_2</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is furthest from the pole.  Scale is true along this parallel.</description></item>
-        /// <item><term>false_easting</term><description>The easting value assigned to the false origin.</description></item>
-        /// <item><term>false_northing</term><description>The northing value assigned to the false origin.</description></item>
-        /// </list>
-        /// </remarks>
-        /// <param name="parameters">List of parameters to initialize the projection.</param>
-        /// <param name="inverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
-        protected AlbersProjection(IEnumerable<ProjectionParameter> parameters, AlbersProjection inverse)
-            : base(parameters, inverse)
+        double alpha1 = this.Alpha(lat1);
+        double sinLat1 = Math.Sin(lat1);
+        double cosLat1 = Math.Cos(lat1);
+        double m1 = Msfnz(this.e, sinLat1, cosLat1);
+        bool secant = Math.Abs(lat1 - lat2) >= Eps10;
+
+        this.n = sinLat1;
+        if (secant)
         {
-            Name = "Albers_Conic_Equal_Area";
+            double alpha2 = this.Alpha(lat2);
+            double sinLat2 = Math.Sin(lat2);
+            double cosLat2 = Math.Cos(lat2);
+            double m2 = Msfnz(this.e, sinLat2, cosLat2);
 
-            double lat0 = lat_origin;
-            double lat1 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_1"));
-            double lat2 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_2"));
-
-            if (Math.Abs(lat1 + lat2) < double.Epsilon)
-                throw new ArgumentException("Equal latitudes for standard parallels on opposite sides of Equator.");
-
-            double alpha1 = alpha(lat1);
-            double alpha2 = alpha(lat2);
-
-            double m1 = Math.Cos(lat1) / Math.Sqrt(1 - _es * Math.Pow(Math.Sin(lat1), 2));
-            double m2 = Math.Cos(lat2) / Math.Sqrt(1 - _es * Math.Pow(Math.Sin(lat2), 2));
-
-            _n = (Math.Pow(m1, 2) - Math.Pow(m2, 2)) / (alpha2 - alpha1);
-            _c = Math.Pow(m1, 2) + (_n * alpha1);
-
-            _ro0 = Ro(alpha(lat0));
-            /*
-			double sin_p0 = Math.Sin(lat0);
-			double cos_p0 = Math.Cos(lat0);
-			double q0 = qsfnz(e, sin_p0, cos_p0);
-
-			double sin_p1 = Math.Sin(lat1);
-			double cos_p1 = Math.Cos(lat1);
-			double m1 = msfnz(e,sin_p1,cos_p1);
-			double q1 = qsfnz(e,sin_p1,cos_p1);
-
-
-			double sin_p2 = Math.Sin(lat2);
-			double cos_p2 = Math.Cos(lat2);
-			double m2 = msfnz(e,sin_p2,cos_p2);
-			double q2 = qsfnz(e,sin_p2,cos_p2);
-
-			if (Math.Abs(lat1 - lat2) > EPSLN)
-				ns0 = (m1 * m1 - m2 * m2)/ (q2 - q1);
-			else
-				ns0 = sin_p1;
-			C = m1 * m1 + ns0 * q1;
-			rh = this._semiMajor * Math.Sqrt(C - ns0 * q0)/ns0;
-			*/
-        }
-        #endregion
-
-        #region Public methods
-
-        /// <summary>
-        /// Converts coordinates in decimal degrees to projected meters.
-        /// </summary>
-        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-        /// <param name="lat">The latitude of the point in radians when entering, its y-in ordinate meters after exit.</param>
-        protected sealed override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            double a = alpha(lat);
-            double ro = Ro(a);
-            double theta = _n * (lon - central_meridian);
-
-            lon = ro * Math.Sin(theta);
-            lat = _ro0 - ro * Math.Cos(theta);
+            this.n = ((m1 * m1) - (m2 * m2)) / (alpha2 - alpha1);
         }
 
-        /// <summary>
-        /// Converts coordinates in projected meters to decimal degrees.
-        /// </summary>
-        /// <param name="x">The x-ordinate of the point in meters when entering, its longitude in radians after exit.</param>
-        /// <param name="y">The y-ordinate of the point in meters when entering, its latitude in radians after exit.</param>
-        protected sealed override void MetersToRadians(ref double x, ref double y)
-        {
-            double theta = Math.Atan(x / (_ro0 - y));
-            double ro = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(_ro0 - y, 2));
-            double q = (_c - Math.Pow(ro, 2) * Math.Pow(_n, 2) / Math.Pow(_semiMajor, 2)) / _n;
-            //double b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
+        this.c = (m1 * m1) + (this.n * alpha1);
 
-            double lat = Math.Asin(q * 0.5);
+        this.ro0 = this.Ro(this.Alpha(lat0));
+    }
+
+    /// <summary>
+    /// Converts coordinates in radians to projected meters.
+    /// </summary>
+    /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+    /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+    protected sealed override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double a = this.Alpha(lat);
+        double ro = this.Ro(a);
+        double theta = this.n * (lon - this.centralMeridian);
+
+        lon = ro * Math.Sin(theta);
+        lat = this.ro0 - (ro * Math.Cos(theta));
+    }
+
+    /// <summary>
+    /// Converts coordinates in projected meters to radians.
+    /// </summary>
+    /// <param name="x">The x-ordinate of the point in meters when entering, its longitude in radians after exit.</param>
+    /// <param name="y">The y-ordinate of the point in meters when entering, its latitude in radians after exit.</param>
+    protected sealed override void MetersToRadians(ref double x, ref double y)
+    {
+        double deltaY = this.ro0 - y;
+        double theta = Math.Atan2(x, deltaY);
+        double ro = Math.Sqrt((x * x) + (deltaY * deltaY));
+        if (this.n < 0.0)
+        {
+            ro = -ro;
+            x = -x;
+            deltaY = -deltaY;
+            theta = Math.Atan2(x, deltaY);
+        }
+
+        double q = (this.c - (Math.Pow(ro, 2) * Math.Pow(this.n, 2) / Math.Pow(this.semiMajor, 2))) / this.n;
+
+        double lat = this.es <= Eps10
+            ? Asinz(q * 0.5)
+            : Math.Asin(q * 0.5);
+        if (this.es > Eps10)
+        {
             double preLat = double.MaxValue;
             int iterationCounter = 0;
             while (Math.Abs(lat - preLat) > 0.000001)
             {
                 preLat = lat;
                 double sin = Math.Sin(lat);
-                double e2sin2 = _es * Math.Pow(sin, 2);
+                double e2sin2 = this.es * Math.Pow(sin, 2);
                 lat += Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat)) *
-                       (q / (1 - _es) - sin / (1 - e2sin2) +
-                        1 / (2 * _e) * Math.Log((1 - _e * sin) / (1 + _e * sin)));
+                       ((q / (1 - this.es)) - (sin / (1 - e2sin2)) +
+                        (1 / (2 * this.e) * Math.Log((1 - (this.e * sin)) / (1 + (this.e * sin)))));
                 iterationCounter++;
                 if (iterationCounter > 25)
-                    throw new ArgumentException(
+                {
+                    ProjectionThrowHelper.ThrowInvalidOperation(
                         "Transformation failed to converge in Albers backwards transformation");
+                }
             }
-
-            x = central_meridian + (theta / _n);
-            y = lat;
         }
 
-        /// <summary>
-        /// Returns the inverse of this projection.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override MathTransform Inverse()
+        x = this.centralMeridian + (theta / this.n);
+        y = lat;
+    }
+
+    /// <summary>
+    /// Returns the inverse of this projection.
+    /// </summary>
+    /// <returns>IMathTransform that is the reverse of the current projection.</returns>
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new AlbersProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    private double Alpha(double lat)
+    {
+        double sin = Math.Sin(lat);
+        if (this.es <= Eps10)
         {
-            if (_inverse == null)
-                _inverse = new AlbersProjection(_Parameters.ToProjectionParameter(), this);
-            return _inverse;
+            return sin + sin;
         }
 
-        #endregion
+        double sinsq = Math.Pow(sin, 2);
+        return (1 - this.es) * ((sin / (1 - (this.es * sinsq))) - (1 / (2 * this.e) * Math.Log((1 - (this.e * sin)) / (1 + (this.e * sin)))));
+    }
 
-        #region Math helper functions
-
-        //private double ToAuthalic(double lat)
-        //{
-        //    return Math.Atan(Q(lat) / Q(Math.PI * 0.5));
-        //}
-        //private double Q(double angle)
-        //{
-        //    double sin = Math.Sin(angle);
-        //    double esin = e * sin;
-        //    return Math.Abs(sin / (1 - Math.Pow(esin, 2)) - 0.5 * e) * Math.Log((1 - esin) / (1 + esin)));
-        //}
-        private double alpha(double lat)
-        {
-            double sin = Math.Sin(lat);
-            double sinsq = Math.Pow(sin, 2);
-            return (1 - _es) * (((sin / (1 - _es * sinsq)) - 1 / (2 * _e) * Math.Log((1 - _e * sin) / (1 + _e * sin))));
-        }
-
-        private double Ro(double a)
-        {
-            return _semiMajor * Math.Sqrt((_c - _n * a)) / _n;
-        }
-
-        #endregion
+    private double Ro(double a)
+    {
+        return this.semiMajor * Math.Sqrt(this.c - (this.n * a)) / this.n;
     }
 }

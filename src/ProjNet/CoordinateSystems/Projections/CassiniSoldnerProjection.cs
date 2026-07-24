@@ -1,154 +1,284 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.CoordinateSystems.Projections;
+
 using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-namespace ProjNet.CoordinateSystems.Projections
+/// <summary>
+/// Implements the Cassini-Soldner (Transverse Cylindrical Equidistant) map projection.
+/// </summary>
+/// <remarks>
+/// <para>The Cassini-Soldner projection is a transverse cylindrical equidistant projection.
+/// It maps the central meridian and its perpendicular cross-sections to straight lines while
+/// preserving distances along lines perpendicular to the central meridian. Scale is true
+/// along the central meridian and along lines perpendicular to it, but distortion increases
+/// with distance from the central meridian.</para>
+/// <para>The forward easting series was independently verified against IOGP, "Geomatics
+/// Guidance Note 7, part 2: Coordinate Conversions and Transformations including
+/// Formulas" (publication 373-7-2, 2019), EPSG method 9806, and John P. Snyder,
+/// <i>Map Projections - A Working Manual</i>, U.S. Geological Survey Professional
+/// Paper 1395 (1987). The third- and fifth-order <c>T</c> terms are subtractive,
+/// matching the polynomial implemented here.</para>
+/// </remarks>
+/// <seealso href="https://epsg.io/9806-method">EPSG method 9806: Cassini-Soldner.</seealso>
+internal sealed class CassiniSoldnerProjection : MapProjection
 {
-    internal class CassiniSoldnerProjection : MapProjection
+    /// <summary>
+    /// Fraction constant 1/120 used in polynomial terms.
+    /// </summary>
+    private const double One120th = 0.00833333333333333333d;
+
+    /// <summary>
+    /// Fraction constant 1/24 used in polynomial terms.
+    /// </summary>
+    private const double One24th = 0.04166666666666666666d;
+
+    /// <summary>
+    /// Fraction constant 1/15 used in polynomial terms.
+    /// </summary>
+    private const double One15th = 0.06666666666666666666d;
+
+    private const int InverseRefinementIterations = 15;
+    private const double InverseRefinementTolerance = 1e-12d;
+    private const double InverseFiniteDifferenceStep = 1e-6d;
+    private const double InverseStepClamp = 0.3d;
+    private const double InversePoleClamp = HalfPi - 1e-10d;
+
+    /// <summary>
+    /// Ellipsoid eccentricity helper factor <c>e² / (1 - e²)</c>.
+    /// </summary>
+    private readonly double cFactor;
+
+    /// <summary>
+    /// Meridional distance at latitude of origin.
+    /// </summary>
+    private readonly double m0;
+
+    /// <summary>
+    /// Reciprocal of the semi-major axis length.
+    /// </summary>
+    private readonly double reciprocalSemiMajor;
+
+    /// <summary>
+    /// Indicates whether the Hyperbolic Cassini-Soldner forward correction is enabled.
+    /// </summary>
+    private readonly bool hyperbolic;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CassiniSoldnerProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        // ReSharper disable InconsistentNaming
-        private const double One6th = 0.16666666666666666666d;      //C1
-        private const double One120th = 0.00833333333333333333d;    //C2
-        private const double One24th = 0.04166666666666666666d;     //C3
-        private const double One3rd = 0.33333333333333333333d;      //C4
-        private const double One15th = 0.06666666666666666666d;     //C5
-                                                                    // ReSharper restore InconsistentNaming
+    }
 
-        private readonly double _cFactor;
-        private readonly double _m0;
-        private readonly double _reciprocalSemiMajor;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CassiniSoldnerProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters, CassiniSoldnerProjection? inverse)
+        : base(parameters, inverse)
+    {
+        this.Authority = "EPSG";
+        this.AuthorityCode = 9806;
+        this.Name = "Cassini_Soldner";
 
-        public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters) : this(parameters, null)
+        this.cFactor = this.es / (1 - this.es);
+        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+        this.m0 = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
+        this.reciprocalSemiMajor = 1d / this.semiMajor;
+        this.hyperbolic = Math.Abs(this.Parameters.GetOptionalParameterValue("hyperbolic", 0d)) > 0d;
+    }
+
+    /// <inheritdoc/>
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new CassiniSoldnerProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc/>
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = lon - this.centralMeridian;
+        double phi = lat;
+        this.ForwardNormalized(lambda, phi, out double x, out double y);
+        lon = x * this.semiMajor;
+        lat = y * this.semiMajor;
+    }
+
+    /// <inheritdoc/>
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        x *= this.reciprocalSemiMajor;
+        y *= this.reciprocalSemiMajor;
+        double targetX = x;
+        double targetY = y;
+        double phi1 = this.Phi1(this.m0 + targetY);
+
+        double tn = Math.Tan(phi1);
+        double t = tn * tn;
+        double n = Math.Sin(phi1);
+        double r = 1.0d / (1.0d - (this.es * n * n));
+        n = Math.Sqrt(r);
+        r *= (1.0d - this.es) * n;
+        double dd = targetX / n;
+        double d2 = dd * dd;
+
+        double phi = phi1 - ((n * tn / r) * d2 * (.5 - ((1.0 + (3.0 * t)) * d2 * One24th)));
+        double lambda = dd * (1.0 + (t * d2 * (-ProjectionConstants.OneThird + ((1.0 + (3.0 * t)) * d2 * One15th)))) / Math.Cos(phi1);
+
+        if (this.hyperbolic && !this.TryRefineInverseNormalized(targetX, targetY, ref lambda, ref phi))
         {
+            ProjectionThrowHelper.ThrowInvalidOperation("Convergence error.");
         }
 
-        public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters, CassiniSoldnerProjection inverse)
-            : base(parameters, inverse)
-        {
-            Authority = "EPSG";
-            AuthorityCode = 9806;
-            Name = "Cassini_Soldner";
+        x = Adjust_lon(lambda + this.centralMeridian);
+        y = phi;
+    }
 
-            _cFactor = _es / (1 - _es);
-            _m0 = mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
-            _reciprocalSemiMajor = 1d / _semiMajor;
-        }
+    private double Phi1(double arg)
+    {
+        const int maxIter = 10;
+        const double eps = 1e-11d;
 
-        public override MathTransform Inverse()
-        {
-            if (_inverse == null)
-                _inverse = new CassiniSoldnerProjection(_Parameters.ToProjectionParameter(), this);
-            return _inverse;
-        }
+        double k = 1.0d / (1.0d - this.es);
 
-        //protected override double[] RadiansToMeters(double[] lonlat)
-        //{
-        //    var lambda = lonlat[0] - central_meridian;
-        //    var phi = lonlat[1];
-
-        //    double sinPhi, cosPhi; // sin and cos value
-        //    sincos(phi, out sinPhi, out cosPhi);
-
-        //    var y = mlfn(phi, sinPhi, cosPhi);
-        //    var n = 1.0d / Math.Sqrt(1 - _es * sinPhi * sinPhi);
-        //    var tn = Math.Tan(phi);
-        //    var t = tn * tn;
-        //    var a1 = lambda * cosPhi;
-        //    var a2 = a1 * a1;
-        //    var c = _cFactor * Math.Pow(cosPhi, 2.0d);
-
-        //    var x = n * a1 * (1.0d - a2 * t * (One6th - (8.0d - t + 8.0d * c) * a2 * One120th));
-        //    y -= _m0 - n * tn * a2 * (0.5d + (5.0d - t + 6.0d * c) * a2 * One24th);
-
-        //    return lonlat.Length == 2
-        //               ? new[] {_semiMajor*x, _semiMajor*y}
-        //               : new[] {_semiMajor*x, _semiMajor*y, lonlat[2]};
-        //}
-
-        protected override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            double lambda = lon - central_meridian;
-            double phi = lat;
-
-            double sinPhi, cosPhi; // sin and cos value
-            sincos(phi, out sinPhi, out cosPhi);
-
-            double y = mlfn(phi, sinPhi, cosPhi);
-            double n = 1.0d / Math.Sqrt(1 - _es * sinPhi * sinPhi);
-            double tn = Math.Tan(phi);
-            double t = tn * tn;
-            double a1 = lambda * cosPhi;
-            double a2 = a1 * a1;
-            double c = _cFactor * Math.Pow(cosPhi, 2.0d);
-
-            double x = n * a1 * (1.0d - a2 * t * (One6th - (8.0d - t + 8.0d * c) * a2 * One120th));
-            y -= _m0 - n * tn * a2 * (0.5d + (5.0d - t + 6.0d * c) * a2 * One24th);
-
-            lon = x * _semiMajor;
-            lat = y * _semiMajor;
-        }
-        //protected override double[] MetersToRadians(double[] p)
-        //{
-
-        //    var x = p[0] * _reciprocalSemiMajor;
-        //    var y = p[1] * _reciprocalSemiMajor;
-        //    var phi1 = Phi1(_m0 + y);
-
-        //    var tn = Math.Tan(phi1);
-        //    var t = tn * tn;
-        //    var n = Math.Sin(phi1);
-        //    var r = 1.0d / (1.0d - _es * n * n);
-        //    n = Math.Sqrt(r);
-        //    r *= (1.0d - _es) * n;
-        //    var dd = x / n;
-        //    var d2 = dd * dd;
-
-        //    var phi = phi1 - (n * tn / r) * d2 * (.5 - (1.0 + 3.0 * t) * d2 * One24th);
-        //    var lambda = dd * (1.0 + t * d2 * (-One3rd + (1.0 + 3.0 * t) * d2 * One15th)) / Math.Cos(phi1);
-        //    lambda = adjust_lon(lambda + central_meridian);
-
-        //    return p.Length == 2
-        //               ? new[] {lambda, phi}
-        //               : new[] {lambda, phi, p[2]};
-        //}
-        protected override void MetersToRadians(ref double x, ref double y)
-        {
-            x *= _reciprocalSemiMajor;
-            y *= _reciprocalSemiMajor;
-            double phi1 = Phi1(_m0 + y);
-
-            double tn = Math.Tan(phi1);
-            double t = tn * tn;
-            double n = Math.Sin(phi1);
-            double r = 1.0d / (1.0d - _es * n * n);
-            n = Math.Sqrt(r);
-            r *= (1.0d - _es) * n;
-            double dd = x / n;
-            double d2 = dd * dd;
-
-            y = phi1 - (n * tn / r) * d2 * (.5 - (1.0 + 3.0 * t) * d2 * One24th);
-            double lambda = dd * (1.0 + t * d2 * (-One3rd + (1.0 + 3.0 * t) * d2 * One15th)) / Math.Cos(phi1);
-            x = adjust_lon(lambda + central_meridian);
-        }
-
-        private double Phi1(double arg)
-        {
-            const int maxIter = 10;
-            const double eps = 1e-11;
-
-            double k = 1.0d / (1.0d - _es);
-
-            double phi = arg;
-            for (int i = maxIter; i > 0; --i)
-            { // rarely goes over 2 iterations 
-                double sinPhi = Math.Sin(phi);
-                double t = 1.0d - _es * sinPhi * sinPhi;
-                t = (mlfn(phi, sinPhi, Math.Cos(phi)) - arg) * (t * Math.Sqrt(t)) * k;
-                phi -= t;
-                if (Math.Abs(t) < eps) return phi;
+        double phi = arg;
+        for (int i = maxIter; i > 0; --i)
+        { // rarely goes over 2 iterations
+            double sinPhi = Math.Sin(phi);
+            double t = 1.0d - (this.es * sinPhi * sinPhi);
+            t = (this.Mlfn(phi, sinPhi, Math.Cos(phi)) - arg) * (t * Math.Sqrt(t)) * k;
+            phi -= t;
+            if (Math.Abs(t) < eps)
+            {
+                return phi;
             }
-            throw new ArgumentException("Convergence error.");
         }
 
+        return ProjectionThrowHelper.ThrowInvalidOperation<double>("Convergence error.");
+    }
+
+    private void ForwardNormalized(double lambda, double phi, out double x, out double y)
+    {
+        Sincos(phi, out double sinPhi, out double cosPhi);
+
+        y = this.Mlfn(phi, sinPhi, cosPhi);
+        double n = 1.0d / Math.Sqrt(1 - (this.es * sinPhi * sinPhi));
+        double tn = Math.Tan(phi);
+        double t = tn * tn;
+        double a1 = lambda * cosPhi;
+        double a2 = a1 * a1;
+        double c = this.cFactor * Math.Pow(cosPhi, 2.0d);
+
+        x = n * a1 * (1.0d - (a2 * t * (ProjectionConstants.OneSixth + ((8.0d - t + (8.0d * c)) * a2 * One120th))));
+        y -= this.m0 - (n * tn * a2 * (0.5d + ((5.0d - t + (6.0d * c)) * a2 * One24th)));
+
+        if (this.hyperbolic)
+        {
+            double rho = (n * n) * (1.0d - this.es) * n;
+            y -= (y * y * y) / (6.0d * rho * n);
+        }
+    }
+
+    private bool TryRefineInverseNormalized(double targetX, double targetY, ref double lambda, ref double phi)
+    {
+        for (int i = 0; i < InverseRefinementIterations; i++)
+        {
+            if (!this.TryForwardNormalized(lambda, phi, out double approxX, out double approxY))
+            {
+                return false;
+            }
+
+            double deltaX = approxX - targetX;
+            double deltaY = approxY - targetY;
+            if (Math.Abs(deltaX) < InverseRefinementTolerance && Math.Abs(deltaY) < InverseRefinementTolerance)
+            {
+                return true;
+            }
+
+            if (!this.TryComputeInverseJacobian(lambda, phi, approxX, approxY, out double derivLamX, out double derivLamY, out double derivPhiX, out double derivPhiY))
+            {
+                return false;
+            }
+
+            double deltaLambda = ProjectionConstants.Clamp((deltaX * derivLamX) + (deltaY * derivLamY), -InverseStepClamp, InverseStepClamp);
+            lambda = Adjust_lon(lambda - deltaLambda);
+
+            double deltaPhi = ProjectionConstants.Clamp((deltaX * derivPhiX) + (deltaY * derivPhiY), -InverseStepClamp, InverseStepClamp);
+            phi = ProjectionConstants.Clamp(phi - deltaPhi, -InversePoleClamp, InversePoleClamp);
+        }
+
+        return false;
+    }
+
+    private bool TryComputeInverseJacobian(
+        double lambda,
+        double phi,
+        double approxX,
+        double approxY,
+        out double derivLamX,
+        out double derivLamY,
+        out double derivPhiX,
+        out double derivPhiY)
+    {
+        derivLamX = 0d;
+        derivLamY = 0d;
+        derivPhiX = 0d;
+        derivPhiY = 0d;
+
+        double dLam = lambda > 0d ? -InverseFiniteDifferenceStep : InverseFiniteDifferenceStep;
+        double lambdaOffset = Adjust_lon(lambda + dLam);
+        dLam = lambdaOffset - lambda;
+        if (Math.Abs(dLam) < Eps10 || !this.TryForwardNormalized(lambdaOffset, phi, out double xLam, out double yLam))
+        {
+            return false;
+        }
+
+        double derivXLam = (xLam - approxX) / dLam;
+        double derivYLam = (yLam - approxY) / dLam;
+
+        double dPhi = phi > 0d ? -InverseFiniteDifferenceStep : InverseFiniteDifferenceStep;
+        double phiOffset = ProjectionConstants.Clamp(phi + dPhi, -InversePoleClamp, InversePoleClamp);
+        dPhi = phiOffset - phi;
+        if (Math.Abs(dPhi) < Eps10 || !this.TryForwardNormalized(lambda, phiOffset, out double xPhi, out double yPhi))
+        {
+            return false;
+        }
+
+        double derivXPhi = (xPhi - approxX) / dPhi;
+        double derivYPhi = (yPhi - approxY) / dPhi;
+        double det = (derivXLam * derivYPhi) - (derivXPhi * derivYLam);
+        if (Math.Abs(det) <= ProjectionConstants.JacobianTolerance)
+        {
+            return false;
+        }
+
+        derivLamX = derivYPhi / det;
+        derivLamY = -derivXPhi / det;
+        derivPhiX = -derivYLam / det;
+        derivPhiY = derivXLam / det;
+        return true;
+    }
+
+    private bool TryForwardNormalized(double lambda, double phi, out double x, out double y)
+    {
+        x = 0d;
+        y = 0d;
+        if (Math.Abs(phi) >= InversePoleClamp)
+        {
+            return false;
+        }
+
+        this.ForwardNormalized(lambda, phi, out x, out y);
+        return !(double.IsNaN(x) || double.IsInfinity(x) || double.IsNaN(y) || double.IsInfinity(y));
     }
 }

@@ -1,24 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
-    <!--<TargetFrameworks>net6;net8</TargetFrameworks>-->
-    <TargetFramework>net8</TargetFramework>
-	  <SignAssembly>true</SignAssembly>
-	  <NoWarn>1701;1702;1591</NoWarn>
+    <TargetFramework>net8.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <SignAssembly>true</SignAssembly>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1701;1702</NoWarn>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
   </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Npgsql" Version="8.0.3" />
+    <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="PublicApiGenerator" />
+    <PackageReference Include="xunit.v3.mtp-v2" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)src\ProjNet\ProjNET.csproj" />
+    <ProjectReference Include="..\..\src\ProjNet\ProjNET.csproj" />
   </ItemGroup>
-
   <ItemGroup>
-    <EmbeddedResource Include="SRID.csv" />
+    <EmbeddedResource Include="Support\SRID.csv" LogicalName="ProjNET.Tests.SRID.csv" />
   </ItemGroup>
-
+  <ItemGroup>
+    <None Include="Generated\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\gie\*.gie" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\gie\proj-generated\*.gie" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\gigs\*.gie" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\grids\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\defmodel\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\tinshift\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

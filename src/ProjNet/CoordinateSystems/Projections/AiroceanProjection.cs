@@ -1,0 +1,720 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the Airocean projection (<c>airocean</c>).
+/// </summary>
+/// <remarks>
+/// <para>Airocean is an icosahedral world map inspired by Buckminster Fuller's
+/// Dymaxion concept. The implementation projects the geographic position onto a
+/// selected icosahedron face, transforms that face into the unfolded Airocean
+/// layout, and optionally rotates the final arrangement between vertical and
+/// horizontal orientations. Inverse projection is supported for both orientations
+/// in this implementation.</para>
+/// <para>This implementation follows PROJ's <c>airocean</c> formulation for the
+/// Fuller/Sadao icosahedral world-map concept: Buckminster Fuller introduced the
+/// Dymaxion world map in 1943, Fuller and Shoji Sadao moved the layout to an
+/// icosahedral Airocean form in 1954, and Robert W. Gray later published exact
+/// transformation equations in <i>Cartographica</i> 32(3), 1995,
+/// doi:10.3138/1677-3273-Q862-1885.</para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/airocean.html">PROJ documentation: Airocean.</seealso>
+/// <seealso href="https://doi.org/10.3138/1677-3273-Q862-1885">Gray, R.W. (1995): Exact Transformation Equations for Fuller's World Map.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Dymaxion_map">Wikipedia: Dymaxion map.</seealso>
+internal sealed class AiroceanProjection : MapProjection
+{
+    private const int OrientationVertical = 0;
+    private const int OrientationHorizontal = 1;
+
+    private readonly bool horizontalOrientation;
+    private readonly double oneMinusF;
+    private readonly double oneMinusFSquared;
+    private readonly double semiMajorSquared;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AiroceanProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public AiroceanProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AiroceanProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public AiroceanProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Airocean";
+        this.oneMinusF = this.semiMajor == 0d ? 1d : this.semiMinor / this.semiMajor;
+        this.oneMinusFSquared = this.oneMinusF * this.oneMinusF;
+        this.semiMajorSquared = this.semiMajor * this.semiMajor;
+
+        double orientationCode = this.Parameters.GetOptionalParameterValue(
+            "airocean_orient",
+            this.Parameters.GetOptionalParameterValue("orient", OrientationVertical));
+        int orientation = ReadDiscreteCode(orientationCode, "orient", nameof(parameters));
+        this.horizontalOrientation = orientation switch
+        {
+            OrientationVertical => false,
+            OrientationHorizontal => true,
+            _ => ArgumentGuard.ThrowArgument<bool>("Invalid value for orient: only vertical or horizontal are supported.", nameof(parameters)),
+        };
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new AiroceanProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double projectionLatitude = lat;
+        if (this.es != 0d)
+        {
+            projectionLatitude = Math.Atan(this.oneMinusFSquared * Math.Tan(lat));
+        }
+
+        Sincos(projectionLatitude, out double sinLatitude, out double cosLatitude);
+        Sincos(lon, out double sinLongitude, out double cosLongitude);
+
+        var cartesianPoint = new Vector3(cosLatitude * cosLongitude, cosLatitude * sinLongitude, sinLatitude);
+
+        int faceId = GetIcosahedronFaceIndex(cartesianPoint);
+        if (faceId < 0)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        Vector3 icosahedronPoint = CartesianToIcosahedron(cartesianPoint, faceId);
+        Vector2 projectedPoint = IcosahedronToAirocean(icosahedronPoint, faceId);
+        if (this.horizontalOrientation)
+        {
+            projectedPoint = HorizontalTransform.Transform(projectedPoint);
+        }
+
+        lon = projectedPoint.X * this.SphericalRadius;
+        lat = projectedPoint.Y * this.SphericalRadius;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        var projectedPoint = new Vector2(x * this.InverseSphericalRadius, y * this.InverseSphericalRadius);
+        if (this.horizontalOrientation)
+        {
+            projectedPoint = HorizontalInverseTransform.Transform(projectedPoint);
+        }
+
+        int faceId = GetAiroceanFaceIndex(projectedPoint);
+        if (faceId < 0)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        Vector3 sphereCoordinates = AiroceanToIcosahedron(projectedPoint, faceId);
+
+        double norm = Math.Sqrt((sphereCoordinates.X * sphereCoordinates.X) + (sphereCoordinates.Y * sphereCoordinates.Y) + (sphereCoordinates.Z * sphereCoordinates.Z));
+        if (norm <= Eps10)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        double q = sphereCoordinates.X / norm;
+        double r = sphereCoordinates.Y / norm;
+        double s = sphereCoordinates.Z / norm;
+
+        double latitude = Math.Acos(-s) - HalfPi;
+        double longitude = Math.Atan2(r, q);
+
+        if (this.es != 0d)
+        {
+            bool invertSign = latitude < 0d;
+            double tanLatitude = Math.Tan(latitude);
+            double xa = this.semiMinor / Math.Sqrt((tanLatitude * tanLatitude) + (this.oneMinusF * this.oneMinusF));
+            if (Math.Abs(xa) <= Eps10)
+            {
+                latitude = HalfPi;
+            }
+            else
+            {
+                double inside = this.semiMajorSquared - (xa * xa);
+                if (inside < 0d)
+                {
+                    inside = 0d;
+                }
+
+                latitude = Math.Atan(Math.Sqrt(inside) / (this.oneMinusF * xa));
+            }
+
+            if (invertSign)
+            {
+                latitude = -latitude;
+            }
+        }
+
+        x = Adjust_lon(longitude);
+        y = latitude;
+    }
+
+    private static int ReadDiscreteCode(double value, string parameterName, string paramName)
+    {
+        if (double.IsNaN(value) || double.IsInfinity(value))
+        {
+            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.", paramName);
+        }
+
+        int rounded = (int)Math.Round(value, MidpointRounding.AwayFromZero);
+        if (Math.Abs(value - rounded) > ProjectionConstants.Tolerance1E12)
+        {
+            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.", paramName);
+        }
+
+        return rounded;
+    }
+
+    private static int GetIcosahedronFaceIndex(in Vector3 point)
+    {
+        for (int i = 0; i < IcoFaces.Length; i++)
+        {
+            if (IsPointInFace(point, IcoFaces[i].P1, IcoFaces[i].P2, IcoFaces[i].P3))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static int GetAiroceanFaceIndex(in Vector2 point)
+    {
+        var homogeneousPoint = new Vector3(point.X, point.Y, 1d);
+        for (int i = 0; i < AiroceanFaces.Length; i++)
+        {
+            Face2D face = AiroceanFaces[i];
+            var p1 = new Vector3(face.P1.X, face.P1.Y, 1d);
+            var p2 = new Vector3(face.P2.X, face.P2.Y, 1d);
+            var p3 = new Vector3(face.P3.X, face.P3.Y, 1d);
+            if (IsPointInFace(homogeneousPoint, p1, p2, p3))
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static bool IsPointInFace(in Vector3 point, in Vector3 p1, in Vector3 p2, in Vector3 p3)
+    {
+        return Determinant(point, p2, p3) <= 0d
+            && Determinant(p1, point, p3) <= 0d
+            && Determinant(p1, p2, point) <= 0d;
+    }
+
+    private static double Determinant(in Vector3 u, in Vector3 v, in Vector3 w)
+    {
+        return (u.X * ((v.Y * w.Z) - (v.Z * w.Y)))
+            - (v.X * ((u.Y * w.Z) - (u.Z * w.Y)))
+            + (w.X * ((u.Y * v.Z) - (u.Z * v.Y)));
+    }
+
+    private static Vector3 CartesianToIcosahedron(in Vector3 point, int faceId)
+    {
+        Vector3 center = IcoCenters[faceId];
+        Vector3 normal = IcoNormals[faceId];
+
+        double denominator = (point.X * normal.X) + (point.Y * normal.Y) + (point.Z * normal.Z);
+        if (Math.Abs(denominator) <= Eps10)
+        {
+            ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+        }
+
+        double numerator = (center.X * normal.X) + (center.Y * normal.Y) + (center.Z * normal.Z);
+        double factor = numerator / denominator;
+
+        return new Vector3(point.X * factor, point.Y * factor, point.Z * factor);
+    }
+
+    private static Vector2 IcosahedronToAirocean(in Vector3 point, int faceId)
+    {
+        Matrix4x4 transform = IcoToAiroceanTransforms[faceId];
+        return new Vector2(
+            (transform.M00 * point.X) + (transform.M01 * point.Y) + (transform.M02 * point.Z) + transform.M03,
+            (transform.M10 * point.X) + (transform.M11 * point.Y) + (transform.M12 * point.Z) + transform.M13);
+    }
+
+    private static Vector3 AiroceanToIcosahedron(in Vector2 point, int faceId)
+    {
+        Matrix4x4 transform = AiroceanToIcoTransforms[faceId];
+        return new Vector3(
+            (transform.M00 * point.X) + (transform.M01 * point.Y) + transform.M03,
+            (transform.M10 * point.X) + (transform.M11 * point.Y) + transform.M13,
+            (transform.M20 * point.X) + (transform.M21 * point.Y) + transform.M23);
+    }
+
+    private static readonly Face[] IcoFaces =
+    [
+                new Face(new Vector3(0.42015242670871d, 0.07814524940278296d, 0.9040825506150193d), new Vector3(0.51883673032736444d, 0.83542038037823585d, 0.18133183755726245d), new Vector3(0.99500943943624165d, -0.091347795276427932d, 0.040147175877166645d)),
+                new Face(new Vector3(0.42015242670871d, 0.07814524940278296d, 0.9040825506150193d), new Vector3(-0.41468222532033522d, 0.65596240543480078d, 0.63067580789147537d), new Vector3(0.51883673032736444d, 0.83542038037823585d, 0.18133183755726245d)),
+                new Face(new Vector3(0.42015242670871d, 0.07814524940278296d, 0.9040825506150193d), new Vector3(-0.51545595994404181d, -0.38171689828713301d, 0.76720099251774754d), new Vector3(-0.41468222532033522d, 0.65596240543480078d, 0.63067580789147537d)),
+                new Face(new Vector3(0.42015242670871d, 0.07814524940278296d, 0.9040825506150193d), new Vector3(0.35578140253294471d, -0.84358000246617815d, 0.40223422660292557d), new Vector3(-0.51545595994404181d, -0.38171689828713301d, 0.76720099251774754d)),
+                new Face(new Vector3(0.42015242670871d, 0.07814524940278296d, 0.9040825506150193d), new Vector3(0.99500943943624165d, -0.091347795276427932d, 0.040147175877166645d), new Vector3(0.35578140253294471d, -0.84358000246617815d, 0.40223422660292557d)),
+                new Face(new Vector3(0.99500943943624165d, -0.091347795276427932d, 0.040147175877166645d), new Vector3(0.51883673032736444d, 0.83542038037823585d, 0.18133183755726245d), new Vector3(0.51545595994404181d, 0.38171689828713301d, -0.76720099251774754d)),
+                new Face(new Vector3(0.51545595994404181d, 0.38171689828713301d, -0.76720099251774754d), new Vector3(0.51883673032736444d, 0.83542038037823585d, 0.18133183755726245d), new Vector3(-0.35578140253294471d, 0.84358000246617815d, -0.40223422660292557d)),
+                new Face(new Vector3(-0.35578140253294471d, 0.84358000246617815d, -0.40223422660292557d), new Vector3(0.51883673032736444d, 0.83542038037823585d, 0.18133183755726245d), new Vector3(-0.41468222532033522d, 0.65596240543480078d, 0.63067580789147537d)),
+                new Face(new Vector3(-0.51545595994404181d, -0.38171689828713301d, 0.76720099251774754d), new Vector3(-0.99500943943624165d, 0.091347795276427932d, -0.040147175877166645d), new Vector3(-0.41468222532033522d, 0.65596240543480078d, 0.63067580789147537d)),
+                new Face(new Vector3(-0.51545595994404181d, -0.38171689828713301d, 0.76720099251774754d), new Vector3(-0.51883673032736444d, -0.83542038037823585d, -0.18133183755726245d), new Vector3(-0.99500943943624165d, 0.091347795276427932d, -0.040147175877166645d)),
+                new Face(new Vector3(-0.51545595994404181d, -0.38171689828713301d, 0.76720099251774754d), new Vector3(0.35578140253294471d, -0.84358000246617815d, 0.40223422660292557d), new Vector3(-0.51883673032736444d, -0.83542038037823585d, -0.18133183755726245d)),
+                new Face(new Vector3(-0.51883673032736444d, -0.83542038037823585d, -0.18133183755726245d), new Vector3(0.35578140253294471d, -0.84358000246617815d, 0.40223422660292557d), new Vector3(0.41468222532033522d, -0.65596240543480078d, -0.63067580789147537d)),
+                new Face(new Vector3(0.41468222532033522d, -0.65596240543480078d, -0.63067580789147537d), new Vector3(0.35578140253294471d, -0.84358000246617815d, 0.40223422660292557d), new Vector3(0.99500943943624165d, -0.091347795276427932d, 0.040147175877166645d)),
+                new Face(new Vector3(0.51545595994404181d, 0.38171689828713301d, -0.76720099251774754d), new Vector3(0.41468222532033522d, -0.65596240543480078d, -0.63067580789147537d), new Vector3(0.99500943943624165d, -0.091347795276427932d, 0.040147175877166645d)),
+                new Face(new Vector3(-0.42015242670871d, -0.07814524940278296d, -0.9040825506150193d), new Vector3(-0.35578140253294471d, 0.84358000246617815d, -0.40223422660292557d), new Vector3(-0.99500943943624165d, 0.091347795276427932d, -0.040147175877166645d)),
+                new Face(new Vector3(-0.42015242670871d, -0.07814524940278296d, -0.9040825506150193d), new Vector3(-0.99500943943624165d, 0.091347795276427932d, -0.040147175877166645d), new Vector3(-0.51883673032736444d, -0.83542038037823585d, -0.18133183755726245d)),
+                new Face(new Vector3(-0.42015242670871d, -0.07814524940278296d, -0.9040825506150193d), new Vector3(-0.51883673032736444d, -0.83542038037823585d, -0.18133183755726245d), new Vector3(0.41468222532033522d, -0.65596240543480078d, -0.63067580789147537d)),
+                new Face(new Vector3(-0.42015242670871d, -0.07814524940278296d, -0.9040825506150193d), new Vector3(0.41468222532033522d, -0.65596240543480078d, -0.63067580789147537d), new Vector3(0.51545595994404181d, 0.38171689828713301d, -0.76720099251774754d)),
+                new Face(new Vector3(-0.35578140253294471d, 0.84358000246617815d, -0.40223422660292557d), new Vector3(-0.38796691462082733d, 0.38271737653169757d, -0.65315838860897246d), new Vector3(0.51545595994404181d, 0.38171689828713301d, -0.76720099251774754d)),
+                new Face(new Vector3(-0.42015242670871d, -0.07814524940278296d, -0.9040825506150193d), new Vector3(0.51545595994404181d, 0.38171689828713301d, -0.76720099251774754d), new Vector3(-0.38796691462082733d, 0.38271737653169757d, -0.65315838860897246d)),
+                new Face(new Vector3(-0.99500943943624165d, 0.091347795276427932d, -0.040147175877166645d), new Vector3(-0.35578140253294471d, 0.84358000246617815d, -0.40223422660292557d), new Vector3(-0.58849102242984053d, 0.53029673439246894d, 0.062764801803794387d)),
+                new Face(new Vector3(-0.35578140253294471d, 0.84358000246617815d, -0.40223422660292557d), new Vector3(-0.41468222532033522d, 0.65596240543480078d, 0.63067580789147537d), new Vector3(-0.58849102242984053d, 0.53029673439246894d, 0.062764801803794387d)),
+                new Face(new Vector3(-0.99500943943624165d, 0.091347795276427932d, -0.040147175877166645d), new Vector3(-0.58849102242984053d, 0.53029673439246894d, 0.062764801803794387d), new Vector3(-0.41468222532033522d, 0.65596240543480078d, 0.63067580789147537d)),
+    ];
+
+    private static readonly Vector3[] IcoCenters =
+    [
+        new Vector3(0.64466619882410536d, 0.27407261150153034d, 0.37518718801648276d),
+        new Vector3(0.17476897723857973d, 0.52317601173860651d, 0.57203006535458567d),
+        new Vector3(-0.16999525285188902d, 0.1174635855168169d, 0.7673197836747474d),
+        new Vector3(0.086825956432537613d, -0.3823838837835094d, 0.69117258991189745d),
+        new Vector3(0.59031442289263214d, -0.28559418277994103d, 0.44882131769837047d),
+        new Vector3(0.67643404323588252d, 0.37526316112964703d, -0.18190732636110615d),
+        new Vector3(0.22617042924615385d, 0.68690576037718232d, -0.32936779385447018d),
+        new Vector3(-0.083875632508638498d, 0.77832092942640496d, 0.13659113961527075d),
+        new Vector3(-0.64171587490020621d, 0.12186443414136523d, 0.45257654151068544d),
+        new Vector3(-0.67643404323588252d, -0.37526316112964703d, 0.18190732636110615d),
+        new Vector3(-0.22617042924615385d, -0.68690576037718232d, 0.32936779385447024d),
+        new Vector3(0.083875632508638498d, -0.77832092942640496d, -0.13659113961527075d),
+        new Vector3(0.58849102242984053d, -0.53029673439246894d, -0.062764801803794387d),
+        new Vector3(0.64171587490020621d, -0.12186443414136523d, -0.45257654151068549d),
+        new Vector3(-0.59031442289263214d, 0.28559418277994103d, -0.44882131769837047d),
+        new Vector3(-0.64466619882410536d, -0.27407261150153028d, -0.37518718801648276d),
+        new Vector3(-0.17476897723857973d, -0.52317601173860651d, -0.57203006535458567d),
+        new Vector3(0.16999525285188902d, -0.11746358551681692d, -0.7673197836747474d),
+        new Vector3(-0.076097452403243393d, 0.53600475909500289d, -0.60753120257654858d),
+        new Vector3(-0.097554460461831846d, 0.22876300847201589d, -0.77481397724724632d),
+        new Vector3(-0.64642728813300898d, 0.48840817737835834d, -0.12653886689209928d),
+        new Vector3(-0.45298488342770682d, 0.67661304743114936d, 0.097068794364114738d),
+        new Vector3(-0.66606089572880578d, 0.42586897836789922d, 0.21776447793936771d),
+    ];
+
+    private static readonly Vector3[] IcoNormals =
+    [
+        new Vector3(0.81125347091409694d, 0.34489532376393844d, 0.47213877364139306d),
+        new Vector3(0.21993077914046083d, 0.65836917802749961d, 0.71984753789261824d),
+        new Vector3(-0.21392348345014195d, 0.14781718295507021d, 0.96560179352142061d),
+        new Vector3(0.10926252787847963d, -0.48119515728732082d, 0.86977751212872534d),
+        new Vector3(0.74285673015867926d, -0.35939416782780276d, 0.56480059365170343d),
+        new Vector3(0.85123039864742922d, 0.47223437885826819d, -0.2289137388687808d),
+        new Vector3(0.28461480697879088d, 0.86440809726542034d, -0.41447925524735379d),
+        new Vector3(-0.10554981496139187d, 0.97944572964114118d, 0.17188746100093646d),
+        new Vector3(-0.8075407579970092d, 0.15335524858988167d, 0.56952619948826877d),
+        new Vector3(-0.85123039864742922d, -0.47223437885826819d, 0.22891373886878083d),
+        new Vector3(-0.28461480697879088d, -0.86440809726542034d, 0.41447925524735379d),
+        new Vector3(0.10554981496139185d, -0.97944572964114118d, -0.17188746100093638d),
+        new Vector3(0.74056214738544823d, -0.66732995645655235d, -0.078983764632673467d),
+        new Vector3(0.8075407579970092d, -0.15335524858988167d, -0.56952619948826877d),
+        new Vector3(-0.74285673015867926d, 0.35939416782780276d, -0.56480059365170343d),
+        new Vector3(-0.81125347091409694d, -0.34489532376393844d, -0.47213877364139306d),
+        new Vector3(-0.21993077914046083d, -0.65836917802749961d, -0.71984753789261824d),
+        new Vector3(0.21392348345014195d, -0.14781718295507021d, -0.96560179352142061d),
+        new Vector3(-0.10926252787847963d, 0.48119515728732087d, -0.86977751212872534d),
+        new Vector3(-0.10926252787847968d, 0.48119515728732087d, -0.86977751212872534d),
+        new Vector3(-0.74056214738544801d, 0.66732995645655235d, 0.078983764632673537d),
+        new Vector3(-0.74056214738544812d, 0.66732995645655235d, 0.078983764632673467d),
+        new Vector3(-0.74056214738544812d, 0.66732995645655246d, 0.078983764632673287d),
+    ];
+
+    private static readonly Face2D[] AiroceanFaces =
+    [
+                new Face2D(new Vector2(1.8211859946200586d, 3.1543866727148018d), new Vector2(1.8211859946200586d, 4.2058488969530687d), new Vector2(2.7317789919300877d, 3.6801177848339353d)),
+                new Face2D(new Vector2(1.8211859946200586d, 3.1543866727148018d), new Vector2(0.9105929973100293d, 3.6801177848339353d), new Vector2(1.8211859946200586d, 4.2058488969530687d)),
+                new Face2D(new Vector2(1.8211859946200586d, 3.1543866727148018d), new Vector2(0.9105929973100293d, 2.6286555605956679d), new Vector2(0.9105929973100293d, 3.6801177848339353d)),
+                new Face2D(new Vector2(1.8211859946200586d, 3.1543866727148018d), new Vector2(1.8211859946200586d, 2.1029244484765344d), new Vector2(0.9105929973100293d, 2.6286555605956679d)),
+                new Face2D(new Vector2(1.8211859946200586d, 3.1543866727148018d), new Vector2(2.7317789919300877d, 3.6801177848339353d), new Vector2(2.7317789919300877d, 2.6286555605956679d)),
+                new Face2D(new Vector2(2.7317789919300877d, 3.6801177848339353d), new Vector2(1.8211859946200586d, 4.2058488969530687d), new Vector2(2.7317789919300877d, 4.7315800090722027d)),
+                new Face2D(new Vector2(1.8211859946200586d, 5.2573111211913357d), new Vector2(1.8211859946200586d, 4.2058488969530687d), new Vector2(0.9105929973100293d, 4.7315800090722027d)),
+                new Face2D(new Vector2(0.9105929973100293d, 4.7315800090722027d), new Vector2(1.8211859946200586d, 4.2058488969530687d), new Vector2(0.9105929973100293d, 3.6801177848339353d)),
+                new Face2D(new Vector2(0.9105929973100293d, 2.6286555605956679d), new Vector2(0.0d, 3.1543866727148018d), new Vector2(0.9105929973100293d, 3.6801177848339353d)),
+                new Face2D(new Vector2(0.9105929973100293d, 2.6286555605956679d), new Vector2(0.9105929973100293d, 1.5771933363574009d), new Vector2(0.0d, 2.1029244484765344d)),
+                new Face2D(new Vector2(0.9105929973100293d, 2.6286555605956679d), new Vector2(1.8211859946200586d, 2.1029244484765344d), new Vector2(0.9105929973100293d, 1.5771933363574009d)),
+                new Face2D(new Vector2(0.9105929973100293d, 1.5771933363574009d), new Vector2(1.8211859946200586d, 2.1029244484765344d), new Vector2(1.8211859946200586d, 1.0514622242382672d)),
+                new Face2D(new Vector2(1.8211859946200586d, 1.0514622242382672d), new Vector2(1.8211859946200586d, 2.1029244484765344d), new Vector2(2.7317789919300877d, 1.5771933363574009d)),
+                new Face2D(new Vector2(1.8211859946200586d, 0.0d), new Vector2(1.8211859946200586d, 1.0514622242382672d), new Vector2(2.7317789919300877d, 0.52573111211913359d)),
+                new Face2D(new Vector2(0.0d, 5.2573111211913357d), new Vector2(0.9105929973100293d, 4.7315800090722027d), new Vector2(0.0d, 4.2058488969530687d)),
+                new Face2D(new Vector2(0.0d, 1.0514622242382672d), new Vector2(0.0d, 2.1029244484765344d), new Vector2(0.9105929973100293d, 1.5771933363574009d)),
+                new Face2D(new Vector2(0.9105929973100293d, 0.52573111211913359d), new Vector2(0.9105929973100293d, 1.5771933363574009d), new Vector2(1.8211859946200586d, 1.0514622242382672d)),
+                new Face2D(new Vector2(0.9105929973100293d, 0.52573111211913359d), new Vector2(1.8211859946200586d, 1.0514622242382672d), new Vector2(1.8211859946200586d, 0.0d)),
+                new Face2D(new Vector2(0.9105929973100293d, 4.7315800090722027d), new Vector2(0.45529649865501465d, 4.9944455651317687d), new Vector2(0.9105929973100293d, 5.7830422333104696d)),
+                new Face2D(new Vector2(0.9105929973100293d, 0.52573111211913359d), new Vector2(1.8211859946200586d, 0.0d), new Vector2(0.9105929973100293d, 0.0d)),
+                new Face2D(new Vector2(0.0d, 4.2058488969530687d), new Vector2(0.9105929973100293d, 4.7315800090722027d), new Vector2(0.60706199820668616d, 4.2058488969530687d)),
+                new Face2D(new Vector2(0.9105929973100293d, 4.7315800090722027d), new Vector2(0.9105929973100293d, 3.6801177848339353d), new Vector2(0.60706199820668616d, 4.2058488969530687d)),
+                new Face2D(new Vector2(0.0d, 3.1543866727148018d), new Vector2(0.30353099910334308d, 3.6801177848339353d), new Vector2(0.9105929973100293d, 3.6801177848339353d)),
+    ];
+
+    private static readonly Matrix4x4[] IcoToAiroceanTransforms =
+    [
+        new Matrix4x4(
+            0.57711278526259346d, -0.6019490725122667d, -0.55190411050115662d, 2.1247169937234016d,
+            0.093854350012571169d, 0.72021144794247027d, -0.68737677531054842d, 3.6801177848339357d,
+            0.81125347091409672d, 0.34489532376393839d, 0.47213877364139289d, -0.79465447229176589d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97099012011986363d, -0.21873613253416729d, -0.096605853619785673d, 1.5176549955167156d,
+            0.093854350012570892d, 0.72021144794247083d, -0.68737677531054797d, 3.6801177848339353d,
+            0.21993077914046077d, 0.6583691780274995d, 0.71984753789261813d, -0.79465447229176589d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97213741150647925d, -0.06476823821979226d, 0.2252863255224028d, 1.2141239964133725d,
+            0.095841516985275071d, 0.98689166362936331d, -0.12984316647721492d, 3.1543866727148013d,
+            -0.21392348345014195d, 0.14781718295507021d, 0.96560179352142073d, -0.79465447229176633d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99212587537314545d, -0.0010987106726278763d, -0.12523993073268391d, 1.5176549955167151d,
+            0.06122048200295415d, 0.87661280702376732d, 0.47728611874350335d, 2.6286555605956674d,
+            0.10926252787847969d, -0.48119515728732087d, 0.86977751212872556d, -0.79465447229176633d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.28030414798915965d, -0.59918003969486144d, -0.74994190751773271d, 2.4282479928267451d,
+            0.60794198989543957d, 0.71541534241489813d, -0.34436524905882676d, 3.1543866727148013d,
+            0.74285673015867904d, -0.3593941678278027d, 0.56480059365170321d, -0.794654472291766d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.25960661905056537d, -0.75800695910456128d, -0.59835595868528879d, 2.4282479928267442d,
+            -0.45608246158307081d, 0.44991125944279409d, -0.76783373647094033d, 4.2058488969530687d,
+            0.85123039864742922d, 0.47223437885826813d, -0.22891373886878083d, -0.79465447229176611d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.95863657006736502d, -0.25808606460596301d, 0.12003128669511368d, 1.5176549955167158d,
+            -0.0032153037031572929d, -0.43149765310854393d, -0.90210832896272153d, 4.7315800090722018d,
+            0.28461480697879082d, 0.86440809726542056d, -0.41447925524735385d, -0.79465447229176622d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99283494044507403d, 0.094058681189907414d, 0.073700376689958561d, 1.2141239964133723d,
+            0.056018011327093935d, 0.17843493822832973d, -0.98235581905255198d, 4.2058488969530679d,
+            -0.10554981496139189d, 0.97944572964114129d, 0.17188746100093644d, -0.79465447229176622d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.58197278956629672d, 0.050269394155928272d, 0.81165304177069308d, 0.60706199820668649d,
+            0.095841516985274419d, 0.98689166362936342d, -0.12984316647721489d, 3.1543866727148013d,
+            -0.80754075799700931d, 0.1533552485898817d, 0.56952619948826888d, -0.79465447229176633d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.52478230747676247d, -0.76863805967839183d, 0.36578554232391575d, 0.60706199820668671d,
+            0.0032153037031566203d, 0.43149765310854449d, 0.90210832896272142d, 2.1029244484765348d,
+            -0.85123039864742922d, -0.47223437885826813d, 0.22891373886878078d, -0.79465447229176611d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.95863657006736525d, -0.25808606460596317d, 0.12003128669511379d, 1.2141239964133719d,
+            0.0032153037031568779d, 0.43149765310854465d, 0.90210832896272175d, 2.1029244484765344d,
+            -0.28461480697879088d, -0.86440809726542045d, 0.41447925524735379d, -0.79465447229176622d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99283494044507381d, 0.094058681189907595d, 0.073700376689958685d, 1.5176549955167153d,
+            -0.056018011327093879d, -0.17843493822832968d, 0.98235581905255132d, 1.5771933363574009d,
+            0.10554981496139189d, -0.97944572964114129d, -0.17188746100093644d, -0.79465447229176622d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.6696489291164518d, 0.72307102143229862d, 0.16952465808265391d, 2.1247169937234016d,
+            -0.05601801132709365d, -0.17843493822832943d, 0.98235581905255165d, 1.5771933363574009d,
+            0.74056214738544823d, -0.66732995645655235d, -0.078983764632673467d, -0.79465447229176622d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.5819727895662965d, 0.050269394155928314d, 0.81165304177069297d, 2.1247169937234016d,
+            -0.095841516985274836d, -0.98689166362936265d, 0.129843166477215d, 0.52573111211913326d,
+            0.80754075799700931d, -0.1533552485898817d, -0.56952619948826888d, -0.79465447229176633d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.3863411332821331d, 0.91915788063587522d, 0.07674189989336716d, 0.30353099910334314d,
+            0.54672150789248386d, -0.16119746460886833d, -0.82165136780233039d, 4.7315800090722027d,
+            -0.74285673015867904d, 0.35939416782780265d, -0.56480059365170321d, -0.794654472291766d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.20727614126473407d, -0.92469594627068652d, 0.31933369413978446d, 0.30353099910334302d,
+            -0.54672150789248486d, 0.16119746460886911d, 0.82165136780233028d, 1.5771933363574007d,
+            -0.81125347091409672d, -0.34489532376393833d, -0.47213877364139295d, -0.794654472291766d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97099012011986385d, -0.21873613253416718d, -0.096605853619785353d, 1.2141239964133725d,
+            -0.093854350012570725d, -0.72021144794247038d, 0.68737677531054842d, 1.0514622242382674d,
+            -0.21993077914046086d, -0.6583691780274995d, -0.71984753789261802d, -0.794654472291766d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97213741150647937d, -0.064768238219792301d, 0.2252863255224031d, 1.5176549955167156d,
+            -0.095841516985274766d, -0.98689166362936265d, 0.12984316647721514d, 0.52573111211913359d,
+            0.21392348345014198d, -0.14781718295507021d, -0.9656017935214205d, -0.79465447229176611d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.54908143033305934d, 0.75861960482905411d, 0.35072193833920801d, 0.60706199820668616d,
+            0.82859597082354086d, -0.43925791486578636d, -0.34710402095445991d, 5.2573111211913348d,
+            -0.10926252787847968d, 0.48119515728732093d, -0.86977751212872545d, -0.79465447229176633d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99212587537314534d, -0.0010987106726278503d, -0.125239930732684d, 1.2141239964133725d,
+            -0.061220482002954366d, -0.87661280702376732d, -0.47728611874350341d, 0.0d,
+            -0.10926252787847965d, 0.48119515728732093d, -0.86977751212872545d, -0.79465447229176633d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.66964892911645213d, 0.72307102143229884d, 0.16952465808265399d, 0.60706199820668605d,
+            0.056018011327093963d, 0.17843493822832968d, -0.98235581905255176d, 4.2058488969530687d,
+            -0.74056214738544823d, 0.66732995645655246d, 0.078983764632673342d, -0.79465447229176622d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.66964892911645246d, 0.72307102143229873d, 0.1695246580826538d, 0.60706199820668627d,
+            0.05601801132709517d, 0.1784349382283307d, -0.98235581905255176d, 4.2058488969530687d,
+            -0.74056214738544834d, 0.66732995645655258d, 0.078983764632673481d, -0.79465447229176633d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.28631144367947836d, 0.20700632128770896d, 0.93550742389630615d, 0.3035309991033428d,
+            0.60794198989543913d, 0.71541534241489779d, -0.34436524905882632d, 3.6801177848339357d,
+            -0.74056214738544812d, 0.66732995645655246d, 0.078983764632673412d, -0.79465447229176611d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+    ];
+
+    private static readonly Matrix4x4[] AiroceanToIcoTransforms =
+    [
+        new Matrix4x4(
+            0.57711278526259402d, 0.093854350012570739d, 0.81125347091409716d, -0.9269302059836626d,
+            -0.60194907251226693d, 0.7202114479424705d, 0.3448953237639385d, -1.0974189231897016d,
+            -0.55190411050115762d, -0.68737677531054819d, 0.47213877364139284d, 4.0774547262062395d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97099012011986396d, 0.093854350012570753d, 0.21993077914046097d, -1.6442540918239978d,
+            -0.21873613253416777d, 0.7202114479424705d, 0.65836917802749917d, -1.7953209624349933d,
+            -0.096605853619785173d, -0.68737677531054853d, 0.71984753789261868d, 3.2482719173989589d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97213741150647925d, 0.095841516985274683d, -0.21392348345014173d, -1.6526118158442071d,
+            -0.064768238219793189d, 0.98689166362936276d, 0.14781718295507035d, -2.9169376534209159d,
+            0.22528632552240307d, -0.12984316647721503d, 0.9656017935214205d, 0.90336980367301989d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99212587537314545d, 0.061220482002954296d, 0.10926252787847969d, -1.5798063949483236d,
+            -0.0010987106726281115d, 0.87661280702376676d, -0.48119515728732043d, -2.6850295497149701d,
+            -0.12523993073268413d, 0.47728611874350318d, 0.86977751212872534d, -0.3733772136037109d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.28030414798916031d, 0.60794198989543913d, 0.74285673015867915d, -2.0080176725529477d,
+            -0.59918003969486111d, 0.7154153424148979d, -0.35939416782780287d, -1.0873330756182955d,
+            -0.74994190751773349d, -0.34436524905882648d, 0.56480059365170354d, 3.3561274015422433d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.25960661905056542d, -0.4560824615830712d, 0.85123039864742922d, 1.9642587095706099d,
+            -0.75800695910456173d, 0.44991125944279492d, 0.47223437885826836d, 0.32363326386975849d,
+            -0.59835595868528868d, -0.76783373647094011d, -0.22891373886878078d, 4.5004420028920258d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.95863657006736502d, -0.0032153037031569672d, 0.28461480697879094d, -1.2134956834766393d,
+            -0.25808606460596312d, -0.43149765310854504d, 0.86440809726542034d, 3.1202570350096352d,
+            0.12003128669511316d, -0.90210832896272219d, -0.41447925524735352d, 3.7568638596119381d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99283494044507403d, 0.056018011327093671d, -0.10554981496139178d, -1.5249036493302057d,
+            0.094058681189907539d, 0.17843493822832954d, 0.97944572964114118d, -0.086348360602766461d,
+            0.073700376689957992d, -0.98235581905255132d, 0.17188746100093619d, 4.1787498817088897d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.58197278956629706d, 0.095841516985274933d, -0.8075407579970092d, -1.2973306433073619d,
+            0.050269394155928723d, 0.98689166362936298d, 0.15335524858988142d, -3.0216901158893736d,
+            0.81165304177069342d, -0.12984316647721506d, 0.56952619948826888d, 0.36942837800164929d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.52478230747676236d, 0.0032153037031565812d, -0.85123039864742911d, -1.0017709802028867d,
+            -0.76863805967839227d, 0.43149765310854499d, -0.47223437885826824d, -0.8160591689057779d,
+            0.36578554232391597d, 0.90210832896272208d, 0.22891373886878089d, -1.937212836027187d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.95863657006736536d, 0.0032153037031565886d, -0.28461480697879071d, -1.3968356335709964d,
+            -0.25808606460596301d, 0.43149765310854504d, -0.86440809726542023d, -1.2809642403813966d,
+            0.12003128669511362d, 0.90210832896272242d, 0.41447925524735396d, -1.7134307317924613d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99283494044507392d, -0.056018011327093609d, 0.10554981496139221d, -1.3345540404002831d,
+            0.094058681189907414d, -0.17843493822832956d, -0.97944572964114107d, -0.63964316125891596d,
+            0.073700376689958561d, 0.98235581905255198d, -0.17188746100093616d, -1.7978079362118518d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.66964892911645235d, -0.056018011327093886d, 0.74056214738544812d, -0.7459722029114777d,
+            0.72307102143229895d, -0.1784349382283297d, -0.66732995645655224d, -1.7851916257515466d,
+            0.16952465808265363d, 0.9823558190525522d, -0.078983764632673731d, -1.9723217754287594d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.58197278956629683d, -0.095841516985274766d, 0.80754075799700908d, -0.54442473366406441d,
+            0.05026939415592821d, -0.98689166362936309d, -0.15335524858988164d, 0.29016698169232114d,
+            0.81165304177069353d, 0.12984316647721511d, -0.56952619948826899d, -2.2453721446813035d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.38634113328213288d, 0.54672150789248519d, -0.74285673015867948d, -3.2944374903463687d,
+            0.91915788063587534d, -0.16119746460886916d, 0.35939416782780292d, 0.76931997399327168d,
+            0.076741899893367715d, -0.82165136780233039d, -0.56480059365170299d, 3.4155943230742447d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.20727614126473443d, -0.54672150789248497d, -0.81125347091409694d, 0.15470458601882164d,
+            -0.92469594627068674d, 0.16119746460886913d, -0.34489532376393839d, -0.24763829408199384d,
+            0.31933369413978435d, 0.82165136780233017d, -0.47213877364139312d, -1.7680179253528721d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97099012011986419d, -0.093854350012570684d, -0.21993077914046077d, -1.2549870787377553d,
+            -0.2187361325341676d, -0.72021144794247027d, -0.65836917802749972d, 0.49967190662923489d,
+            -0.096605853619785464d, 0.68737677531054819d, -0.71984753789261813d, -1.1774892933385632d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.97213741150647937d, -0.095841516985274586d, 0.21392348345014212d, -1.2549870787377553d,
+            -0.064768238219792662d, -0.98689166362936276d, -0.14781718295507024d, 0.49967190662923483d,
+            0.2252863255224028d, 0.12984316647721506d, -0.96560179352142039d, -1.1774892933385632d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.5490814303330579d, 0.82859597082354119d, -0.10926252787847955d, -4.7763392390936437d,
+            0.75861960482905522d, -0.43925791486578841d, 0.48119515728732087d, 2.231170271492442d,
+            0.35072193833920873d, -0.34710402095445941d, -0.86977751212872534d, 0.92075127895909092d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.99212587537314556d, -0.061220482002954546d, -0.10926252787847962d, -1.2913897891856965d,
+            -0.0010987106726276701d, -0.8766128070237672d, 0.48119515728732093d, 0.38371785477626236d,
+            -0.12523993073268386d, -0.47728611874350324d, -0.86977751212872523d, -0.53911578470019728d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.66964892911645257d, 0.056018011327093199d, -0.74056214738544823d, -1.2306127305858023d,
+            0.72307102143229895d, 0.17843493822832968d, 0.66732995645655224d, -0.6591225928490807d,
+            0.16952465808265377d, -0.98235581905255032d, 0.078983764632673259d, 4.0914929621004301d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.66964892911645202d, 0.056018011327093706d, -0.74056214738544801d, -1.230612730585803d,
+            0.72307102143229884d, 0.17843493822832959d, 0.66732995645655235d, -0.6591225928490807d,
+            0.16952465808265541d, -0.98235581905255143d, 0.078983764632673106d, 4.0914929621004337d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+        new Matrix4x4(
+            0.28631144367947847d, 0.6079419898954399d, -0.74056214738544857d, -2.9126935501461353d,
+            0.20700632128770891d, 0.71541534241489835d, 0.66732995645655213d, -2.1653488262928251d,
+            0.93550742389630603d, -0.34436524905882709d, 0.078983764632673509d, 1.046113976300111d,
+            0.0d, 0.0d, 0.0d, 1.0d),
+    ];
+
+    private static readonly Matrix4x4 HorizontalTransform =
+        new(
+            0.0d, -1.0d, 0.0d, 5.7830422333104696d,
+            1.0d, 0.0d, 0.0d, 0.0d,
+            0.0d, 0.0d, 1.0d, 0.0d,
+            0.0d, 0.0d, 0.0d, 1.0d);
+
+    private static readonly Matrix4x4 HorizontalInverseTransform =
+        new(
+            0.0d, 1.0d, 0.0d, 0.0d,
+            -1.0d, -0.0d, -0.0d, 5.7830422333104696d,
+            0.0d, 0.0d, 1.0d, 0.0d,
+            0.0d, 0.0d, 0.0d, 1.0d);
+
+    private readonly struct Vector2(double x, double y)
+    {
+        public double X { get; } = x;
+
+        public double Y { get; } = y;
+    }
+
+    private readonly struct Vector3(double x, double y, double z)
+    {
+        public double X { get; } = x;
+
+        public double Y { get; } = y;
+
+        public double Z { get; } = z;
+    }
+
+    private readonly struct Face(Vector3 p1, Vector3 p2, Vector3 p3)
+    {
+        public Vector3 P1 { get; } = p1;
+
+        public Vector3 P2 { get; } = p2;
+
+        public Vector3 P3 { get; } = p3;
+    }
+
+    private readonly struct Face2D(Vector2 p1, Vector2 p2, Vector2 p3)
+    {
+        public Vector2 P1 { get; } = p1;
+
+        public Vector2 P2 { get; } = p2;
+
+        public Vector2 P3 { get; } = p3;
+    }
+
+    private readonly struct Matrix4x4(
+        double m00,
+        double m01,
+        double m02,
+        double m03,
+        double m10,
+        double m11,
+        double m12,
+        double m13,
+        double m20,
+        double m21,
+        double m22,
+        double m23,
+        double m30,
+        double m31,
+        double m32,
+        double m33)
+    {
+        public double M00 { get; } = m00;
+
+        public double M01 { get; } = m01;
+
+        public double M02 { get; } = m02;
+
+        public double M03 { get; } = m03;
+
+        public double M10 { get; } = m10;
+
+        public double M11 { get; } = m11;
+
+        public double M12 { get; } = m12;
+
+        public double M13 { get; } = m13;
+
+        public double M20 { get; } = m20;
+
+        public double M21 { get; } = m21;
+
+        public double M22 { get; } = m22;
+
+        public double M23 { get; } = m23;
+
+        public double M30 { get; } = m30;
+
+        public double M31 { get; } = m31;
+
+        public double M32 { get; } = m32;
+
+        public double M33 { get; } = m33;
+
+        public Vector2 Transform(in Vector2 vector)
+        {
+            return new Vector2(
+                (this.M00 * vector.X) + (this.M01 * vector.Y) + this.M03,
+                (this.M10 * vector.X) + (this.M11 * vector.Y) + this.M13);
+        }
+    }
+}

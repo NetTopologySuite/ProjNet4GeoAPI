@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)</SolutionDir>
-
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)scskey.snk</AssemblyOriginatorKeyFile>
-
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
-
+  <PropertyGroup Label="Quality Gates">
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Label="CI Build" Condition="'$(CI)' == 'true'">
+    <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" />
+  </ItemGroup>
   <ItemGroup>
     <None Condition=" '$(IsPackable)' == 'true' " Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
-
 </Project>

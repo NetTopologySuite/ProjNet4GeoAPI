@@ -1,0 +1,9 @@
+{
+  "file_type": "triangulation_file",
+  "format_version": "1.0",
+  "transformed_components": [ "vertical" ],
+  "vertices_columns": [ "source_x", "source_y", "source_z", "target_z" ],
+  "triangles_columns": [ "idx_vertex1", "idx_vertex2", "idx_vertex3" ],
+  "vertices": [ [ 0, 0, 10.5, 10.6 ], [ 0, 1, 15.0, 15.2 ], [ 1, 1, 17.5, 18.0 ] ],
+  "triangles": [ [ 0, 1, 2 ] ]
+}

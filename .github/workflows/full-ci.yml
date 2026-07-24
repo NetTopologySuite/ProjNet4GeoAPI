@@ -1,40 +1,178 @@
 name: Full Continuous Integration
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   pack:
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
+    name: Build, test, and pack
+    runs-on: ubuntu-latest
 
     steps:
     - name: Get source
-      uses: actions/checkout@v2
-
-    - name: Setup .NET 
-      uses: actions/setup-dotnet@v4
+      uses: actions/checkout@v6.0.2
       with:
-        dotnet-version: 8
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.2.0
+      with:
+        global-json-file: global.json
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v5.0.5
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ hashFiles('Directory.Packages.props', 'dotnet-tools.json') }}
+        restore-keys: |
+          nuget-
+
+    - name: Restore tools
+      run: dotnet tool restore
+
+    - name: Register .NET problem matcher
+      run: echo "::add-matcher::.github/problem-matchers/dotnet.json"
 
     - name: Build
-      run: dotnet build -c Release -v minimal -p:WarningLevel=3
+      run: dotnet build ProjNet4GeoAPI.sln -c Release --tl:off -v minimal
 
-    - name: Test
-      run: dotnet test -c Release --no-build
-      shell: bash # defaults disagree on how to quote the filter string
+    - name: Dependency review
+      if: ${{ github.event_name == 'pull_request' }}
+      uses: actions/dependency-review-action@v4.9.0
+
+    - name: Test with coverage
+      run: |
+        mkdir -p coverage-out
+        dotnet dotnet-coverage collect \
+          --output coverage-out/coverage.cobertura.xml \
+          --output-format cobertura \
+          -- dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build
+
+    - name: Record coverage artifact status
+      if: ${{ always() }}
+      id: coverage-status
+      shell: pwsh
+      run: |
+        if (Test-Path 'coverage-out/coverage.cobertura.xml') {
+          'present=true' >> $env:GITHUB_OUTPUT
+        }
+        else {
+          'present=false' >> $env:GITHUB_OUTPUT
+        }
+
+    - name: Upload coverage artifact
+      if: ${{ always() && steps.coverage-status.outputs.present == 'true' }}
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: code-coverage
+        path: coverage-out/coverage.cobertura.xml
+        retention-days: 30
+
+    - name: Generate coverage summary
+      if: ${{ always() && steps.coverage-status.outputs.present == 'true' }}
+      uses: irongut/CodeCoverageSummary@v1.3.0
+      with:
+        filename: coverage-out/coverage.cobertura.xml
+        badge: true
+        format: markdown
+        output: both
+        thresholds: '60 80'
+
+    - name: Record coverage summary status
+      if: ${{ always() && steps.coverage-status.outputs.present == 'true' }}
+      id: coverage-summary-status
+      shell: pwsh
+      run: |
+        if (Test-Path 'code-coverage-results.md') {
+          'present=true' >> $env:GITHUB_OUTPUT
+        }
+        else {
+          'present=false' >> $env:GITHUB_OUTPUT
+        }
+
+    - name: Add coverage to job summary
+      if: ${{ always() && steps.coverage-summary-status.outputs.present == 'true' }}
+      run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload coverage summary artifact
+      if: ${{ always() && steps.coverage-summary-status.outputs.present == 'true' }}
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: coverage-summary
+        path: code-coverage-results.md
+        retention-days: 30
+
+    - name: API compatibility gate
+      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter-class ProjNet.Tests.PublicApiBaselineTests
+
+    - name: GIE/GIGS parity smoke gate
+      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter-class ProjNet.Tests.GieBuiltinsTheoryTests --filter-class ProjNet.Tests.Gigs5101TheoryTests
+
+    - name: Benchmark smoke gate
+      shell: pwsh
+      run: |
+        ./.github/scripts/Invoke-CuratedBenchmarks.ps1 -Mode Smoke -NoBuild
+
+        ./.github/scripts/Convert-BenchmarkReports.ps1 `
+          -InputDirectory BenchmarkDotNet.Artifacts/results `
+          -OutputFile BenchmarkDotNet.Artifacts/benchmark-action-data.json
+
+        ./.github/scripts/Assert-CuratedBenchmarkDataset.ps1 `
+          -DatasetPath BenchmarkDotNet.Artifacts/benchmark-action-data.json
 
     - name: Pack
-      run: dotnet pack -c Release --no-build -o artifacts -p:NoWarn=NU5105
+      run: dotnet pack ProjNet4GeoAPI.sln -c Release --no-build -o artifacts -p:NoWarn=NU5105
 
     - name: Upload
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7.0.1
       with:
-        name: NuGet Package Files (${{ matrix.os }})
+        name: NuGet Package Files
         path: artifacts
+
+  coverageComment:
+    name: Coverage PR comment
+    runs-on: ubuntu-latest
+    needs: pack
+    if: ${{ always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && !endsWith(github.actor, '[bot]') }}
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+    - name: Download coverage summary artifact
+      uses: actions/download-artifact@v8.0.1
+      continue-on-error: true
+      with:
+        name: coverage-summary
+        path: .
+
+    - name: Update coverage PR comment with fallback
+      if: ${{ hashFiles('code-coverage-results.md') == '' }}
+      uses: marocchino/sticky-pull-request-comment@v3.0.4
+      with:
+        header: code-coverage
+        recreate: true
+        message: |
+          Coverage summary unavailable for this run.
+
+          See the workflow logs for the coverage generation or artifact upload step that failed earlier in the pipeline.
+
+    - name: Add coverage PR comment
+      if: ${{ hashFiles('code-coverage-results.md') != '' }}
+      uses: marocchino/sticky-pull-request-comment@v3.0.4
+      with:
+        header: code-coverage
+        recreate: true
+        path: code-coverage-results.md
 
   deployToMyGet:
     name: Deploy to MyGet
@@ -44,15 +182,15 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master')
 
     steps:
-    - name: Setup .NET 8
-      uses: actions/setup-dotnet@v4
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v5.2.0
       with:
-        dotnet-version: 8
+        dotnet-version: 10.0.201
 
     - name: Download Package Files
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v8.0.1
       with:
-        name: NuGet Package Files (ubuntu-latest)
+        name: NuGet Package Files
         path: artifacts
 
     - name: Publish Package Files to MyGet
@@ -69,15 +207,15 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
-    - name: Setup .NET 8
-      uses: actions/setup-dotnet@v4
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v5.2.0
       with:
-        dotnet-version: 8
+        dotnet-version: 10.0.201
 
     - name: Download Package Files
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v8.0.1
       with:
-        name: NuGet Package Files (ubuntu-latest)
+        name: NuGet Package Files
         path: artifacts
 
     - name: Publish Package Files to NuGet

@@ -1,0 +1,125 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the Colombia Urban projection (<c>col_urban</c>).
+/// </summary>
+/// <remarks>
+/// Applies a height-above-ellipsoid correction via the mandatory <c>h_0</c> parameter
+/// (height in meters above the ellipsoid), which scales coordinates to account for
+/// terrain elevation and is intended for large-scale urban surveys in Colombia.
+/// <para>The forward and inverse relations were independently verified against the IGAC-style
+/// Colombia Urban formulation. The implementation matches the published <c>a</c>, <c>b</c>,
+/// <c>c</c>, and <c>d</c> coefficients derived from the latitude of origin and the mandatory
+/// ellipsoidal height parameter <c>h_0</c>.</para>
+/// </remarks>
+internal sealed class ColombiaUrbanProjection : MapProjection
+{
+    private readonly double h0;
+    private readonly double rho0;
+    private readonly double a;
+    private readonly double b;
+    private readonly double c;
+    private readonly double d;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColombiaUrbanProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public ColombiaUrbanProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ColombiaUrbanProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public ColombiaUrbanProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(MergeParameters(parameters), inverse)
+    {
+        this.Name = "Colombia_Urban";
+        double unscaledH0 = this.Parameters.GetParameterValue("h_0");
+        this.h0 = unscaledH0 / this.semiMajor;
+
+        double sinPhi0 = Math.Sin(this.latOrigin);
+        double nu0 = 1d / Math.Sqrt(1d - (this.es * sinPhi0 * sinPhi0));
+        this.a = 1d + (this.h0 / nu0);
+        this.rho0 = (1d - this.es) / Math.Pow(1d - (this.es * sinPhi0 * sinPhi0), 1.5d);
+        this.b = Math.Tan(this.latOrigin) / (2d * this.rho0 * nu0);
+        this.c = 1d + this.h0;
+        this.d = this.rho0 * (1d + (this.h0 / (1d - this.es)));
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new ColombiaUrbanProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double cosPhi = Math.Cos(lat);
+        double sinPhi = Math.Sin(lat);
+        double nu = 1d / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
+        double lambdaNuCosPhi = lambda * nu * cosPhi;
+        double x = this.a * lambdaNuCosPhi;
+        double sinPhiM = Math.Sin(0.5d * (lat + this.latOrigin));
+        double rhoM = (1d - this.es) / Math.Pow(1d - (this.es * sinPhiM * sinPhiM), 1.5d);
+        double g = 1d + (this.h0 / rhoM);
+        double y = g * this.rho0 * ((lat - this.latOrigin) + (this.b * lambdaNuCosPhi * lambdaNuCosPhi));
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
+
+        double phi = this.latOrigin + (yy / this.d) - (this.b * (xx / this.c) * (xx / this.c));
+        double sinPhi = Math.Sin(phi);
+        double nu = 1d / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
+        double lambda = xx / (this.c * nu * Math.Cos(phi));
+
+        x = Adjust_lon(this.centralMeridian + lambda);
+        y = phi;
+    }
+
+    private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
+    {
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
+        if (!HasParameter(merged, "h_0"))
+        {
+            ArgumentGuard.ThrowArgument("Missing mandatory projection parameter 'h_0'.", nameof(parameters));
+        }
+
+        return merged;
+    }
+
+    private static bool HasParameter(List<ProjectionParameter> parameters, string name)
+    {
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            if (parameters[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+}

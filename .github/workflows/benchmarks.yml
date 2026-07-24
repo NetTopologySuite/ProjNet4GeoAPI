@@ -1,0 +1,138 @@
+name: Benchmark Monitoring
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: benchmark-data
+  cancel-in-progress: false
+
+jobs:
+  benchmark:
+    name: Run curated benchmarks
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Get source
+      uses: actions/checkout@v6.0.2
+      with:
+        fetch-depth: 0
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5.2.0
+      with:
+        global-json-file: global.json
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v5.0.5
+      with:
+        path: ~/.nuget/packages
+        key: nuget-${{ hashFiles('Directory.Packages.props', 'dotnet-tools.json') }}
+        restore-keys: |
+          nuget-
+
+    - name: Register .NET problem matcher
+      run: echo "::add-matcher::.github/problem-matchers/dotnet.json"
+
+    - name: Build
+      run: dotnet build ProjNet4GeoAPI.sln -c Release --tl:off -v minimal
+
+    - name: Run curated benchmarks
+      shell: pwsh
+      run: ./.github/scripts/Invoke-CuratedBenchmarks.ps1 -Mode Full -NoBuild
+
+    - name: Build benchmark regression dataset
+      shell: pwsh
+      run: >
+        ./.github/scripts/Convert-BenchmarkReports.ps1
+        -InputDirectory BenchmarkDotNet.Artifacts/results
+        -OutputFile BenchmarkDotNet.Artifacts/benchmark-action-data.json
+
+    - name: Validate curated benchmark dataset
+      shell: pwsh
+      run: ./.github/scripts/Assert-CuratedBenchmarkDataset.ps1 -DatasetPath BenchmarkDotNet.Artifacts/benchmark-action-data.json
+
+    - name: Ensure benchmark data branch exists
+      if: ${{ github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch }}
+      shell: bash
+      run: |
+        if git ls-remote --exit-code --heads origin benchmark-data > /dev/null 2>&1; then
+          echo "benchmark-data branch already exists."
+          exit 0
+        fi
+
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+        worktree_dir="$(mktemp -d)"
+        git worktree add --detach "$worktree_dir"
+        pushd "$worktree_dir" > /dev/null
+        git checkout --orphan benchmark-data
+        git rm -rf . > /dev/null 2>&1 || true
+        echo "# Benchmark data" > README.md
+        git add README.md
+        git commit -m "Initialize benchmark data branch"
+        git push origin HEAD:benchmark-data
+        popd > /dev/null
+        git worktree remove "$worktree_dir" --force
+
+    - name: Require existing benchmark data branch for compare-only runs
+      if: ${{ github.ref_type != 'branch' || github.ref_name != github.event.repository.default_branch }}
+      shell: bash
+      run: |
+        if ! git ls-remote --exit-code --heads origin benchmark-data > /dev/null 2>&1; then
+          echo "benchmark-data branch does not exist yet. Run the workflow on the default branch first to establish the baseline." >&2
+          exit 1
+        fi
+
+        git fetch --depth=1 origin benchmark-data
+
+        if git cat-file -e FETCH_HEAD:dev/bench/data.js 2>/dev/null; then
+          echo "benchmark-data branch contains persisted benchmark history."
+          exit 0
+        fi
+
+        echo "benchmark-data branch does not contain persisted benchmark history yet. Run the workflow on the default branch first to establish the baseline." >&2
+        exit 1
+
+    - name: Store benchmark result
+      if: ${{ github.ref_type == 'branch' && github.ref_name == github.event.repository.default_branch }}
+      uses: benchmark-action/github-action-benchmark@v1.22.0
+      with:
+        name: ProjNET Curated Benchmarks
+        tool: customSmallerIsBetter
+        output-file-path: BenchmarkDotNet.Artifacts/benchmark-action-data.json
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        auto-push: true
+        gh-pages-branch: benchmark-data
+        alert-threshold: '150%'
+        fail-on-alert: false
+        comment-on-alert: true
+        summary-always: true
+
+    - name: Compare benchmark result against stored baseline
+      if: ${{ github.ref_type != 'branch' || github.ref_name != github.event.repository.default_branch }}
+      uses: benchmark-action/github-action-benchmark@v1.22.0
+      with:
+        name: ProjNET Curated Benchmarks
+        tool: customSmallerIsBetter
+        output-file-path: BenchmarkDotNet.Artifacts/benchmark-action-data.json
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        gh-pages-branch: benchmark-data
+        auto-push: false
+        save-data-file: false
+        alert-threshold: '150%'
+        fail-on-alert: false
+        summary-always: true
+
+    - name: Upload benchmark artifacts
+      uses: actions/upload-artifact@v7.0.1
+      with:
+        name: benchmark-results
+        path: BenchmarkDotNet.Artifacts
+        retention-days: 90

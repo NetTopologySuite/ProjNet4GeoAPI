@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the spherical Tissot projection (<c>tissot</c>).
+/// </summary>
+/// <remarks>
+/// Tissot is a simple spherical conic specialization of <see cref="SimpleConicProjectionBase"/>.
+/// Its numerical behavior follows the shared simple-conic equations with the Tissot-specific
+/// equal-area style radius construction.
+/// </remarks>
+internal sealed class TissotProjection : SimpleConicProjectionBase
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TissotProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public TissotProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TissotProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public TissotProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse, SimpleConicType.Tissot, "Tissot")
+    {
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new TissotProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+}

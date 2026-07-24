@@ -1,0 +1,149 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.Tests;
+
+using System;
+using Xunit;
+
+/// <summary>
+/// Provides unit tests for <see cref="ArgumentGuard"/>.
+/// </summary>
+public class ArgumentGuardTests
+{
+    /// <summary>
+    /// Verifies that the generic null guard returns the original reference for non-null values.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullGenericWithNonNullValueReturnsSameReference()
+    {
+        string value = "projnet";
+
+        string result = ArgumentGuard.ThrowIfNull(value, nameof(value));
+
+        Assert.Same(value, result);
+    }
+
+    /// <summary>
+    /// Verifies that the generic null guard throws for null values.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullGenericWithNullValueThrowsArgumentNullException()
+    {
+        string? value = null;
+
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => ArgumentGuard.ThrowIfNull(value, nameof(value)));
+
+        Assert.Equal(nameof(value), exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that the null-or-empty guard returns the original reference for non-empty values.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullOrEmptyWithNonEmptyValueReturnsSameReference()
+    {
+        string value = "valid";
+
+        string result = ArgumentGuard.ThrowIfNullOrEmpty(value, nameof(value));
+
+        Assert.Same(value, result);
+    }
+
+    /// <summary>
+    /// Verifies that the null-or-empty guard throws for empty values.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullOrEmptyWithEmptyValueThrowsArgumentException()
+    {
+        string value = string.Empty;
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNullOrEmpty(value, nameof(value)));
+
+        Assert.Equal(nameof(value), exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that the null-or-whitespace guard returns the original reference for non-whitespace values.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullOrWhiteSpaceWithContentReturnsSameReference()
+    {
+        string value = "valid";
+
+        string result = ArgumentGuard.ThrowIfNullOrWhiteSpace(value, nameof(value));
+
+        Assert.Same(value, result);
+    }
+
+    /// <summary>
+    /// Verifies that the null-or-whitespace guard throws for whitespace values.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNullOrWhiteSpaceWithWhitespaceThrowsArgumentException()
+    {
+        string value = "  ";
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNullOrWhiteSpace(value, nameof(value)));
+
+        Assert.Equal(nameof(value), exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that the negative-value guard accepts zero and positive values.
+    /// </summary>
+    /// <param name="value">Value to validate.</param>
+    [Theory]
+    [InlineData(0d)]
+    [InlineData(1.5d)]
+    public void ThrowIfNegativeWithNonNegativeValueSucceeds(double value)
+    {
+        ArgumentGuard.ThrowIfNegative(value, nameof(value));
+    }
+
+    /// <summary>
+    /// Verifies that the negative-value guard throws for negative input.
+    /// </summary>
+    [Fact]
+    public void ThrowIfNegativeWithNegativeValueThrowsArgumentOutOfRangeException()
+    {
+        const double value = -0.1d;
+
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => ArgumentGuard.ThrowIfNegative(value, nameof(value)));
+
+        Assert.Equal(nameof(value), exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that the finite-number guard accepts finite values.
+    /// </summary>
+    /// <param name="value">Value to validate.</param>
+    [Theory]
+    [InlineData(0d)]
+    [InlineData(-1.5d)]
+    [InlineData(42.25d)]
+    public void ThrowIfNotFiniteWithFiniteValueSucceeds(double value)
+    {
+        ArgumentGuard.ThrowIfNotFinite(value, nameof(value));
+    }
+
+    /// <summary>
+    /// Verifies that the finite-number guard throws for NaN and infinity inputs.
+    /// </summary>
+    /// <param name="value">Value to validate.</param>
+    [Theory]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    [InlineData(double.NegativeInfinity)]
+    public void ThrowIfNotFiniteWithNonFiniteValueThrowsArgumentOutOfRangeException(double value)
+    {
+        const string message = "Custom finite-value message.";
+
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => ArgumentGuard.ThrowIfNotFinite(value, nameof(value), message));
+
+        Assert.Equal(nameof(value), exception.ParamName);
+        Assert.Contains(message, exception.Message, StringComparison.Ordinal);
+    }
+}

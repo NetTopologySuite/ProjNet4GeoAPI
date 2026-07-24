@@ -1,0 +1,83 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+/// <summary>
+/// Shared numeric constants reused across projection implementations.
+/// </summary>
+internal static class ProjectionConstants
+{
+    /// <summary>
+    /// One third.
+    /// </summary>
+    internal const double OneThird = 0.33333333333333333333d;
+
+    /// <summary>
+    /// Two thirds.
+    /// </summary>
+    internal const double TwoThirds = 0.66666666666666666666d;
+
+    /// <summary>
+    /// One sixth.
+    /// </summary>
+    internal const double OneSixth = 0.16666666666666666666d;
+
+    /// <summary>
+    /// One plus a 1e-7 tolerance margin.
+    /// </summary>
+    internal const double OnePlusEps7 = 1.0000001d;
+
+    /// <summary>
+    /// One plus a 1e-6 tolerance margin.
+    /// </summary>
+    internal const double OnePlusEps6 = 1.000001d;
+
+    /// <summary>
+    /// Shared 1e-12 tolerance.
+    /// </summary>
+    internal const double Tolerance1E12 = 1e-12d;
+
+    /// <summary>
+    /// Square root of 2.
+    /// </summary>
+    internal const double Sqrt2 = 1.41421356237309504880d;
+
+    /// <summary>
+    /// Reciprocal square root of 2.
+    /// </summary>
+    internal const double OneOverSqrt2 = 0.70710678118654752440d;
+
+    /// <summary>
+    /// Shared 1e-18 tolerance used for Jacobian and determinant singularity checks.
+    /// </summary>
+    internal const double JacobianTolerance = 1e-18d;
+
+    /// <summary>
+    /// Clamps <paramref name="value"/> to the inclusive range [<paramref name="minimum"/>, <paramref name="maximum"/>].
+    /// </summary>
+    /// <param name="value">Input value.</param>
+    /// <param name="minimum">Inclusive lower bound.</param>
+    /// <param name="maximum">Inclusive upper bound.</param>
+    /// <returns>The clamped value.</returns>
+    internal static double Clamp(double value, double minimum, double maximum)
+    {
+        return value < minimum ? minimum : value > maximum ? maximum : value;
+    }
+
+    /// <summary>
+    /// Clamps <paramref name="value"/> to the inclusive range [-1, 1].
+    /// </summary>
+    /// <param name="value">Input value.</param>
+    /// <returns>The clamped value.</returns>
+    internal static double ClampToUnit(double value)
+    {
+        if (value > 1d)
+        {
+            return 1d;
+        }
+
+        return value < -1d ? -1d : value;
+    }
+}

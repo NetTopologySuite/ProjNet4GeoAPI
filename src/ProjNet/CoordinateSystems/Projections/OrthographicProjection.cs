@@ -1,427 +1,451 @@
-﻿using ProjNet.CoordinateSystems.Transformations;
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.CoordinateSystems.Projections;
+
 using System;
 using System.Collections.Generic;
-using System.Text;
+using ProjNet.CoordinateSystems.Transformations;
 
-namespace ProjNet.CoordinateSystems.Projections
+/// <summary>
+/// Implements the Orthographic map projection (<c>ortho</c>).
+/// </summary>
+/// <remarks>
+/// The Orthographic projection is a perspective azimuthal projection from an infinite
+/// distance. Only the hemisphere facing the projection center is visible. Both spherical
+/// and ellipsoidal models are supported.
+/// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.1, pp. 109-115.</seealso>
+internal sealed class OrthographicProjection : MapProjection
 {
-    [Serializable]
-    internal class OrthographicProjection : MapProjection
+    private readonly double sinph0;
+    private readonly double cosph0;
+    private readonly double nu0;
+    private readonly double yShift;
+    private readonly double yScale;
+    private readonly double sinalpha;
+    private readonly double cosalpha;
+    private readonly Mode mode;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrthographicProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public OrthographicProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        private enum Mode
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OrthographicProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public OrthographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Orthographic";
+        double alpha = DegreesToRadians(this.Parameters.GetOptionalParameterValue("alpha", 0d, "azimuth"));
+        this.sinalpha = Math.Sin(alpha);
+        this.cosalpha = Math.Cos(alpha);
+
+        Sincos(this.Phi0, out this.sinph0, out this.cosph0);
+
+        if (Math.Abs(Math.Abs(this.Phi0) - HalfPi) <= Eps10)
         {
-            N_POLE = 0,
-            S_POLE = 1,
-            EQUIT = 2,
-            OBLIQ = 3
+            this.mode = this.Phi0 < 0.0 ? Mode.SouthPole : Mode.NorthPole;
+        }
+        else if (Math.Abs(this.Phi0) > Eps10)
+        {
+            this.mode = Mode.Oblique;
+        }
+        else
+        {
+            this.mode = Mode.Equatorial;
         }
 
-        private readonly double _sinph0;
-        private readonly double _cosph0;
-        private readonly double _nu0;
-        private readonly double _y_shift;
-        private readonly double _y_scale;
-        private readonly Mode _mode;
-        /// <summary>
-        /// Initializes the OrthographicProjection object with the specified parameters to project points. 
-        /// </summary>
-        /// <param name="parameters">ParameterList with the required parameters.</param>
-        /// <remarks>
-        /// <para>The parameters this projection expects are listed below.</para>
-        /// <list type="table">
-        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-        /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-        /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-        /// </list>
-        /// </remarks>
-        public OrthographicProjection(IEnumerable<ProjectionParameter> parameters) : this(parameters, null)
+        if (this.es > 0)
         {
+            this.nu0 = this.semiMajor / Math.Sqrt(1.0 - (this.es * this.sinph0 * this.sinph0));
+            this.yShift = this.es * this.nu0 / this.semiMajor * this.sinph0 * this.cosph0;
+            this.yScale = 1.0 / Math.Sqrt(1.0 - (this.es * this.cosph0 * this.cosph0));
+        }
+    }
+
+    private enum Mode
+    {
+        /// <summary>
+        /// Projection center is at the geographic north pole.
+        /// </summary>
+        NorthPole = 0,
+
+        /// <summary>
+        /// Projection center is at the geographic south pole.
+        /// </summary>
+        SouthPole = 1,
+
+        /// <summary>
+        /// Projection center lies on the equator.
+        /// </summary>
+        Equatorial = 2,
+
+        /// <summary>
+        /// Projection center is at an oblique (non-equatorial, non-polar) latitude.
+        /// </summary>
+        Oblique = 3,
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new OrthographicProjection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        if (this.es == 0.0)
+        {
+            this.OrthoSInverse(ref x, ref y);
+        }
+        else
+        {
+            this.OrthoEInverse(ref x, ref y);
+        }
+    }
+
+    /// <summary>
+    /// Converts coordinates in projected meters to radians for spherical orthographic projections.
+    /// </summary>
+    /// <param name="x">The x-ordinate in meters when entering, longitude in radians after exit.</param>
+    /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit.</param>
+    private void OrthoSInverse(ref double x, ref double y)
+    {
+        double xf = x;
+        double yf = y;
+        x = ((this.cosalpha * xf) + (this.sinalpha * yf)) / this.scaleFactor;
+        y = ((-this.sinalpha * xf) + (this.cosalpha * yf)) / this.scaleFactor;
+
+        // Using the algorithm in Map projections: A working manual, by John Snyder pg 150
+        double rho = Hypot(x, y);
+        if (rho > this.semiMajor)
+        {
+            if ((rho - this.semiMajor) > Eps10)
+            {
+                    ProjectionThrowHelper.ThrowInvalidOperation($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
+            }
+
+            rho = this.semiMajor;
         }
 
-        /// <summary>
-        /// Initializes the OrthographicProjection object with the specified parameters to project points. 
-        /// </summary>
-        /// <param name="parameters">List of parameters to initialize the projection.</param>
-        /// <param name="inverse">Null indicates the projection is forward (degrees to meters).</param>
-        /// <remarks>
-        /// <para>The parameters this projection expects are listed below.</para>
-        /// <list type="table">
-        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-        /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-        /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-        /// </list>
-        /// </remarks>
-        public OrthographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse) : base(parameters, inverse)
+        double sinc = rho / this.semiMajor;
+
+        double cosc = Math.Sqrt(1.0 - (sinc * sinc)); // in this range OK
+
+        double phi = this.latOrigin;
+        double lam = this.Lon_origin;
+        if (Math.Abs(rho) > Eps10)
         {
-            Name = "Orthographic";
-
-            sincos(phi0, out _sinph0, out _cosph0);
-
-            if( Math.Abs(Math.Abs(phi0) - HALF_PI) <= EPS10 )
+            switch (this.mode)
             {
-                _mode = phi0 < 0.0 ? Mode.S_POLE : Mode.N_POLE;
-            }
-            else if ( Math.Abs(phi0) > EPS10)
-            {
-                _mode = Mode.OBLIQ;
-            }
-            else
-            {
-                _mode = Mode.EQUIT;
-            }
-
-            if( _es > 0 )
-            {
-                _nu0 = _semiMajor / Math.Sqrt(1.0 - _es * _sinph0 * _sinph0);
-                _y_shift = _es * _nu0 / _semiMajor * _sinph0 * _cosph0;
-                _y_scale = 1.0 / Math.Sqrt(1.0 - _es * _cosph0 * _cosph0);
-            }
-        }
-
-        /// <summary>
-        /// Returns the inverse of this projection.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override MathTransform Inverse()
-        {
-            if (_inverse == null)
-            {
-                _inverse = new OrthographicProjection(_Parameters.ToProjectionParameter(), this);
-            }
-
-            return _inverse;
-        }
-
-        /// <summary>
-        /// Converts coordinates in projected meters to radians.
-        /// </summary>
-        /// <param name="x">The x-ordinate in meters when entering, longitude in radians ater exit</param>
-        /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit</param>
-        protected override void MetersToRadians(ref double x, ref double y)
-        {
-            if( _es == 0.0 )
-            {
-                OrthoSInverse(ref x, ref y);
-            }
-            else
-            {
-                OrthoEInverse(ref x, ref y);
-            }
-        }
-
-        /// <summary>
-        /// Converts coordinates in projected meters to radians for spherical orthographic projections.
-        /// </summary>
-        /// <param name="x">The x-ordinate in meters when entering, longitude in radians ater exit</param>
-        /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit</param>
-        private void OrthoSInverse(ref double x, ref double y)
-        {
-            //Using the algorithm in Map projections: A working manual, by John Snyder pg 150
-            double rho = hypot(x, y);
-            if( rho > _semiMajor)
-            {
-                if( (rho - _semiMajor) > EPS10)
-                {
-                    throw new ArgumentOutOfRangeException($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
-                }
-
-                rho = _semiMajor;
-            }
-            double sinc = rho / _semiMajor;
-
-            double cosc = Math.Sqrt(1.0 - sinc * sinc); // in this range OK
-
-            double phi;
-            double lam;
-            if (Math.Abs(rho) <= EPS10)
-            {
-                phi = lat_origin;
-                lam = lon_origin;
-            }
-            else
-            {
-                switch (_mode)
-                {
-                    case Mode.N_POLE:
-                        phi = Math.Asin(cosc);
-                        lam = lon_origin + Math.Atan2(x, -y);
-                        break;
-                    case Mode.S_POLE:
-                        phi = -Math.Asin(cosc);
-                        lam = lon_origin + Math.Atan2(x, y);
-                        break;
-                    case Mode.EQUIT:
-                        if (Math.Abs(y) >= _semiMajor)
-                        {
-                            phi = y < 0.0 ? -HALF_PI : HALF_PI;
-                        }
-                        else
-                        {
-                            phi = Math.Asin(y/_semiMajor);
-                        }
-                        lam = lon_origin + Math.Atan2(x / _semiMajor, cosc);
-                        break;
-                    case Mode.OBLIQ:
-                        phi = Math.Asin(cosc * _sinph0 + (y * _cosph0 / _semiMajor));
-                        lam = lon_origin + Math.Atan2(x * sinc, rho * _cosph0 * cosc - y * _sinph0 * sinc);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(_mode));
-                }
-            }
-
-            //Return values in passed in parameters
-            x = lam;
-            y = phi;
-        }
-
-        /// <summary>
-        /// Converts coordinates in projected meters to radians for ellipsoidal orthographic projections.
-        /// </summary>
-        /// <param name="x">The x-ordinate in meters when entering, longitude in radians ater exit</param>
-        /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit</param>
-        private void OrthoEInverse(ref double x, ref double y)
-        {
-            Func<double, double> SQ = (a) => a * a;
-
-            double x_scaled = x / _semiMajor;
-            double y_scaled = y / _semiMajor;
-            double phi;
-            double lam;
-            if (_mode == Mode.N_POLE || _mode == Mode.S_POLE)
-            {
-                // Polar case. Forward case equations can be simplified as:
-                // x = nu * cosphi * sinlam
-                // y = nu * -cosphi * coslam * sign(phi0)
-                // ==> lam = atan2(x, -y * sign(phi0))
-                // ==> (x/a)^2 + (y/a)^2 = nu^2 * cosphi^2
-                //                rh^2 = cosphi^2 / (1 - es * sinphi^2)
-                // ==>  cosphi^2 = rh^2 * (1 - es) / (1 - es * rh^2)
-                lam = Math.Atan2(x, -y * sign(lat_origin));
-
-                double rh2 = SQ(x_scaled) + SQ(y_scaled);
-                if (rh2 >= 1.0 - 1e-15)
-                {
-                    if ((rh2 - 1.0) > EPS10)
+                case Mode.NorthPole:
+                    phi = Math.Asin(cosc);
+                    lam = this.Lon_origin + Math.Atan2(x, -y);
+                    break;
+                case Mode.SouthPole:
+                    phi = -Math.Asin(cosc);
+                    lam = this.Lon_origin + Math.Atan2(x, y);
+                    break;
+                case Mode.Equatorial:
+                    if (Math.Abs(y) >= this.semiMajor)
                     {
-                        throw new ArgumentOutOfRangeException($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
-                    }
-                    phi = 0.0;
-                }
-                else
-                {
-                    phi = Math.Acos(Math.Sqrt(rh2 * (1 - _es) / (1 - _es * rh2))) * sign(lat_origin);
-                }
-            }
-            else if (_mode == Mode.EQUIT)
-            {
-                // Equatorial case. Forward case equations can be simplified as:
-                // x = nu * cosphi * sinlam
-                // y  = nu * sinphi * (1 - P->es)
-                // (x/a)^2 * (1 - es * sinphi^2) = (1 - sinphi^2) * sinlam^2
-                // (y/a)^2 / ((1 - es)^2 + (y/a)^2 * es) = sinphi^2
-
-                // Equation of the ellipse
-                if( SQ(x_scaled) + SQ(y_scaled * (_semiMajor / _semiMinor)) > 1 + 1e-11 )
-                {
-                    throw new ArgumentOutOfRangeException($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
-                }
-
-                double sinphi2 = SQ(y_scaled) / (SQ(1 - _es) + SQ(y_scaled)*_es);
-                if (sinphi2 > 1 - 1e-11)
-                {
-                    phi = HALF_PI * sign(y_scaled);
-                    lam = 0.0;
-                }
-                else
-                {
-                    phi = Math.Asin(Math.Sqrt(sinphi2)) * sign(y_scaled);
-                    double sinlam = x_scaled * Math.Sqrt((1 - _es * sinphi2) / (1 - sinphi2));
-                    if (Math.Abs(sinlam) - 1 > -1e-15)
-                    {
-                        lam = HALF_PI * sign(x_scaled);
+                        phi = y < 0.0 ? -HalfPi : HalfPi;
                     }
                     else
                     {
-                        lam = Math.Asin(sinlam);
+                        phi = Math.Asin(y / this.semiMajor);
                     }
+
+                    lam = this.Lon_origin + Math.Atan2(x / this.semiMajor, cosc);
+                    break;
+                case Mode.Oblique:
+                    phi = Math.Asin((cosc * this.sinph0) + (y * this.cosph0 / this.semiMajor));
+                    lam = this.Lon_origin + Math.Atan2(x * sinc, (rho * this.cosph0 * cosc) - (y * this.sinph0 * sinc));
+                    break;
+                default:
+                    throw new InvalidOperationException("Unsupported orthographic mode.");
+            }
+        }
+
+        // Return values in passed in parameters
+        x = lam;
+        y = phi;
+    }
+
+    /// <summary>
+    /// Converts coordinates in projected meters to radians for ellipsoidal orthographic projections.
+    /// </summary>
+    /// <param name="x">The x-ordinate in meters when entering, longitude in radians after exit.</param>
+    /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit.</param>
+    private void OrthoEInverse(ref double x, ref double y)
+    {
+        Func<double, double> sQ = (a) => a * a;
+
+        double xf = x;
+        double yf = y;
+        x = ((this.cosalpha * xf) + (this.sinalpha * yf)) / this.scaleFactor;
+        y = ((-this.sinalpha * xf) + (this.cosalpha * yf)) / this.scaleFactor;
+
+        double x_scaled = x / this.semiMajor;
+        double y_scaled = y / this.semiMajor;
+        double phi = this.latOrigin;
+        double lam = this.Lon_origin;
+        if (this.mode == Mode.NorthPole || this.mode == Mode.SouthPole)
+        {
+            // Polar case. Forward case equations can be simplified as:
+            // x = nu * cosphi * sinlam
+            // y = nu * -cosphi * coslam * sign(phi0)
+            // ==> lam = atan2(x, -y * sign(phi0))
+            // ==> (x/a)^2 + (y/a)^2 = nu^2 * cosphi^2
+            //                rh^2 = cosphi^2 / (1 - es * sinphi^2)
+            // ==>  cosphi^2 = rh^2 * (1 - es) / (1 - es * rh^2)
+            lam = Math.Atan2(x, -y * Sign(this.latOrigin));
+
+            double rh2 = sQ(x_scaled) + sQ(y_scaled);
+            if (rh2 >= 1.0 - 1e-15d)
+            {
+                if ((rh2 - 1.0) > Eps10)
+                {
+                    ProjectionThrowHelper.ThrowInvalidOperation($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
                 }
+
+                phi = 0.0;
             }
             else
             {
-                // Using Q->sinph0 * sinphi + Q->cosph0 * cosphi * coslam == 0 (visibity
-                // condition of the forward case) in the forward equations, and a lot of
-                // substitution games...
-                double x_recentered = x;
-                double y_recentered = (y - _y_shift) / _y_scale;
-                if( SQ(x_scaled) + SQ(y_scaled) > 1 + 1e-11)
-                {
-                    throw new ArgumentOutOfRangeException($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
-                }
+                phi = Math.Acos(Math.Sqrt(rh2 * (1 - this.es) / (1 - (this.es * rh2)))) * Sign(this.latOrigin);
+            }
+        }
+        else if (this.mode == Mode.Equatorial)
+        {
+            // Equatorial case. Forward case equations can be simplified as:
+            // x = nu * cosphi * sinlam
+            // y  = nu * sinphi * (1 - P->es)
+            // (x/a)^2 * (1 - es * sinphi^2) = (1 - sinphi^2) * sinlam^2
+            // (y/a)^2 / ((1 - es)^2 + (y/a)^2 * es) = sinphi^2
 
-                // From EPSG guidance note 7.2, March 2020, §3.3.5 Orthographic
-
-                // It suggests as initial guess:
-                // lp.lam = 0;
-                // lp.phi = P->phi0;
-                // But for poles, this will not converge well. Better use:
-                OrthoSInverse(ref x_recentered, ref y_recentered);
-                phi = y_recentered;
-                lam = x_recentered - lon_origin;
-
-                for ( int i = 0; i < 20; ++i )
-                {
-                    sincos(phi, out double sinphi, out double cosphi);
-                    sincos(lam, out double sinlam, out double coslam);
-                    double one_minus_es_sinphi2 = 1.0 - _es * sinphi * sinphi;
-                    double nu = _semiMajor / Math.Sqrt(one_minus_es_sinphi2);
-                    double rho = (1.0 - _es) * nu / one_minus_es_sinphi2;
-
-                    double x_new = nu * cosphi * sinlam;
-                    double y_new = nu * (sinphi * _cosph0 - cosphi * _sinph0 * coslam) +
-                        _es * (_nu0 * _sinph0 - nu * sinphi) * _cosph0;
-                    double J11 = -rho * sinphi * sinlam;
-                    double J12 = nu * cosphi * coslam;
-                    double J21 = rho * (cosphi * _cosph0 + sinphi * _sinph0 * coslam);
-                    double J22 = nu * _sinph0 * _cosph0 * sinlam;
-                    double D = J11 * J22 - J12 * J21;
-                    double dx = x - x_new;
-                    double dy = y - y_new;
-                    double dphi = (J22 * dx - J12 * dy) / D;
-                    double dlam = (-J21 * dx + J11 * dy) / D;
-
-                    phi += dphi;
-                    if( phi > HALF_PI)
-                    {
-                        phi = HALF_PI;
-                    }
-                    else if (phi < -HALF_PI)
-                    {
-                        phi = -HALF_PI;
-                    }
-
-                    lam += dlam;
-                    if( Math.Abs(dphi) < 1e-12 && Math.Abs(dlam) < 1e-12 )
-                    {
-                        break;
-                    }
-                }
+            // Equation of the ellipse
+            if (sQ(x_scaled) + sQ(y_scaled * (this.semiMajor / this.semiMinor)) > 1 + 1e-11d)
+            {
+                ProjectionThrowHelper.ThrowInvalidOperation($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
             }
 
-            //Return values
-            x = lam + lon_origin;
-            y = phi;
-        }
-
-        /// <summary>
-        /// Method to convert a point (lon, lat) in radians to (x, y) in meters
-        /// </summary>
-        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-        /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
-        protected override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            if (_es == 0.0)
+            double sinphi2 = sQ(y_scaled) / (sQ(1 - this.es) + (sQ(y_scaled) * this.es));
+            if (sinphi2 > 1 - 1e-11d)
             {
-                OrthoSForward(ref lon, ref lat);
+                phi = HalfPi * Sign(y_scaled);
+                lam = 0.0;
             }
             else
             {
-                OrthoEForward(ref lon, ref lat);
+                phi = Math.Asin(Math.Sqrt(sinphi2)) * Sign(y_scaled);
+                double sinlam = x_scaled * Math.Sqrt((1 - (this.es * sinphi2)) / (1 - sinphi2));
+                if (Math.Abs(sinlam) - 1 > -1e-15d)
+                {
+                    lam = HalfPi * Sign(x_scaled);
+                }
+                else
+                {
+                    lam = Math.Asin(sinlam);
+                }
             }
         }
-
-        /// <summary>
-        /// Method to convert a point (lon, lat) in radians to (x, y) in meters for spherical orthographic projections
-        /// </summary>
-        /// <param name="lam">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-        /// <param name="phi">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
-        private void OrthoSForward(ref double lam, ref double phi)
+        else
         {
-            double x = HUGE_VAL;
-            double y = HUGE_VAL;
-
-            double cosphi = Math.Cos(phi);
-            double coslam = Math.Cos(lam - lon_origin);
-            double sinphi;
-            switch (_mode)
+            // Using Q->sinph0 * sinphi + Q->cosph0 * cosphi * coslam == 0 (visibity
+            // condition of the forward case) in the forward equations, and a lot of
+            // substitution games...
+            double x_recentered = x;
+            double y_recentered = (y - this.yShift) / this.yScale;
+            if (sQ(x_scaled) + sQ(y_scaled) > 1 + 1e-11d)
             {
-                case Mode.EQUIT:
-                    if (cosphi * coslam < -EPS10)
-                    {
-                        throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
-                    }
-                    y = _semiMajor * Math.Sin(phi);
-                    break;
-                case Mode.OBLIQ:
-                    sinphi = Math.Sin(phi);
-
-                    // Is the point visible from the projection plane ?
-                    // From https://lists.osgeo.org/pipermail/proj/2020-September/009831.html
-                    // this is the dot product of the normal of the ellipsoid at the center of
-                    // the projection and at the point considered for projection.
-                    // [cos(phi)*cos(lambda), cos(phi)*sin(lambda), sin(phi)]
-                    // Also from Snyder's Map Projection - A working manual, equation (5-3), page 149
-                    if (_sinph0 * sinphi + _cosph0 * cosphi * coslam < -EPS10)
-                    {
-                        throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
-                    }
-                    y = _semiMajor * ( _cosph0 * sinphi - _sinph0 * cosphi * coslam );
-                    break;
-                case Mode.N_POLE:
-                    coslam = -coslam;
-                    if (Math.Abs(phi - phi0) - EPS10 > HALF_PI)
-                    {
-                        throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
-                    }
-                    y = _semiMajor * cosphi * coslam;
-                    break;
-                case Mode.S_POLE:
-                    if (Math.Abs(phi - phi0) - EPS10 > HALF_PI)
-                    {
-                        throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
-                    }
-                    y = _semiMajor * cosphi * coslam;
-                    break;
+                ProjectionThrowHelper.ThrowInvalidOperation($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
             }
 
-            x = _semiMajor * cosphi * Math.Sin(lam - lon_origin);
-
-            // Set the variables to return
-            lam = x;
-            phi = y;
-        }
-
-        /// <summary>
-        /// Method to convert a point (lon, lat) in radians to (x, y) in meters for ellipsoidal orthographic projections
-        /// </summary>
-        /// <param name="lam">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-        /// <param name="phi">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
-        private void OrthoEForward(ref double lam, ref double phi)
-        {
             // From EPSG guidance note 7.2, March 2020, §3.3.5 Orthographic
-            sincos(phi, out double sinphi, out double cosphi);
-            sincos(lam - lon_origin, out double sinlam, out double coslam);
 
-            // Is the point visible from the projection plane ?
-            // Same condition as in spherical case
-            if( _sinph0 * sinphi + _cosph0 * cosphi * coslam < - EPS10 )
+            // It suggests as initial guess:
+            // lp.lam = 0;
+            // lp.phi = P->phi0;
+            // But for poles, this will not converge well. Better use:
+            this.OrthoSInverse(ref x_recentered, ref y_recentered);
+            phi = y_recentered;
+            lam = x_recentered - this.Lon_origin;
+
+            bool converged = false;
+            for (int i = 0; i < 20; ++i)
             {
-                throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                Sincos(phi, out double sinphi, out double cosphi);
+                Sincos(lam, out double sinlam, out double coslam);
+                double one_minus_es_sinphi2 = 1.0 - (this.es * sinphi * sinphi);
+                double nu = this.semiMajor / Math.Sqrt(one_minus_es_sinphi2);
+                double rho = (1.0 - this.es) * nu / one_minus_es_sinphi2;
+
+                double x_new = nu * cosphi * sinlam;
+                double y_new = (nu * ((sinphi * this.cosph0) - (cosphi * this.sinph0 * coslam))) +
+                    (this.es * ((this.nu0 * this.sinph0) - (nu * sinphi)) * this.cosph0);
+                double j11 = -rho * sinphi * sinlam;
+                double j12 = nu * cosphi * coslam;
+                double j21 = rho * ((cosphi * this.cosph0) + (sinphi * this.sinph0 * coslam));
+                double j22 = nu * this.sinph0 * cosphi * sinlam;
+                double d = (j11 * j22) - (j12 * j21);
+                double dx = x - x_new;
+                double dy = y - y_new;
+                double dphi = ((j22 * dx) - (j12 * dy)) / d;
+                double dlam = ((-j21 * dx) + (j11 * dy)) / d;
+
+                phi += dphi;
+                if (phi > HalfPi)
+                {
+                    phi = HalfPi - (phi - HalfPi);
+                    lam = Adjust_lon(lam + PI);
+                }
+                else if (phi < -HalfPi)
+                {
+                    phi = -HalfPi + (-HalfPi - phi);
+                    lam = Adjust_lon(lam + PI);
+                }
+
+                lam += dlam;
+                if (Math.Abs(dphi) < ProjectionConstants.Tolerance1E12 && Math.Abs(dlam) < ProjectionConstants.Tolerance1E12)
+                {
+                    converged = true;
+                    break;
+                }
             }
 
-            double nu = _semiMajor / Math.Sqrt(1.0 - _es * sinphi * sinphi);
-            double x = nu * cosphi * sinlam;
-            double y = nu * (sinphi * _cosph0 - cosphi * _sinph0 * coslam) +
-                _es * (_nu0 * _sinph0 - nu * sinphi) * _cosph0;
-
-            lam = x;
-            phi = y;
+            if (!converged)
+            {
+                ProjectionThrowHelper.ThrowOutsideProjectionDomain();
+            }
         }
+
+        // Return values
+        x = lam + this.Lon_origin;
+        y = phi;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        if (this.es == 0.0)
+        {
+            this.OrthoSForward(ref lon, ref lat);
+        }
+        else
+        {
+            this.OrthoEForward(ref lon, ref lat);
+        }
+    }
+
+    /// <summary>
+    /// Method to convert a point (lon, lat) in radians to (x, y) in meters for spherical orthographic projections.
+    /// </summary>
+    /// <param name="lam">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+    /// <param name="phi">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+    private void OrthoSForward(ref double lam, ref double phi)
+    {
+        double y = HugeVal;
+
+        double cosphi = Math.Cos(phi);
+        double coslam = Math.Cos(lam - this.Lon_origin);
+        switch (this.mode)
+        {
+            case Mode.Equatorial:
+                if (cosphi * coslam < -Eps10)
+                {
+                    ProjectionThrowHelper.ThrowInvalidOperation($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                }
+
+                y = this.semiMajor * Math.Sin(phi);
+                break;
+            case Mode.Oblique:
+                double sinphi = Math.Sin(phi);
+
+                // Is the point visible from the projection plane ?
+                // From https://lists.osgeo.org/pipermail/proj/2020-September/009831.html
+                // this is the dot product of the normal of the ellipsoid at the center of
+                // the projection and at the point considered for projection.
+                // [cos(phi)*cos(lambda), cos(phi)*sin(lambda), sin(phi)]
+                // Also from Snyder's Map Projection - A working manual, equation (5-3), page 149
+                if ((this.sinph0 * sinphi) + (this.cosph0 * cosphi * coslam) < -Eps10)
+                {
+                    ProjectionThrowHelper.ThrowInvalidOperation($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                }
+
+                y = this.semiMajor * ((this.cosph0 * sinphi) - (this.sinph0 * cosphi * coslam));
+                break;
+            case Mode.NorthPole:
+                coslam = -coslam;
+                if (Math.Abs(phi - this.Phi0) - Eps10 > HalfPi)
+                {
+                    ProjectionThrowHelper.ThrowInvalidOperation($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                }
+
+                y = this.semiMajor * cosphi * coslam;
+                break;
+            case Mode.SouthPole:
+                if (Math.Abs(phi - this.Phi0) - Eps10 > HalfPi)
+                {
+                    ProjectionThrowHelper.ThrowInvalidOperation($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                }
+
+                y = this.semiMajor * cosphi * coslam;
+                break;
+        }
+
+        double x = this.semiMajor * cosphi * Math.Sin(lam - this.Lon_origin);
+        double xp = x;
+        double yp = y;
+        x = ((xp * this.cosalpha) - (yp * this.sinalpha)) * this.scaleFactor;
+        y = ((xp * this.sinalpha) + (yp * this.cosalpha)) * this.scaleFactor;
+
+        // Set the variables to return
+        lam = x;
+        phi = y;
+    }
+
+    /// <summary>
+    /// Method to convert a point (lon, lat) in radians to (x, y) in meters for ellipsoidal orthographic projections.
+    /// </summary>
+    /// <param name="lam">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+    /// <param name="phi">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+    private void OrthoEForward(ref double lam, ref double phi)
+    {
+        // From EPSG guidance note 7.2, March 2020, §3.3.5 Orthographic
+        Sincos(phi, out double sinphi, out double cosphi);
+        Sincos(lam - this.Lon_origin, out double sinlam, out double coslam);
+
+        // Is the point visible from the projection plane ?
+        // Same condition as in spherical case
+        if ((this.sinph0 * sinphi) + (this.cosph0 * cosphi * coslam) < -Eps10)
+        {
+            ProjectionThrowHelper.ThrowInvalidOperation($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+        }
+
+        double nu = this.semiMajor / Math.Sqrt(1.0 - (this.es * sinphi * sinphi));
+        double x = nu * cosphi * sinlam;
+        double y = (nu * ((sinphi * this.cosph0) - (cosphi * this.sinph0 * coslam))) +
+            (this.es * ((this.nu0 * this.sinph0) - (nu * sinphi)) * this.cosph0);
+        double xp = x;
+        double yp = y;
+        x = ((xp * this.cosalpha) - (yp * this.sinalpha)) * this.scaleFactor;
+        y = ((xp * this.sinalpha) + (yp * this.cosalpha)) * this.scaleFactor;
+
+        lam = x;
+        phi = y;
     }
 }

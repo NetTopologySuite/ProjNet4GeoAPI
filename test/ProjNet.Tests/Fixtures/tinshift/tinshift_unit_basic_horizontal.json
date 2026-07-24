@@ -1,0 +1,11 @@
+{
+  "file_type": "triangulation_file",
+  "format_version": "1.0",
+  "input_crs": "EPSG:2393",
+  "output_crs": "EPSG:3067",
+  "transformed_components": [ "horizontal" ],
+  "vertices_columns": [ "source_x", "source_y", "target_x", "target_y" ],
+  "triangles_columns": [ "idx_vertex1", "idx_vertex2", "idx_vertex3" ],
+  "vertices": [ [ 0, 0, 101, 101 ], [ 0, 1, 100, 101 ], [ 1, 1, 100, 100 ] ],
+  "triangles": [ [ 0, 1, 2 ] ]
+}

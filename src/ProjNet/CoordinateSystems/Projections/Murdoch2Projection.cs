@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the spherical Murdoch II projection (<c>murd2</c>).
+/// </summary>
+/// <remarks>
+/// Murdoch II is a simple spherical conic specialization of
+/// <see cref="SimpleConicProjectionBase"/>. It is the family member that switches the
+/// shared radial distance from a linear expression to the tangent-based Murdoch II form.
+/// </remarks>
+internal sealed class Murdoch2Projection : SimpleConicProjectionBase
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Murdoch2Projection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public Murdoch2Projection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Murdoch2Projection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public Murdoch2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse, SimpleConicType.Murdoch2, "Murdoch_II")
+    {
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new Murdoch2Projection(this.Parameters.ToProjectionParameter(), this);
+
+        return this.inverse;
+    }
+}

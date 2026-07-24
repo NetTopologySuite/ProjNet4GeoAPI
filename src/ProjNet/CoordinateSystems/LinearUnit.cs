@@ -1,143 +1,176 @@
-// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
-//
-// This file is part of ProjNet.
-// ProjNet is free software; you can redistribute it and/or modify
-// it under the terms of the GNU Lesser General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-// 
-// ProjNet is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU Lesser General Public License for more details.
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-// You should have received a copy of the GNU Lesser General Public License
-// along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
+using System.Xml.Linq;
+using ProjNet.IO.Wkt;
 
-namespace ProjNet.CoordinateSystems
+/// <summary>
+/// Definition of linear units.
+/// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// The predefined linear-unit accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
+public class LinearUnit : Info, IUnit
 {
-	/// <summary>
-	/// Definition of linear units.
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LinearUnit"/> class.
     /// </summary>
-    [Serializable] 
-    public class LinearUnit : Info, IUnit
-	{
-		/// <summary>
-		/// Creates an instance of a linear unit
-		/// </summary>
-		/// <param name="metersPerUnit">Number of meters per <see cref="LinearUnit" /></param>
-		/// <param name="name">Name</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="authorityCode">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
-		public LinearUnit(double metersPerUnit, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
-			:
-			base(name, authority, authorityCode, alias, abbreviation, remarks)
-		{
-			MetersPerUnit = metersPerUnit;
-		}
+    /// <param name="metersPerUnit">Number of meters per <see cref="LinearUnit" />.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="authorityCode">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    public LinearUnit(double metersPerUnit, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
+        : base(name, authority, authorityCode, alias, abbreviation, remarks)
+    {
+        this.MetersPerUnit = metersPerUnit;
+    }
 
-		#region Predefined units
-		/// <summary>
-		/// Returns the meters linear unit.
-		/// Also known as International metre. SI standard unit.
-		/// </summary>
-		public static LinearUnit Metre
-		{
-			get { return new LinearUnit(1.0,"metre", "EPSG", 9001, "m", string.Empty, "Also known as International metre. SI standard unit."); }
-		}
-		/// <summary>
-		/// Returns the foot linear unit (1ft = 0.3048m).
-		/// </summary>
-		public static LinearUnit Foot
-		{
-			get { return new LinearUnit(0.3048, "foot", "EPSG", 9002, "ft", string.Empty, string.Empty); }
-		}
-		/// <summary>
-		/// Returns the US Survey foot linear unit (1ftUS = 0.304800609601219m).
-		/// </summary>
-		public static LinearUnit USSurveyFoot
-		{
-			get { return new LinearUnit(0.304800609601219, "US survey foot", "EPSG", 9003, "American foot", "ftUS", "Used in USA."); }
-		}
-		/// <summary>
-		/// Returns the Nautical Mile linear unit (1NM = 1852m).
-		/// </summary>
-		public static LinearUnit NauticalMile
-		{
-			get { return new LinearUnit(1852, "nautical mile", "EPSG", 9030, "NM", string.Empty, string.Empty); }
-		}
+    /// <summary>
+    /// Gets the meters linear unit.
+    /// Also known as International metre. SI standard unit.
+    /// </summary>
+    public static LinearUnit Metre => new(1.0, "metre", "EPSG", 9001, "m", string.Empty, "Also known as International metre. SI standard unit.");
 
-		/// <summary>
-		/// Returns Clarke's foot.
-		/// </summary>
-		/// <remarks>
-		/// Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. 
-		/// Used in older Australian, southern African &amp; British West Indian mapping.
-		/// </remarks>
-		public static LinearUnit ClarkesFoot
-		{
-			get { return new LinearUnit(0.3047972654, "Clarke's foot", "EPSG", 9005, "Clarke's foot", string.Empty, "Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. Used in older Australian, southern African & British West Indian mapping."); }
-		}
-        #endregion
+    /// <summary>
+    /// Gets the foot linear unit (1ft = 0.3048m).
+    /// </summary>
+    public static LinearUnit Foot => new(0.3048, "foot", "EPSG", 9002, "ft", string.Empty, string.Empty);
 
-        #region ILinearUnit Members
+    /// <summary>
+    /// Gets the US Survey foot linear unit (1ftUS = 0.304800609601219m).
+    /// </summary>
+    public static LinearUnit USSurveyFoot => new(0.304800609601219, "US survey foot", "EPSG", 9003, "American foot", "ftUS", "Used in USA.");
 
+    /// <summary>
+    /// Gets the Nautical Mile linear unit (1NM = 1852m).
+    /// </summary>
+    public static LinearUnit NauticalMile => new(1852, "nautical mile", "EPSG", 9030, "NM", string.Empty, string.Empty);
 
-        /// <summary>
-        /// Gets or sets the number of meters per <see cref="LinearUnit"/>.
-        /// </summary>
-        public double MetersPerUnit { get; set; }
+    /// <summary>
+    /// Gets clarke's foot.
+    /// </summary>
+    /// <remarks>
+    /// Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre.
+    /// Used in older Australian, southern African &amp; British West Indian mapping.
+    /// </remarks>
+    public static LinearUnit ClarkesFoot => new(0.3047972654, "Clarke's foot", "EPSG", 9005, "Clarke's foot", string.Empty, "Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. Used in older Australian, southern African & British West Indian mapping.");
 
-        /// <summary>
-        /// Returns the Well-known text for this object
-        /// as defined in the simple features specification.
-        /// </summary>
-        public override string WKT
-		{
-			get
-			{
-				var sb = new StringBuilder();
-				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", Name, MetersPerUnit);
-				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
-				sb.Append("]");
-				return sb.ToString();
-			}
-		}
+    /// <summary>
+    /// Gets the number of meters per <see cref="LinearUnit"/>.
+    /// </summary>
+    public double MetersPerUnit { get; }
 
-		/// <summary>
-		/// Gets an XML representation of this object
-		/// </summary>
-		public override string XML
-		{
-			get
-			{
-				return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_LinearUnit MetersPerUnit=\"{0}\">{1}</CS_LinearUnit>", MetersPerUnit, InfoXml);
-			}
-		}
+    /// <summary>
+    /// Gets the Well-known text for this object
+    /// as defined in the simple features specification.
+    /// </summary>
+    public override string WKT => this.ToWktNode().ToString();
 
-		#endregion
+    /// <summary>
+    /// Gets an XML representation of this object.
+    /// </summary>
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
-		/// <summary>
-		/// Checks whether the values of this instance is equal to the values of another instance.
-		/// Only parameters used for coordinate system are used for comparison.
-		/// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns>True if equal</returns>
-		public override bool EqualParams(object obj)
-		{
-			if (!(obj is LinearUnit))
-				return false;
-			return (obj as LinearUnit).MetersPerUnit == this.MetersPerUnit;
-		}		
-	}
+    /// <summary>
+    /// Creates a copy of this unit with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="LinearUnit"/> with updated authority metadata.</returns>
+    public new LinearUnit WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this unit with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="LinearUnit"/> with the updated name.</returns>
+    public new LinearUnit WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
+    /// Returns an XML representation of this linear unit as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement(
+            "CS_LinearUnit",
+            new XAttribute("MetersPerUnit", this.MetersPerUnit.ToString(CultureInfo.InvariantCulture)));
+        element.Add(this.InfoXmlElement);
+        return element;
+    }
+
+    /// <summary>
+    /// Converts this linear unit to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this linear unit.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.MetersPerUnit),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("UNIT", children);
+    }
+
+    /// <summary>
+    /// Converts this linear unit to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this linear unit in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.MetersPerUnit),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("LENGTHUNIT", children);
+    }
+
+    /// <inheritdoc />
+    public override bool EqualParams(object obj)
+    {
+        return obj is LinearUnit linearUnit && linearUnit.MetersPerUnit == this.MetersPerUnit;
+    }
+
+    /// <inheritdoc />
+    private protected override Info CloneWithAuthorityCore(string authority, long code) => this.WithAuthority(authority, code);
+
+    /// <inheritdoc />
+    private protected override Info CloneWithNameCore(string name) => this.WithName(name);
 }

@@ -1,166 +1,169 @@
-/*
- * http://svn.osgeo.org/geotools/tags/2.6.2/modules/library/referencing/src/main/java/org/geotools/referencing/operation/projection/Polyconic.java
- * http://svn.osgeo.org/geotools/tags/2.6.2/modules/library/referencing/src/main/java/org/geotools/referencing/operation/projection/MapProjection.java
- */
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
+// SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from GeoTools.NET.
+
+namespace ProjNet.CoordinateSystems.Projections;
+
 using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-namespace ProjNet.CoordinateSystems.Projections
+/// <summary>
+/// Implements the American Polyconic map projection.
+/// </summary>
+/// <remarks>
+/// <para>The American Polyconic represents each parallel by its own circular arc while
+/// preserving true scale along the central meridian. The ellipsoidal form depends on the
+/// meridian arc and the cotangent of latitude.</para>
+/// <para>The formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9818, American Polyconic, and John P.
+/// Snyder, <i>Map Projections - A Working Manual</i>, USGS Professional Paper 1395,
+/// section 18. The forward easting and northing equations using the meridian arc
+/// through <c>Mlfn</c>/<c>Inv_mlfn</c> match the implementation here.</para>
+/// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 4, Sect. 4.3.1, pp. 149-151.</seealso>
+/// <seealso href="https://epsg.io/9818-method">EPSG method 9818: American Polyconic.</seealso>
+internal sealed class PolyconicProjection : MapProjection
 {
     /// <summary>
-    /// 
+    /// Maximum difference allowed when comparing real numbers.
     /// </summary>
-    [Serializable] 
-    internal class PolyconicProjection : MapProjection
+
+    /// <summary>
+    /// Maximum number of iterations for iterative computations.
+    /// </summary>
+    private const int MaximumIterations = 20;
+
+    /// <summary>
+    /// Difference allowed in iterative computations.
+    /// </summary>
+    private const double IterationTolerance = ProjectionConstants.Tolerance1E12;
+
+    /// <summary>
+    /// Meridian distance at the latitude of origin.
+    /// Used for calculations for the ellipsoid.
+    /// </summary>
+    private readonly double ml0;
+
+    private readonly double reciprocSemiMajorTimesScaleFactor;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolyconicProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">The parameter values in standard units.</param>
+    public PolyconicProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        /// <summary>
-        /// Maximum difference allowed when comparing real numbers.
-        /// </summary>
-        private const double Epsilon = 1E-10;
+    }
 
-        /// <summary>
-        /// Maximum number of iterations for iterative computations.
-        /// </summary>
-        private const int MaximumIterations = 20;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PolyconicProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">The parameter values in standard units.</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
+    private PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection? inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Polyconic";
 
-        /// <summary>
-        /// Difference allowed in iterative computations.
-        /// </summary>
-        private const double IterationTolerance = 1E-12;
+        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+        this.ml0 = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
+        this.reciprocSemiMajorTimesScaleFactor = 1 / (this.semiMajor * this.scaleFactor);
+    }
 
-        ///<summary>
-        /// Meridian distance at the latitude of origin.
-        /// Used for calculations for the ellipsoid.
-        /// </summary>
-        private readonly double _ml0;
+    /// <inheritdoc/>
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lam = lon;
+        double phi = lat;
 
-        private readonly double _reciprocSemiMajorTimesScaleFactor;
+        double delta_lam = Adjust_lon(lam - this.centralMeridian);
 
-        ///<summary>
-        /// Constructs a new map projection from the supplied parameters.
-        ///</summary>
-        /// <param name="parameters">The parameter values in standard units</param>
-        public PolyconicProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
-        { }
-
-        /// <summary>
-        /// Constructs a new map projection from the supplied parameters.
-        /// </summary>
-        /// <param name="parameters">The parameter values in standard units</param>
-        /// <param name="inverse">Defines if Projection is inverse</param>
-        protected PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection inverse)
-            : base(parameters, inverse)
+        double x = delta_lam; // lam;
+        double y = -this.ml0;
+        if (Math.Abs(phi) > Eps10)
         {
-            Name = "Polyconic";
+            double sp = Math.Sin(phi);
+            double cp = Math.Cos(phi);
+            double ms = Math.Abs(cp) > Eps10 ? Msfnz(this.e, sp, cp) / sp : 0.0;
 
-            _ml0 = mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
-            _reciprocSemiMajorTimesScaleFactor = 1 / (_semiMajor * scale_factor);
+            // lam =
+            delta_lam *= sp;
+            x = ms * Math.Sin(delta_lam);
+            y = (this.Mlfn(phi, sp, cp) - this.ml0) + (ms * (1.0 - Math.Cos(delta_lam)));
         }
 
-        protected override void RadiansToMeters(ref double lon, ref double lat)
+        lon = this.scaleFactor * this.semiMajor * x;
+        lat = this.scaleFactor * this.semiMajor * y;
+    }
+
+    /// <inheritdoc/>
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        x *= this.reciprocSemiMajorTimesScaleFactor;
+        y *= this.reciprocSemiMajorTimesScaleFactor;
+
+        y += this.ml0;
+        double lam = x;
+        double phi = 0.0;
+        if (Math.Abs(y) <= Eps10)
         {
-            double lam = lon;
-            double phi = lat;
-
-            double delta_lam = adjust_lon(lam - central_meridian);
-
-            double x, y;
-
-            if (Math.Abs(phi) <= Epsilon)
-            {
-                x = delta_lam; //lam;
-                y = -_ml0;
-            }
-            else
+        }
+        else
+        {
+            double r = (y * y) + (x * x);
+            phi = y;
+            int iter = 0;
+            for (; iter <= MaximumIterations; iter++)
             {
                 double sp = Math.Sin(phi);
-                double cp;
-                double ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? msfn(sp, cp) / sp : 0.0;
-                /*lam =*/
-                delta_lam *= sp;
-                x = ms * Math.Sin( /*lam*/delta_lam);
-                y = (mlfn(phi, sp, cp) - _ml0) + ms * (1.0 - Math.Cos( /*lam*/delta_lam));
-            }
-
-            lon = scale_factor * _semiMajor * x;
-            lat = scale_factor * _semiMajor * y;
-        }
-
-        protected override void MetersToRadians(ref double x, ref double y)
-        {
-            x *= _reciprocSemiMajorTimesScaleFactor;
-            y *= _reciprocSemiMajorTimesScaleFactor;
-
-            double lam, phi;
-
-            y += _ml0;
-            if (Math.Abs(y) <= Epsilon)
-            {
-                lam = x;
-                phi = 0.0;
-            }
-            else
-            {
-                double r = y * y + x * x;
-                phi = y;
-                int iter = 0;
-                for (; iter <= MaximumIterations; iter++)
+                double cp = Math.Cos(phi);
+                if (Math.Abs(cp) < IterationTolerance)
                 {
-                    double sp = Math.Sin(phi);
-                    double cp = Math.Cos(phi);
-                    if (Math.Abs(cp) < IterationTolerance)
-                        throw new Exception("No Convergence");
-
-                    double s2ph = sp * cp;
-                    double mlp = Math.Sqrt(1.0 - _es * sp * sp);
-                    double c = sp * mlp / cp;
-                    double ml = mlfn(phi, sp, cp);
-                    double mlb = ml * ml + r;
-                    mlp = (1.0 - _es) / (mlp * mlp * mlp);
-                    double dPhi = (ml + ml + c * mlb - 2.0 * y * (c * ml + 1.0)) / (
-                                   _es * s2ph * (mlb - 2.0 * y * ml) / c +
-                                   2.0 * (y - ml) * (c * mlp - 1.0 / s2ph) - mlp - mlp);
-                    if (Math.Abs(dPhi) <= IterationTolerance)
-                        break;
-
-                    phi += dPhi;
+                    throw new InvalidOperationException("No Convergence");
                 }
 
-                if (iter > MaximumIterations)
-                    throw new Exception("No Convergence");
-                double c2 = Math.Sin(phi);
-                lam = Math.Asin(x * Math.Tan(phi) * Math.Sqrt(1.0 - _es * c2 * c2)) / Math.Sin(phi);
+                double s2ph = sp * cp;
+                double mlp = Math.Sqrt(1.0 - (this.es * sp * sp));
+                double c = sp * mlp / cp;
+                double ml = this.Mlfn(phi, sp, cp);
+                double mlb = (ml * ml) + r;
+                mlp = (1.0 - this.es) / (mlp * mlp * mlp);
+                double dPhi = (ml + ml + (c * mlb) - (2.0 * y * ((c * ml) + 1.0))) / (
+                               (this.es * s2ph * (mlb - (2.0 * y * ml)) / c) +
+                               (2.0 * (y - ml) * ((c * mlp) - (1.0 / s2ph))) - mlp - mlp);
+                if (Math.Abs(dPhi) <= IterationTolerance)
+                {
+                    break;
+                }
+
+                phi += dPhi;
             }
 
-            x = adjust_lon(lam + central_meridian);
-            y = phi;
+            if (iter > MaximumIterations)
+            {
+                throw new InvalidOperationException("No Convergence");
+            }
+
+            double c2 = Math.Sin(phi);
+            lam = Math.Asin(x * Math.Tan(phi) * Math.Sqrt(1.0 - (this.es * c2 * c2))) / Math.Sin(phi);
         }
 
-        /// <summary>
-        /// Returns the inverse of this projection.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override MathTransform Inverse()
-        {
-            if (_inverse == null)
-                _inverse = new PolyconicProjection(_Parameters.ToProjectionParameter(), this);
-            return _inverse;
-        }
+        x = Adjust_lon(lam + this.centralMeridian);
+        y = phi;
+    }
 
-        #region Private helpers
-        ///<summary>
-         /// Computes function <code>f(s,c,e²) = c/sqrt(1 - s²*e²)</code> needed for the true scale
-         /// latitude (Snyder 14-15), where <var>s</var> and <var>c</var> are the sine and cosine of
-         /// the true scale latitude, and <var>e²</var> is the eccentricity squared.
-        ///</summary>
-        double msfn(double s, double c)
-        {
-            return c / Math.Sqrt(1.0 - (s * s) * _es);
-        }
+    /// <summary>
+    /// Returns the inverse of this projection.
+    /// </summary>
+    /// <returns>IMathTransform that is the reverse of the current projection.</returns>
+    public override MathTransform Inverse()
+    {
+        this.inverse ??= new PolyconicProjection(this.Parameters.ToProjectionParameter(), this);
 
-        #endregion
-
+        return this.inverse;
     }
 }
