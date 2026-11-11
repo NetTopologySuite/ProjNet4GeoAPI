@@ -51,7 +51,7 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly Mode _mode;
         private readonly double _qp;
         private readonly double _one_es;
-        private readonly double[] _apa;
+        private readonly double[] _authalicCoefficients;
         //private readonly double _mmf;
         private readonly double _dd;
         private readonly double _sinb1;
@@ -100,9 +100,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 _one_es = 1.0 - _es;
                 _qp = qsfn(1, _e, _one_es);
                 //_mmf = 0.5 / (1.0 - _es);
-                _apa = authset(_es);
-                if (_apa == null)
-                    throw new ArgumentException(nameof(parameters));
+                _authalicCoefficients = AuthalicSeriesCoefficients(_es);
 
                 switch (_mode)
                 {
@@ -349,7 +347,7 @@ namespace ProjNet.CoordinateSystems.Projections
                         y = rho * cCe;
                     }
                     double lamOE = adjust_lon(Math.Atan2(x, y) + central_meridian);
-                    y = authlat(Math.Atan2(n, hypot(x, y)), _apa);
+                    y = AuthalicToGeodetic(Math.Atan2(n, hypot(x, y)), _authalicCoefficients, _es, _qp);
                     x = lamOE;
                     return;
                 case Mode.N_POLE:
@@ -373,7 +371,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             x = adjust_lon(Math.Atan2(x, y) + central_meridian); // lam
-            y = authlat(ab, _apa);                               // phi 
+            y = AuthalicToGeodetic(ab, _authalicCoefficients, _es, _qp); // phi 
         }
 
         private void SphericalMetersToRadians(ref double x, ref double y)

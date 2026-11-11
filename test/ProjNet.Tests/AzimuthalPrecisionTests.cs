@@ -49,6 +49,23 @@ namespace ProjNET.Tests
             CheckInverse("Lambert_Azimuthal_Equal_Area", Wgs84, 90, 0, 0.0055846991, -0.0096729826, 30, 89.9999999);
         }
 
+        /// <summary>
+        /// Away from the poles: the geodetic latitude from the authalic one used a 3-term series in e^2
+        /// that was up to 1.6 mm off near 20 degrees of latitude on WGS 84; now Karney's series (as in
+        /// PROJ), and Newton's method for flatter ellipsoids (here 1/f = 30).
+        /// </summary>
+        [Test]
+        public void LambertAzimuthalEqualAreaAuthalicLatitude()
+        {
+            CheckInverse("Lambert_Azimuthal_Equal_Area", Wgs84, 52, 10, 3169886.1977156079, -2859860.5252899877, 40, 20.5);
+            CheckInverse("Lambert_Azimuthal_Equal_Area", Wgs84, 52, 10, -8255457.8876390513, -4325335.7419390697, -60, -20);
+            CheckInverse("Lambert_Azimuthal_Equal_Area", Wgs84, 52, 10, 1116144.6025791967, 2246815.6491002310, 40, 70);
+            const string flat = "SPHEROID[\"Flat\",6378137.0,30.0]";
+            CheckInverse("Lambert_Azimuthal_Equal_Area", flat, 52, 10, 3164672.4205533662, -2788115.3019215590, 40, 20.5);
+            CheckInverse("Lambert_Azimuthal_Equal_Area", flat, 52, 10, -8157421.9670853456, -4173006.6592939394, -60, -20);
+            CheckInverse("Lambert_Azimuthal_Equal_Area", flat, 52, 10, 1150784.7146271013, 2262287.8046130096, 40, 70);
+        }
+
         [Test]
         public void LambertAzimuthalEqualAreaSpherical()
         {

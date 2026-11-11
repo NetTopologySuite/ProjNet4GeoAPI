@@ -1196,6 +1196,80 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
+        /// Coefficients of the series for the geodetic latitude in terms of the authalic latitude,
+        /// to order 6 in the third flattening n (C. F. F. Karney, On auxiliary latitudes, Survey
+        /// Review 56, 165-180, 2024, Eq. A20; as used by PROJ). Full double precision for |f| up to
+        /// about 1/150; <see cref="AuthalicToGeodetic"/> refines the result by Newton's method for
+        /// flatter ellipsoids.
+        /// </summary>
+        /// <param name="es">The square of the eccentricity</param>
+        protected static double[] AuthalicSeriesCoefficients(double es)
+        {
+            // C[phi,xi], upper triangular part, row by row
+            double[] c = {
+                4.0 / 3.0, 4.0 / 45.0, -16.0 / 35.0, -2582.0 / 14175.0, 60136.0 / 467775.0, 28112932.0 / 212837625.0,
+                46.0 / 45.0, 152.0 / 945.0, -11966.0 / 14175.0, -21016.0 / 51975.0, 251310128.0 / 638512875.0,
+                3044.0 / 2835.0, 3802.0 / 14175.0, -94388.0 / 66825.0, -8797648.0 / 10945935.0,
+                6059.0 / 4725.0, 41072.0 / 93555.0, -1472637812.0 / 638512875.0,
+                768272.0 / 467775.0, 455935736.0 / 638512875.0,
+                4210684958.0 / 1915538625.0
+            };
+            double b = Math.Sqrt(1 - es);
+            double n = (1 - b) / (1 + b); // third flattening
+            var F = new double[6];
+            double d = n;
+            int o = 0;
+            for (int l = 0; l < 6; l++)
+            {
+                int m = 5 - l; // order of the polynomial in n
+                double y = c[o + m];
+                for (int k = m; k > 0; k--)
+                    y = y * n + c[o + k - 1];
+                F[l] = d * y;
+                o += m + 1;
+                d *= n;
+            }
+            return F;
+        }
+
+        /// <summary>
+        /// Geodetic latitude from the authalic latitude <paramref name="beta"/>: the series of
+        /// <see cref="AuthalicSeriesCoefficients"/>, summed by Clenshaw's method, and for
+        /// |n| >= 0.01 a few Newton steps on q(phi) = qp * sin(beta), as in PROJ.
+        /// </summary>
+        protected static double AuthalicToGeodetic(double beta, double[] F, double es, double qp)
+        {
+            double s = Math.Sin(beta), c = Math.Cos(beta);
+            double u0 = 0, u1 = 0, X = 2 * (c - s) * (c + s); // 2 * cos(2 * beta)
+            for (int k = F.Length; k > 0;)
+            {
+                double t = X * u0 - u1 + F[--k];
+                u1 = u0;
+                u0 = t;
+            }
+            double phi = beta + 2 * s * c * u0;
+            double b = Math.Sqrt(1 - es);
+            if (Math.Abs((1 - b) / (1 + b)) < 0.01)
+                return phi;
+            // f(phi) = (qp * sin(beta) - q(phi)) / (1 - e^2), with
+            // q(phi) / (1 - e^2) = sin(phi) / (1 - e^2 sin(phi)^2) + atanh(e sin(phi)) / e
+            double e = Math.Sqrt(es), one_es = 1 - es;
+            double qDivOneEs = qp * s / one_es;
+            for (int i = 0; i < 10; i++)
+            {
+                double sinphi = Math.Sin(phi), cosphi = Math.Cos(phi);
+                double w = 1 - es * sinphi * sinphi;
+                double es_sin = e * sinphi;
+                double atanh = 0.5 * Math.Log((1 + es_sin) / (1 - es_sin));
+                double dphi = w * w / (2 * cosphi) * (qDivOneEs - sinphi / w - atanh / e);
+                if (!(Math.Abs(dphi) >= 1e-15))
+                    break;
+                phi += dphi;
+            }
+            return phi;
+        }
+
+        /// <summary>
         /// Calculates the hypotenuse of a triangle: Sqrt(x*x + y*y);
         /// </summary>
         /// <param name="x">The length of one orthogonal leg of the triangle</param>
