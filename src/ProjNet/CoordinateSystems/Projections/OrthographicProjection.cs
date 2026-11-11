@@ -148,29 +148,29 @@ namespace ProjNet.CoordinateSystems.Projections
             {
                 switch (_mode)
                 {
+                    // asin(cosc), asin(y / a) and asin(cosc * sinph0 + y * cosph0 / a) lost half the
+                    // digits close to the poles; acos(sinc) and atan2() of the three components keep
+                    // full precision there
                     case Mode.N_POLE:
-                        phi = Math.Asin(cosc);
+                        phi = Math.Acos(sinc);
                         lam = lon_origin + Math.Atan2(x, -y);
                         break;
                     case Mode.S_POLE:
-                        phi = -Math.Asin(cosc);
+                        phi = -Math.Acos(sinc);
                         lam = lon_origin + Math.Atan2(x, y);
                         break;
                     case Mode.EQUIT:
-                        if (Math.Abs(y) >= _semiMajor)
-                        {
-                            phi = y < 0.0 ? -HALF_PI : HALF_PI;
-                        }
-                        else
-                        {
-                            phi = Math.Asin(y/_semiMajor);
-                        }
+                        phi = Math.Atan2(y * sinc, hypot(x * sinc, rho * cosc));
                         lam = lon_origin + Math.Atan2(x / _semiMajor, cosc);
                         break;
                     case Mode.OBLIQ:
-                        phi = Math.Asin(cosc * _sinph0 + (y * _cosph0 / _semiMajor));
-                        lam = lon_origin + Math.Atan2(x * sinc, rho * _cosph0 * cosc - y * _sinph0 * sinc);
+                    {
+                        double n = rho * cosc * _sinph0 + y * sinc * _cosph0;
+                        double d = rho * cosc * _cosph0 - y * sinc * _sinph0;
+                        phi = Math.Atan2(n, hypot(x * sinc, d));
+                        lam = lon_origin + Math.Atan2(x * sinc, d);
                         break;
+                    }
                     default:
                         throw new ArgumentOutOfRangeException(nameof(_mode));
                 }
