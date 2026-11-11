@@ -51,7 +51,7 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly Mode _mode;
         private readonly double _qp;
         private readonly double _one_es;
-        private readonly double[] _apa;
+        private readonly double[] _authalicCoefficients;
         //private readonly double _mmf;
         private readonly double _dd;
         private readonly double _sinb1;
@@ -100,9 +100,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 _one_es = 1.0 - _es;
                 _qp = qsfn(1, _e, _one_es);
                 //_mmf = 0.5 / (1.0 - _es);
-                _apa = authset(_es);
-                if (_apa == null)
-                    throw new ArgumentException(nameof(parameters));
+                _authalicCoefficients = AuthalicSeriesCoefficients(_es);
 
                 switch (_mode)
                 {
@@ -334,17 +332,24 @@ namespace ProjNet.CoordinateSystems.Projections
                     cCe = Math.Cos(sCe);
                     sCe = Math.Sin(sCe);
                     x *= sCe;
+                    // rho * sin(beta), rho * cos(beta) * cos(lam) and rho * cos(beta) * sin(lam) of the
+                    // authalic latitude beta: atan2() keeps beta accurate near the poles, where asin()
+                    // of sin(beta) did not
+                    double n;
                     if (_mode == Mode.OBLIQ)
                     {
-                        ab = cCe * _sinb1 + y * sCe * _cosb1 / rho;
+                        n = rho * cCe * _sinb1 + y * sCe * _cosb1;
                         y = rho * _cosb1 * cCe - y * _sinb1 * sCe;
                     }
                     else
                     {
-                        ab = y * sCe / rho;
+                        n = y * sCe;
                         y = rho * cCe;
                     }
-                    break;
+                    double lamOE = adjust_lon(Math.Atan2(x, y) + central_meridian);
+                    y = AuthalicToGeodetic(Math.Atan2(n, hypot(x, y)), _authalicCoefficients, _es, _qp);
+                    x = lamOE;
+                    return;
                 case Mode.N_POLE:
                     y = -y;
                     goto continue_S_POLE;
@@ -358,14 +363,15 @@ namespace ProjNet.CoordinateSystems.Projections
                         y = lat_origin;   // phi
                         return ;
                     }
-                    ab = 1.0 - q / _qp;
+                    // asin(1 - q / qp), but accurate near the pole
+                    ab = HALF_PI - 2.0 * Math.Asin(Math.Min(1.0, Math.Sqrt(0.5 * q / _qp)));
                     if (_mode == Mode.S_POLE)
                         ab = -ab;
                     break;
             }
 
-            x = x = adjust_lon(Math.Atan2(x, y) + central_meridian); // lam
-            y = authlat(Math.Asin(ab), _apa);                      // phi 
+            x = adjust_lon(Math.Atan2(x, y) + central_meridian); // lam
+            y = AuthalicToGeodetic(ab, _authalicCoefficients, _es, _qp); // phi 
         }
 
         private void SphericalMetersToRadians(ref double x, ref double y)
@@ -389,16 +395,18 @@ namespace ProjNet.CoordinateSystems.Projections
             switch (_mode)
             {
                 case Mode.EQUIT:
-                    phi = Math.Abs(rh) <= EPS10 ? 0.0 : Math.Asin(y * sinz / rh);
-                    x *= sinz;
-                    y = cosz * rh;
-                    break;
                 case Mode.OBLIQ:
-                    phi = Math.Abs(rh) <= EPS10 ? lat_origin :
-                        Math.Asin(cosz * _sinb1 + y * sinz * _cosb1 / rh);
-                    x *= sinz * _cosb1;
-                    y = (cosz - Math.Sin(phi) * _sinb1) * rh;
+                {
+                    // rh * sin(phi), rh * cos(phi) * cos(lam) and rh * cos(phi) * sin(lam): atan2()
+                    // keeps the latitude accurate near the poles, where asin() of sin(phi) did not
+                    double s0 = _mode == Mode.EQUIT ? 0.0 : _sinb1;
+                    double c0 = _mode == Mode.EQUIT ? 1.0 : _cosb1;
+                    double n = rh * cosz * s0 + y * sinz * c0;
+                    y = rh * cosz * c0 - y * sinz * s0;
+                    x *= sinz;
+                    phi = rh == 0.0 ? (_mode == Mode.EQUIT ? 0.0 : lat_origin) : Math.Atan2(n, hypot(x, y));
                     break;
+                }
                 case Mode.N_POLE:
                     y = -y;
                     phi = HALF_PI - phi;
